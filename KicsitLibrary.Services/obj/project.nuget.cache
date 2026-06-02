@@ -1,8 +1,26 @@
 {
   "version": 2,
-  "dgSpecHash": "vNIyAANpGNw=",
+  "dgSpecHash": "PIFe6iU2If4=",
   "success": true,
   "projectFilePath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\hani7\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.2\\communitytoolkit.mvvm.8.4.2.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.configuration\\10.0.8\\microsoft.extensions.configuration.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.8\\microsoft.extensions.configuration.abstractions.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\10.0.8\\microsoft.extensions.configuration.fileextensions.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.configuration.json\\10.0.8\\microsoft.extensions.configuration.json.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\10.0.8\\microsoft.extensions.dependencyinjection.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.8\\microsoft.extensions.dependencyinjection.abstractions.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\10.0.8\\microsoft.extensions.fileproviders.abstractions.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\10.0.8\\microsoft.extensions.fileproviders.physical.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\10.0.8\\microsoft.extensions.filesystemglobbing.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.8\\microsoft.extensions.primitives.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\system.io.pipelines\\10.0.8\\system.io.pipelines.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\system.text.encodings.web\\10.0.8\\system.text.encodings.web.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\system.text.json\\10.0.8\\system.text.json.10.0.8.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.27\\microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.27\\microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\hani7\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.27\\microsoft.windowsdesktop.app.ref.8.0.27.nupkg.sha512"
+  ],
   "logs": []
 }
