@@ -18,9 +18,9 @@
         <!-- Sidebar Panel -->
         <Grid Grid.Column="0" Background="{StaticResource PrimaryBrush}">
             <Grid.RowDefinitions>
-                <Grid.RowDefinition Height="70"/>
-                <Grid.RowDefinition Height="*"/>
-                <Grid.RowDefinition Height="80"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="80"/>
             </Grid.RowDefinitions>
 
             <!-- Institution Header -->
