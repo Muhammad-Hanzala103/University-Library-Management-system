@@ -35,7 +35,55 @@ namespace KicsitLibrary.Desktop
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return value == null ? Visibility.Visible : Visibility.Collapsed;
+            bool isInverse = parameter?.ToString() == "Inverse";
+            bool isNull = value == null;
+            bool check = isInverse ? !isNull : isNull;
+            return check ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
+
+    public class BooleanToVisibilityConverter : MarkupExtension, IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is bool flag)
+            {
+                bool isInverse = parameter?.ToString() == "Inverse";
+                bool check = isInverse ? !flag : flag;
+                return check ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
+
+    public class StringVisibilityConverter : MarkupExtension, IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            bool hasText = !string.IsNullOrWhiteSpace(value?.ToString());
+            bool isInverse = parameter?.ToString() == "Inverse";
+            bool check = isInverse ? !hasText : hasText;
+            return check ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
