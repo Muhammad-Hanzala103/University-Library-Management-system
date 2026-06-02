@@ -1,0 +1,223 @@
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using KicsitLibrary.Core.Entities;
+
+namespace KicsitLibrary.Data
+{
+    public class KicsitLibraryDbContext : DbContext
+    {
+        public KicsitLibraryDbContext(DbContextOptions<KicsitLibraryDbContext> options) : base(options)
+        {
+        }
+
+        public DbSet<Role> Roles => Set<Role>();
+        public DbSet<Permission> Permissions => Set<Permission>();
+        public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+        public DbSet<User> Users => Set<User>();
+        public DbSet<UserRole> UserRoles => Set<UserRole>();
+        public DbSet<Student> Students => Set<Student>();
+        public DbSet<FacultyStaff> FacultyStaff => Set<FacultyStaff>();
+        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<DepartmentCategory> DepartmentCategories => Set<DepartmentCategory>();
+        public DbSet<LiteratureCategory> LiteratureCategories => Set<LiteratureCategory>();
+        public DbSet<Author> Authors => Set<Author>();
+        public DbSet<Publisher> Publishers => Set<Publisher>();
+        public DbSet<BookMaster> BookMasters => Set<BookMaster>();
+        public DbSet<BookAuthor> BookAuthors => Set<BookAuthor>();
+        public DbSet<Rack> Racks => Set<Rack>();
+        public DbSet<Shelf> Shelves => Set<Shelf>();
+        public DbSet<BookLocation> BookLocations => Set<BookLocation>();
+        public DbSet<BookCopy> BookCopies => Set<BookCopy>();
+        public DbSet<IssueRecord> IssueRecords => Set<IssueRecord>();
+        public DbSet<ReceiveRecord> ReceiveRecords => Set<ReceiveRecord>();
+        public DbSet<Reservation> Reservations => Set<Reservation>();
+        public DbSet<Fine> Fines => Set<Fine>();
+        public DbSet<NotificationRecord> NotificationRecords => Set<NotificationRecord>();
+        public DbSet<VisitRecord> VisitRecords => Set<VisitRecord>();
+        public DbSet<VisitFile> VisitFiles => Set<VisitFile>();
+        public DbSet<AuditRecord> AuditRecords => Set<AuditRecord>();
+        public DbSet<AuditFile> AuditFiles => Set<AuditFile>();
+        public DbSet<InventoryItem> InventoryItems => Set<InventoryItem>();
+        public DbSet<NewArrival> NewArrivals => Set<NewArrival>();
+        public DbSet<DocumentUpload> DocumentUploads => Set<DocumentUpload>();
+        public DbSet<ImportBatch> ImportBatches => Set<ImportBatch>();
+        public DbSet<ImportError> ImportErrors => Set<ImportError>();
+        public DbSet<SystemSettings> SystemSettings => Set<SystemSettings>();
+        public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
+        public DbSet<DeletedRecordArchive> DeletedRecordArchives => Set<DeletedRecordArchive>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // 1. Composite Keys
+            modelBuilder.Entity<UserRole>()
+                .HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            modelBuilder.Entity<RolePermission>()
+                .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+
+            modelBuilder.Entity<BookAuthor>()
+                .HasKey(ba => new { ba.BookMasterId, ba.AuthorId });
+
+            // 2. Indexes
+            modelBuilder.Entity<BookCopy>().HasIndex(bc => bc.AccessionNumber).IsUnique();
+            modelBuilder.Entity<BookCopy>().HasIndex(bc => bc.Barcode).IsUnique();
+            modelBuilder.Entity<BookMaster>().HasIndex(bm => bm.Title);
+            modelBuilder.Entity<BookMaster>().HasIndex(bm => bm.ISBN);
+            modelBuilder.Entity<BookMaster>().HasIndex(bm => bm.ISSN);
+            modelBuilder.Entity<BookMaster>().HasIndex(bm => bm.UniqueTitleNumber).IsUnique();
+
+            modelBuilder.Entity<Student>().HasIndex(s => s.RegistrationNumber).IsUnique();
+            modelBuilder.Entity<Student>().HasIndex(s => s.AdmissionNumber);
+            modelBuilder.Entity<Student>().HasIndex(s => s.PageNumber);
+            modelBuilder.Entity<Student>().HasIndex(s => s.RegisterNumber);
+
+            modelBuilder.Entity<FacultyStaff>().HasIndex(fs => fs.PersonnelNumber).IsUnique();
+
+            modelBuilder.Entity<IssueRecord>().HasIndex(ir => ir.AccessionNumber);
+            modelBuilder.Entity<IssueRecord>().HasIndex(ir => ir.IssueDate);
+            modelBuilder.Entity<IssueRecord>().HasIndex(ir => ir.ExpectedReturnDate);
+
+            modelBuilder.Entity<ReceiveRecord>().HasIndex(rr => rr.ReceiveDate);
+
+            modelBuilder.Entity<VisitRecord>().HasIndex(vr => vr.OrganizationName);
+            modelBuilder.Entity<VisitRecord>().HasIndex(vr => vr.VisitDate);
+
+            modelBuilder.Entity<AuditRecord>().HasIndex(ar => ar.AuditDate);
+
+            modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
+            modelBuilder.Entity<SystemSettings>().HasIndex(ss => ss.Key).IsUnique();
+
+            // 3. Relationships Configurations
+            modelBuilder.Entity<BookCopy>()
+                .HasOne(bc => bc.BookMaster)
+                .WithMany(bm => bm.BookCopies)
+                .HasForeignKey(bc => bc.BookMasterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<IssueRecord>()
+                .HasOne(ir => ir.BookCopy)
+                .WithMany(bc => bc.IssueRecords)
+                .HasForeignKey(ir => ir.BookCopyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<IssueRecord>()
+                .HasOne(ir => ir.Student)
+                .WithMany(s => s.IssueRecords)
+                .HasForeignKey(ir => ir.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<IssueRecord>()
+                .HasOne(ir => ir.FacultyStaff)
+                .WithMany(fs => fs.IssueRecords)
+                .HasForeignKey(ir => ir.FacultyStaffId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReceiveRecord>()
+                .HasOne(rr => rr.IssueRecord)
+                .WithOne(ir => ir.ReceiveRecord)
+                .HasForeignKey<ReceiveRecord>(rr => rr.IssueRecordId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Fine>()
+                .HasOne(f => f.IssueRecord)
+                .WithOne(ir => ir.Fine)
+                .HasForeignKey<Fine>(f => f.IssueRecordId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Fine>()
+                .HasOne(f => f.Student)
+                .WithMany(s => s.Fines)
+                .HasForeignKey(f => f.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Fine>()
+                .HasOne(f => f.FacultyStaff)
+                .WithMany(fs => fs.Fines)
+                .HasForeignKey(f => f.FacultyStaffId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.BookMaster)
+                .WithMany(bm => bm.Reservations)
+                .HasForeignKey(r => r.BookMasterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Student)
+                .WithMany(s => s.Reservations)
+                .HasForeignKey(r => r.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.FacultyStaff)
+                .WithMany(fs => fs.Reservations)
+                .HasForeignKey(r => r.FacultyStaffId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // 4. Global Query Filters for Soft Delete
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(EntityBase).IsAssignableFrom(entityType.ClrType))
+                {
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(ConvertFilterExpression(entityType.ClrType));
+                }
+            }
+        }
+
+        private static LambdaExpression ConvertFilterExpression(Type type)
+        {
+            var parameter = Expression.Parameter(type, "e");
+            var property = Expression.Property(parameter, nameof(EntityBase.IsDeleted));
+            var falseConstant = Expression.Constant(false);
+            var body = Expression.Equal(property, falseConstant);
+            return Expression.Lambda(body, parameter);
+        }
+
+        // 5. Intercept SaveChanges for Auditing and Soft Delete
+        public override int SaveChanges()
+        {
+            ApplyAuditAndSoftDelete();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyAuditAndSoftDelete();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ApplyAuditAndSoftDelete()
+        {
+            var entries = ChangeTracker.Entries();
+            foreach (var entry in entries)
+            {
+                if (entry.Entity is EntityBase entity)
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            entity.CreatedAt = DateTime.UtcNow;
+                            entity.IsDeleted = false;
+                            break;
+                        case EntityState.Modified:
+                            entity.UpdatedAt = DateTime.UtcNow;
+                            break;
+                        case EntityState.Deleted:
+                            // Prevent hard delete, change to soft delete
+                            entry.State = EntityState.Modified;
+                            entity.IsDeleted = true;
+                            entity.DeletedAt = DateTime.UtcNow;
+                            // Reason and DeletedByUserId should be populated in the service layer before calling Delete/Remove
+                            break;
+                    }
+                }
+            }
+        }
+    }
+}

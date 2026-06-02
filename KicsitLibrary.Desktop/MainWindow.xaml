@@ -1,12 +1,224 @@
-﻿<Window x:Class="KicsitLibrary.Desktop.MainWindow"
+<Window x:Class="KicsitLibrary.Desktop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KicsitLibrary.Desktop"
+        xmlns:vm="clr-namespace:KicsitLibrary.Desktop.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="KICSIT Library Management System" Height="768" Width="1150"
+        WindowStartupLocation="CenterScreen" Background="{StaticResource BgBrush}">
+    
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
+        <!-- Sidebar Panel -->
+        <Grid Grid.Column="0" Background="{StaticResource PrimaryBrush}">
+            <Grid.RowDefinitions>
+                <Grid.RowDefinition Height="70"/>
+                <Grid.RowDefinition Height="*"/>
+                <Grid.RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+
+            <!-- Institution Header -->
+            <StackPanel Grid.Row="0" VerticalAlignment="Center" Margin="20,0">
+                <TextBlock Text="KICSIT LIBRARY" Foreground="{StaticResource TextLightBrush}" FontSize="18" FontWeight="Bold" FontFamily="Segoe UI"/>
+                <TextBlock Text="Management System" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <!-- Navigation Items -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10">
+                <StackPanel>
+                    <Button Style="{StaticResource SidebarButton}" Content="Dashboard" 
+                            Command="{Binding NavigateToDashboardCommand}" 
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Dashboard}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Book Catalog" 
+                            Command="{Binding NavigateToCatalogCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Book Catalog}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Issue Material" 
+                            Command="{Binding NavigateToIssueCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Issue Material}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Receive Material" 
+                            Command="{Binding NavigateToReceiveCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Receive Material}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Fines Management" 
+                            Command="{Binding NavigateToFinesCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Fines Management}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Overdue Reminders" 
+                            Command="{Binding NavigateToOverdueCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Overdue Reminders}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Students Management" 
+                            Command="{Binding NavigateToStudentsCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Students Management}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Faculty &amp; Staff" 
+                            Command="{Binding NavigateToFacultyCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Faculty &amp; Staff}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Visit Records" 
+                            Command="{Binding NavigateToVisitsCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Visit Records}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Audit Records" 
+                            Command="{Binding NavigateToAuditCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Audit Records}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Inventory Management" 
+                            Command="{Binding NavigateToInventoryCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Inventory Management}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="Reports &amp; Analytics" 
+                            Command="{Binding NavigateToReportsCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reports &amp; Analytics}"/>
+                    
+                    <Button Style="{StaticResource SidebarButton}" Content="System Settings" 
+                            Command="{Binding NavigateToSettingsCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=System Settings}"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- User Status Panel -->
+            <Border Grid.Row="2" Background="#142038" BorderBrush="#203358" BorderThickness="0,1,0,0" Padding="15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Circle Avatar placeholder -->
+                    <Border Grid.Column="0" Width="32" Height="32" CornerRadius="16" Background="{StaticResource AccentBrush}" VerticalAlignment="Center">
+                        <TextBlock Text="A" Foreground="White" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                        <TextBlock Text="{Binding CurrentUserName}" Foreground="{StaticResource TextLightBrush}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding CurrentUserRole}" Foreground="{StaticResource TextMutedBrush}" FontSize="10" Margin="0,1,0,0"/>
+                    </StackPanel>
+                    
+                    <!-- Logout button placeholder -->
+                    <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <TextBlock Text="❌" Foreground="{StaticResource TextMutedBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <Grid.RowDefinition Height="80"/>
+                <Grid.RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Top Header Panel -->
+            <Border Grid.Row="0" Margin="15,15,15,0" Style="{StaticResource CardStyle}" Padding="20,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Screen Title -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextStyle}" FontSize="20"/>
+                        <TextBlock Text="Dr A Q Khan Institute of Computer Sciences &amp; IT" Style="{StaticResource SubtitleTextStyle}" FontSize="11"/>
+                    </StackPanel>
+                    
+                    <!-- Quick Stats or Actions -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Style="{StaticResource PrimaryButton}" Content="Issue Material" Padding="12,6" Margin="0,0,10,0"/>
+                        <Button Style="{StaticResource SecondaryButton}" Content="Add Book" Padding="12,6"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Content Area Viewport -->
+            <Grid Grid.Row="1" Margin="15">
+                <!-- If CurrentView is null, show a landing/dashboard template draft -->
+                <ContentControl Content="{Binding CurrentView}">
+                    <ContentControl.ContentTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Loading View..."/>
+                        </DataTemplate>
+                    </ContentControl.ContentTemplate>
+                </ContentControl>
+                
+                <!-- Placeholder when view is empty (Standard Phase 1 landing look) -->
+                <Grid Visibility="{Binding CurrentView, Converter={local:NullToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Quick Info Cards -->
+                    <UniformGrid Grid.Row="0" Columns="4" Margin="0,0,0,15">
+                        <!-- Card 1: Books -->
+                        <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0" Background="#FFFFFF">
+                            <StackPanel>
+                                <TextBlock Text="Total Books" Foreground="{StaticResource TextMutedBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="1,245" Foreground="{StaticResource PrimaryBrush}" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+                                <TextBlock Text="98% Available" Foreground="{StaticResource SuccessBrush}" FontSize="10" FontWeight="SemiBold" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card 2: Issued -->
+                        <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0" Background="#FFFFFF">
+                            <StackPanel>
+                                <TextBlock Text="Issued Books" Foreground="{StaticResource TextMutedBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="142" Foreground="{StaticResource PrimaryBrush}" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+                                <TextBlock Text="12 Due Today" Foreground="{StaticResource WarningBrush}" FontSize="10" FontWeight="SemiBold" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card 3: Overdue -->
+                        <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0" Background="#FFFFFF">
+                            <StackPanel>
+                                <TextBlock Text="Overdue Books" Foreground="{StaticResource TextMutedBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="15" Foreground="{StaticResource DangerBrush}" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+                                <TextBlock Text="Requires Action" Foreground="{StaticResource DangerBrush}" FontSize="10" FontWeight="SemiBold" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card 4: Fines -->
+                        <Border Style="{StaticResource CardStyle}" Background="#FFFFFF">
+                            <StackPanel>
+                                <TextBlock Text="Pending Fines" Foreground="{StaticResource TextMutedBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="Rs. 4,500" Foreground="{StaticResource PrimaryBrush}" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+                                <TextBlock Text="5 unpaid accounts" Foreground="{StaticResource TextMutedBrush}" FontSize="10" FontWeight="SemiBold" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Main Welcome Area -->
+                    <Border Grid.Row="1" Style="{StaticResource CardStyle}" VerticalAlignment="Stretch">
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
+                                <Border Width="80" Height="80" CornerRadius="40" Background="{StaticResource BgBrush}" Margin="0,0,0,15">
+                                    <TextBlock Text="📚" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="KICSIT Library Management System" Style="{StaticResource TitleTextStyle}" FontSize="22" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Welcome to the next generation Library Information System. Select any module from the sidebar menu to begin." 
+                                           Style="{StaticResource SubtitleTextStyle}" HorizontalAlignment="Center" Margin="0,5,0,25" TextAlignment="Center"/>
+                                <Button Style="{StaticResource PrimaryButton}" Content="Quick Search Book Catalog" HorizontalAlignment="Center" Padding="20,10"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
