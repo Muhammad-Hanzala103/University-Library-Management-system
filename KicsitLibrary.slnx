@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="KicsitLibrary.Core/KicsitLibrary.Core.csproj" />
+  <Project Path="KicsitLibrary.Data/KicsitLibrary.Data.csproj" />
+  <Project Path="KicsitLibrary.Desktop/KicsitLibrary.Desktop.csproj" />
+  <Project Path="KicsitLibrary.Reports/KicsitLibrary.Reports.csproj" />
+  <Project Path="KicsitLibrary.Services/KicsitLibrary.Services.csproj" />
+  <Project Path="KicsitLibrary.Tests/KicsitLibrary.Tests.csproj" />
+</Solution>
