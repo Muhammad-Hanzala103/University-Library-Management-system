@@ -5,3 +5,4 @@ C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Themes\Colors.baml
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Themes\Styles.baml
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\MainWindow.g.cs

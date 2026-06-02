@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Data;
 using KicsitLibrary.Data.Repositories;
+using KicsitLibrary.Desktop.ViewModels;
 
 namespace KicsitLibrary.Desktop
 {

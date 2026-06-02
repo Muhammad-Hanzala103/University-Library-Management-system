@@ -120,8 +120,8 @@
         <!-- Main Content Area -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <Grid.RowDefinition Height="80"/>
-                <Grid.RowDefinition Height="*"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <!-- Top Header Panel -->
