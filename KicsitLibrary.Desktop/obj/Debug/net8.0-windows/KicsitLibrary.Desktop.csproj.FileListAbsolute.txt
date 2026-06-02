@@ -1,0 +1,4 @@
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\KicsitLibrary.Desktop.csproj.AssemblyReference.cache
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\App.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\KicsitLibrary.Desktop_MarkupCompile.cache
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\KicsitLibrary.Desktop_MarkupCompile.lref
