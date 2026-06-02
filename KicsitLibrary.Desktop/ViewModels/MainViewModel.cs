@@ -1,10 +1,17 @@
+using System;
+using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KicsitLibrary.Core.Interfaces;
 
 namespace KicsitLibrary.Desktop.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
+        private readonly INavigationService _navigationService;
+        private readonly IAuthenticationService _authService;
+
         [ObservableProperty]
         private object? _currentView;
 
@@ -17,87 +24,109 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private string _currentUserRole = "Super Admin";
 
-        public MainViewModel()
+        public MainViewModel(INavigationService navigationService, IAuthenticationService authService)
         {
-            NavigateToDashboard();
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+
+            _navigationService.NavigationChanged += OnNavigationChanged;
+
+            LoadUserDetails();
+
+            Title = _navigationService.CurrentViewName;
+            
+            // Force load the initial dashboard view
+            OnNavigationChanged("Dashboard");
+        }
+
+        private void LoadUserDetails()
+        {
+            if (_authService.CurrentUser != null)
+            {
+                CurrentUserName = _authService.CurrentUser.FullName;
+                
+                var userRole = _authService.CurrentUser.UserRoles.FirstOrDefault();
+                CurrentUserRole = userRole?.Role?.Name ?? "Read Only Viewer";
+            }
+        }
+
+        private void OnNavigationChanged(string viewName)
+        {
+            Title = viewName;
+            
+            switch (viewName)
+            {
+                case "Dashboard":
+                    CurrentView = App.AppHost?.Services.GetService<DashboardViewModel>();
+                    break;
+                default:
+                    CurrentView = null;
+                    break;
+            }
         }
 
         [RelayCommand]
-        private void NavigateToDashboard()
-        {
-            Title = "Dashboard";
-        }
+        private void NavigateToDashboard() => _navigationService.NavigateTo("Dashboard");
 
         [RelayCommand]
-        private void NavigateToCatalog()
-        {
-            Title = "Book Catalog";
-        }
+        private void NavigateToCatalog() => _navigationService.NavigateTo("Book Catalog");
 
         [RelayCommand]
-        private void NavigateToIssue()
-        {
-            Title = "Issue Material";
-        }
+        private void NavigateToIssue() => _navigationService.NavigateTo("Issue Material");
 
         [RelayCommand]
-        private void NavigateToReceive()
-        {
-            Title = "Receive Material";
-        }
+        private void NavigateToReceive() => _navigationService.NavigateTo("Receive Material");
 
         [RelayCommand]
-        private void NavigateToFines()
-        {
-            Title = "Fines Management";
-        }
+        private void NavigateToFines() => _navigationService.NavigateTo("Fines Management");
 
         [RelayCommand]
-        private void NavigateToOverdue()
-        {
-            Title = "Overdue Reminders";
-        }
+        private void NavigateToOverdue() => _navigationService.NavigateTo("Overdue Reminders");
 
         [RelayCommand]
-        private void NavigateToStudents()
-        {
-            Title = "Students Management";
-        }
+        private void NavigateToStudents() => _navigationService.NavigateTo("Students Management");
 
         [RelayCommand]
-        private void NavigateToFaculty()
-        {
-            Title = "Faculty & Staff";
-        }
+        private void NavigateToFaculty() => _navigationService.NavigateTo("Faculty & Staff");
 
         [RelayCommand]
-        private void NavigateToVisits()
-        {
-            Title = "Visit Records";
-        }
+        private void NavigateToVisits() => _navigationService.NavigateTo("Visit Records");
 
         [RelayCommand]
-        private void NavigateToAudit()
-        {
-            Title = "Audit Records";
-        }
+        private void NavigateToAudit() => _navigationService.NavigateTo("Audit Records");
 
         [RelayCommand]
-        private void NavigateToInventory()
-        {
-            Title = "Inventory Management";
-        }
+        private void NavigateToInventory() => _navigationService.NavigateTo("Inventory Management");
 
         [RelayCommand]
-        private void NavigateToReports()
-        {
-            Title = "Reports & Analytics";
-        }
+        private void NavigateToReports() => _navigationService.NavigateTo("Reports & Analytics");
 
         [RelayCommand]
-        private void NavigateToSettings()
+        private void NavigateToSettings() => _navigationService.NavigateTo("System Settings");
+
+        [RelayCommand]
+        private void Logout()
         {
-            Title = "System Settings";
+            _authService.Logout();
+            
+            var loginWindow = App.AppHost?.Services.GetRequiredService<LoginWindow>();
+            var activeWindow = App.Current.MainWindow;
+            
+            if (activeWindow != null && loginWindow != null)
+            {
+                activeWindow.Hide();
+
+                if (loginWindow.ShowDialog() == true)
+                {
+                    LoadUserDetails();
+                    _navigationService.NavigateTo("Dashboard");
+                    activeWindow.Show();
+                }
+                else
+                {
+                    App.Current.Shutdown();
+                }
+            }
         }
     }
 }

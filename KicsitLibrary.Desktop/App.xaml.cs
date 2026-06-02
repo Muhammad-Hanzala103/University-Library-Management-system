@@ -9,7 +9,9 @@ using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Data;
 using KicsitLibrary.Data.Repositories;
 using KicsitLibrary.Desktop.ViewModels;
+using KicsitLibrary.Desktop.Services;
 using KicsitLibrary.Services.Authentication;
+using KicsitLibrary.Services.Dashboard;
 using KicsitLibrary.Services.Logging;
 
 namespace KicsitLibrary.Desktop
@@ -43,8 +45,10 @@ namespace KicsitLibrary.Desktop
 
                     // Register Services
                     services.AddSingleton<IPasswordHasher, PasswordHasher>();
+                    services.AddSingleton<INavigationService, NavigationService>();
                     services.AddScoped<IActivityLogService, ActivityLogService>();
                     services.AddSingleton<IAuthenticationService, AuthenticationService>();
+                    services.AddScoped<IDashboardService, DashboardService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -54,6 +58,7 @@ namespace KicsitLibrary.Desktop
                     });
                     services.AddTransient<LoginViewModel>();
                     services.AddTransient<LoginWindow>();
+                    services.AddTransient<DashboardViewModel>();
                 })
                 .Build();
         }

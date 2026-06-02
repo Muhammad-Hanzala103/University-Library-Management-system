@@ -5,9 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KicsitLibrary.Desktop"
         xmlns:vm="clr-namespace:KicsitLibrary.Desktop.ViewModels"
+        xmlns:views="clr-namespace:KicsitLibrary.Desktop.Views"
         mc:Ignorable="d"
         Title="KICSIT Library Management System" Height="768" Width="1150"
         WindowStartupLocation="CenterScreen" Background="{StaticResource BgBrush}">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView/>
+        </DataTemplate>
+    </Window.Resources>
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -106,7 +113,8 @@
                     </StackPanel>
                     
                     <!-- Logout button placeholder -->
-                    <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center">
+                    <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center"
+                            Command="{Binding LogoutCommand}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <TextBlock Text="❌" Foreground="{StaticResource TextMutedBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
