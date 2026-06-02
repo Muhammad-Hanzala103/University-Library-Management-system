@@ -52,6 +52,8 @@ namespace KicsitLibrary.Desktop
                     {
                         DataContext = s.GetRequiredService<MainViewModel>()
                     });
+                    services.AddTransient<LoginViewModel>();
+                    services.AddTransient<LoginWindow>();
                 })
                 .Build();
         }
@@ -94,8 +96,18 @@ namespace KicsitLibrary.Desktop
                 }
             }
 
-            var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            var loginWindow = AppHost.Services.GetRequiredService<LoginWindow>();
+            var loginResult = loginWindow.ShowDialog();
+
+            if (loginResult == true)
+            {
+                var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
+                mainWindow.Show();
+            }
+            else
+            {
+                Shutdown();
+            }
 
             base.OnStartup(e);
         }
