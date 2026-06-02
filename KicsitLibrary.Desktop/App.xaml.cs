@@ -9,6 +9,8 @@ using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Data;
 using KicsitLibrary.Data.Repositories;
 using KicsitLibrary.Desktop.ViewModels;
+using KicsitLibrary.Services.Authentication;
+using KicsitLibrary.Services.Logging;
 
 namespace KicsitLibrary.Desktop
 {
@@ -39,6 +41,11 @@ namespace KicsitLibrary.Desktop
                     // Register Repositories
                     services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+                    // Register Services
+                    services.AddSingleton<IPasswordHasher, PasswordHasher>();
+                    services.AddScoped<IActivityLogService, ActivityLogService>();
+                    services.AddSingleton<IAuthenticationService, AuthenticationService>();
+
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
                     services.AddSingleton<MainWindow>(s => new MainWindow
@@ -57,6 +64,7 @@ namespace KicsitLibrary.Desktop
             using (var scope = AppHost.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<KicsitLibraryDbContext>();
+                var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
                 try
                 {
                     await dbContext.Database.MigrateAsync();
@@ -73,6 +81,16 @@ namespace KicsitLibrary.Desktop
                         MessageBox.Show($"Database initialization failed:\n{ex.Message}\n\nFallback Error:\n{innerEx.Message}", 
                             "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
+                }
+
+                try
+                {
+                    await DbSeeder.SeedAsync(dbContext, passwordHasher);
+                }
+                catch (Exception seedEx)
+                {
+                    MessageBox.Show($"Database seeding failed:\n{seedEx.Message}", 
+                        "Seeding Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
 
