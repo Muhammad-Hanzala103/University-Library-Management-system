@@ -1,4 +1,5 @@
 using System;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
 {
@@ -9,7 +10,7 @@ namespace KicsitLibrary.Core.Entities
         public int BookCopyId { get; set; }
         public virtual BookCopy BookCopy { get; set; } = null!;
         
-        public string MemberType { get; set; } = "Student"; // Student, FacultyStaff
+        public MemberType MemberType { get; set; } = MemberType.Student; // Student, FacultyStaff
         
         public int? StudentId { get; set; }
         public virtual Student? Student { get; set; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
 {
@@ -53,7 +54,7 @@ namespace KicsitLibrary.Core.Entities
         public string? Supplier { get; set; }
         public string? InvoiceFile { get; set; }
         
-        public string Status { get; set; } = "Available";
+        public BookStatus Status { get; set; } = BookStatus.Available;
         
         public int? CreatedByUserId { get; set; }
         public int? UpdatedByUserId { get; set; }

@@ -35,10 +35,22 @@ namespace KicsitLibrary.Desktop
                 {
                     var configuration = context.Configuration;
                     var connectionString = configuration.GetConnectionString("DefaultConnection");
+                    var dbProvider = configuration.GetValue<string>("SystemSettings:DatabaseProvider") ?? "SqlServer";
 
-                    // Register DB Context (SQL Server LocalDB)
-                    services.AddDbContext<KicsitLibraryDbContext>(options =>
-                        options.UseSqlServer(connectionString, b => b.MigrationsAssembly("KicsitLibrary.Data")));
+                    // Register DB Context Factory dynamically (SQL Server or SQLite)
+                    if (dbProvider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
+                    {
+                        services.AddDbContextFactory<KicsitLibraryDbContext>(options =>
+                            options.UseSqlite(connectionString, b => b.MigrationsAssembly("KicsitLibrary.Data")));
+                    }
+                    else
+                    {
+                        services.AddDbContextFactory<KicsitLibraryDbContext>(options =>
+                            options.UseSqlServer(connectionString, b => b.MigrationsAssembly("KicsitLibrary.Data")));
+                    }
+
+                    // Register scoped DbContext resolved from factory for backwards compatibility
+                    services.AddScoped(p => p.GetRequiredService<IDbContextFactory<KicsitLibraryDbContext>>().CreateDbContext());
 
                     // Register Repositories
                     services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

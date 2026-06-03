@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
 {
@@ -19,7 +20,7 @@ namespace KicsitLibrary.Core.Entities
         public string ActionTaken { get; set; } = string.Empty;
         
         public string ResponsiblePerson { get; set; } = string.Empty;
-        public string Status { get; set; } = "Draft";
+        public AuditStatus Status { get; set; } = AuditStatus.Draft;
         public string? Remarks { get; set; }
         
         public int CreatedByUserId { get; set; }

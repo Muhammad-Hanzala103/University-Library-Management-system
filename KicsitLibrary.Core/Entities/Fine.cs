@@ -1,4 +1,5 @@
 using System;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
 {
@@ -6,7 +7,7 @@ namespace KicsitLibrary.Core.Entities
     {
         public string FineRecordNumber { get; set; } = string.Empty;
         
-        public string MemberType { get; set; } = "Student";
+        public MemberType MemberType { get; set; } = MemberType.Student;
         
         public int? StudentId { get; set; }
         public virtual Student? Student { get; set; }
@@ -24,7 +25,7 @@ namespace KicsitLibrary.Core.Entities
         public decimal FineAmount { get; set; }
         public decimal PaidAmount { get; set; }
         public decimal RemainingAmount { get; set; }
-        public string PaymentStatus { get; set; } = "Unpaid";
+        public FineStatus PaymentStatus { get; set; } = FineStatus.Unpaid;
         public DateTime? PaymentDate { get; set; }
         
         public decimal WaivedAmount { get; set; }

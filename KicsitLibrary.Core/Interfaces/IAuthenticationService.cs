@@ -9,6 +9,6 @@ namespace KicsitLibrary.Core.Interfaces
         Task<bool> ChangePasswordAsync(int userId, string oldPassword, string newPassword);
         Task<bool> VerifyUserPermissionAsync(int userId, string permissionCode);
         User? CurrentUser { get; }
-        void Logout();
+        Task LogoutAsync();
     }
 }

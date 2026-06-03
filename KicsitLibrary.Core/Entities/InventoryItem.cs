@@ -1,11 +1,12 @@
 using System;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
 {
     public class InventoryItem : EntityBase
     {
         public string ItemName { get; set; } = string.Empty;
-        public string ItemType { get; set; } = "Chair";
+        public InventoryItemType ItemType { get; set; } = InventoryItemType.Chair;
         public int Quantity { get; set; }
         public int AvailableQuantity { get; set; }
         public int DamagedQuantity { get; set; }

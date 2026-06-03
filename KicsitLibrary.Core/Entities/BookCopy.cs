@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
 {
@@ -20,7 +21,7 @@ namespace KicsitLibrary.Core.Entities
         public string? Location { get; set; }
         
         public string PhysicalCondition { get; set; } = "Normal";
-        public string AvailabilityStatus { get; set; } = "Available";
+        public BookStatus AvailabilityStatus { get; set; } = BookStatus.Available;
         
         public string? CurrentHolderType { get; set; }
         public int? CurrentHolderId { get; set; }

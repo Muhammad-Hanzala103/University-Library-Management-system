@@ -11,6 +11,7 @@ namespace KicsitLibrary.Desktop.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IAuthenticationService _authService;
+        private IServiceScope? _currentScope;
 
         [ObservableProperty]
         private object? _currentView;
@@ -54,10 +55,14 @@ namespace KicsitLibrary.Desktop.ViewModels
         {
             Title = viewName;
             
+            _currentScope?.Dispose();
+            _currentScope = null;
+            
             switch (viewName)
             {
                 case "Dashboard":
-                    CurrentView = App.AppHost?.Services.GetService<DashboardViewModel>();
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<DashboardViewModel>();
                     break;
                 default:
                     CurrentView = null;
@@ -105,9 +110,9 @@ namespace KicsitLibrary.Desktop.ViewModels
         private void NavigateToSettings() => _navigationService.NavigateTo("System Settings");
 
         [RelayCommand]
-        private void Logout()
+        private async Task LogoutAsync()
         {
-            _authService.Logout();
+            await _authService.LogoutAsync();
             
             var loginWindow = App.AppHost?.Services.GetRequiredService<LoginWindow>();
             var activeWindow = App.Current.MainWindow;

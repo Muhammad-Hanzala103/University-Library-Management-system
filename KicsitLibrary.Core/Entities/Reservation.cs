@@ -1,4 +1,5 @@
 using System;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
 {
@@ -6,7 +7,7 @@ namespace KicsitLibrary.Core.Entities
     {
         public string ReservationNumber { get; set; } = string.Empty;
         
-        public string MemberType { get; set; } = "Student";
+        public MemberType MemberType { get; set; } = MemberType.Student;
         
         public int? StudentId { get; set; }
         public virtual Student? Student { get; set; }
@@ -22,7 +23,7 @@ namespace KicsitLibrary.Core.Entities
         public DateTime ReservationDate { get; set; } = DateTime.UtcNow;
         public DateTime ExpiryDate { get; set; }
         
-        public string Status { get; set; } = "Pending";
+        public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
         public string? Remarks { get; set; }
     }
 }

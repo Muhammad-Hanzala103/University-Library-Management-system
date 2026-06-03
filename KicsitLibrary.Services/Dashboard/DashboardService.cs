@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
+using KicsitLibrary.Core.Enums;
 using KicsitLibrary.Data;
 
 namespace KicsitLibrary.Services.Dashboard
@@ -37,19 +38,19 @@ namespace KicsitLibrary.Services.Dashboard
                 stats.TotalBooks = copyGroups.Sum(cg => cg.Count);
                 stats.TotalAccessionCopies = stats.TotalBooks;
 
-                stats.AvailableBooks = copyGroups.FirstOrDefault(g => g.Status == "Available")?.Count ?? 0;
-                stats.IssuedBooks = copyGroups.FirstOrDefault(g => g.Status == "Issued")?.Count ?? 0;
-                stats.ReservedBooks = copyGroups.FirstOrDefault(g => g.Status == "Reserved")?.Count ?? 0;
-                stats.OverdueBooks = copyGroups.FirstOrDefault(g => g.Status == "Overdue")?.Count ?? 0;
-                stats.LostBooks = copyGroups.FirstOrDefault(g => g.Status == "Lost")?.Count ?? 0;
-                stats.DamagedBooks = copyGroups.FirstOrDefault(g => g.Status == "Damaged")?.Count ?? 0;
+                stats.AvailableBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Available)?.Count ?? 0;
+                stats.IssuedBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Issued)?.Count ?? 0;
+                stats.ReservedBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Reserved)?.Count ?? 0;
+                stats.OverdueBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Overdue)?.Count ?? 0;
+                stats.LostBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Lost)?.Count ?? 0;
+                stats.DamagedBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Damaged)?.Count ?? 0;
 
                 // Unique Titles
                 stats.TotalUniqueTitles = await _context.BookMasters.CountAsync(bm => !bm.IsDeleted);
 
                 // Students
                 stats.TotalStudents = await _context.Students.CountAsync(s => !s.IsDeleted);
-                stats.ClearedStudents = await _context.Students.CountAsync(s => !s.IsDeleted && s.ClearanceStatus == "Cleared");
+                stats.ClearedStudents = await _context.Students.CountAsync(s => !s.IsDeleted && s.ClearanceStatus == ClearanceStatus.Cleared);
                 stats.NotClearedStudents = stats.TotalStudents - stats.ClearedStudents;
 
                 // Faculty & Staff
@@ -59,13 +60,13 @@ namespace KicsitLibrary.Services.Dashboard
                     .Select(g => new { Type = g.Key, Count = g.Count() })
                     .ToListAsync();
 
-                stats.TotalFaculty = facultyStaffGroups.FirstOrDefault(g => g.Type == "PermanentFaculty" || g.Type == "Permanent Faculty")?.Count ?? 0;
-                stats.TotalVisitingFaculty = facultyStaffGroups.FirstOrDefault(g => g.Type == "VisitingFaculty" || g.Type == "Visiting Faculty")?.Count ?? 0;
-                stats.TotalStaff = facultyStaffGroups.FirstOrDefault(g => g.Type == "Staff")?.Count ?? 0;
+                stats.TotalFaculty = facultyStaffGroups.FirstOrDefault(g => g.Type == FacultyType.PermanentFaculty)?.Count ?? 0;
+                stats.TotalVisitingFaculty = facultyStaffGroups.FirstOrDefault(g => g.Type == FacultyType.VisitingFaculty)?.Count ?? 0;
+                stats.TotalStaff = facultyStaffGroups.FirstOrDefault(g => g.Type == FacultyType.Staff)?.Count ?? 0;
 
                 // Fines
                 stats.PendingFines = await _context.Fines
-                    .Where(f => !f.IsDeleted && (f.PaymentStatus == "Unpaid" || f.PaymentStatus == "Partial"))
+                    .Where(f => !f.IsDeleted && (f.PaymentStatus == FineStatus.Unpaid || f.PaymentStatus == FineStatus.Partial))
                     .SumAsync(f => f.RemainingAmount);
 
                 stats.FineCollectedToday = await _context.Fines
@@ -89,7 +90,7 @@ namespace KicsitLibrary.Services.Dashboard
                     .SumAsync(ii => ii.Quantity);
 
                 stats.PendingNotifications = await _context.NotificationRecords
-                    .CountAsync(nr => !nr.IsDeleted && nr.Status == "Pending");
+                    .CountAsync(nr => !nr.IsDeleted && nr.Status == NotificationStatus.Pending);
             }
             catch (Exception)
             {

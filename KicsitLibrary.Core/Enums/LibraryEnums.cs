@@ -90,4 +90,17 @@ namespace KicsitLibrary.Core.Enums
         Cancelled,
         Expired
     }
+
+    public enum ClearanceStatus
+    {
+        NotCleared,
+        Cleared
+    }
+
+    public enum NotificationStatus
+    {
+        Pending,
+        Sent,
+        Failed
+    }
 }

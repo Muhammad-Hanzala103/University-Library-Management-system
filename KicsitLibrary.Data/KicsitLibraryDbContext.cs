@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using KicsitLibrary.Core.Entities;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Data
 {
@@ -92,6 +93,65 @@ namespace KicsitLibrary.Data
 
             modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
             modelBuilder.Entity<SystemSettings>().HasIndex(ss => ss.Key).IsUnique();
+
+            // Extra Lookups Indexes
+            modelBuilder.Entity<Author>().HasIndex(a => a.Name);
+            modelBuilder.Entity<Publisher>().HasIndex(p => p.Name);
+            modelBuilder.Entity<BookMaster>().HasIndex(bm => bm.Subject);
+            modelBuilder.Entity<InventoryItem>().HasIndex(ii => ii.ItemType);
+
+            // 2b. Enum to String Conversions
+            modelBuilder.Entity<BookCopy>()
+                .Property(bc => bc.AvailabilityStatus)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<BookMaster>()
+                .Property(bm => bm.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Student>()
+                .Property(s => s.ClearanceStatus)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<FacultyStaff>()
+                .Property(fs => fs.FacultyType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Fine>()
+                .Property(f => f.PaymentStatus)
+                .HasConversion<string>();
+            modelBuilder.Entity<Fine>()
+                .Property(f => f.MemberType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Reservation>()
+                .Property(r => r.Status)
+                .HasConversion<string>();
+            modelBuilder.Entity<Reservation>()
+                .Property(r => r.MemberType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<AuditRecord>()
+                .Property(ar => ar.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<NotificationRecord>()
+                .Property(nr => nr.Status)
+                .HasConversion<string>();
+            modelBuilder.Entity<NotificationRecord>()
+                .Property(nr => nr.NotificationType)
+                .HasConversion<string>();
+            modelBuilder.Entity<NotificationRecord>()
+                .Property(nr => nr.MemberType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<InventoryItem>()
+                .Property(ii => ii.ItemType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<IssueRecord>()
+                .Property(ir => ir.MemberType)
+                .HasConversion<string>();
 
             // 3. Relationships Configurations
             modelBuilder.Entity<BookCopy>()

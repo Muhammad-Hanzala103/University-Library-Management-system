@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
 {
@@ -7,7 +8,7 @@ namespace KicsitLibrary.Core.Entities
     {
         public string PersonnelNumber { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string FacultyType { get; set; } = "PermanentFaculty";
+        public FacultyType FacultyType { get; set; } = FacultyType.PermanentFaculty;
         public string Department { get; set; } = string.Empty;
         public string Designation { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
