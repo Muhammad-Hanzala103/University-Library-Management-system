@@ -120,7 +120,7 @@
                     <DataGridTextColumn Header="Authors" Binding="{Binding BookAuthors, Converter={local:AuthorsDisplayConverter}}" Width="1.5*"/>
                     <DataGridTextColumn Header="Category" Binding="{Binding Category.Name}" Width="110"/>
                     <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher.Name}" Width="110"/>
-                    <DataGridTextColumn Header="Copies" Binding="{Binding BookCopies.Count}" Width="60" HorizontalAlignment="Center"/>
+                    <DataGridTextColumn Header="Copies" Binding="{Binding BookCopies.Count}" Width="60"/>
                     <DataGridTemplateColumn Width="180" Header="Catalog Operations">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

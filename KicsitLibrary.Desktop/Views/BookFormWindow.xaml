@@ -151,10 +151,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <!-- Classification -->
                         <StackPanel Grid.Column="0" Margin="0,0,6,0">
