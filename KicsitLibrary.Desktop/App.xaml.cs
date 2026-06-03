@@ -13,6 +13,7 @@ using KicsitLibrary.Desktop.Services;
 using KicsitLibrary.Services.Authentication;
 using KicsitLibrary.Services.Dashboard;
 using KicsitLibrary.Services.Logging;
+using KicsitLibrary.Services.Catalog;
 
 namespace KicsitLibrary.Desktop
 {
@@ -61,6 +62,7 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IActivityLogService, ActivityLogService>();
                     services.AddSingleton<IAuthenticationService, AuthenticationService>();
                     services.AddScoped<IDashboardService, DashboardService>();
+                    services.AddScoped<ICatalogService, CatalogService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -71,6 +73,11 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<LoginViewModel>();
                     services.AddTransient<LoginWindow>();
                     services.AddTransient<DashboardViewModel>();
+                    services.AddTransient<BookCatalogViewModel>();
+                    services.AddTransient<BookFormViewModel>();
+                    services.AddTransient<AuthorViewModel>();
+                    services.AddTransient<PublisherViewModel>();
+                    services.AddTransient<CopiesViewModel>();
                 })
                 .Build();
         }

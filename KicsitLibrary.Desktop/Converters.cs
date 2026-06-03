@@ -96,4 +96,26 @@ namespace KicsitLibrary.Desktop
             return this;
         }
     }
+
+    public class AuthorsDisplayConverter : MarkupExtension, IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is System.Collections.Generic.IEnumerable<KicsitLibrary.Core.Entities.BookAuthor> bookAuthors)
+            {
+                return string.Join(", ", bookAuthors.Select(ba => ba.Author?.Name).Where(n => !string.IsNullOrEmpty(n)));
+            }
+            return string.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
 }

@@ -1,0 +1,149 @@
+<UserControl x:Class="KicsitLibrary.Desktop.Views.BookCatalogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:KicsitLibrary.Desktop"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="900" Background="Transparent">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Loader Bar -->
+        <ProgressBar Grid.Row="0" Height="4" IsIndeterminate="True" 
+                     Visibility="{Binding IsBusy, Converter={local:BooleanToVisibilityConverter}}" 
+                     VerticalAlignment="Top" Margin="0,0,0,10"/>
+
+        <!-- Top Actions & Navigation shortcuts -->
+        <Grid Grid.Row="0" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="Catalog Directory" FontSize="18" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Manage Authors" Style="{StaticResource SecondaryButton}" Click="ManageAuthors_Click" Margin="0,0,8,0" Padding="12,6"/>
+                <Button Content="Manage Publishers" Style="{StaticResource SecondaryButton}" Click="ManagePublishers_Click" Margin="0,0,8,0" Padding="12,6"/>
+                <Button Content="Add New Book" Style="{StaticResource PrimaryButton}" Command="{Binding AddBookCommand}" Padding="15,6"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Search Filters Panel -->
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,15" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Row 1: Title, Author, Category, Department -->
+                <!-- Title Search -->
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,10">
+                    <TextBlock Text="Title / Subtitle Keywords" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SearchTitle, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <!-- Author Search -->
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,10,10">
+                    <TextBlock Text="Filter by Author" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <ComboBox Height="36" ItemsSource="{Binding Authors}" SelectedValue="{Binding SelectedAuthorId}" 
+                              SelectedValuePath="Id" DisplayMemberPath="Name"/>
+                </StackPanel>
+
+                <!-- Category Search -->
+                <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,10,10">
+                    <TextBlock Text="Filter by Category" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <ComboBox Height="36" ItemsSource="{Binding Categories}" SelectedValue="{Binding SelectedCategoryId}" 
+                              SelectedValuePath="Id" DisplayMemberPath="Name"/>
+                </StackPanel>
+
+                <!-- Department Search -->
+                <StackPanel Grid.Row="0" Grid.Column="3" Margin="0,0,0,10">
+                    <TextBlock Text="Filter by Department" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <ComboBox Height="36" ItemsSource="{Binding DepartmentCategories}" SelectedValue="{Binding SelectedDepartmentCategoryId}" 
+                              SelectedValuePath="Id" DisplayMemberPath="Name"/>
+                </StackPanel>
+
+                <!-- Row 2: Publisher, ISBN, AccessionNumber, Buttons -->
+                <!-- Publisher Search -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Filter by Publisher" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <ComboBox Height="36" ItemsSource="{Binding Publishers}" SelectedValue="{Binding SelectedPublisherId}" 
+                              SelectedValuePath="Id" DisplayMemberPath="Name"/>
+                </StackPanel>
+
+                <!-- ISBN Search -->
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,10,0">
+                    <TextBlock Text="ISBN" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SearchISBN, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <!-- Accession Number Search -->
+                <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,10,0">
+                    <TextBlock Text="Accession Number" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SearchAccessionNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <Grid Grid.Row="1" Grid.Column="3" VerticalAlignment="Bottom" Height="36">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Reset" Style="{StaticResource SecondaryButton}" Command="{Binding ClearFiltersCommand}" Margin="0,0,5,0"/>
+                    <Button Grid.Column="1" Content="Search Catalog" Style="{StaticResource PrimaryButton}" Command="{Binding SearchCommand}" Margin="5,0,0,0"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Catalog Data Grid -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <DataGrid Grid.Row="0" ItemsSource="{Binding Books}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Catalog Code" Binding="{Binding UniqueTitleNumber}" Width="100"/>
+                    <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="2*"/>
+                    <DataGridTextColumn Header="Authors" Binding="{Binding BookAuthors, Converter={local:AuthorsDisplayConverter}}" Width="1.5*"/>
+                    <DataGridTextColumn Header="Category" Binding="{Binding Category.Name}" Width="110"/>
+                    <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher.Name}" Width="110"/>
+                    <DataGridTextColumn Header="Copies" Binding="{Binding BookCopies.Count}" Width="60" HorizontalAlignment="Center"/>
+                    <DataGridTemplateColumn Width="180" Header="Catalog Operations">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="📚 Copies" Style="{StaticResource SecondaryButton}" Padding="8,4" FontSize="11" Height="26"
+                                            Command="{Binding DataContext.ManageCopiesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                                    <Button Content="✏️" ToolTip="Edit Book Details" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="8,0,0,0"
+                                            Command="{Binding DataContext.EditBookCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                                    <Button Content="🗑️" ToolTip="Delete Book Title" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="8,0,0,0"
+                                            Command="{Binding DataContext.DeleteBookCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Bottom Status / Errors bar -->
+            <TextBlock Grid.Row="1" Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" Margin="0,8,0,0"
+                       Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}"/>
+        </Grid>
+    </Grid>
+</UserControl>

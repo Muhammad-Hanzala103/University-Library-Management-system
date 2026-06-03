@@ -64,6 +64,10 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<DashboardViewModel>();
                     break;
+                case "Book Catalog":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<BookCatalogViewModel>();
+                    break;
                 default:
                     CurrentView = null;
                     break;

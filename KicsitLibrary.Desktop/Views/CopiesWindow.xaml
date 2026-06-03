@@ -1,0 +1,147 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.CopiesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KicsitLibrary.Desktop"
+        mc:Ignorable="d"
+        Title="Manage Physical Copies" Height="520" Width="850"
+        WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}"
+        BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,15" Padding="0,0,0,10" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <Grid>
+                <StackPanel>
+                    <TextBlock Text="{Binding BookMaster.Title, StringFormat='Manage Copies: {0}'}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                        <TextBlock Text="{Binding BookMaster.UniqueTitleNumber, StringFormat='Catalog Code: {0}'}" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock Text=" | " FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock Text="{Binding Copies.Count, StringFormat='{0} total volume(s) registered'}" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+                <Button Content="Close" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                        Style="{StaticResource SecondaryButton}" Click="CloseButton_Click" Padding="15,6"/>
+            </Grid>
+        </Border>
+
+        <!-- Workspace -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="320"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Copies Grid -->
+            <Grid Grid.Column="0" Margin="0,0,15,0">
+                <DataGrid ItemsSource="{Binding Copies}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Accession #" Binding="{Binding AccessionNumber}" Width="110"/>
+                        <DataGridTextColumn Header="Copy #" Binding="{Binding CopyNumber}" Width="60"/>
+                        <DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="*"/>
+                        <DataGridTextColumn Header="Condition" Binding="{Binding PhysicalCondition}" Width="80"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding AvailabilityStatus}" Width="80"/>
+                        <DataGridTemplateColumn Width="60" Header="Action">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="🗑️" ToolTip="Delete Copy" Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalAlignment="Center"
+                                            Command="{Binding DataContext.DeleteCopyCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <!-- Right: Add Copy Form -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Register New Physical Copy" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,15" Foreground="{StaticResource PrimaryBrush}"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- Accession Number -->
+                            <TextBlock Text="Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,6,0"/>
+                                <Button Grid.Column="1" Content="Auto" ToolTip="Auto Generate Accession Number"
+                                        Style="{StaticResource SecondaryButton}" Command="{Binding AutoGenerateAccessionCommand}" Padding="10,6"/>
+                            </Grid>
+
+                            <!-- Barcode -->
+                            <TextBlock Text="Barcode (Optional)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Barcode, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                            <!-- QR Code -->
+                            <TextBlock Text="QR Code (Optional)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding QRCode, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                            <!-- Location Selectors -->
+                            <TextBlock Text="Placement Location" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,5,0,10"/>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Rack -->
+                                <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                    <TextBlock Text="Rack" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                                    <ComboBox Height="36" Margin="0,0,0,12" ItemsSource="{Binding Racks}" 
+                                              SelectedItem="{Binding SelectedRack}" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                                <!-- Shelf -->
+                                <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                    <TextBlock Text="Shelf" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                                    <ComboBox Height="36" Margin="0,0,0,12" ItemsSource="{Binding Shelves}" 
+                                              SelectedItem="{Binding SelectedShelf}" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Row Number -->
+                            <TextBlock Text="Row Number" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding RowNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                            <!-- Custom Location -->
+                            <TextBlock Text="Or Enter Custom Location" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding CustomLocation, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                            <!-- Condition -->
+                            <TextBlock Text="Physical Condition" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding PhysicalCondition}" SelectedValuePath="Content">
+                                <ComboBoxItem Content="Normal"/>
+                                <ComboBoxItem Content="New / Pristine"/>
+                                <ComboBoxItem Content="Damaged (Needs repair)"/>
+                                <ComboBoxItem Content="Worn Out"/>
+                            </ComboBox>
+
+                            <!-- Error Alert -->
+                            <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" TextWrapping="Wrap"
+                                       Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Button Grid.Row="2" Content="Add Physical Copy" Style="{StaticResource PrimaryButton}" 
+                            Command="{Binding AddCopyCommand}" Margin="0,15,0,0" Padding="20,10"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,109 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.AuthorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KicsitLibrary.Desktop"
+        mc:Ignorable="d"
+        Title="Authors Directory" Height="500" Width="800"
+        WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}"
+        BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,15" Padding="0,0,0,10" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <Grid>
+                <StackPanel>
+                    <TextBlock Text="Authors Directory" FontSize="20" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="Add, edit, or remove catalog authors." FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                </StackPanel>
+                <Button Content="Close" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                        Style="{StaticResource SecondaryButton}" Click="CloseButton_Click" Padding="15,6"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Workspace -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="320"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: List -->
+            <Grid Grid.Column="0" Margin="0,0,15,0">
+                <DataGrid ItemsSource="{Binding Authors}" SelectedItem="{Binding SelectedAuthor, Mode=TwoWay}"
+                          AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Alternate Name" Binding="{Binding AlternateName}" Width="130"/>
+                        <DataGridTextColumn Header="Language" Binding="{Binding Language}" Width="100"/>
+                        <DataGridTemplateColumn Width="90" Header="Actions">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="✏️" ToolTip="Edit" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                                Command="{Binding DataContext.SelectAuthorForEditCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"/>
+                                        <Button Content="🗑️" ToolTip="Delete" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <!-- Right: Details / Form -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="{Binding IsEditMode, Converter={local:BooleanToVisibilityConverter}, ConverterParameter='Edit Author Details;Add New Author'}"
+                               FontSize="14" FontWeight="SemiBold" Margin="0,0,0,15" Foreground="{StaticResource PrimaryBrush}"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- Name -->
+                            <TextBlock Text="Author Name" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                            <!-- Alternate Name -->
+                            <TextBlock Text="Alternate Name (e.g. Alias)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AlternateName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                            <!-- Language -->
+                            <TextBlock Text="Primary Writing Language" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Language, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                            <!-- Biography -->
+                            <TextBlock Text="Biography Notes" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Biography, UpdateSourceTrigger=PropertyChanged}" Height="80" 
+                                     TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
+                            
+                            <!-- Error Alert -->
+                            <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" TextWrapping="Wrap"
+                                       Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Save / Cancel Button Panel -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                        <Button Content="Clear" Style="{StaticResource SecondaryButton}" Command="{Binding ClearFormCommand}" Margin="0,0,8,0" Padding="15,8"/>
+                        <Button Content="Save" Style="{StaticResource PrimaryButton}" Command="{Binding SaveCommand}" Padding="20,8"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
