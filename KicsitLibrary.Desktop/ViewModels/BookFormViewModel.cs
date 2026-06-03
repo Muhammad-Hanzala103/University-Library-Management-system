@@ -219,8 +219,8 @@ namespace KicsitLibrary.Desktop.ViewModels
                     Keywords = _editingBook.Keywords ?? string.Empty;
                     Notes = _editingBook.Notes ?? string.Empty;
                     Contents = _editingBook.Contents ?? string.Empty;
-                    ISBN = _editingBook.ISBN ?? string.Empty;
-                    ISSN = _editingBook.ISSN ?? string.Empty;
+                    Isbn = _editingBook.ISBN ?? string.Empty;
+                    Issn = _editingBook.ISSN ?? string.Empty;
                     Source = _editingBook.Source ?? string.Empty;
                     StoreName = _editingBook.StoreName ?? string.Empty;
                     BillNumber = _editingBook.BillNumber ?? string.Empty;
@@ -396,8 +396,8 @@ namespace KicsitLibrary.Desktop.ViewModels
                 book.Keywords = string.IsNullOrWhiteSpace(Keywords) ? null : Keywords.Trim();
                 book.Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim();
                 book.Contents = string.IsNullOrWhiteSpace(Contents) ? null : Contents.Trim();
-                book.ISBN = string.IsNullOrWhiteSpace(ISBN) ? null : ISBN.Trim();
-                book.ISSN = string.IsNullOrWhiteSpace(ISSN) ? null : ISSN.Trim();
+                book.ISBN = string.IsNullOrWhiteSpace(Isbn) ? null : Isbn.Trim();
+                book.ISSN = string.IsNullOrWhiteSpace(Issn) ? null : Issn.Trim();
                 book.Source = string.IsNullOrWhiteSpace(Source) ? null : Source.Trim();
                 book.StoreName = string.IsNullOrWhiteSpace(StoreName) ? null : StoreName.Trim();
                 book.BillNumber = string.IsNullOrWhiteSpace(BillNumber) ? null : BillNumber.Trim();

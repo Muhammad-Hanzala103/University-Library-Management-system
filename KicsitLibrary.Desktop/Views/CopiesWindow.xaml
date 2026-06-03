@@ -23,7 +23,7 @@
                     <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                         <TextBlock Text="{Binding BookMaster.UniqueTitleNumber, StringFormat='Catalog Code: {0}'}" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
                         <TextBlock Text=" | " FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
-                        <TextBlock Text="{Binding Copies.Count, StringFormat='{0} total volume(s) registered'}" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBlock Text="{Binding Copies.Count, StringFormat='{}{0} total volume(s) registered'}" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
                     </StackPanel>
                 </StackPanel>
                 <Button Content="Close" HorizontalAlignment="Right" VerticalAlignment="Center" 

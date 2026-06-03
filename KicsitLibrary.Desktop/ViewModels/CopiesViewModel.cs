@@ -184,7 +184,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                     BookMasterId = BookMaster.Id,
                     CopyNumber = nextCopyNumber,
                     Barcode = string.IsNullOrWhiteSpace(Barcode) ? null : Barcode.Trim(),
-                    QRCode = string.IsNullOrWhiteSpace(QRCode) ? null : QRCode.Trim(),
+                    QRCode = string.IsNullOrWhiteSpace(QrCode) ? null : QrCode.Trim(),
                     RackNumber = SelectedRack?.Name,
                     ShelfNumber = SelectedShelf?.Name,
                     RowNumber = string.IsNullOrWhiteSpace(RowNumber) ? null : RowNumber.Trim(),
@@ -197,7 +197,7 @@ namespace KicsitLibrary.Desktop.ViewModels
 
                 // Clear input fields and refresh list
                 Barcode = string.Empty;
-                QRCode = string.Empty;
+                QrCode = string.Empty;
                 RowNumber = string.Empty;
                 CustomLocation = string.Empty;
 

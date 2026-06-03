@@ -200,3 +200,11 @@ C:\Projects\University Library Management system\KicsitLibrary.Desktop\bin\Debug
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\runtimes\win-x86\native\e_sqlite3.dll
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuthorWindow.g.cs
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\PublisherWindow.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\BookCatalogView.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\BookFormWindow.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\CopiesWindow.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuthorWindow.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\BookCatalogView.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\BookFormWindow.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\CopiesWindow.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\PublisherWindow.baml
