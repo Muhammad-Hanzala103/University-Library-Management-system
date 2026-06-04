@@ -1,0 +1,154 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.VisitRecordWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KicsitLibrary.Desktop"
+        mc:Ignorable="d"
+        x:Name="visitWindow"
+        Title="{Binding WindowTitle}" Height="680" Width="950"
+        WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}"
+        BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1">
+
+    <Grid Margin="25">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,20" Padding="0,0,0,10" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <StackPanel>
+                <TextBlock Text="{Binding WindowTitle}" FontSize="20" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                <TextBlock Text="Enter accreditation body inspection logs and recommendations (HEC, PEC, NCEAC, QEC)." FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Form Workspace -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Column 1: Basic Visit details -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,15,0">
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="VISIT CLASSIFICATION" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,15"/>
+
+                    <!-- Organization Name -->
+                    <TextBlock Text="Organization / Accreditation Body Name *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding OrganizationName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                    <!-- Purpose of Visit -->
+                    <TextBlock Text="Purpose of Visit *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Purpose, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Visit Type -->
+                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                            <TextBlock Text="Visit Type" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding VisitType}" SelectedValuePath="Content">
+                                <ComboBoxItem Content="HEC Accreditation"/>
+                                <ComboBoxItem Content="PEC Accreditation"/>
+                                <ComboBoxItem Content="NCEAC Accreditation"/>
+                                <ComboBoxItem Content="QEC Quality Audit"/>
+                                <ComboBoxItem Content="ExternalVisit"/>
+                                <ComboBoxItem Content="Other"/>
+                            </ComboBox>
+                        </StackPanel>
+                        <!-- Department -->
+                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                            <TextBlock Text="Department inspected" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding Department}" SelectedValuePath="Content">
+                                <ComboBoxItem Content="CS"/>
+                                <ComboBoxItem Content="CE"/>
+                                <ComboBoxItem Content="SE"/>
+                                <ComboBoxItem Content="AI"/>
+                                <ComboBoxItem Content="DS"/>
+                                <ComboBoxItem Content="General"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Date of Visit -->
+                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                            <TextBlock Text="Date of Visit" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <DatePicker Height="36" Margin="0,0,0,12" SelectedDate="{Binding VisitDate}"/>
+                        </StackPanel>
+                        <!-- Follow-up Date -->
+                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                            <TextBlock Text="Next Follow-up Date" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <DatePicker Height="36" Margin="0,0,0,12" SelectedDate="{Binding NextFollowUpDate}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Visit Team Members -->
+                    <TextBlock Text="Delegation Team Members" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding VisitTeamMembers, UpdateSourceTrigger=PropertyChanged}" Height="60"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Column 2: Observations & compliance -->
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Margin="0,0,15,0">
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="COMPLIANCE &amp; LOGS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,15"/>
+
+                    <!-- Observations -->
+                    <TextBlock Text="Observations" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Observations, UpdateSourceTrigger=PropertyChanged}" Height="60"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
+
+                    <!-- Findings -->
+                    <TextBlock Text="Findings" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Findings, UpdateSourceTrigger=PropertyChanged}" Height="60"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
+
+                    <!-- Suggestions -->
+                    <TextBlock Text="Suggestions" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Suggestions, UpdateSourceTrigger=PropertyChanged}" Height="60"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
+
+                    <!-- Requirements -->
+                    <TextBlock Text="Requirements" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Requirements, UpdateSourceTrigger=PropertyChanged}" Height="60"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
+
+                    <!-- Action Taken -->
+                    <TextBlock Text="Action Taken by KICSIT Library" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding ActionTaken, UpdateSourceTrigger=PropertyChanged}" Height="60"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Footer Buttons -->
+        <Border Grid.Row="2" Padding="0,15,0,0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Status/Error Message -->
+                <TextBlock Grid.Column="0" Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Cancel" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=visitWindow}" Width="100" Margin="0,0,10,0"/>
+                    <Button Content="Save Log" Style="{StaticResource PrimaryButton}" Command="{Binding SaveCommand}" CommandParameter="{Binding ElementName=visitWindow}" Width="130"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

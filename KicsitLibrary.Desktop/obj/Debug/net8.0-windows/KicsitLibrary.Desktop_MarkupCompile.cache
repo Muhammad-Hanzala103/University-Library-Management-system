@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\App.xaml
-101763959459
+171333967330
 
-21425804327
+37-2075459313
 2691476447455
-LoginWindow.xaml;MainWindow.xaml;Themes\Colors.xaml;Themes\Styles.xaml;Views\AuthorWindow.xaml;Views\BookCatalogView.xaml;Views\BookFormWindow.xaml;Views\CopiesWindow.xaml;Views\DashboardView.xaml;Views\PublisherWindow.xaml;
+LoginWindow.xaml;MainWindow.xaml;Themes\Colors.xaml;Themes\Styles.xaml;Views\AuthorWindow.xaml;Views\BookCatalogView.xaml;Views\BookFormWindow.xaml;Views\ConsumerProfileWindow.xaml;Views\CopiesWindow.xaml;Views\DashboardView.xaml;Views\FacultyStaffFormWindow.xaml;Views\FacultyStaffManagementView.xaml;Views\PublisherWindow.xaml;Views\StudentFormWindow.xaml;Views\StudentsManagementView.xaml;Views\VisitRecordsView.xaml;Views\VisitRecordWindow.xaml;
 
 False
 

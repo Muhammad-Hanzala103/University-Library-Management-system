@@ -79,8 +79,8 @@
                     <TextBlock Text="Account Status" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                     <ComboBox Height="36" SelectedValue="{Binding SelectedActiveStatus}" SelectedValuePath="Tag">
                         <ComboBoxItem Content="All" Tag="{x:Null}"/>
-                        <ComboBoxItem Content="Active Only" Tag="{Binding True, Source={x:Static System:Boolean.TrueString}}"/>
-                        <ComboBoxItem Content="Inactive Only" Tag="{Binding False, Source={x:Static System:Boolean.FalseString}}"/>
+                        <ComboBoxItem Content="Active Only" Tag="True"/>
+                        <ComboBoxItem Content="Inactive Only" Tag="False"/>
                     </ComboBox>
                 </StackPanel>
 

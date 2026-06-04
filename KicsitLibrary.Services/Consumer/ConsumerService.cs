@@ -470,7 +470,7 @@ namespace KicsitLibrary.Services.Consumer
                 query = query.Where(f => f.FacultyStaffId == memberId);
             }
 
-            return await query.OrderByDescending(f => f.FineDate).ToListAsync();
+            return await query.OrderByDescending(f => f.CreatedAt).ToListAsync();
         }
 
         public async Task<IEnumerable<Reservation>> GetReservationHistoryAsync(int memberId, MemberType type)

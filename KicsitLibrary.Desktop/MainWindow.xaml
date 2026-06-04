@@ -17,6 +17,15 @@
         <DataTemplate DataType="{x:Type vm:BookCatalogViewModel}">
             <views:BookCatalogView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StudentsManagementViewModel}">
+            <views:StudentsManagementView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:FacultyStaffManagementViewModel}">
+            <views:FacultyStaffManagementView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:VisitRecordsViewModel}">
+            <views:VisitRecordsView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>

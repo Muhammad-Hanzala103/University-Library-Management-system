@@ -208,3 +208,17 @@ C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\BookFormWindow.baml
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\CopiesWindow.baml
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\PublisherWindow.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FacultyStaffFormWindow.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StudentFormWindow.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StudentsManagementView.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\VisitRecordsView.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\VisitRecordWindow.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FacultyStaffManagementView.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ConsumerProfileWindow.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ConsumerProfileWindow.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FacultyStaffFormWindow.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FacultyStaffManagementView.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StudentFormWindow.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StudentsManagementView.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\VisitRecordsView.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\VisitRecordWindow.baml

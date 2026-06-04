@@ -75,7 +75,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                         identifier = student.RegistrationNumber;
                         Department = student.Department;
                         MemberTypeDisplay = "Student";
-                        programOrDesignationLabel = "Program / Batch";
+                        ProgramOrDesignationLabel = "Program / Batch";
                         ProgramOrDesignationValue = $"{student.Program} ({student.Batch})";
                         ClearanceDisplay = student.ClearanceStatus.ToString();
                         Email = student.Email;
@@ -97,7 +97,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                         identifier = fs.PersonnelNumber;
                         Department = fs.Department;
                         MemberTypeDisplay = fs.FacultyType.ToString();
-                        programOrDesignationLabel = "Designation";
+                        ProgramOrDesignationLabel = "Designation";
                         ProgramOrDesignationValue = fs.Designation;
                         ClearanceDisplay = fs.ActiveStatus ? "Cleared" : "Suspended";
                         Email = fs.Email;
@@ -129,7 +129,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                 ReturnHistory.Clear();
                 foreach (var issue in issues)
                 {
-                    if (issue.ReceiveRecord == null && issue.Status != BookStatus.Returned)
+                    if (issue.ReceiveRecord == null)
                     {
                         ActiveIssues.Add(issue);
                     }
