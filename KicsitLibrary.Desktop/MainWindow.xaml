@@ -26,6 +26,15 @@
         <DataTemplate DataType="{x:Type vm:VisitRecordsViewModel}">
             <views:VisitRecordsView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:IssueMaterialViewModel}">
+            <views:IssueMaterialView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ReceiveMaterialViewModel}">
+            <views:ReceiveMaterialView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:FinesManagementViewModel}">
+            <views:FinesManagementView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>

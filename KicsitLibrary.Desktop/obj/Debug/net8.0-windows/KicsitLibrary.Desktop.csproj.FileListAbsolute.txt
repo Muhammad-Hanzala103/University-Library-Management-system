@@ -222,3 +222,9 @@ C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StudentsManagementView.baml
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\VisitRecordsView.baml
 C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\VisitRecordWindow.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\IssueMaterialView.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReceiveMaterialView.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FinesManagementView.g.cs
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FinesManagementView.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\IssueMaterialView.baml
+C:\Projects\University Library Management system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReceiveMaterialView.baml
