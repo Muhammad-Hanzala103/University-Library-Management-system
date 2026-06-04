@@ -80,6 +80,18 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<VisitRecordsViewModel>();
                     break;
+                case "Issue Material":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<IssueMaterialViewModel>();
+                    break;
+                case "Receive Material":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<ReceiveMaterialViewModel>();
+                    break;
+                case "Fines Management":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<FinesManagementViewModel>();
+                    break;
                 default:
                     CurrentView = null;
                     break;
