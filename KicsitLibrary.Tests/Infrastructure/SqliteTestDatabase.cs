@@ -102,10 +102,49 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
         Context.SystemSettings.AddRange(
             new SystemSettings { Key = "StudentIssueLimit", Value = "3", Group = "Borrowing" },
             new SystemSettings { Key = "DefaultIssueDays", Value = "14", Group = "Borrowing" },
-            new SystemSettings { Key = "FinePerDay", Value = "10", Group = "Billing" });
+            new SystemSettings { Key = "FinePerDay", Value = "10", Group = "Billing" },
+            new SystemSettings { Key = "NotificationCooldownHours", Value = "24", Group = "Notifications" },
+            new SystemSettings { Key = "MaxNotificationRetryCount", Value = "3", Group = "Notifications" });
         await Context.SaveChangesAsync();
 
         return new TestLibraryData(user, student, book, copy);
+    }
+
+    public async Task<BookCopy> AddCopyAsync(TestLibraryData data)
+    {
+        var copy = new BookCopy
+        {
+            AccessionNumber = $"ACC-{Guid.NewGuid():N}",
+            BookMasterId = data.Book.Id,
+            CopyNumber = await Context.BookCopies.CountAsync() + 1,
+            AvailabilityStatus = BookStatus.Issued
+        };
+        Context.BookCopies.Add(copy);
+        await Context.SaveChangesAsync();
+        return copy;
+    }
+
+    public async Task<IssueRecord> AddIssueAsync(
+        TestLibraryData data,
+        DateTime expectedReturnDateUtc,
+        BookCopy? copy = null)
+    {
+        copy ??= data.Copy;
+        copy.AvailabilityStatus = BookStatus.Issued;
+        var issue = new IssueRecord
+        {
+            AccessionNumber = copy.AccessionNumber,
+            BookCopyId = copy.Id,
+            MemberType = MemberType.Student,
+            StudentId = data.Student.Id,
+            IssueDate = expectedReturnDateUtc.AddDays(-14),
+            ExpectedReturnDate = expectedReturnDateUtc,
+            FinePerDay = 10,
+            IssuedByUserId = data.User.Id
+        };
+        Context.IssueRecords.Add(issue);
+        await Context.SaveChangesAsync();
+        return issue;
     }
 
     public async ValueTask DisposeAsync()

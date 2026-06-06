@@ -92,6 +92,14 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<FinesManagementViewModel>();
                     break;
+                case "Overdue Reminders":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<OverdueRemindersViewModel>();
+                    break;
+                case "Notification Center":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<NotificationCenterViewModel>();
+                    break;
                 default:
                     CurrentView = null;
                     break;
@@ -115,6 +123,9 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToOverdue() => _navigationService.NavigateTo("Overdue Reminders");
+
+        [RelayCommand]
+        private void NavigateToNotifications() => _navigationService.NavigateTo("Notification Center");
 
         [RelayCommand]
         private void NavigateToStudents() => _navigationService.NavigateTo("Students Management");

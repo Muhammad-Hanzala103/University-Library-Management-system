@@ -12,15 +12,30 @@ This document contains a structured task list outlining the implementation steps
 - [x] Configure xUnit and isolated SQLite integration tests.
 - [x] Add circulation, catalog, seeding, notification-entity, activity-log, and overdue-calculation regression coverage.
 
-## Priority 4B: Overdue Engine & Notifications
-- **Goal**: Implement automatic background scanning for overdue books and notify users.
-- [ ] Create `INotificationService.cs` in `KicsitLibrary.Core/Interfaces/`.
-- [ ] Create `NotificationService.cs` in `KicsitLibrary.Services/`.
-- [ ] Implement an automated schedule checker that queries active `IssueRecords` where `DateTime.UtcNow > ExpectedReturnDate` and status is not returned.
-- [ ] Add `NotificationRecord` entities for trackable logs.
-- [ ] Implement email client dispatcher (using SMTP configuration resolved from `SystemSettings`).
-- [ ] Create `OverdueRemindersViewModel.cs` under `KicsitLibrary.Desktop/ViewModels/`.
-- [ ] Create `OverdueRemindersView.xaml` under `KicsitLibrary.Desktop/Views/` to list all late items, show calculations, and trigger reminders.
+## Priority 4B: Deterministic Overdue Query & Notification Records
+- [x] Derive overdue items from active issue records and local calendar dates.
+- [x] Add the `OverdueItem` projection and current fine calculation.
+- [x] Implement `IOverdueService` and manual idempotent processing.
+- [x] Implement `INotificationService` record creation, retry, read state, and cooldown checks.
+- [x] Persist notification recipient snapshots, retry metadata, and deduplication keys.
+- [x] Add non-destructive SQLite compatibility columns and indexes.
+- [x] Add Overdue Reminders and Notification Center MVVM views.
+- [x] Wire navigation, DI, dashboard overdue counting, settings, and audit logs.
+- [x] Add ten Priority 4B tests; all nineteen tests pass.
+
+## Priority 4C: Manual Email Delivery
+- **Goal**: Add explicit operator-triggered SMTP delivery for existing pending email records.
+- [ ] Define SMTP configuration without committing credentials.
+- [ ] Add an email delivery abstraction and bounded retry handling.
+- [ ] Update pending/failed/sent records with attempt timestamps and failure details.
+- [ ] Add integration tests with a fake email transport.
+- [ ] Keep delivery manual; do not add a background scheduler in this slice.
+
+## Priority 4D: Background Overdue Scheduler
+- **Goal**: Add a cancellation-aware hosted scanner only after manual delivery is verified.
+- [ ] Create a DI scope for each scan.
+- [ ] Prevent duplicate work across multiple app instances.
+- [ ] Add SQLite contention handling and operational logging.
 
 ---
 

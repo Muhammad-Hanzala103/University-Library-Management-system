@@ -17,6 +17,19 @@ public class DatabaseFoundationTests
         Assert.True(await database.Context.Users.AnyAsync());
         Assert.True(await database.Context.Roles.AnyAsync());
         Assert.True(await database.Context.SystemSettings.AnyAsync());
+        var requiredSettings = new[]
+        {
+            "FinePerDay",
+            "NotificationCooldownHours",
+            "EmailNotificationEnabled",
+            "WhatsAppNotificationEnabled",
+            "ReminderBeforeDueDays",
+            "MaxNotificationRetryCount"
+        };
+        foreach (var key in requiredSettings)
+        {
+            Assert.True(await database.Context.SystemSettings.AnyAsync(setting => setting.Key == key));
+        }
     }
 
     [Fact]

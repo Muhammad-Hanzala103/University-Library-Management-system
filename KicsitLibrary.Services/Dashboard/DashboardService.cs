@@ -41,7 +41,15 @@ namespace KicsitLibrary.Services.Dashboard
                 stats.AvailableBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Available)?.Count ?? 0;
                 stats.IssuedBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Issued)?.Count ?? 0;
                 stats.ReservedBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Reserved)?.Count ?? 0;
-                stats.OverdueBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Overdue)?.Count ?? 0;
+                var localToday = DateTime.Now.Date;
+                var overdueCutoffUtc = TimeZoneInfo.ConvertTimeToUtc(
+                    DateTime.SpecifyKind(localToday, DateTimeKind.Unspecified),
+                    TimeZoneInfo.Local);
+                stats.OverdueBooks = await _context.IssueRecords
+                    .CountAsync(ir =>
+                        !ir.IsDeleted &&
+                        ir.ReceiveRecord == null &&
+                        ir.ExpectedReturnDate < overdueCutoffUtc);
                 stats.LostBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Lost)?.Count ?? 0;
                 stats.DamagedBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Damaged)?.Count ?? 0;
 

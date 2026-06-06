@@ -1,5 +1,39 @@
 # Codex Continuation Audit
 
+## Priority 4B Completion Update
+
+Completion date: 2026-06-06
+
+Priority 4B is complete:
+
+- Added deterministic active-issue overdue queries using local due-date boundaries.
+- Added `OverdueItem`, `IOverdueService`, and `OverdueService`.
+- Added `INotificationService` and record-only `NotificationService`.
+- Notification records now persist issue linkage, recipient snapshots, retry/read metadata, attempt timestamps, and deduplication keys.
+- Manual processing creates `InApp` and `Email` records idempotently.
+- Email remains pending or failed; no SMTP transport exists.
+- Missing email, duplicate skips, starts, completions, retries, reads, and errors are audited.
+- Added Overdue Reminders and Notification Center views, ViewModels, DI registrations, and navigation.
+- Dashboard overdue totals now use active overdue issue rows.
+- Added fixed additive SQLite compatibility updates without deleting or rebuilding user tables.
+- Added ten tests; all nineteen tests pass.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 19 tests passed.
+
+Deferred by design:
+
+- SMTP delivery
+- Background hosted scheduler
+- Reports and exports
+- Migration baseline/adoption
+
 ## Priority 4A Completion Update
 
 Completion date: 2026-06-06

@@ -17,6 +17,8 @@ using KicsitLibrary.Services.Logging;
 using KicsitLibrary.Services.Catalog;
 using KicsitLibrary.Services.Consumer;
 using KicsitLibrary.Services.Circulation;
+using KicsitLibrary.Services.Notifications;
+using KicsitLibrary.Desktop.Views;
 
 namespace KicsitLibrary.Desktop
 {
@@ -69,6 +71,9 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<ICatalogService, CatalogService>();
                     services.AddScoped<IConsumerService, ConsumerService>();
                     services.AddScoped<ICirculationService, CirculationService>();
+                    services.AddScoped<INotificationService, NotificationService>();
+                    services.AddScoped<IOverdueService, OverdueService>();
+                    services.AddScoped<IRecordDetailsService, RecordDetailsService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -94,6 +99,10 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<IssueMaterialViewModel>();
                     services.AddTransient<ReceiveMaterialViewModel>();
                     services.AddTransient<FinesManagementViewModel>();
+                    services.AddTransient<OverdueRemindersViewModel>();
+                    services.AddTransient<NotificationCenterViewModel>();
+                    services.AddTransient<OverdueRemindersView>();
+                    services.AddTransient<NotificationCenterView>();
                 })
                 .Build();
         }
@@ -117,6 +126,7 @@ namespace KicsitLibrary.Desktop
                         throw new InvalidOperationException("The configured database exists but cannot be opened.");
                     }
                 }
+                await DatabaseCompatibilityInitializer.ApplyAsync(dbContext);
                 await DbSeeder.SeedAsync(dbContext, passwordHasher);
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using KicsitLibrary.Core.Enums;
 
 namespace KicsitLibrary.Core.Entities
@@ -29,5 +30,6 @@ namespace KicsitLibrary.Core.Entities
 
         public virtual ReceiveRecord? ReceiveRecord { get; set; }
         public virtual Fine? Fine { get; set; }
+        public virtual ICollection<NotificationRecord> NotificationRecords { get; set; } = new List<NotificationRecord>();
     }
 }

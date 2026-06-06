@@ -1,0 +1,119 @@
+<UserControl x:Class="KicsitLibrary.Desktop.Views.OverdueRemindersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:KicsitLibrary.Desktop"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="Transparent">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ProgressBar Grid.Row="0" Height="4" IsIndeterminate="True"
+                     Visibility="{Binding IsBusy, Converter={local:BooleanToVisibilityConverter}}"
+                     Margin="0,0,0,10"/>
+
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="OVERDUE PROCESSING" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,10"/>
+                <WrapPanel>
+                    <Button Content="Refresh" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding RefreshCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Run Overdue Check" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding RunOverdueCheckCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Send Reminder For Selected" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding SendReminderForSelectedCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Send Reminders For All Eligible" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding SendRemindersForAllEligibleCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Open Member Profile" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding OpenMemberProfileCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Open Book Details" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding OpenBookDetailsCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Clear Filters" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ClearFiltersCommand}" Margin="0,0,0,8"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,0,0,12" Padding="12">
+            <WrapPanel>
+                <StackPanel Width="210" Margin="0,0,10,8">
+                    <TextBlock Text="Search" FontSize="11" FontWeight="SemiBold"/>
+                    <TextBox Style="{StaticResource StyledTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <StackPanel Width="130" Margin="0,0,10,8">
+                    <TextBlock Text="Member Type" FontSize="11" FontWeight="SemiBold"/>
+                    <ComboBox ItemsSource="{Binding MemberTypeOptions}"
+                              SelectedItem="{Binding SelectedMemberType}" Padding="8"/>
+                </StackPanel>
+                <StackPanel Width="95" Margin="0,0,10,8">
+                    <TextBlock Text="Min Days" FontSize="11" FontWeight="SemiBold"/>
+                    <TextBox Style="{StaticResource StyledTextBox}"
+                             Text="{Binding MinimumDaysOverdue, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <StackPanel Width="95" Margin="0,0,10,8">
+                    <TextBlock Text="Max Days" FontSize="11" FontWeight="SemiBold"/>
+                    <TextBox Style="{StaticResource StyledTextBox}"
+                             Text="{Binding MaximumDaysOverdue, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <StackPanel Width="100" Margin="0,0,10,8">
+                    <TextBlock Text="Min Fine" FontSize="11" FontWeight="SemiBold"/>
+                    <TextBox Style="{StaticResource StyledTextBox}"
+                             Text="{Binding MinimumFine, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <StackPanel Width="100" Margin="0,0,10,8">
+                    <TextBlock Text="Max Fine" FontSize="11" FontWeight="SemiBold"/>
+                    <TextBox Style="{StaticResource StyledTextBox}"
+                             Text="{Binding MaximumFine, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <StackPanel Width="140" Margin="0,0,0,8">
+                    <TextBlock Text="Notification Status" FontSize="11" FontWeight="SemiBold"/>
+                    <ComboBox ItemsSource="{Binding NotificationStatusOptions}"
+                              SelectedItem="{Binding SelectedNotificationStatus}" Padding="8"/>
+                </StackPanel>
+            </WrapPanel>
+        </Border>
+
+        <Border Grid.Row="3" Style="{StaticResource CardStyle}" Padding="0">
+            <DataGrid ItemsSource="{Binding OverdueItems}"
+                      SelectedItem="{Binding SelectedItem}"
+                      IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      HorizontalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Accession Number" Binding="{Binding AccessionNumber}" Width="120"/>
+                    <DataGridTextColumn Header="Book Title" Binding="{Binding BookTitle}" Width="190"/>
+                    <DataGridTextColumn Header="Member Type" Binding="{Binding MemberType}" Width="105"/>
+                    <DataGridTextColumn Header="Member Name" Binding="{Binding MemberName}" Width="150"/>
+                    <DataGridTextColumn Header="Member Code" Binding="{Binding MemberCode}" Width="120"/>
+                    <DataGridTextColumn Header="Member Email" Binding="{Binding MemberEmail}" Width="180"/>
+                    <DataGridTextColumn Header="Issue Date" Binding="{Binding IssueDate, StringFormat='dd-MMM-yyyy'}" Width="105"/>
+                    <DataGridTextColumn Header="Expected Return Date" Binding="{Binding ExpectedReturnDate, StringFormat='dd-MMM-yyyy'}" Width="140"/>
+                    <DataGridTextColumn Header="Days Overdue" Binding="{Binding DaysOverdue}" Width="100"/>
+                    <DataGridTextColumn Header="Fine Per Day" Binding="{Binding FinePerDay, StringFormat='{}{0:N0}'}" Width="100"/>
+                    <DataGridTextColumn Header="Current Fine" Binding="{Binding CurrentFineAmount, StringFormat='{}{0:N0}'}" Width="105"/>
+                    <DataGridTextColumn Header="Last Notification Date" Binding="{Binding LastNotificationDate, StringFormat='dd-MMM-yyyy HH:mm'}" Width="150"/>
+                    <DataGridTextColumn Header="Notification Status" Binding="{Binding NotificationStatus}" Width="125"/>
+                    <DataGridCheckBoxColumn Header="Can Send Reminder" Binding="{Binding CanSendReminder}" Width="120"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <StackPanel Grid.Row="4" Margin="0,10,0,0">
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource SuccessBrush}"
+                       FontWeight="SemiBold" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}"
+                       FontWeight="SemiBold" TextWrapping="Wrap"
+                       Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

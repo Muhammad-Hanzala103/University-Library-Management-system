@@ -10,7 +10,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 2 (Consumer Management)**: **100% Completed**
 - **Priority 3 (Circulation System)**: **100% Completed**
 - **Priority 4A (Database Initialization & Test Infrastructure)**: **100% Completed**
-- **Priority 4B to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 4B (Deterministic Overdue & Notification Records)**: **100% Completed**
+- **Priority 4C to 8 (Advanced Modules)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -19,6 +20,17 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `KicsitLibrary.Tests` is a real xUnit test project with nine passing tests.
 - Tests use isolated temporary SQLite files and never use the development database.
 - Shared overdue-day and fine calculations are available through `OverdueCalculator`.
+
+### Priority 4B Foundation
+- Active overdue items are derived from `IssueRecord.ReceiveRecord == null` and local due-date rules.
+- `OverdueService` creates idempotent `InApp` and `Email` notification records manually.
+- Same-day and configurable cooldown checks prevent duplicate records.
+- Email delivery remains pending; no SMTP client or hosted scheduler exists.
+- Missing member email creates a failed record without crashing processing.
+- Notification retry and read-state management are persisted and audited.
+- Overdue Reminders and Notification Center views are wired into navigation.
+- Dashboard overdue totals now use active issue due dates instead of `BookCopy.Overdue`.
+- Nineteen isolated SQLite tests pass.
 
 ---
 
@@ -41,6 +53,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `ICatalogService.cs` / `CatalogService.cs`
 - `IConsumerService.cs` / `ConsumerService.cs`
 - `ICirculationService.cs` / `CirculationService.cs`
+- `IOverdueService.cs` / `OverdueService.cs`
+- `INotificationService.cs` / `NotificationService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -49,6 +63,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `BookCatalogViewModel.cs` / `BookFormViewModel.cs` / `CopiesViewModel.cs` / `AuthorViewModel.cs` / `PublisherViewModel.cs`: Catalog module.
 - `StudentsManagementViewModel.cs` / `StudentFormViewModel.cs` / `FacultyStaffManagementViewModel.cs` / `FacultyStaffFormViewModel.cs` / `ConsumerProfileViewModel.cs` / `VisitRecordsViewModel.cs` / `VisitRecordFormViewModel.cs`: Consumer module.
 - `IssueMaterialViewModel.cs` / `ReceiveMaterialViewModel.cs` / `FinesManagementViewModel.cs`: Circulation module.
+- `OverdueRemindersViewModel.cs` / `NotificationCenterViewModel.cs`: Manual overdue and notification-record operations.
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.
@@ -57,6 +72,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `BookCatalogView.xaml` / `BookFormWindow.xaml` / `CopiesWindow.xaml` / `AuthorWindow.xaml` / `PublisherWindow.xaml`
 - `StudentsManagementView.xaml` / `StudentFormWindow.xaml` / `FacultyStaffManagementView.xaml` / `FacultyStaffFormWindow.xaml` / `ConsumerProfileWindow.xaml` / `VisitRecordsView.xaml` / `VisitRecordWindow.xaml`
 - `IssueMaterialView.xaml` / `ReceiveMaterialView.xaml` / `FinesManagementView.xaml`
+- `OverdueRemindersView.xaml` / `NotificationCenterView.xaml`
 
 ### Navigation & Routes Wired
 - `"Dashboard"` -> `DashboardViewModel`
@@ -67,19 +83,20 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `"Students Management"` -> `StudentsManagementViewModel`
 - `"Faculty & Staff"` -> `FacultyStaffManagementViewModel`
 - `"Visit Records"` -> `VisitRecordsViewModel`
+- `"Overdue Reminders"` -> `OverdueRemindersViewModel`
+- `"Notification Center"` -> `NotificationCenterViewModel`
 
 ---
 
 ## 3. Pending Components
 
 - **Views & ViewModels**:
-  - `OverdueRemindersView.xaml` & `OverdueRemindersViewModel.cs` (Mapped but not implemented)
   - `AuditRecordsView.xaml` & `AuditRecordsViewModel.cs` (Mapped but not implemented)
   - `InventoryManagementView.xaml` & `InventoryManagementViewModel.cs` (Mapped but not implemented)
   - `ReportsView.xaml` & `ReportsViewModel.cs` (Mapped but not implemented)
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:
-  - `INotificationService`: Alerts and email notification engines.
+  - SMTP notification delivery and a hosted overdue scheduler.
   - `IReportService`: Custom reports generation and formatting.
   - `IClearanceService`: Student/Faculty final departure settlement database routines.
   - `IBackupSyncService`: Local backup scripts and Supabase sync logic.

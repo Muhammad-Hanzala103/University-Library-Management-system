@@ -35,6 +35,12 @@
         <DataTemplate DataType="{x:Type vm:FinesManagementViewModel}">
             <views:FinesManagementView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:OverdueRemindersViewModel}">
+            <views:OverdueRemindersView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:NotificationCenterViewModel}">
+            <views:NotificationCenterView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -83,6 +89,10 @@
                     <Button Style="{StaticResource SidebarButton}" Content="Overdue Reminders" 
                             Command="{Binding NavigateToOverdueCommand}"
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Overdue Reminders}"/>
+
+                    <Button Style="{StaticResource SidebarButton}" Content="Notification Center"
+                            Command="{Binding NavigateToNotificationsCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Notification Center}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Students Management" 
                             Command="{Binding NavigateToStudentsCommand}"

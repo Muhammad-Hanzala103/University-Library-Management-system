@@ -30,12 +30,28 @@ dotnet test KicsitLibrary.slnx --logger "console;verbosity=detailed"
 
 The test project uses a unique temporary SQLite file per test under `%TEMP%\KicsitLibrary.Tests`. It never opens `KicsitLibrary.db`.
 
+Current expected result:
+
+```text
+Passed: 19
+Failed: 0
+Skipped: 0
+```
+
+Run only Priority 4B tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~OverdueNotificationTests|FullyQualifiedName~DashboardOverdueTests"
+```
+
 ---
 
 ## 3. Database Initialization
 The current development strategy is `EnsureCreatedAsync` only.
 
 Do not run `dotnet ef migrations add InitialCreate` against the current database workflow. A baseline/adoption plan is required first because existing databases may have been created by `EnsureCreatedAsync`.
+
+Priority 4B adds notification columns through a fixed non-destructive SQLite compatibility initializer. This is not a replacement for the pending migration baseline.
 
 ---
 

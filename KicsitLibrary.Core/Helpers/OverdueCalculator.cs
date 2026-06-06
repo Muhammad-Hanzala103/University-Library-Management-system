@@ -6,12 +6,15 @@ namespace KicsitLibrary.Core.Helpers
     {
         public static int CalculateOverdueDays(DateTime expectedReturnDate, DateTime asOf)
         {
-            if (asOf <= expectedReturnDate)
+            var dueDate = expectedReturnDate.Date;
+            var currentDate = asOf.Date;
+
+            if (currentDate <= dueDate)
             {
                 return 0;
             }
 
-            return Math.Max(0, (int)(asOf - expectedReturnDate).TotalDays);
+            return Math.Max(0, (currentDate - dueDate).Days);
         }
 
         public static decimal CalculateFine(int overdueDays, decimal finePerDay)

@@ -83,6 +83,11 @@ namespace KicsitLibrary.Data
             modelBuilder.Entity<IssueRecord>().HasIndex(ir => ir.AccessionNumber);
             modelBuilder.Entity<IssueRecord>().HasIndex(ir => ir.IssueDate);
             modelBuilder.Entity<IssueRecord>().HasIndex(ir => ir.ExpectedReturnDate);
+            modelBuilder.Entity<NotificationRecord>().HasIndex(nr => nr.IssueRecordId);
+            modelBuilder.Entity<NotificationRecord>().HasIndex(nr => nr.CreatedAt);
+            modelBuilder.Entity<NotificationRecord>()
+                .HasIndex(nr => nr.DeduplicationKey)
+                .IsUnique();
 
             modelBuilder.Entity<ReceiveRecord>().HasIndex(rr => rr.ReceiveDate);
 
@@ -218,6 +223,24 @@ namespace KicsitLibrary.Data
                 .HasOne(r => r.FacultyStaff)
                 .WithMany(fs => fs.Reservations)
                 .HasForeignKey(r => r.FacultyStaffId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<NotificationRecord>()
+                .HasOne(nr => nr.IssueRecord)
+                .WithMany(ir => ir.NotificationRecords)
+                .HasForeignKey(nr => nr.IssueRecordId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<NotificationRecord>()
+                .HasOne(nr => nr.Student)
+                .WithMany(s => s.NotificationRecords)
+                .HasForeignKey(nr => nr.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<NotificationRecord>()
+                .HasOne(nr => nr.FacultyStaff)
+                .WithMany(fs => fs.NotificationRecords)
+                .HasForeignKey(nr => nr.FacultyStaffId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 4. Global Query Filters for Soft Delete
