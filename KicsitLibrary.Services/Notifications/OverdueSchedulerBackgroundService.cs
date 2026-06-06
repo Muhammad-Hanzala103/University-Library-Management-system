@@ -33,28 +33,49 @@ namespace KicsitLibrary.Services.Notifications
             try
             {
                 await _startupSignal.WaitAsync(stoppingToken);
-                var status = await _schedulerService.GetStatusAsync(stoppingToken);
-
-                if (status.Enabled && status.RunOnStartup)
-                {
-                    await Task.Delay(
-                        TimeSpan.FromSeconds(status.InitialDelaySeconds),
-                        stoppingToken);
-                    await _schedulerService.RunAsync(cancellationToken: stoppingToken);
-                }
+                var startupRunEvaluated = false;
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    status = await _schedulerService.GetStatusAsync(stoppingToken);
-                    var delay = status.Enabled
-                        ? TimeSpan.FromMinutes(status.IntervalMinutes)
-                        : DisabledPollingInterval;
-                    await Task.Delay(delay, stoppingToken);
-
-                    status = await _schedulerService.GetStatusAsync(stoppingToken);
-                    if (status.Enabled)
+                    try
                     {
-                        await _schedulerService.RunAsync(cancellationToken: stoppingToken);
+                        var status = await _schedulerService.GetStatusAsync(stoppingToken);
+                        if (!startupRunEvaluated)
+                        {
+                            startupRunEvaluated = true;
+                            if (status.Enabled && status.RunOnStartup)
+                            {
+                                await Task.Delay(
+                                    TimeSpan.FromSeconds(status.InitialDelaySeconds),
+                                    stoppingToken);
+                                await _schedulerService.RunAsync(
+                                    cancellationToken: stoppingToken);
+                                continue;
+                            }
+                        }
+
+                        var delay = status.Enabled
+                            ? TimeSpan.FromMinutes(status.IntervalMinutes)
+                            : DisabledPollingInterval;
+                        await Task.Delay(delay, stoppingToken);
+
+                        status = await _schedulerService.GetStatusAsync(stoppingToken);
+                        if (status.Enabled)
+                        {
+                            await _schedulerService.RunAsync(
+                                cancellationToken: stoppingToken);
+                        }
+                    }
+                    catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            ex,
+                            "The overdue scheduler loop iteration failed; it will retry.");
+                        await Task.Delay(DisabledPollingInterval, stoppingToken);
                     }
                 }
             }
@@ -64,7 +85,9 @@ namespace KicsitLibrary.Services.Notifications
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "The overdue scheduler background loop stopped unexpectedly.");
+                _logger.LogError(
+                    ex,
+                    "The overdue scheduler background loop stopped unexpectedly.");
             }
         }
     }

@@ -13,10 +13,12 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
     private SqliteTestDatabase(string databasePath, KicsitLibraryDbContext context)
     {
         _databasePath = databasePath;
+        ConnectionString = $"Data Source={databasePath};Pooling=False";
         Context = context;
     }
 
     public KicsitLibraryDbContext Context { get; }
+    public string ConnectionString { get; }
 
     public static async Task<SqliteTestDatabase> CreateAsync(bool seed = false)
     {
@@ -182,6 +184,60 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
             {
                 setting.Value = value.Value;
             }
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    public async Task ConfigureSchedulerSettingsAsync(
+        bool enabled,
+        bool runOnStartup = false,
+        bool sendPendingEmails = false,
+        int intervalMinutes = 60,
+        int initialDelaySeconds = 30,
+        int maxRunMinutes = 10)
+    {
+        var values = new Dictionary<string, string>
+        {
+            ["OverdueSchedulerEnabled"] = enabled.ToString(),
+            ["OverdueSchedulerRunOnStartup"] = runOnStartup.ToString(),
+            ["OverdueSchedulerIntervalMinutes"] = intervalMinutes.ToString(),
+            ["OverdueSchedulerInitialDelaySeconds"] = initialDelaySeconds.ToString(),
+            ["OverdueSchedulerSendPendingEmails"] = sendPendingEmails.ToString(),
+            ["OverdueSchedulerMaxRunMinutes"] = maxRunMinutes.ToString(),
+            ["OverdueSchedulerLastRunAt"] = string.Empty,
+            ["OverdueSchedulerLastSuccessAt"] = string.Empty,
+            ["OverdueSchedulerLastFailureAt"] = string.Empty,
+            ["OverdueSchedulerLastMessage"] = string.Empty,
+            ["OverdueSchedulerIsRunning"] = "False"
+        };
+
+        foreach (var value in values)
+        {
+            await SetSystemSettingAsync(value.Key, value.Value, "Scheduler");
+        }
+    }
+
+    public async Task SetSystemSettingAsync(
+        string key,
+        string value,
+        string group = "Scheduler")
+    {
+        var setting = await Context.SystemSettings
+            .FirstOrDefaultAsync(item => item.Key == key);
+        if (setting == null)
+        {
+            Context.SystemSettings.Add(new SystemSettings
+            {
+                Key = key,
+                Value = value,
+                Group = group
+            });
+        }
+        else
+        {
+            setting.Value = value;
+            setting.Group = group;
         }
 
         await Context.SaveChangesAsync();

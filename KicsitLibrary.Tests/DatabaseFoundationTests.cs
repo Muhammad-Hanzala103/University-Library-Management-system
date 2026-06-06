@@ -31,7 +31,18 @@ public class DatabaseFoundationTests
             "SmtpUser",
             "SmtpPassword",
             "SmtpFromEmail",
-            "SmtpFromName"
+            "SmtpFromName",
+            "OverdueSchedulerEnabled",
+            "OverdueSchedulerRunOnStartup",
+            "OverdueSchedulerIntervalMinutes",
+            "OverdueSchedulerInitialDelaySeconds",
+            "OverdueSchedulerSendPendingEmails",
+            "OverdueSchedulerMaxRunMinutes",
+            "OverdueSchedulerLastRunAt",
+            "OverdueSchedulerLastSuccessAt",
+            "OverdueSchedulerLastFailureAt",
+            "OverdueSchedulerLastMessage",
+            "OverdueSchedulerIsRunning"
         };
         foreach (var key in requiredSettings)
         {
@@ -41,6 +52,18 @@ public class DatabaseFoundationTests
         var emailEnabled = await database.Context.SystemSettings
             .SingleAsync(setting => setting.Key == "EmailNotificationEnabled");
         Assert.Equal("False", emailEnabled.Value);
+        Assert.Equal(
+            "False",
+            (await database.Context.SystemSettings.SingleAsync(
+                setting => setting.Key == "OverdueSchedulerEnabled")).Value);
+        Assert.Equal(
+            "False",
+            (await database.Context.SystemSettings.SingleAsync(
+                setting => setting.Key == "OverdueSchedulerRunOnStartup")).Value);
+        Assert.Equal(
+            "False",
+            (await database.Context.SystemSettings.SingleAsync(
+                setting => setting.Key == "OverdueSchedulerSendPendingEmails")).Value);
     }
 
     [Fact]
