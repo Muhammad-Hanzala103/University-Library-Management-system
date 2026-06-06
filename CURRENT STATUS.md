@@ -14,7 +14,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 4C (Manual SMTP Delivery & Retry)**: **100% Completed**
 - **Priority 4D (Cancellation-Aware Background Scheduler)**: **100% Completed**
 - **Priority 5A (Reports & Export Foundation)**: **100% Completed**
-- **Priority 5B to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 5B (Advanced Reports & Print Refinements)**: **100% Completed**
+- **Priority 6 to 8 (Advanced Modules)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -70,6 +71,16 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Reports & Analytics navigation opens a real dashboard with report-specific filters, dynamic preview, empty state, and export actions.
 - Fifty-two isolated tests pass, including thirteen reporting and physical-file tests.
 
+### Priority 5B Advanced Reports
+- Added eleven production providers for clearance, borrowing history, reservations, lost/damaged books, deleted-book archives, visits, audits, inventory, new arrivals, and stock verification.
+- All sixteen reports query real SQLite entities through the existing data-first provider contracts.
+- The dashboard groups reports into seven categories, supports report search/count, and renders text, enum, date-range, number-range, and boolean filters from definitions.
+- Invalid date and number ranges produce clear validation messages before querying.
+- PDF output now repeats report metadata and table headers, handles wide reports in landscape, and adds page numbers and summaries.
+- Excel output includes metadata, styled headers, frozen rows, auto filters, bounded auto-fit widths, date/currency formats, and summaries.
+- CSV output preserves safe escaping, headers for empty reports, and deterministic date formatting.
+- Sixty-eight isolated tests pass, including sixteen Priority 5B tests.
+
 ---
 
 ## 2. Completed Components
@@ -98,7 +109,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `IOverdueSchedulerService.cs` / `OverdueSchedulerService.cs`
 - `OverdueSchedulerBackgroundService.cs`
 - `IReportService` / `ReportService`
-- `IReportDataProvider` / five production report providers
+- `IReportDataProvider` / sixteen production report providers
 - `IReportExporter` / CSV, Excel, and PDF exporters
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)

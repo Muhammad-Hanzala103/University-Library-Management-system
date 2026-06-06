@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 52
+Passed: 68
 Failed: 0
 Skipped: 0
 ```
@@ -68,6 +68,14 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 
 Report tests use temporary SQLite databases and temporary export folders. They physically create CSV, XLSX, and PDF files and do not require Microsoft Excel.
 
+Run only Priority 5B report tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~Priority5BReportTests"
+```
+
+Priority 5B tests cover all eleven advanced providers, all sixteen registered definitions, wide PDF output, Excel metadata/headers, and empty/date-formatted CSV output.
+
 ## 3. Manual SMTP Verification
 
 1. Back up the development database before changing settings.
@@ -95,15 +103,20 @@ Report tests use temporary SQLite databases and temporary export folders. They p
 ## 5. Manual Reports Verification
 
 1. Open **Reports & Analytics** from the sidebar.
-2. Select each of the five report cards and confirm real database rows appear.
-3. Apply report-specific filters and select **Refresh Preview**.
-4. Confirm **Clear Filters** restores the full preview.
-5. Export CSV, Excel, and PDF.
-6. Confirm the success message includes the generated file path.
-7. Open `%USERPROFILE%\Documents\KICSIT Library Reports`.
-8. Verify the file name includes the report name and timestamp.
-9. Confirm repeated exports create unique files instead of overwriting.
-10. Confirm a `Report Exported` activity-log record was written.
+2. Search reports by name and confirm the visible report count changes.
+3. Confirm all sixteen report cards appear under the seven report categories.
+4. Select each Priority 5B report and confirm real database rows appear.
+5. Apply text, enum, date, number, and boolean filters where available.
+6. Verify invalid date/number ranges show a clear validation message.
+7. Confirm **Clear Filters** restores the full preview.
+8. Export CSV, Excel, and PDF.
+9. Confirm the success message includes the generated file path.
+10. Open `%USERPROFILE%\Documents\KICSIT Library Reports`.
+11. Verify the file name includes the report name and timestamp.
+12. Confirm repeated exports create unique files instead of overwriting.
+13. Confirm wide PDF reports have page metadata, repeated headers, and page numbers.
+14. Confirm Excel reports have metadata, filters, frozen headers, and summaries.
+15. Confirm a `Report Exported` activity-log record was written.
 
 ## 6. Database Initialization
 The current development strategy is `EnsureCreatedAsync` only.

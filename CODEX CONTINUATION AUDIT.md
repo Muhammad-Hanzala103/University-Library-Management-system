@@ -1,5 +1,40 @@
 # Codex Continuation Audit
 
+## Priority 5B Completion Update
+
+Completion date: 2026-06-06
+
+Priority 5B is complete:
+
+- Added exactly eleven advanced SQLite report providers.
+- Student clearance derives active-book counts and unpaid/partial fine balances without requiring the pending clearance service.
+- Student and faculty borrowing reports include active and returned history using the shared overdue calculator.
+- Added reservation, lost/damaged, deleted-book archive, visit, audit, inventory, new-arrivals, and stock-verification reports.
+- All sixteen reports are grouped into seven categories and are searchable in the Reports dashboard.
+- Filter UI now supports text, enum, date range, number range, and boolean definitions with range validation.
+- PDF output has repeating metadata/header rows, landscape wide-table handling, page numbers, summaries, and a clear empty state.
+- Excel output has metadata, styled/frozen headers, auto filters, bounded auto-fit widths, typed date/currency formats, and summaries.
+- CSV output retains escaping and now uses deterministic date formatting.
+- Added sixteen Priority 5B tests; all sixty-eight tests pass.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 68 tests passed, 0 failed, 0 skipped.
+
+Deferred by design:
+
+- Embedded Unicode PDF fonts, logos, charts, and user-selected output paths
+- Physical stock-verification workflow
+- Full reservation lifecycle and student-clearance workflow
+- Deployment, Supabase sync, WhatsApp delivery, and EF migrations
+
+Exact next task: Priority 6, implement the student/faculty clearance service and workflow using the tested Priority 5B outstanding-book and fine foundations.
+
 ## Priority 5A Completion Update
 
 Completion date: 2026-06-06

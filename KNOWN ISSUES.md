@@ -49,14 +49,17 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Deduplication is enforced per issue, notification type, channel, local date, and cooldown query. Multi-process concurrency beyond the unique date key remains a deployment consideration.
 
 ### Reports & Exports
-- Catalog, Issued Books, Overdue Books, Fine, and Notification reports are implemented.
+- Sixteen reports are implemented: the five Priority 5A reports plus Student Clearance, Student Borrowing History, Faculty Staff Borrowing History, Reservation, Lost And Damaged Books, Deleted Books Archive, Visit Detail, Audit, Inventory, New Arrivals, and Stock Verification.
 - CSV, Excel, and PDF exports create real files. Excel uses ClosedXML and does not require Microsoft Excel.
-- The PDF writer intentionally uses built-in PDF primitives to avoid adding a commercial/AGPL reporting dependency. It supports text tables, wrapping, multiple pages, filters, and summaries, but not advanced fonts, logos, charts, or complex pagination.
+- The PDF writer intentionally uses built-in PDF primitives to avoid adding a commercial/AGPL reporting dependency. It supports landscape pages, repeating metadata/table headers, width-bounded columns, multiple pages, page numbers, filters, and summaries, but not advanced fonts, logos, or charts.
 - PDF text is currently normalized to basic ASCII. Non-ASCII names may appear as `?` until embedded Unicode fonts are added.
-- The UI exports to the default Documents folder. A user-selected save dialog is deferred to Priority 5B.
+- The UI exports to the default Documents folder. A user-selected save dialog remains deferred.
 - Providers currently materialize report rows before applying some complex text filters. Very large databases may require paging or server-side filter optimization.
 - Report previews use dynamic auto-generated DataGrid columns and are not covered by WPF UI automation.
-- Only the five Priority 5A reports are available. Other operational and compliance reports remain pending.
+- Reservation reporting reflects existing records, but the reservation lifecycle UI/workflow remains partial.
+- Visit status is derived as `Pending Follow Up` when a follow-up date exists and no action is recorded; `VisitRecord` has no persisted status field.
+- Stock Verification `Actual Status` currently equals the database status, and physical verification remarks state that on-shelf verification is pending.
+- Student Clearance reporting calculates outstanding books/fines independently; the Priority 6 clearance service and approval workflow remain pending.
 
 ### Cloud Integration (Supabase Sync)
 - Currently, the database provider runs 100% locally on SQLite. There is no background worker that pushes local SQLite transaction records to a remote Supabase Postgres cloud instance.
@@ -65,7 +68,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
 
 ### Automated Test Coverage
-- Fifty-two xUnit tests run against isolated temporary SQLite files.
-- Coverage protects circulation, overdue and notification behavior plus five report providers, filters, exporter selection, file naming, non-overwrite behavior, and physical CSV/XLSX/PDF creation.
+- Sixty-eight xUnit tests run against isolated temporary SQLite files.
+- Coverage protects circulation, overdue and notification behavior plus all sixteen report definitions, advanced providers, filters, exporter selection, file naming, non-overwrite behavior, and physical CSV/XLSX/PDF creation.
 - There is no clearance service or clearance eligibility helper, so the requested "active issue blocks student clearance" test is pending Priority 6.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

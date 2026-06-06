@@ -59,12 +59,22 @@ Remaining deployment concern:
 - [x] Add thirteen isolated provider/export tests; all fifty-two tests pass.
 
 ## Priority 5B: Extended Reports & Print Refinement
-- **Goal**: Build additional reports only after the foundation is accepted.
-- [ ] Define borrowing-history, member-directory, collection-summary, and activity-log reports.
-- [ ] Add print-oriented page headers, footers, page numbers, and configurable branding.
+- **Goal**: Add the approved advanced operational reports and improve export quality.
+- [x] Add Student Clearance, Student Borrowing History, and Faculty Staff Borrowing History reports.
+- [x] Add Reservation, Lost And Damaged Books, and Deleted Books Archive reports.
+- [x] Add Visit Detail and Audit reports.
+- [x] Add Inventory, New Arrivals, and Stock Verification reports.
+- [x] Group and search all sixteen reports in the Reports dashboard.
+- [x] Validate date and number ranges through contract-driven filter inputs.
+- [x] Improve PDF page metadata, repeating headers, wide-table handling, page numbers, and summaries.
+- [x] Improve Excel metadata, filters, frozen headers, sizing, and typed formatting.
+- [x] Preserve safe CSV escaping and deterministic date formatting.
+- [x] Add sixteen isolated tests; all sixty-eight tests pass.
+
+Deferred refinements:
+- [ ] Add embedded Unicode PDF fonts and configurable logos/branding.
 - [ ] Add explicit user-selected output paths through a dialog service.
-- [ ] Add large-dataset paging or streaming strategy after profiling.
-- [ ] Keep existing five Priority 5A reports backward compatible.
+- [ ] Add large-dataset paging or streaming after profiling.
 
 ---
 
