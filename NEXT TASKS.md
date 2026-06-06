@@ -34,11 +34,16 @@ This document contains a structured task list outlining the implementation steps
 
 ## Priority 4D: Background Overdue Scheduler
 - **Goal**: Add a cancellation-aware hosted scanner only after manual delivery is verified.
-- [ ] Define scheduler interval, startup behavior, and single-instance ownership policy.
-- [ ] Create a DI scope for each scan.
-- [ ] Prevent duplicate work across multiple app instances.
-- [ ] Add SQLite contention handling and operational logging.
-- [ ] Add cancellation, shutdown, and duplicate-send tests before enabling automatic delivery.
+- [x] Define scheduler interval, startup behavior, and disabled-by-default policies.
+- [x] Create a DI scope for every scheduled or bulk manual scan.
+- [x] Prevent overlapping scans and email batches within the application process.
+- [x] Add bounded SQLite busy/locked retries and operational logging.
+- [x] Add cancellation, status persistence, dependency failure, and duplicate-reminder tests.
+- [x] Add scheduler status and run-now actions to Overdue Reminders.
+- [x] Gate the hosted worker on successful database initialization.
+
+Remaining deployment concern:
+- [ ] Add cross-process ownership protection before supporting multiple simultaneous desktop application instances.
 
 ---
 

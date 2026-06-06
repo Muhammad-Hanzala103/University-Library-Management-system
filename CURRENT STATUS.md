@@ -12,7 +12,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 4A (Database Initialization & Test Infrastructure)**: **100% Completed**
 - **Priority 4B (Deterministic Overdue & Notification Records)**: **100% Completed**
 - **Priority 4C (Manual SMTP Delivery & Retry)**: **100% Completed**
-- **Priority 4D to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 4D (Cancellation-Aware Background Scheduler)**: **100% Completed**
+- **Priority 5 to 8 (Advanced Modules)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -44,6 +45,18 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Notification Center exposes send selected, retry selected, send all pending, validate settings, refresh, and mark-read actions.
 - Twenty-nine isolated SQLite tests pass, including ten fake-transport delivery tests.
 
+### Priority 4D Foundation
+- `OverdueSchedulerService` coordinates scheduled and bulk manual overdue runs through one process-level semaphore.
+- Every run creates a fresh DI scope for EF, overdue, notification, and activity-log services.
+- `OverdueSchedulerBackgroundService` waits for database initialization before reading settings.
+- The worker supports disabled idle polling, optional delayed startup runs, configurable periodic intervals, and cooperative shutdown cancellation.
+- Scheduler, startup-run, and automatic-email settings are disabled by default.
+- Runs persist last-run, success, failure, message, and running-state settings.
+- SQLite busy/locked operations receive three bounded retries with cancellation-aware short delays.
+- The Overdue Reminders screen shows scheduler status and provides real run-now and refresh actions.
+- Bulk manual overdue checks use the same coordinator lock but never enable automatic email delivery.
+- Thirty-nine isolated SQLite tests pass, including ten scheduler tests.
+
 ---
 
 ## 2. Completed Components
@@ -69,6 +82,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `INotificationService.cs` / `NotificationService.cs`
 - `IEmailTransport.cs` / `MailKitEmailTransport.cs`
 - `IEmailSettingsService.cs` / `EmailSettingsService.cs`
+- `IOverdueSchedulerService.cs` / `OverdueSchedulerService.cs`
+- `OverdueSchedulerBackgroundService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -110,7 +125,6 @@ This document catalogs all implemented and pending files, services, entities, Vi
   - `ReportsView.xaml` & `ReportsViewModel.cs` (Mapped but not implemented)
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:
-- A hosted overdue scheduler. Manual SMTP delivery is complete.
   - `IReportService`: Custom reports generation and formatting.
   - `IClearanceService`: Student/Faculty final departure settlement database routines.
   - `IBackupSyncService`: Local backup scripts and Supabase sync logic.

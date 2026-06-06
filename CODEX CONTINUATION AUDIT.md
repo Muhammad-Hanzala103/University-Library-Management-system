@@ -1,5 +1,42 @@
 # Codex Continuation Audit
 
+## Priority 4D Completion Update
+
+Completion date: 2026-06-06
+
+Priority 4D is complete:
+
+- Added `IOverdueSchedulerService`, scheduler status/run models, and a singleton scheduler coordinator.
+- Scheduled and bulk manual runs share one process-level semaphore and cannot overlap.
+- Each run resolves scoped EF, overdue, notification, and activity-log services from a fresh DI scope.
+- Added a hosted background service gated on successful database initialization.
+- The worker supports disabled idle mode, optional delayed startup execution, dynamic intervals, cooperative cancellation, and bounded run time.
+- Added three-attempt handling for transient SQLite busy/locked failures.
+- Runs persist running state, timestamps, summaries, and failure details and create activity-log records.
+- Automatic pending-email delivery is independently disabled by default and continues to use `NotificationService`.
+- Added a scheduler status panel and real run-now/refresh actions to Overdue Reminders.
+- Added eleven non-destructive scheduler settings with disabled defaults.
+- Added ten scheduler tests; all thirty-nine tests pass.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 39 tests passed, 0 failed, 0 skipped.
+
+Deferred by design:
+
+- Cross-process scheduler ownership for multiple simultaneous desktop instances
+- WhatsApp delivery
+- Reports and exports
+- Deployment and Supabase sync
+- Migration baseline/adoption
+
+Exact next task: Priority 5A, define report contracts and implement tested CSV/Excel/PDF export foundations without changing database initialization.
+
 ## Priority 4C Completion Update
 
 Completion date: 2026-06-06

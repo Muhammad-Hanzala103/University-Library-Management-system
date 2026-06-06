@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 29
+Passed: 39
 Failed: 0
 Skipped: 0
 ```
@@ -52,6 +52,14 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 
 Priority 4C tests use `FakeEmailTransport`; they never open a network connection or use the development database.
 
+Run only Priority 4D scheduler tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~OverdueSchedulerTests"
+```
+
+Scheduler tests use temporary SQLite files, fake SMTP transport, and controllable overdue-service doubles. They do not wait for real scheduler intervals.
+
 ## 3. Manual SMTP Verification
 
 1. Back up the development database before changing settings.
@@ -63,7 +71,20 @@ Priority 4C tests use `FakeEmailTransport`; they never open a network connection
 7. Confirm the record status, `SentAt`, `LastAttemptAt`, `RetryCount`, and any `FailureReason`.
 8. Confirm an activity-log row exists for each attempted delivery.
 
-## 4. Database Initialization
+## 4. Manual Scheduler Verification
+
+1. Back up the development database before changing settings.
+2. Confirm `OverdueSchedulerEnabled`, `OverdueSchedulerRunOnStartup`, and `OverdueSchedulerSendPendingEmails` are `False` by default.
+3. Open Overdue Reminders and select **Refresh Scheduler Status**.
+4. Set `OverdueSchedulerEnabled=True` in `SystemSettings`.
+5. Keep `OverdueSchedulerSendPendingEmails=False` for the first run.
+6. Select **Run Scheduler Now** and verify notification records are created without email delivery.
+7. Run it again and verify same-day records are not duplicated.
+8. Confirm last-run, last-success, message, and running-state values update.
+9. Configure valid SMTP settings before enabling `OverdueSchedulerSendPendingEmails=True`.
+10. Restart the application only after explicitly enabling `OverdueSchedulerRunOnStartup` if a delayed startup run is required.
+
+## 5. Database Initialization
 The current development strategy is `EnsureCreatedAsync` only.
 
 Do not run `dotnet ef migrations add InitialCreate` against the current database workflow. A baseline/adoption plan is required first because existing databases may have been created by `EnsureCreatedAsync`.
@@ -72,7 +93,7 @@ Priority 4B adds notification columns through a fixed non-destructive SQLite com
 
 ---
 
-## 5. Run the WPF Desktop Application
+## 6. Run the WPF Desktop Application
 Launch the WPF UI:
 ```powershell
 dotnet run --project KicsitLibrary.Desktop
@@ -80,7 +101,7 @@ dotnet run --project KicsitLibrary.Desktop
 
 ---
 
-## 6. SQLite Local Database Inspections
+## 7. SQLite Local Database Inspections
 The default SQLite database is named `KicsitLibrary.db`. Relative paths are resolved from `AppContext.BaseDirectory`, normally `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`.
 - Connect to database using SQLite CLI:
   ```bash

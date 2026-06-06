@@ -39,7 +39,14 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Provider-specific SMTP behavior and real-server interoperability are not covered by automated tests.
 - `InApp` records are persisted but there is no per-user popup/badge delivery mechanism yet.
 - WhatsApp remains a disabled placeholder.
-- There is no hosted/background scheduler.
+- A hosted overdue scheduler is implemented but disabled by default.
+- Startup runs and automatic pending-email delivery are independently disabled by default.
+- Scheduler overlap protection uses an in-process semaphore. Separate desktop application processes are not coordinated by an OS mutex or distributed lease.
+- Scheduler timeout and shutdown cancellation are cooperative. EF Core and MailKit receive cancellation tokens, but an external provider or operating-system call may not stop instantaneously.
+- SQLite busy/locked errors receive three short retries. Other exceptions are persisted and logged without indefinite retry.
+- The worker polls settings every 30 seconds while disabled. There is no push-based settings notification.
+- The Overdue Reminders screen displays scheduler settings but does not edit them. A full System Settings screen remains pending.
+- A stale persisted running flag after an abnormal process termination is cleared when scheduler status is next loaded.
 - Deduplication is enforced per issue, notification type, channel, local date, and cooldown query. Multi-process concurrency beyond the unique date key remains a deployment consideration.
 
 ### PDF & Excel Report Printers
@@ -52,7 +59,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
 
 ### Automated Test Coverage
-- Twenty-nine xUnit tests run against isolated temporary SQLite files.
-- Coverage protects circulation transitions, duplicate accession validation, seed insertion, overdue query rules, notification idempotency, cooldowns, missing email, retry/read state, dashboard overdue counting, activity logging, manual email status transitions, retry limits, channel filtering, disabled delivery, and password redaction.
+- Thirty-nine xUnit tests run against isolated temporary SQLite files.
+- Coverage protects circulation transitions, duplicate accession validation, seed insertion, overdue query rules, notification idempotency, cooldowns, missing email, retry/read state, dashboard overdue counting, activity logging, manual email delivery, scheduler gating, optional email batches, overlap prevention, status persistence, dependency failure, and cancellation.
 - There is no clearance service or clearance eligibility helper, so the requested "active issue blocks student clearance" test is pending Priority 6.
-- The suite does not automate WPF UI interaction, multi-process concurrency, migration adoption, or a live SMTP server.
+- The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, or a live SMTP server.
