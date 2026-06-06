@@ -72,11 +72,11 @@ public sealed class StudentClearanceReportDataProvider(KicsitLibraryDbContext co
             return new { Student = student, PendingBooks = pendingBooks, PendingFine = pendingFine };
         })
         .Where(item =>
-            Matches(search, item.Student.RegistrationNumber, item.Student.AdmissionNumber, item.Student.Name) &&
-            MatchesExact(department, item.Student.Department) &&
-            MatchesExact(program, item.Student.Program) &&
-            MatchesExact(batch, item.Student.Batch) &&
-            MatchesExact(status, item.Student.ClearanceStatus.ToString()) &&
+            TextMatches(search, item.Student.RegistrationNumber, item.Student.AdmissionNumber, item.Student.Name) &&
+            ExactMatches(department, item.Student.Department) &&
+            ExactMatches(program, item.Student.Program) &&
+            ExactMatches(batch, item.Student.Batch) &&
+            ExactMatches(status, item.Student.ClearanceStatus.ToString()) &&
             (!pendingOnly || item.PendingBooks > 0 || item.PendingFine > 0))
         .Select(item => Row(
             ("RegistrationNumber", item.Student.RegistrationNumber),
@@ -171,26 +171,26 @@ public sealed class StudentBorrowingHistoryReportDataProvider(KicsitLibraryDbCon
         {
             var endDate = issue.ReceiveRecord == null
                 ? today
-                : ToLocalDate(issue.ReceiveRecord.ReceiveDate);
+                : AsLocalDate(issue.ReceiveRecord.ReceiveDate);
             var overdueDays = OverdueCalculator.CalculateOverdueDays(
-                ToLocalDate(issue.ExpectedReturnDate), endDate);
+                AsLocalDate(issue.ExpectedReturnDate), endDate);
             return new { Issue = issue, OverdueDays = overdueDays };
         })
         .Where(item =>
-            Matches(search, item.Issue.Student?.Name, item.Issue.AccessionNumber, item.Issue.BookCopy.BookMaster.Title) &&
-            Matches(registration, item.Issue.Student?.RegistrationNumber) &&
-            MatchesExact(department, item.Issue.Student?.Department) &&
-            (!fromDate.HasValue || ToLocalDate(item.Issue.IssueDate) >= fromDate.Value.Date) &&
-            (!toDate.HasValue || ToLocalDate(item.Issue.IssueDate) <= toDate.Value.Date) &&
+            TextMatches(search, item.Issue.Student?.Name, item.Issue.AccessionNumber, item.Issue.BookCopy.BookMaster.Title) &&
+            TextMatches(registration, item.Issue.Student?.RegistrationNumber) &&
+            ExactMatches(department, item.Issue.Student?.Department) &&
+            (!fromDate.HasValue || AsLocalDate(item.Issue.IssueDate) >= fromDate.Value.Date) &&
+            (!toDate.HasValue || AsLocalDate(item.Issue.IssueDate) <= toDate.Value.Date) &&
             (!overdueOnly || item.OverdueDays > 0))
         .Select(item => Row(
             ("RegistrationNumber", item.Issue.Student?.RegistrationNumber),
             ("StudentName", item.Issue.Student?.Name),
             ("AccessionNumber", item.Issue.AccessionNumber),
             ("BookTitle", item.Issue.BookCopy.BookMaster.Title),
-            ("IssueDate", ToLocalDate(item.Issue.IssueDate)),
-            ("ExpectedReturnDate", ToLocalDate(item.Issue.ExpectedReturnDate)),
-            ("ReceiveDate", item.Issue.ReceiveRecord == null ? null : ToLocalDate(item.Issue.ReceiveRecord.ReceiveDate)),
+            ("IssueDate", AsLocalDate(item.Issue.IssueDate)),
+            ("ExpectedReturnDate", AsLocalDate(item.Issue.ExpectedReturnDate)),
+            ("ReceiveDate", item.Issue.ReceiveRecord == null ? null : AsLocalDate(item.Issue.ReceiveRecord.ReceiveDate)),
             ("DaysOverdue", item.OverdueDays),
             ("FineAmount", item.Issue.Fine?.FineAmount ?? item.Issue.ReceiveRecord?.FineAmount ?? 0),
             ("Status", item.Issue.ReceiveRecord == null ? "Active" : "Returned")))
@@ -275,17 +275,17 @@ public sealed class FacultyBorrowingHistoryReportDataProvider(KicsitLibraryDbCon
 
         var rows = issues.Select(issue =>
         {
-            var endDate = issue.ReceiveRecord == null ? today : ToLocalDate(issue.ReceiveRecord.ReceiveDate);
-            var days = OverdueCalculator.CalculateOverdueDays(ToLocalDate(issue.ExpectedReturnDate), endDate);
+            var endDate = issue.ReceiveRecord == null ? today : AsLocalDate(issue.ReceiveRecord.ReceiveDate);
+            var days = OverdueCalculator.CalculateOverdueDays(AsLocalDate(issue.ExpectedReturnDate), endDate);
             return new { Issue = issue, Days = days };
         })
         .Where(item =>
-            Matches(search, item.Issue.FacultyStaff?.Name, item.Issue.AccessionNumber, item.Issue.BookCopy.BookMaster.Title) &&
-            Matches(personnel, item.Issue.FacultyStaff?.PersonnelNumber) &&
-            MatchesExact(facultyType, item.Issue.FacultyStaff?.FacultyType.ToString()) &&
-            MatchesExact(department, item.Issue.FacultyStaff?.Department) &&
-            (!fromDate.HasValue || ToLocalDate(item.Issue.IssueDate) >= fromDate.Value.Date) &&
-            (!toDate.HasValue || ToLocalDate(item.Issue.IssueDate) <= toDate.Value.Date) &&
+            TextMatches(search, item.Issue.FacultyStaff?.Name, item.Issue.AccessionNumber, item.Issue.BookCopy.BookMaster.Title) &&
+            TextMatches(personnel, item.Issue.FacultyStaff?.PersonnelNumber) &&
+            ExactMatches(facultyType, item.Issue.FacultyStaff?.FacultyType.ToString()) &&
+            ExactMatches(department, item.Issue.FacultyStaff?.Department) &&
+            (!fromDate.HasValue || AsLocalDate(item.Issue.IssueDate) >= fromDate.Value.Date) &&
+            (!toDate.HasValue || AsLocalDate(item.Issue.IssueDate) <= toDate.Value.Date) &&
             (!overdueOnly || item.Days > 0))
         .Select(item => Row(
             ("PersonnelNumber", item.Issue.FacultyStaff?.PersonnelNumber),
@@ -294,9 +294,9 @@ public sealed class FacultyBorrowingHistoryReportDataProvider(KicsitLibraryDbCon
             ("Department", item.Issue.FacultyStaff?.Department),
             ("AccessionNumber", item.Issue.AccessionNumber),
             ("BookTitle", item.Issue.BookCopy.BookMaster.Title),
-            ("IssueDate", ToLocalDate(item.Issue.IssueDate)),
-            ("ExpectedReturnDate", ToLocalDate(item.Issue.ExpectedReturnDate)),
-            ("ReceiveDate", item.Issue.ReceiveRecord == null ? null : ToLocalDate(item.Issue.ReceiveRecord.ReceiveDate)),
+            ("IssueDate", AsLocalDate(item.Issue.IssueDate)),
+            ("ExpectedReturnDate", AsLocalDate(item.Issue.ExpectedReturnDate)),
+            ("ReceiveDate", item.Issue.ReceiveRecord == null ? null : AsLocalDate(item.Issue.ReceiveRecord.ReceiveDate)),
             ("DaysOverdue", item.Days),
             ("FineAmount", item.Issue.Fine?.FineAmount ?? item.Issue.ReceiveRecord?.FineAmount ?? 0),
             ("Status", item.Issue.ReceiveRecord == null ? "Active" : "Returned")))

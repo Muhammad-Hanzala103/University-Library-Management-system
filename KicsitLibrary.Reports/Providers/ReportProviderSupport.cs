@@ -161,20 +161,20 @@ namespace KicsitLibrary.Reports.Providers
             };
         }
 
-        protected static bool Matches(string? filter, params string?[] values)
+        protected static bool TextMatches(string? filter, params string?[] values)
         {
             return string.IsNullOrWhiteSpace(filter) ||
                 values.Any(value =>
                     value?.Contains(filter, StringComparison.OrdinalIgnoreCase) == true);
         }
 
-        protected static bool MatchesExact(string? filter, string? value)
+        protected static bool ExactMatches(string? filter, string? value)
         {
             return string.IsNullOrWhiteSpace(filter) ||
                 string.Equals(filter, value, StringComparison.OrdinalIgnoreCase);
         }
 
-        protected static DateTime ToLocalDate(DateTime value)
+        protected static DateTime AsLocalDate(DateTime value)
         {
             var utc = value.Kind switch
             {

@@ -63,13 +63,13 @@ public sealed class ReservationReportDataProvider(KicsitLibraryDbContext context
                 ? item.Student?.Name : item.FacultyStaff?.Name;
             var memberCode = item.MemberType == MemberType.Student
                 ? item.Student?.RegistrationNumber : item.FacultyStaff?.PersonnelNumber;
-            return Matches(search, item.ReservationNumber, item.BookMaster.Title, memberName, memberCode, item.Remarks) &&
-                MatchesExact(memberType, item.MemberType.ToString()) &&
-                MatchesExact(status, item.Status.ToString()) &&
-                (!fromDate.HasValue || ToLocalDate(item.ReservationDate) >= fromDate.Value.Date) &&
-                (!toDate.HasValue || ToLocalDate(item.ReservationDate) <= toDate.Value.Date) &&
+            return TextMatches(search, item.ReservationNumber, item.BookMaster.Title, memberName, memberCode, item.Remarks) &&
+                ExactMatches(memberType, item.MemberType.ToString()) &&
+                ExactMatches(status, item.Status.ToString()) &&
+                (!fromDate.HasValue || AsLocalDate(item.ReservationDate) >= fromDate.Value.Date) &&
+                (!toDate.HasValue || AsLocalDate(item.ReservationDate) <= toDate.Value.Date) &&
                 (!expiredOnly || item.Status == ReservationStatus.Expired ||
-                    (ToLocalDate(item.ExpiryDate) < today &&
+                    (AsLocalDate(item.ExpiryDate) < today &&
                      item.Status is ReservationStatus.Pending or ReservationStatus.Available));
         })
         .Select(item => Row(
@@ -78,8 +78,8 @@ public sealed class ReservationReportDataProvider(KicsitLibraryDbContext context
             ("MemberType", item.MemberType.ToString()),
             ("MemberName", item.MemberType == MemberType.Student ? item.Student?.Name : item.FacultyStaff?.Name),
             ("MemberCode", item.MemberType == MemberType.Student ? item.Student?.RegistrationNumber : item.FacultyStaff?.PersonnelNumber),
-            ("ReservationDate", ToLocalDate(item.ReservationDate)),
-            ("ExpiryDate", ToLocalDate(item.ExpiryDate)),
+            ("ReservationDate", AsLocalDate(item.ReservationDate)),
+            ("ExpiryDate", AsLocalDate(item.ExpiryDate)),
             ("Status", item.Status.ToString()),
             ("Remarks", item.Remarks)))
         .ToList();
@@ -162,10 +162,10 @@ public sealed class LostDamagedBooksReportDataProvider(KicsitLibraryDbContext co
             return new { Copy = copy, LastIssue = lastIssue, LastMember = lastMember };
         })
         .Where(item =>
-            Matches(search, item.Copy.AccessionNumber, item.Copy.BookMaster.Title, item.LastMember) &&
-            MatchesExact(status, item.Copy.AvailabilityStatus.ToString()) &&
-            MatchesExact(category, item.Copy.BookMaster.Category.Name) &&
-            MatchesExact(department, item.Copy.BookMaster.DepartmentCategory.Name) &&
+            TextMatches(search, item.Copy.AccessionNumber, item.Copy.BookMaster.Title, item.LastMember) &&
+            ExactMatches(status, item.Copy.AvailabilityStatus.ToString()) &&
+            ExactMatches(category, item.Copy.BookMaster.Category.Name) &&
+            ExactMatches(department, item.Copy.BookMaster.DepartmentCategory.Name) &&
             (!fromDate.HasValue || item.Copy.LastIssuedDate?.ToLocalTime().Date >= fromDate.Value.Date) &&
             (!toDate.HasValue || item.Copy.LastIssuedDate?.ToLocalTime().Date <= toDate.Value.Date))
         .Select(item => Row(
@@ -239,9 +239,9 @@ public sealed class DeletedBooksArchiveReportDataProvider(KicsitLibraryDbContext
         var rows = archives.Where(item =>
         {
             var deletedAt = (item.DeletedAt ?? item.CreatedAt).ToLocalTime().Date;
-            return Matches(search, item.TableName, item.DeletedReason, item.SerializedData) &&
-                MatchesExact(entity, item.TableName) &&
-                Matches(deletedBy, item.DeletedByUser.FullName, item.DeletedByUser.Username) &&
+            return TextMatches(search, item.TableName, item.DeletedReason, item.SerializedData) &&
+                ExactMatches(entity, item.TableName) &&
+                TextMatches(deletedBy, item.DeletedByUser.FullName, item.DeletedByUser.Username) &&
                 (!fromDate.HasValue || deletedAt >= fromDate.Value.Date) &&
                 (!toDate.HasValue || deletedAt <= toDate.Value.Date);
         })
