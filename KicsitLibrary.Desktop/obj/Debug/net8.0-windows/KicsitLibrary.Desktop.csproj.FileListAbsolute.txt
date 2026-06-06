@@ -462,3 +462,8 @@ C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\OverdueRemindersView.g.cs
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\NotificationCenterView.baml
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\OverdueRemindersView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\BouncyCastle.Cryptography.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\MailKit.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\MimeKit.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\System.Security.Cryptography.Pkcs.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
