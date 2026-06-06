@@ -18,6 +18,17 @@ namespace KicsitLibrary.Reports.Providers
         public const string OverdueBooks = "overdue-books";
         public const string Fines = "fines";
         public const string Notifications = "notifications";
+        public const string StudentClearance = "student-clearance";
+        public const string StudentBorrowingHistory = "student-borrowing-history";
+        public const string FacultyBorrowingHistory = "faculty-borrowing-history";
+        public const string Reservations = "reservations";
+        public const string LostDamagedBooks = "lost-damaged-books";
+        public const string DeletedBooksArchive = "deleted-books-archive";
+        public const string VisitDetail = "visit-detail";
+        public const string Audit = "audit";
+        public const string Inventory = "inventory";
+        public const string NewArrivals = "new-arrivals";
+        public const string StockVerification = "stock-verification";
     }
 
     internal static class ReportFilterKeys
@@ -37,6 +48,29 @@ namespace KicsitLibrary.Reports.Providers
         public const string PaymentStatus = "PaymentStatus";
         public const string Channel = "Channel";
         public const string NotificationType = "NotificationType";
+        public const string Program = "Program";
+        public const string Batch = "Batch";
+        public const string ClearanceStatus = "ClearanceStatus";
+        public const string PendingOnly = "PendingOnly";
+        public const string RegistrationNumber = "RegistrationNumber";
+        public const string PersonnelNumber = "PersonnelNumber";
+        public const string FacultyType = "FacultyType";
+        public const string ExpiredOnly = "ExpiredOnly";
+        public const string EntityName = "EntityName";
+        public const string DeletedBy = "DeletedBy";
+        public const string Organization = "Organization";
+        public const string PendingFollowUpOnly = "PendingFollowUpOnly";
+        public const string AuditType = "AuditType";
+        public const string FinancialYear = "FinancialYear";
+        public const string PendingActionOnly = "PendingActionOnly";
+        public const string ItemType = "ItemType";
+        public const string Condition = "Condition";
+        public const string Location = "Location";
+        public const string MaterialType = "MaterialType";
+        public const string PurchaseYear = "PurchaseYear";
+        public const string ReceivedDateRange = "ReceivedDateRange";
+        public const string Rack = "Rack";
+        public const string Shelf = "Shelf";
     }
 
     public abstract class ReportDataProviderBase : IReportDataProvider
@@ -125,6 +159,30 @@ namespace KicsitLibrary.Reports.Providers
                 Type = type,
                 Options = options
             };
+        }
+
+        protected static bool Matches(string? filter, params string?[] values)
+        {
+            return string.IsNullOrWhiteSpace(filter) ||
+                values.Any(value =>
+                    value?.Contains(filter, StringComparison.OrdinalIgnoreCase) == true);
+        }
+
+        protected static bool MatchesExact(string? filter, string? value)
+        {
+            return string.IsNullOrWhiteSpace(filter) ||
+                string.Equals(filter, value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        protected static DateTime ToLocalDate(DateTime value)
+        {
+            var utc = value.Kind switch
+            {
+                DateTimeKind.Utc => value,
+                DateTimeKind.Local => value.ToUniversalTime(),
+                _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+            };
+            return utc.ToLocalTime().Date;
         }
     }
 

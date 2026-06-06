@@ -24,6 +24,7 @@ namespace KicsitLibrary.Reports.Models
         public string Key { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string Category { get; set; } = "Other Reports";
         public IReadOnlyList<ReportColumn> Columns { get; set; } = [];
         public IReadOnlyList<ReportFilter> Filters { get; set; } = [];
     }
