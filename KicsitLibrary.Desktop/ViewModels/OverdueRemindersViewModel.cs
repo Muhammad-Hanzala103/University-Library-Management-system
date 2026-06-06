@@ -14,6 +14,7 @@ namespace KicsitLibrary.Desktop.ViewModels
     public partial class OverdueRemindersViewModel : ObservableObject
     {
         private readonly IOverdueService _overdueService;
+        private readonly INotificationService _notificationService;
         private readonly IAuthenticationService _authenticationService;
         private readonly IActivityLogService _logService;
         private readonly IRecordDetailsService _recordDetailsService;
@@ -37,11 +38,13 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         public OverdueRemindersViewModel(
             IOverdueService overdueService,
+            INotificationService notificationService,
             IAuthenticationService authenticationService,
             IActivityLogService logService,
             IRecordDetailsService recordDetailsService)
         {
             _overdueService = overdueService ?? throw new ArgumentNullException(nameof(overdueService));
+            _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
             _recordDetailsService = recordDetailsService ?? throw new ArgumentNullException(nameof(recordDetailsService));
@@ -177,7 +180,10 @@ namespace KicsitLibrary.Desktop.ViewModels
             try
             {
                 var result = await _overdueService.ProcessOverdueNotificationsAsync(CurrentUserId);
-                StatusMessage = $"{actionLabel}: {result.Message}";
+                var pendingEmails = await _notificationService.GetPendingEmailNotificationsAsync();
+                StatusMessage =
+                    $"{actionLabel}: {result.Message} " +
+                    $"{pendingEmails.Count} email record(s) are pending manual delivery in Notification Center.";
                 await RefreshAsync();
             }
             catch (Exception ex)

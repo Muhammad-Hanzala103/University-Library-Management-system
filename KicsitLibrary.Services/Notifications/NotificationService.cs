@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
@@ -15,13 +16,19 @@ namespace KicsitLibrary.Services.Notifications
     {
         private readonly KicsitLibraryDbContext _context;
         private readonly IActivityLogService _logService;
+        private readonly IEmailTransport _emailTransport;
+        private readonly IEmailSettingsService _emailSettingsService;
 
         public NotificationService(
             KicsitLibraryDbContext context,
-            IActivityLogService logService)
+            IActivityLogService logService,
+            IEmailTransport emailTransport,
+            IEmailSettingsService emailSettingsService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
+            _emailTransport = emailTransport ?? throw new ArgumentNullException(nameof(emailTransport));
+            _emailSettingsService = emailSettingsService ?? throw new ArgumentNullException(nameof(emailSettingsService));
         }
 
         public async Task<NotificationCreateResult> CreateNotificationAsync(
@@ -104,7 +111,76 @@ namespace KicsitLibrary.Services.Notifications
                 .ToListAsync();
         }
 
-        public async Task<NotificationRecord> RetryNotificationRecordAsync(
+        public async Task<IReadOnlyList<NotificationRecord>> GetPendingEmailNotificationsAsync()
+        {
+            return await _context.NotificationRecords
+                .Where(notification =>
+                    notification.Channel == "Email" &&
+                    notification.Status == NotificationStatus.Pending)
+                .OrderBy(notification => notification.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<NotificationDeliveryResult> SendNotificationAsync(
+            int notificationId,
+            int? userId = null)
+        {
+            var notification = await _context.NotificationRecords
+                .FirstOrDefaultAsync(record => record.Id == notificationId);
+            if (notification == null)
+            {
+                return new NotificationDeliveryResult
+                {
+                    NotificationId = notificationId,
+                    Message = "Notification record not found."
+                };
+            }
+
+            return await DeliverEmailAsync(notification, userId);
+        }
+
+        public async Task<NotificationBatchDeliveryResult> SendPendingEmailNotificationsAsync(
+            int? userId = null)
+        {
+            var result = new NotificationBatchDeliveryResult();
+            var pendingIds = await _context.NotificationRecords
+                .Where(notification =>
+                    notification.Channel == "Email" &&
+                    notification.Status == NotificationStatus.Pending)
+                .OrderBy(notification => notification.CreatedAt)
+                .Select(notification => notification.Id)
+                .ToListAsync();
+
+            foreach (var notificationId in pendingIds)
+            {
+                var delivery = await SendNotificationAsync(notificationId, userId);
+                result.ProcessedCount++;
+                if (delivery.Succeeded)
+                {
+                    result.SentCount++;
+                }
+                else if (delivery.Attempted)
+                {
+                    result.FailedCount++;
+                }
+                else
+                {
+                    result.SkippedCount++;
+                }
+            }
+
+            result.Message =
+                $"Processed {result.ProcessedCount}; sent {result.SentCount}; " +
+                $"failed {result.FailedCount}; skipped {result.SkippedCount}.";
+            await _logService.LogActivityAsync(
+                "Pending Email Processing Completed",
+                result.Message,
+                userId);
+
+            return result;
+        }
+
+        public async Task<NotificationDeliveryResult> RetryNotificationRecordAsync(
             int notificationId,
             int? userId = null)
         {
@@ -112,44 +188,188 @@ namespace KicsitLibrary.Services.Notifications
                 .FirstOrDefaultAsync(nr => nr.Id == notificationId);
             if (notification == null)
             {
-                throw new InvalidOperationException("Notification record not found.");
+                return new NotificationDeliveryResult
+                {
+                    NotificationId = notificationId,
+                    Message = "Notification record not found."
+                };
             }
 
-            var maxRetryCount = await GetIntegerSettingAsync("MaxNotificationRetryCount", 3);
-            if (notification.RetryCount >= maxRetryCount)
+            if (!notification.Channel.Equals("Email", StringComparison.OrdinalIgnoreCase))
             {
-                notification.Status = NotificationStatus.Failed;
-                notification.FailureReason = $"Maximum retry count of {maxRetryCount} reached.";
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    "Only email notification records can be retried through SMTP.",
+                    userId,
+                    keepPending: notification.Status == NotificationStatus.Pending);
+            }
+
+            return await DeliverEmailAsync(notification, userId);
+        }
+
+        public Task<EmailSettingsValidationResult> ValidateEmailSettingsAsync()
+        {
+            return _emailSettingsService.ValidateAsync();
+        }
+
+        private async Task<NotificationDeliveryResult> DeliverEmailAsync(
+            NotificationRecord notification,
+            int? userId)
+        {
+            if (!notification.Channel.Equals("Email", StringComparison.OrdinalIgnoreCase))
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    "Only email notification records can be sent through SMTP.",
+                    userId,
+                    keepPending: notification.Status == NotificationStatus.Pending);
+            }
+
+            if (notification.Status == NotificationStatus.Sent)
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    "Notification has already been sent.",
+                    userId,
+                    keepPending: false);
+            }
+
+            if (string.IsNullOrWhiteSpace(notification.RecipientEmail))
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    "Recipient email is missing.",
+                    userId,
+                    keepPending: false);
+            }
+
+            var validation = await _emailSettingsService.ValidateAsync();
+            if (!validation.IsEnabled)
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    validation.Message,
+                    userId,
+                    keepPending: true);
+            }
+
+            if (!validation.IsValid)
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    validation.Message,
+                    userId,
+                    keepPending: false);
+            }
+
+            var options = validation.Options;
+            if (notification.RetryCount >= options.MaxNotificationRetryCount)
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    $"Maximum retry count of {options.MaxNotificationRetryCount} reached.",
+                    userId,
+                    keepPending: false);
+            }
+
+            notification.RetryCount++;
+            notification.LastAttemptAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            EmailSendResult sendResult;
+            try
+            {
+                sendResult = await _emailTransport.SendAsync(
+                    new EmailMessage
+                    {
+                        ToEmail = notification.RecipientEmail,
+                        ToName = notification.RecipientName,
+                        Subject = notification.Subject,
+                        PlainTextBody = notification.Message,
+                        FromEmail = options.FromEmail,
+                        FromName = options.FromName
+                    },
+                    options,
+                    CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                sendResult = new EmailSendResult
+                {
+                    Succeeded = false,
+                    FailureReason = ex.Message
+                };
+            }
+
+            if (sendResult.Succeeded)
+            {
+                notification.Status = NotificationStatus.Sent;
+                notification.SentAt = sendResult.SentAt ?? DateTime.UtcNow;
+                notification.FailureReason = null;
             }
             else
             {
-                notification.RetryCount++;
-                notification.LastAttemptAt = DateTime.UtcNow;
-
-                if (notification.Channel.Equals("Email", StringComparison.OrdinalIgnoreCase) &&
-                    string.IsNullOrWhiteSpace(notification.RecipientEmail))
-                {
-                    notification.Status = NotificationStatus.Failed;
-                    notification.FailureReason = "Member email is missing.";
-                }
-                else
-                {
-                    notification.Status = NotificationStatus.Pending;
-                    notification.FailureReason = notification.Channel.Equals(
-                        "Email",
-                        StringComparison.OrdinalIgnoreCase)
-                        ? "Email delivery pending."
-                        : "In-app delivery pending.";
-                }
+                notification.Status = NotificationStatus.Failed;
+                notification.SentAt = null;
+                notification.FailureReason = SanitizeFailureReason(
+                    string.IsNullOrWhiteSpace(sendResult.FailureReason)
+                        ? "Email transport failed without a reason."
+                        : sendResult.FailureReason,
+                    options.Password);
             }
 
             await _context.SaveChangesAsync();
+            var activityDetail = sendResult.Succeeded
+                ? $"Email notification {notification.Id} sent to {notification.RecipientCode}."
+                : $"Email notification {notification.Id} failed for {notification.RecipientCode}: {notification.FailureReason}";
             await _logService.LogActivityAsync(
-                "Notification Retry",
-                $"Notification {notification.Id} retry updated to attempt {notification.RetryCount}; no external delivery was attempted.",
+                sendResult.Succeeded ? "Email Delivery Succeeded" : "Email Delivery Failed",
+                activityDetail,
                 userId);
 
-            return notification;
+            return new NotificationDeliveryResult
+            {
+                NotificationId = notification.Id,
+                Succeeded = sendResult.Succeeded,
+                Attempted = true,
+                Message = sendResult.Succeeded
+                    ? "Email sent successfully."
+                    : notification.FailureReason ?? "Email delivery failed.",
+                Notification = notification
+            };
+        }
+
+        private async Task<NotificationDeliveryResult> RecordBlockedDeliveryAsync(
+            NotificationRecord notification,
+            string reason,
+            int? userId,
+            bool keepPending)
+        {
+            notification.Status = keepPending
+                ? NotificationStatus.Pending
+                : NotificationStatus.Failed;
+            notification.FailureReason = reason;
+            await _context.SaveChangesAsync();
+            await _logService.LogActivityAsync(
+                "Email Delivery Blocked",
+                $"Notification {notification.Id} was not sent: {reason}",
+                userId);
+
+            return new NotificationDeliveryResult
+            {
+                NotificationId = notification.Id,
+                Succeeded = false,
+                Attempted = false,
+                Message = reason,
+                Notification = notification
+            };
+        }
+
+        private static string SanitizeFailureReason(string reason, string password)
+        {
+            return string.IsNullOrEmpty(password)
+                ? reason
+                : reason.Replace(password, "[REDACTED]", StringComparison.Ordinal);
         }
 
         public async Task<NotificationRecord> MarkAsReadAsync(
@@ -228,15 +448,6 @@ namespace KicsitLibrary.Services.Notifications
                 CanCreate = true,
                 LastNotification = lastNotification
             };
-        }
-
-        private async Task<int> GetIntegerSettingAsync(string key, int defaultValue)
-        {
-            var value = await _context.SystemSettings
-                .Where(setting => setting.Key == key)
-                .Select(setting => setting.Value)
-                .FirstOrDefaultAsync();
-            return int.TryParse(value, out var parsed) && parsed > 0 ? parsed : defaultValue;
         }
 
         private static string NormalizeChannel(string channel)

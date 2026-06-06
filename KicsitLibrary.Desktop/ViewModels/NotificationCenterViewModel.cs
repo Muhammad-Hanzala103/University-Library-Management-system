@@ -35,6 +35,10 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty] private string _statusMessage = string.Empty;
         [ObservableProperty] private string _errorMessage = string.Empty;
         [ObservableProperty] private bool _isBusy;
+        [ObservableProperty] private int _totalPending;
+        [ObservableProperty] private int _totalSent;
+        [ObservableProperty] private int _totalFailed;
+        [ObservableProperty] private int _totalRetried;
 
         public NotificationCenterViewModel(
             INotificationService notificationService,
@@ -64,6 +68,7 @@ namespace KicsitLibrary.Desktop.ViewModels
             {
                 _allNotifications = (await _notificationService.GetNotificationsAsync()).ToList();
                 ApplyFilters();
+                UpdateCounts();
                 StatusMessage = $"Loaded {_allNotifications.Count} notification record(s).";
                 await _logService.LogActivityAsync(
                     "Notification Center Refreshed",
@@ -81,6 +86,22 @@ namespace KicsitLibrary.Desktop.ViewModels
         }
 
         [RelayCommand]
+        private async Task SendSelectedEmailAsync()
+        {
+            if (SelectedNotification == null)
+            {
+                ErrorMessage = "Select an email notification record first.";
+                return;
+            }
+
+            await RunDeliveryOperationAsync(
+                () => _notificationService.SendNotificationAsync(
+                    SelectedNotification.Id,
+                    CurrentUserId),
+                "Send selected email");
+        }
+
+        [RelayCommand]
         private async Task RetrySelectedAsync()
         {
             if (SelectedNotification == null)
@@ -89,20 +110,51 @@ namespace KicsitLibrary.Desktop.ViewModels
                 return;
             }
 
+            await RunDeliveryOperationAsync(
+                () => _notificationService.RetryNotificationRecordAsync(
+                    SelectedNotification.Id,
+                    CurrentUserId),
+                "Retry selected email");
+        }
+
+        [RelayCommand]
+        private async Task SendAllPendingEmailsAsync()
+        {
             IsBusy = true;
             ErrorMessage = string.Empty;
             try
             {
-                var updated = await _notificationService.RetryNotificationRecordAsync(
-                    SelectedNotification.Id,
-                    CurrentUserId);
-                StatusMessage =
-                    $"Retry recorded for notification {updated.Id}. No external delivery was attempted.";
+                var result = await _notificationService.SendPendingEmailNotificationsAsync(CurrentUserId);
+                StatusMessage = result.Message;
                 await RefreshAsync();
             }
             catch (Exception ex)
             {
-                ErrorMessage = $"Retry failed: {ex.Message}";
+                ErrorMessage = $"Pending email processing failed: {ex.Message}";
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task ValidateEmailSettingsAsync()
+        {
+            IsBusy = true;
+            ErrorMessage = string.Empty;
+            try
+            {
+                var result = await _notificationService.ValidateEmailSettingsAsync();
+                StatusMessage = result.Message;
+                if (!result.IsValid)
+                {
+                    ErrorMessage = result.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Email settings validation failed: {ex.Message}";
             }
             finally
             {
@@ -202,6 +254,43 @@ namespace KicsitLibrary.Desktop.ViewModels
             }
 
             Notifications = new ObservableCollection<NotificationRecord>(query);
+        }
+
+        private async Task RunDeliveryOperationAsync(
+            Func<Task<Core.Models.NotificationDeliveryResult>> operation,
+            string operationName)
+        {
+            IsBusy = true;
+            ErrorMessage = string.Empty;
+            try
+            {
+                var result = await operation();
+                StatusMessage = $"{operationName}: {result.Message}";
+                if (!result.Succeeded)
+                {
+                    ErrorMessage = result.Message;
+                }
+                await RefreshAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"{operationName} failed: {ex.Message}";
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private void UpdateCounts()
+        {
+            TotalPending = _allNotifications.Count(notification =>
+                notification.Status == Core.Enums.NotificationStatus.Pending);
+            TotalSent = _allNotifications.Count(notification =>
+                notification.Status == Core.Enums.NotificationStatus.Sent);
+            TotalFailed = _allNotifications.Count(notification =>
+                notification.Status == Core.Enums.NotificationStatus.Failed);
+            TotalRetried = _allNotifications.Count(notification => notification.RetryCount > 0);
         }
 
         private int? CurrentUserId => _authenticationService.CurrentUser?.Id;
