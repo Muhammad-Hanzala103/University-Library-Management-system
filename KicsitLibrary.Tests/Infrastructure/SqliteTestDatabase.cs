@@ -147,6 +147,73 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
         return issue;
     }
 
+    public async Task ConfigureValidEmailSettingsAsync(
+        bool enabled = true,
+        int maxRetryCount = 3,
+        string password = "development-test-password")
+    {
+        var values = new Dictionary<string, string>
+        {
+            ["EmailNotificationEnabled"] = enabled.ToString(),
+            ["MaxNotificationRetryCount"] = maxRetryCount.ToString(),
+            ["SmtpHost"] = "smtp.test.invalid",
+            ["SmtpPort"] = "587",
+            ["SmtpUseSsl"] = "True",
+            ["SmtpUser"] = "test-user",
+            ["SmtpPassword"] = password,
+            ["SmtpFromEmail"] = "library@test.invalid",
+            ["SmtpFromName"] = "KICSIT Library"
+        };
+
+        foreach (var value in values)
+        {
+            var setting = await Context.SystemSettings
+                .FirstOrDefaultAsync(item => item.Key == value.Key);
+            if (setting == null)
+            {
+                Context.SystemSettings.Add(new SystemSettings
+                {
+                    Key = value.Key,
+                    Value = value.Value,
+                    Group = "Notifications"
+                });
+            }
+            else
+            {
+                setting.Value = value.Value;
+            }
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    public async Task<NotificationRecord> AddNotificationAsync(
+        TestLibraryData data,
+        string channel = "Email",
+        NotificationStatus status = NotificationStatus.Pending,
+        string? recipientEmail = "student@test.invalid")
+    {
+        var notification = new NotificationRecord
+        {
+            MemberType = MemberType.Student,
+            StudentId = data.Student.Id,
+            NotificationType = NotificationType.OverdueReminder,
+            Channel = channel,
+            RecipientName = data.Student.Name,
+            RecipientCode = data.Student.RegistrationNumber,
+            RecipientEmail = recipientEmail,
+            Subject = "Test notification",
+            Message = "Test notification body",
+            Status = status,
+            FailureReason = status == NotificationStatus.Pending
+                ? "Email delivery pending."
+                : null
+        };
+        Context.NotificationRecords.Add(notification);
+        await Context.SaveChangesAsync();
+        return notification;
+    }
+
     public async ValueTask DisposeAsync()
     {
         await Context.DisposeAsync();

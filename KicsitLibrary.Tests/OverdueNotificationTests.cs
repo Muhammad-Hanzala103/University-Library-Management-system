@@ -174,20 +174,25 @@ public class OverdueNotificationTests
         await services.Overdue.ProcessOverdueNotificationsAsync(data.User.Id);
         var email = await database.Context.NotificationRecords
             .SingleAsync(record => record.Channel == "Email");
+        await database.ConfigureValidEmailSettingsAsync();
 
-        var updated = await services.Notification.RetryNotificationRecordAsync(email.Id, data.User.Id);
+        var result = await services.Notification.RetryNotificationRecordAsync(email.Id, data.User.Id);
 
-        Assert.Equal(1, updated.RetryCount);
-        Assert.Equal(NotificationStatus.Pending, updated.Status);
-        Assert.Equal("Email delivery pending.", updated.FailureReason);
-        Assert.Null(updated.SentAt);
+        Assert.True(result.Succeeded);
+        Assert.Equal(1, result.Notification!.RetryCount);
+        Assert.Equal(NotificationStatus.Sent, result.Notification.Status);
+        Assert.NotNull(result.Notification.SentAt);
     }
 
     private static (OverdueService Overdue, NotificationService Notification) CreateServices(
         SqliteTestDatabase database)
     {
         var logService = new ActivityLogService(new Repository<ActivityLog>(database.Context));
-        var notificationService = new NotificationService(database.Context, logService);
+        var notificationService = new NotificationService(
+            database.Context,
+            logService,
+            new FakeEmailTransport(),
+            new EmailSettingsService(database.Context));
         return (
             new OverdueService(database.Context, notificationService, logService),
             notificationService);

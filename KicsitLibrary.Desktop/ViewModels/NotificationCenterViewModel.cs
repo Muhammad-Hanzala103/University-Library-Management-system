@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KicsitLibrary.Core.Entities;
+using KicsitLibrary.Core.Enums;
 using KicsitLibrary.Core.Interfaces;
+using KicsitLibrary.Core.Models;
 
 namespace KicsitLibrary.Desktop.ViewModels
 {
@@ -125,8 +127,8 @@ namespace KicsitLibrary.Desktop.ViewModels
             try
             {
                 var result = await _notificationService.SendPendingEmailNotificationsAsync(CurrentUserId);
-                StatusMessage = result.Message;
                 await RefreshAsync();
+                StatusMessage = result.Message;
             }
             catch (Exception ex)
             {
@@ -257,7 +259,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         }
 
         private async Task RunDeliveryOperationAsync(
-            Func<Task<Core.Models.NotificationDeliveryResult>> operation,
+            Func<Task<NotificationDeliveryResult>> operation,
             string operationName)
         {
             IsBusy = true;
@@ -265,12 +267,12 @@ namespace KicsitLibrary.Desktop.ViewModels
             try
             {
                 var result = await operation();
+                await RefreshAsync();
                 StatusMessage = $"{operationName}: {result.Message}";
                 if (!result.Succeeded)
                 {
                     ErrorMessage = result.Message;
                 }
-                await RefreshAsync();
             }
             catch (Exception ex)
             {
@@ -285,11 +287,11 @@ namespace KicsitLibrary.Desktop.ViewModels
         private void UpdateCounts()
         {
             TotalPending = _allNotifications.Count(notification =>
-                notification.Status == Core.Enums.NotificationStatus.Pending);
+                notification.Status == NotificationStatus.Pending);
             TotalSent = _allNotifications.Count(notification =>
-                notification.Status == Core.Enums.NotificationStatus.Sent);
+                notification.Status == NotificationStatus.Sent);
             TotalFailed = _allNotifications.Count(notification =>
-                notification.Status == Core.Enums.NotificationStatus.Failed);
+                notification.Status == NotificationStatus.Failed);
             TotalRetried = _allNotifications.Count(notification => notification.RetryCount > 0);
         }
 
