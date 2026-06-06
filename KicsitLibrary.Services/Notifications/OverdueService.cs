@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
@@ -30,7 +31,9 @@ namespace KicsitLibrary.Services.Notifications
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
         }
 
-        public async Task<IReadOnlyList<OverdueItem>> GetOverdueItemsAsync(DateTime? localDate = null)
+        public async Task<IReadOnlyList<OverdueItem>> GetOverdueItemsAsync(
+            DateTime? localDate = null,
+            CancellationToken cancellationToken = default)
         {
             var localToday = (localDate ?? DateTime.Now).Date;
             var overdueCutoffUtc = TimeZoneInfo.ConvertTimeToUtc(
@@ -48,7 +51,7 @@ namespace KicsitLibrary.Services.Notifications
                     ir.ReceiveRecord == null &&
                     ir.ExpectedReturnDate < overdueCutoffUtc)
                 .OrderBy(ir => ir.ExpectedReturnDate)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             if (issues.Count == 0)
             {
@@ -63,7 +66,7 @@ namespace KicsitLibrary.Services.Notifications
                     issueIds.Contains(nr.IssueRecordId.Value) &&
                     nr.NotificationType == NotificationType.OverdueReminder)
                 .OrderByDescending(nr => nr.CreatedAt)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             var cooldownHours = await GetCooldownHoursAsync();
 
             var results = new List<OverdueItem>(issues.Count);
@@ -128,7 +131,9 @@ namespace KicsitLibrary.Services.Notifications
             return results;
         }
 
-        public async Task<OverdueProcessingResult> ProcessOverdueNotificationsAsync(int? userId = null)
+        public async Task<OverdueProcessingResult> ProcessOverdueNotificationsAsync(
+            int? userId = null,
+            CancellationToken cancellationToken = default)
         {
             var result = new OverdueProcessingResult();
             await _logService.LogActivityAsync(
@@ -138,10 +143,15 @@ namespace KicsitLibrary.Services.Notifications
 
             try
             {
-                var items = await GetOverdueItemsAsync();
+                var items = await GetOverdueItemsAsync(
+                    cancellationToken: cancellationToken);
                 foreach (var item in items)
                 {
-                    result.Add(await CreateReminderForItemAsync(item, userId));
+                    cancellationToken.ThrowIfCancellationRequested();
+                    result.Add(await CreateReminderForItemAsync(
+                        item,
+                        userId,
+                        cancellationToken));
                 }
 
                 result.Message =
@@ -152,6 +162,14 @@ namespace KicsitLibrary.Services.Notifications
                     result.Message,
                     userId);
                 return result;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex) when (SqliteRetryPolicy.IsTransient(ex))
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -181,7 +199,10 @@ namespace KicsitLibrary.Services.Notifications
                 };
             }
 
-            return await CreateReminderForItemAsync(item, userId);
+            return await CreateReminderForItemAsync(
+                item,
+                userId,
+                CancellationToken.None);
         }
 
         public async Task<NotificationRecord?> GetLastReminderAsync(int issueRecordId)
@@ -247,13 +268,15 @@ namespace KicsitLibrary.Services.Notifications
 
         private async Task<OverdueProcessingResult> CreateReminderForItemAsync(
             OverdueItem item,
-            int? userId)
+            int? userId,
+            CancellationToken cancellationToken)
         {
             var result = new OverdueProcessingResult { ProcessedCount = 1 };
             var cooldownHours = await GetCooldownHoursAsync();
 
             foreach (var channel in ReminderChannels)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
                     var eligibility = await _notificationService.CanCreateNotificationAsync(
@@ -302,6 +325,14 @@ namespace KicsitLibrary.Services.Notifications
                         "Overdue Reminder Created",
                         $"{channel} reminder created for issue {item.IssueRecordId} and member {item.MemberCode}.",
                         userId);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex) when (SqliteRetryPolicy.IsTransient(ex))
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {

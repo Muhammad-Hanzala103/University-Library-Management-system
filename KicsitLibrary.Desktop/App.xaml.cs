@@ -75,6 +75,9 @@ namespace KicsitLibrary.Desktop
                     services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
                     services.AddScoped<INotificationService, NotificationService>();
                     services.AddScoped<IOverdueService, OverdueService>();
+                    services.AddSingleton<IOverdueSchedulerService, OverdueSchedulerService>();
+                    services.AddSingleton<OverdueSchedulerStartupSignal>();
+                    services.AddHostedService<OverdueSchedulerBackgroundService>();
                     services.AddScoped<IRecordDetailsService, RecordDetailsService>();
 
                     // Register Shell Window and ViewModels
@@ -130,6 +133,9 @@ namespace KicsitLibrary.Desktop
                 }
                 await DatabaseCompatibilityInitializer.ApplyAsync(dbContext);
                 await DbSeeder.SeedAsync(dbContext, passwordHasher);
+                AppHost.Services
+                    .GetRequiredService<OverdueSchedulerStartupSignal>()
+                    .MarkReady();
             }
             catch (Exception ex)
             {
@@ -190,7 +196,7 @@ namespace KicsitLibrary.Desktop
         {
             if (AppHost != null)
             {
-                await AppHost.StopAsync();
+                await AppHost.StopAsync(TimeSpan.FromSeconds(10));
                 AppHost.Dispose();
             }
             base.OnExit(e);

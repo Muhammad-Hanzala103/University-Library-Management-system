@@ -12,6 +12,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -44,6 +45,58 @@
         </Border>
 
         <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,0,0,12" Padding="12">
+            <StackPanel>
+                <DockPanel Margin="0,0,0,10">
+                    <TextBlock Text="SCHEDULER STATUS" FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryBrush}"
+                               VerticalAlignment="Center"/>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button Content="Run Scheduler Now" Style="{StaticResource PrimaryButton}"
+                                Command="{Binding RunSchedulerNowCommand}" Margin="0,0,8,0"/>
+                        <Button Content="Refresh Scheduler Status" Style="{StaticResource SecondaryButton}"
+                                Command="{Binding RefreshSchedulerStatusCommand}"/>
+                    </StackPanel>
+                </DockPanel>
+                <WrapPanel>
+                    <StackPanel Width="135" Margin="0,0,10,8">
+                        <TextBlock Text="Enabled" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SchedulerEnabled}"/>
+                    </StackPanel>
+                    <StackPanel Width="135" Margin="0,0,10,8">
+                        <TextBlock Text="Run On Startup" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SchedulerRunOnStartup}"/>
+                    </StackPanel>
+                    <StackPanel Width="135" Margin="0,0,10,8">
+                        <TextBlock Text="Interval Minutes" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SchedulerIntervalMinutes}"/>
+                    </StackPanel>
+                    <StackPanel Width="170" Margin="0,0,10,8">
+                        <TextBlock Text="Automatic Email Sending" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SchedulerSendPendingEmails}"/>
+                    </StackPanel>
+                    <StackPanel Width="130" Margin="0,0,10,8">
+                        <TextBlock Text="Currently Running" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SchedulerIsRunning}"/>
+                    </StackPanel>
+                    <StackPanel Width="180" Margin="0,0,10,8">
+                        <TextBlock Text="Last Run" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SchedulerLastRunAt, StringFormat='{}{0:dd-MMM-yyyy HH:mm:ss}'}"/>
+                    </StackPanel>
+                    <StackPanel Width="180" Margin="0,0,10,8">
+                        <TextBlock Text="Last Success" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SchedulerLastSuccessAt, StringFormat='{}{0:dd-MMM-yyyy HH:mm:ss}'}"/>
+                    </StackPanel>
+                    <StackPanel Width="180" Margin="0,0,10,8">
+                        <TextBlock Text="Last Failure" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SchedulerLastFailureAt, StringFormat='{}{0:dd-MMM-yyyy HH:mm:ss}'}"/>
+                    </StackPanel>
+                </WrapPanel>
+                <TextBlock Text="{Binding SchedulerLastMessage}" TextWrapping="Wrap"
+                           Foreground="{StaticResource TextMutedBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3" Style="{StaticResource CardStyle}" Margin="0,0,0,12" Padding="12">
             <WrapPanel>
                 <StackPanel Width="210" Margin="0,0,10,8">
                     <TextBlock Text="Search" FontSize="11" FontWeight="SemiBold"/>
@@ -83,7 +136,7 @@
             </WrapPanel>
         </Border>
 
-        <Border Grid.Row="3" Style="{StaticResource CardStyle}" Padding="0">
+        <Border Grid.Row="4" Style="{StaticResource CardStyle}" Padding="0">
             <DataGrid ItemsSource="{Binding OverdueItems}"
                       SelectedItem="{Binding SelectedItem}"
                       IsReadOnly="True"
@@ -108,7 +161,7 @@
             </DataGrid>
         </Border>
 
-        <StackPanel Grid.Row="4" Margin="0,10,0,0">
+        <StackPanel Grid.Row="5" Margin="0,10,0,0">
             <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource SuccessBrush}"
                        FontWeight="SemiBold" TextWrapping="Wrap"/>
             <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}"

@@ -14,6 +14,7 @@ namespace KicsitLibrary.Desktop.ViewModels
     public partial class OverdueRemindersViewModel : ObservableObject
     {
         private readonly IOverdueService _overdueService;
+        private readonly IOverdueSchedulerService _schedulerService;
         private readonly INotificationService _notificationService;
         private readonly IAuthenticationService _authenticationService;
         private readonly IActivityLogService _logService;
@@ -35,15 +36,26 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty] private string _statusMessage = string.Empty;
         [ObservableProperty] private string _errorMessage = string.Empty;
         [ObservableProperty] private bool _isBusy;
+        [ObservableProperty] private bool _schedulerEnabled;
+        [ObservableProperty] private bool _schedulerRunOnStartup;
+        [ObservableProperty] private int _schedulerIntervalMinutes;
+        [ObservableProperty] private bool _schedulerSendPendingEmails;
+        [ObservableProperty] private DateTime? _schedulerLastRunAt;
+        [ObservableProperty] private DateTime? _schedulerLastSuccessAt;
+        [ObservableProperty] private DateTime? _schedulerLastFailureAt;
+        [ObservableProperty] private string _schedulerLastMessage = string.Empty;
+        [ObservableProperty] private bool _schedulerIsRunning;
 
         public OverdueRemindersViewModel(
             IOverdueService overdueService,
+            IOverdueSchedulerService schedulerService,
             INotificationService notificationService,
             IAuthenticationService authenticationService,
             IActivityLogService logService,
             IRecordDetailsService recordDetailsService)
         {
             _overdueService = overdueService ?? throw new ArgumentNullException(nameof(overdueService));
+            _schedulerService = schedulerService ?? throw new ArgumentNullException(nameof(schedulerService));
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
@@ -68,6 +80,7 @@ namespace KicsitLibrary.Desktop.ViewModels
             {
                 _allItems = (await _overdueService.GetOverdueItemsAsync()).ToList();
                 ApplyFilters();
+                await LoadSchedulerStatusAsync();
                 StatusMessage = $"Loaded {_allItems.Count} active overdue item(s).";
                 await _logService.LogActivityAsync(
                     "Overdue View Refreshed",
@@ -87,13 +100,39 @@ namespace KicsitLibrary.Desktop.ViewModels
         [RelayCommand]
         private async Task RunOverdueCheckAsync()
         {
-            await ProcessAllAsync("Overdue check");
+            await ProcessAllAsync("Overdue check", scheduledRun: false);
         }
 
         [RelayCommand]
         private async Task SendRemindersForAllEligibleAsync()
         {
-            await ProcessAllAsync("Eligible reminder processing");
+            await ProcessAllAsync("Eligible reminder processing", scheduledRun: false);
+        }
+
+        [RelayCommand]
+        private async Task RunSchedulerNowAsync()
+        {
+            await ProcessAllAsync("Scheduler run", scheduledRun: true);
+        }
+
+        [RelayCommand]
+        private async Task RefreshSchedulerStatusAsync()
+        {
+            IsBusy = true;
+            ErrorMessage = string.Empty;
+            try
+            {
+                await LoadSchedulerStatusAsync();
+                StatusMessage = "Scheduler status refreshed.";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Unable to refresh scheduler status: {ex.Message}";
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
@@ -173,18 +212,26 @@ namespace KicsitLibrary.Desktop.ViewModels
             }
         }
 
-        private async Task ProcessAllAsync(string actionLabel)
+        private async Task ProcessAllAsync(
+            string actionLabel,
+            bool scheduledRun)
         {
             IsBusy = true;
             ErrorMessage = string.Empty;
             try
             {
-                var result = await _overdueService.ProcessOverdueNotificationsAsync(CurrentUserId);
+                var result = scheduledRun
+                    ? await _schedulerService.RunAsync(CurrentUserId)
+                    : await _schedulerService.RunManualOverdueCheckAsync(CurrentUserId);
                 var pendingEmails = await _notificationService.GetPendingEmailNotificationsAsync();
                 await RefreshAsync();
                 StatusMessage =
                     $"{actionLabel}: {result.Message} " +
                     $"{pendingEmails.Count} email record(s) are pending manual delivery in Notification Center.";
+                if (!result.Succeeded && !result.WasSkipped)
+                {
+                    ErrorMessage = result.FailureReason ?? result.Message;
+                }
             }
             catch (Exception ex)
             {
@@ -194,6 +241,20 @@ namespace KicsitLibrary.Desktop.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        private async Task LoadSchedulerStatusAsync()
+        {
+            var status = await _schedulerService.GetStatusAsync();
+            SchedulerEnabled = status.Enabled;
+            SchedulerRunOnStartup = status.RunOnStartup;
+            SchedulerIntervalMinutes = status.IntervalMinutes;
+            SchedulerSendPendingEmails = status.SendPendingEmails;
+            SchedulerLastRunAt = status.LastRunAt?.ToLocalTime();
+            SchedulerLastSuccessAt = status.LastSuccessAt?.ToLocalTime();
+            SchedulerLastFailureAt = status.LastFailureAt?.ToLocalTime();
+            SchedulerLastMessage = status.LastMessage;
+            SchedulerIsRunning = status.IsRunning;
         }
 
         private void ApplyFilters()

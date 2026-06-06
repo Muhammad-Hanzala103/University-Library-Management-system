@@ -209,3 +209,5 @@ C:\Project\University-Library-Management-system\KicsitLibrary.Tests\bin\Debug\ne
 C:\Project\University-Library-Management-system\KicsitLibrary.Tests\bin\Debug\net8.0\MimeKit.dll
 C:\Project\University-Library-Management-system\KicsitLibrary.Tests\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\Project\University-Library-Management-system\KicsitLibrary.Tests\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Tests\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Tests\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll

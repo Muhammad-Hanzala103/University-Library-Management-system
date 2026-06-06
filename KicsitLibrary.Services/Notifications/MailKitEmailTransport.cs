@@ -62,6 +62,10 @@ namespace KicsitLibrary.Services.Notifications
                     SentAt = DateTime.UtcNow
                 };
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 return new EmailSendResult

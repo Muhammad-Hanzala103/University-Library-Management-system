@@ -20,6 +20,7 @@ internal sealed class FakeEmailTransport : IEmailTransport
         EmailTransportOptions options,
         CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         SendCount++;
         Messages.Add(message);
 

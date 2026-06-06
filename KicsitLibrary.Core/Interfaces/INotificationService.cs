@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
@@ -16,8 +17,14 @@ namespace KicsitLibrary.Core.Interfaces
 
         Task<IReadOnlyList<NotificationRecord>> GetNotificationsAsync();
         Task<IReadOnlyList<NotificationRecord>> GetPendingEmailNotificationsAsync();
-        Task<NotificationDeliveryResult> SendNotificationAsync(int notificationId, int? userId = null);
-        Task<NotificationBatchDeliveryResult> SendPendingEmailNotificationsAsync(int? userId = null);
+        Task<NotificationDeliveryResult> SendNotificationAsync(
+            int notificationId,
+            int? userId = null,
+            CancellationToken cancellationToken = default);
+
+        Task<NotificationBatchDeliveryResult> SendPendingEmailNotificationsAsync(
+            int? userId = null,
+            CancellationToken cancellationToken = default);
         Task<NotificationDeliveryResult> RetryNotificationRecordAsync(int notificationId, int? userId = null);
         Task<EmailSettingsValidationResult> ValidateEmailSettingsAsync();
         Task<NotificationRecord> MarkAsReadAsync(int notificationId, int? userId = null);

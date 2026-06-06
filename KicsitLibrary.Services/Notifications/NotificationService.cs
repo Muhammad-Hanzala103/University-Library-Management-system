@@ -123,10 +123,13 @@ namespace KicsitLibrary.Services.Notifications
 
         public async Task<NotificationDeliveryResult> SendNotificationAsync(
             int notificationId,
-            int? userId = null)
+            int? userId = null,
+            CancellationToken cancellationToken = default)
         {
             var notification = await _context.NotificationRecords
-                .FirstOrDefaultAsync(record => record.Id == notificationId);
+                .FirstOrDefaultAsync(
+                    record => record.Id == notificationId,
+                    cancellationToken);
             if (notification == null)
             {
                 return new NotificationDeliveryResult
@@ -136,11 +139,15 @@ namespace KicsitLibrary.Services.Notifications
                 };
             }
 
-            return await DeliverEmailAsync(notification, userId);
+            return await DeliverEmailAsync(
+                notification,
+                userId,
+                cancellationToken);
         }
 
         public async Task<NotificationBatchDeliveryResult> SendPendingEmailNotificationsAsync(
-            int? userId = null)
+            int? userId = null,
+            CancellationToken cancellationToken = default)
         {
             var result = new NotificationBatchDeliveryResult();
             var pendingIds = await _context.NotificationRecords
@@ -149,11 +156,15 @@ namespace KicsitLibrary.Services.Notifications
                     notification.Status == NotificationStatus.Pending)
                 .OrderBy(notification => notification.CreatedAt)
                 .Select(notification => notification.Id)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             foreach (var notificationId in pendingIds)
             {
-                var delivery = await SendNotificationAsync(notificationId, userId);
+                cancellationToken.ThrowIfCancellationRequested();
+                var delivery = await SendNotificationAsync(
+                    notificationId,
+                    userId,
+                    cancellationToken);
                 result.ProcessedCount++;
                 if (delivery.Succeeded)
                 {
@@ -204,7 +215,10 @@ namespace KicsitLibrary.Services.Notifications
                     keepPending: notification.Status == NotificationStatus.Pending);
             }
 
-            return await DeliverEmailAsync(notification, userId);
+            return await DeliverEmailAsync(
+                notification,
+                userId,
+                CancellationToken.None);
         }
 
         public Task<EmailSettingsValidationResult> ValidateEmailSettingsAsync()
@@ -214,7 +228,8 @@ namespace KicsitLibrary.Services.Notifications
 
         private async Task<NotificationDeliveryResult> DeliverEmailAsync(
             NotificationRecord notification,
-            int? userId)
+            int? userId,
+            CancellationToken cancellationToken)
         {
             if (!notification.Channel.Equals("Email", StringComparison.OrdinalIgnoreCase))
             {
@@ -274,7 +289,7 @@ namespace KicsitLibrary.Services.Notifications
 
             notification.RetryCount++;
             notification.LastAttemptAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             EmailSendResult sendResult;
             try
@@ -290,7 +305,11 @@ namespace KicsitLibrary.Services.Notifications
                         FromName = options.FromName
                     },
                     options,
-                    CancellationToken.None);
+                    cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -318,7 +337,7 @@ namespace KicsitLibrary.Services.Notifications
                     options.Password);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(CancellationToken.None);
             var activityDetail = sendResult.Succeeded
                 ? $"Email notification {notification.Id} sent to {notification.RecipientCode}."
                 : $"Email notification {notification.Id} failed for {notification.RecipientCode}: {notification.FailureReason}";
