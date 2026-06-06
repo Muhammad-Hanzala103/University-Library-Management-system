@@ -4,6 +4,7 @@
     <ProjectReference Include="..\KicsitLibrary.Core\KicsitLibrary.Core.csproj" />
     <ProjectReference Include="..\KicsitLibrary.Services\KicsitLibrary.Services.csproj" />
     <ProjectReference Include="..\KicsitLibrary.Data\KicsitLibrary.Data.csproj" />
+    <ProjectReference Include="..\KicsitLibrary.Reports\KicsitLibrary.Reports.csproj" />
   </ItemGroup>
 
   <ItemGroup>

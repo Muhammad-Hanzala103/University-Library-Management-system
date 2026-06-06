@@ -100,6 +100,10 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<NotificationCenterViewModel>();
                     break;
+                case "Reports & Analytics":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<ReportsDashboardViewModel>();
+                    break;
                 default:
                     CurrentView = null;
                     break;

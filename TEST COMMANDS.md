@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 39
+Passed: 52
 Failed: 0
 Skipped: 0
 ```
@@ -60,6 +60,14 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 
 Scheduler tests use temporary SQLite files, fake SMTP transport, and controllable overdue-service doubles. They do not wait for real scheduler intervals.
 
+Run only Priority 5A report tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~ReportFoundationTests"
+```
+
+Report tests use temporary SQLite databases and temporary export folders. They physically create CSV, XLSX, and PDF files and do not require Microsoft Excel.
+
 ## 3. Manual SMTP Verification
 
 1. Back up the development database before changing settings.
@@ -84,7 +92,20 @@ Scheduler tests use temporary SQLite files, fake SMTP transport, and controllabl
 9. Configure valid SMTP settings before enabling `OverdueSchedulerSendPendingEmails=True`.
 10. Restart the application only after explicitly enabling `OverdueSchedulerRunOnStartup` if a delayed startup run is required.
 
-## 5. Database Initialization
+## 5. Manual Reports Verification
+
+1. Open **Reports & Analytics** from the sidebar.
+2. Select each of the five report cards and confirm real database rows appear.
+3. Apply report-specific filters and select **Refresh Preview**.
+4. Confirm **Clear Filters** restores the full preview.
+5. Export CSV, Excel, and PDF.
+6. Confirm the success message includes the generated file path.
+7. Open `%USERPROFILE%\Documents\KICSIT Library Reports`.
+8. Verify the file name includes the report name and timestamp.
+9. Confirm repeated exports create unique files instead of overwriting.
+10. Confirm a `Report Exported` activity-log record was written.
+
+## 6. Database Initialization
 The current development strategy is `EnsureCreatedAsync` only.
 
 Do not run `dotnet ef migrations add InitialCreate` against the current database workflow. A baseline/adoption plan is required first because existing databases may have been created by `EnsureCreatedAsync`.
@@ -93,7 +114,7 @@ Priority 4B adds notification columns through a fixed non-destructive SQLite com
 
 ---
 
-## 6. Run the WPF Desktop Application
+## 7. Run the WPF Desktop Application
 Launch the WPF UI:
 ```powershell
 dotnet run --project KicsitLibrary.Desktop
@@ -101,7 +122,7 @@ dotnet run --project KicsitLibrary.Desktop
 
 ---
 
-## 7. SQLite Local Database Inspections
+## 8. SQLite Local Database Inspections
 The default SQLite database is named `KicsitLibrary.db`. Relative paths are resolved from `AppContext.BaseDirectory`, normally `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`.
 - Connect to database using SQLite CLI:
   ```bash

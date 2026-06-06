@@ -13,7 +13,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 4B (Deterministic Overdue & Notification Records)**: **100% Completed**
 - **Priority 4C (Manual SMTP Delivery & Retry)**: **100% Completed**
 - **Priority 4D (Cancellation-Aware Background Scheduler)**: **100% Completed**
-- **Priority 5 to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 5A (Reports & Export Foundation)**: **100% Completed**
+- **Priority 5B to 8 (Advanced Modules)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -57,6 +58,18 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Bulk manual overdue checks use the same coordinator lock but never enable automatic email delivery.
 - Thirty-nine isolated SQLite tests pass, including ten scheduler tests.
 
+### Priority 5A Foundation
+- Added data-first report contracts, definitions, filters, rows, results, and export results.
+- Five scoped providers query real SQLite data for Catalog, Issued Books, Overdue Books, Fines, and Notifications.
+- CSV, Excel, and PDF exporters consume `ReportResult` only and never query the database.
+- ClosedXML generates `.xlsx` files without requiring Microsoft Excel.
+- CSV and PDF generation use internal deterministic writers with no additional runtime applications.
+- Export paths default to the current user's Documents folder under `KICSIT Library Reports`.
+- File names are sanitized, timestamped, and made unique unless overwrite is explicitly requested.
+- Successful and failed export actions write activity-log records.
+- Reports & Analytics navigation opens a real dashboard with report-specific filters, dynamic preview, empty state, and export actions.
+- Fifty-two isolated tests pass, including thirteen reporting and physical-file tests.
+
 ---
 
 ## 2. Completed Components
@@ -84,6 +97,9 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `IEmailSettingsService.cs` / `EmailSettingsService.cs`
 - `IOverdueSchedulerService.cs` / `OverdueSchedulerService.cs`
 - `OverdueSchedulerBackgroundService.cs`
+- `IReportService` / `ReportService`
+- `IReportDataProvider` / five production report providers
+- `IReportExporter` / CSV, Excel, and PDF exporters
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -93,6 +109,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `StudentsManagementViewModel.cs` / `StudentFormViewModel.cs` / `FacultyStaffManagementViewModel.cs` / `FacultyStaffFormViewModel.cs` / `ConsumerProfileViewModel.cs` / `VisitRecordsViewModel.cs` / `VisitRecordFormViewModel.cs`: Consumer module.
 - `IssueMaterialViewModel.cs` / `ReceiveMaterialViewModel.cs` / `FinesManagementViewModel.cs`: Circulation module.
 - `OverdueRemindersViewModel.cs` / `NotificationCenterViewModel.cs`: Manual overdue and notification-record operations.
+- `ReportsDashboardViewModel.cs` / `ReportPreviewViewModel.cs`: Report selection, filters, preview, and export operations.
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.
@@ -102,6 +119,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `StudentsManagementView.xaml` / `StudentFormWindow.xaml` / `FacultyStaffManagementView.xaml` / `FacultyStaffFormWindow.xaml` / `ConsumerProfileWindow.xaml` / `VisitRecordsView.xaml` / `VisitRecordWindow.xaml`
 - `IssueMaterialView.xaml` / `ReceiveMaterialView.xaml` / `FinesManagementView.xaml`
 - `OverdueRemindersView.xaml` / `NotificationCenterView.xaml`
+- `ReportsDashboardView.xaml` / `ReportPreviewView.xaml`
 
 ### Navigation & Routes Wired
 - `"Dashboard"` -> `DashboardViewModel`
@@ -114,6 +132,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `"Visit Records"` -> `VisitRecordsViewModel`
 - `"Overdue Reminders"` -> `OverdueRemindersViewModel`
 - `"Notification Center"` -> `NotificationCenterViewModel`
+- `"Reports & Analytics"` -> `ReportsDashboardViewModel`
 
 ---
 
@@ -122,9 +141,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Views & ViewModels**:
   - `AuditRecordsView.xaml` & `AuditRecordsViewModel.cs` (Mapped but not implemented)
   - `InventoryManagementView.xaml` & `InventoryManagementViewModel.cs` (Mapped but not implemented)
-  - `ReportsView.xaml` & `ReportsViewModel.cs` (Mapped but not implemented)
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:
-  - `IReportService`: Custom reports generation and formatting.
   - `IClearanceService`: Student/Faculty final departure settlement database routines.
   - `IBackupSyncService`: Local backup scripts and Supabase sync logic.

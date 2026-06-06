@@ -23,7 +23,7 @@
                       AutoGenerateColumns="True"
                       IsReadOnly="True"
                       HorizontalScrollBarVisibility="Auto"
-                      Visibility="{Binding IsEmpty, Converter={local:InverseBooleanToVisibilityConverter}}"/>
+                      Visibility="{Binding IsEmpty, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
             <Border Style="{StaticResource CardStyle}"
                     Visibility="{Binding IsEmpty, Converter={local:BooleanToVisibilityConverter}}">
                 <TextBlock Text="{Binding PreviewMessage}"

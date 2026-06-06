@@ -41,6 +41,9 @@
         <DataTemplate DataType="{x:Type vm:NotificationCenterViewModel}">
             <views:NotificationCenterView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ReportsDashboardViewModel}">
+            <views:ReportsDashboardView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>

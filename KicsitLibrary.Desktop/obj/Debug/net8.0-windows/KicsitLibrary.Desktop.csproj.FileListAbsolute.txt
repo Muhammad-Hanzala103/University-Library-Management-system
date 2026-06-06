@@ -467,3 +467,15 @@ C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\MimeKit.dll
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\System.Security.Cryptography.Pkcs.dll
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\ClosedXML.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\ClosedXML.Parser.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\DocumentFormat.OpenXml.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\DocumentFormat.OpenXml.Framework.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\ExcelNumberFormat.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\RBush.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\SixLabors.Fonts.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\bin\Debug\net8.0-windows\System.IO.Packaging.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReportPreviewView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReportsDashboardView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReportPreviewView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReportsDashboardView.baml

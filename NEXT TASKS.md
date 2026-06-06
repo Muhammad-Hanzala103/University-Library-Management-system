@@ -47,14 +47,24 @@ Remaining deployment concern:
 
 ---
 
-## Priority 5: Reports & Exports
-- **Goal**: Implement structured printouts and document compilation for library files.
-- [ ] Create `IReportService.cs` in `KicsitLibrary.Core/Interfaces/`.
-- [ ] Create `ReportService.cs` in `KicsitLibrary.Services/` (using iText7 and ClosedXML).
-- [ ] Implement PDF layout generator helper classes (generating catalog summaries, consumer checkouts history, and active balance sheets).
-- [ ] Implement Excel spreadsheet exports for Catalog lists and Fine registers.
-- [ ] Implement CSV text file outputs.
-- [ ] Create `ReportsViewModel.cs` and `ReportsView.xaml` layout panel (allowing date-range filtering, category selections, and output type picks).
+## Priority 5A: Reports & Export Foundation
+- **Goal**: Add reusable data-first reporting and the first five production reports.
+- [x] Define report contracts, data rows, filters, results, and export requests.
+- [x] Implement Catalog, Issued Books, Overdue Books, Fine, and Notification providers.
+- [x] Implement physical CSV, Excel, and PDF exports.
+- [x] Add safe Documents-folder storage and non-overwriting file names.
+- [x] Log export success and failure.
+- [x] Add Reports dashboard, report-specific filters, preview, empty state, and export actions.
+- [x] Wire Reports & Analytics navigation and DI.
+- [x] Add thirteen isolated provider/export tests; all fifty-two tests pass.
+
+## Priority 5B: Extended Reports & Print Refinement
+- **Goal**: Build additional reports only after the foundation is accepted.
+- [ ] Define borrowing-history, member-directory, collection-summary, and activity-log reports.
+- [ ] Add print-oriented page headers, footers, page numbers, and configurable branding.
+- [ ] Add explicit user-selected output paths through a dialog service.
+- [ ] Add large-dataset paging or streaming strategy after profiling.
+- [ ] Keep existing five Priority 5A reports backward compatible.
 
 ---
 

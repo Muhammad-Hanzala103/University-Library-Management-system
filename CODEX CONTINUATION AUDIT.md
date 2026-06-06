@@ -1,5 +1,43 @@
 # Codex Continuation Audit
 
+## Priority 5A Completion Update
+
+Completion date: 2026-06-06
+
+Priority 5A is complete:
+
+- Added reusable report contracts and neutral data-first report models.
+- Added five SQLite providers: Library Catalog, Issued Books, Overdue Books, Fine, and Notification.
+- Added CSV, ClosedXML Excel, and dependency-light PDF exporters.
+- Exporters do not query the database and return explicit success or failure results.
+- Added filename sanitization, timestamped Documents-folder storage, and non-overwriting path selection.
+- Added activity logging through `ReportExportService`.
+- Added Reports dashboard and preview ViewModels/Views with report cards, practical filters, dynamic DataGrid preview, empty state, and CSV/Excel/PDF actions.
+- Wired the existing Reports & Analytics navigation route and dependency injection.
+- Added thirteen report tests; all fifty-two tests pass.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 52 tests passed, 0 failed, 0 skipped.
+
+Package added:
+
+- `ClosedXML` 0.105.0
+
+Deferred by design:
+
+- Reports beyond the five Priority 5A definitions
+- Advanced PDF branding, charts, embedded Unicode fonts, and print dialogs
+- User-selected save location
+- Deployment, Supabase sync, WhatsApp delivery, and EF migrations
+
+Exact next task: Priority 5B, add the next approved report definitions and print-quality refinements without changing the Priority 5A contracts.
+
 ## Priority 4D Completion Update
 
 Completion date: 2026-06-06

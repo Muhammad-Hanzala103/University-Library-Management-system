@@ -19,6 +19,10 @@ using KicsitLibrary.Services.Consumer;
 using KicsitLibrary.Services.Circulation;
 using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Desktop.Views;
+using KicsitLibrary.Reports.Contracts;
+using KicsitLibrary.Reports.Export;
+using KicsitLibrary.Reports.Providers;
+using KicsitLibrary.Reports.Services;
 
 namespace KicsitLibrary.Desktop
 {
@@ -79,6 +83,16 @@ namespace KicsitLibrary.Desktop
                     services.AddSingleton<OverdueSchedulerStartupSignal>();
                     services.AddHostedService<OverdueSchedulerBackgroundService>();
                     services.AddScoped<IRecordDetailsService, RecordDetailsService>();
+                    services.AddScoped<IReportDataProvider, CatalogReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, IssuedBooksReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, OverdueBooksReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, FineReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, NotificationReportDataProvider>();
+                    services.AddScoped<IReportExporter, CsvReportExporter>();
+                    services.AddScoped<IReportExporter, ExcelReportExporter>();
+                    services.AddScoped<IReportExporter, PdfReportExporter>();
+                    services.AddScoped<IReportService, ReportService>();
+                    services.AddScoped<IReportExportService, ReportExportService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -106,8 +120,11 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<FinesManagementViewModel>();
                     services.AddTransient<OverdueRemindersViewModel>();
                     services.AddTransient<NotificationCenterViewModel>();
+                    services.AddTransient<ReportsDashboardViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
+                    services.AddTransient<ReportsDashboardView>();
+                    services.AddTransient<ReportPreviewView>();
                 })
                 .Build();
         }
