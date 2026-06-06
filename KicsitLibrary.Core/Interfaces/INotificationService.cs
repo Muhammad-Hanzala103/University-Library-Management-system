@@ -15,7 +15,11 @@ namespace KicsitLibrary.Core.Interfaces
             int? userId = null);
 
         Task<IReadOnlyList<NotificationRecord>> GetNotificationsAsync();
-        Task<NotificationRecord> RetryNotificationRecordAsync(int notificationId, int? userId = null);
+        Task<IReadOnlyList<NotificationRecord>> GetPendingEmailNotificationsAsync();
+        Task<NotificationDeliveryResult> SendNotificationAsync(int notificationId, int? userId = null);
+        Task<NotificationBatchDeliveryResult> SendPendingEmailNotificationsAsync(int? userId = null);
+        Task<NotificationDeliveryResult> RetryNotificationRecordAsync(int notificationId, int? userId = null);
+        Task<EmailSettingsValidationResult> ValidateEmailSettingsAsync();
         Task<NotificationRecord> MarkAsReadAsync(int notificationId, int? userId = null);
 
         Task<NotificationRecord?> GetLastNotificationForIssueAsync(

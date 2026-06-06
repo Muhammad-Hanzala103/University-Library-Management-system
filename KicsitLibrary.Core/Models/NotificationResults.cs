@@ -32,4 +32,22 @@ namespace KicsitLibrary.Core.Models
             FailedCount += result.FailedCount;
         }
     }
+
+    public class NotificationDeliveryResult
+    {
+        public int NotificationId { get; set; }
+        public bool Succeeded { get; set; }
+        public bool Attempted { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public NotificationRecord? Notification { get; set; }
+    }
+
+    public class NotificationBatchDeliveryResult
+    {
+        public int ProcessedCount { get; set; }
+        public int SentCount { get; set; }
+        public int FailedCount { get; set; }
+        public int SkippedCount { get; set; }
+        public string Message { get; set; } = string.Empty;
+    }
 }

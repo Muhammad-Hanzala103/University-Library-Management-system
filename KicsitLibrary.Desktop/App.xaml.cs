@@ -71,6 +71,8 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<ICatalogService, CatalogService>();
                     services.AddScoped<IConsumerService, ConsumerService>();
                     services.AddScoped<ICirculationService, CirculationService>();
+                    services.AddScoped<IEmailSettingsService, EmailSettingsService>();
+                    services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
                     services.AddScoped<INotificationService, NotificationService>();
                     services.AddScoped<IOverdueService, OverdueService>();
                     services.AddScoped<IRecordDetailsService, RecordDetailsService>();
