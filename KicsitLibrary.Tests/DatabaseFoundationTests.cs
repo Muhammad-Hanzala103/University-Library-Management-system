@@ -24,12 +24,23 @@ public class DatabaseFoundationTests
             "EmailNotificationEnabled",
             "WhatsAppNotificationEnabled",
             "ReminderBeforeDueDays",
-            "MaxNotificationRetryCount"
+            "MaxNotificationRetryCount",
+            "SmtpHost",
+            "SmtpPort",
+            "SmtpUseSsl",
+            "SmtpUser",
+            "SmtpPassword",
+            "SmtpFromEmail",
+            "SmtpFromName"
         };
         foreach (var key in requiredSettings)
         {
             Assert.True(await database.Context.SystemSettings.AnyAsync(setting => setting.Key == key));
         }
+
+        var emailEnabled = await database.Context.SystemSettings
+            .SingleAsync(setting => setting.Key == "EmailNotificationEnabled");
+        Assert.Equal("False", emailEnabled.Value);
     }
 
     [Fact]

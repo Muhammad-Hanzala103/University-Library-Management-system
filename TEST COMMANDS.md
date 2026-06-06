@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 19
+Passed: 29
 Failed: 0
 Skipped: 0
 ```
@@ -44,9 +44,26 @@ Run only Priority 4B tests:
 dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~OverdueNotificationTests|FullyQualifiedName~DashboardOverdueTests"
 ```
 
----
+Run only Priority 4C email-delivery tests:
 
-## 3. Database Initialization
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~EmailDeliveryTests"
+```
+
+Priority 4C tests use `FakeEmailTransport`; they never open a network connection or use the development database.
+
+## 3. Manual SMTP Verification
+
+1. Back up the development database before changing settings.
+2. Populate `SmtpHost`, `SmtpPort`, `SmtpUseSsl`, `SmtpUser`, `SmtpPassword`, `SmtpFromEmail`, and `SmtpFromName` in `SystemSettings`.
+3. Set `EmailNotificationEnabled` to `True`.
+4. Open Notification Center and select **Validate Email Settings**.
+5. Run the overdue check to create pending email records.
+6. Use **Send Selected Email** or **Send All Pending Emails**.
+7. Confirm the record status, `SentAt`, `LastAttemptAt`, `RetryCount`, and any `FailureReason`.
+8. Confirm an activity-log row exists for each attempted delivery.
+
+## 4. Database Initialization
 The current development strategy is `EnsureCreatedAsync` only.
 
 Do not run `dotnet ef migrations add InitialCreate` against the current database workflow. A baseline/adoption plan is required first because existing databases may have been created by `EnsureCreatedAsync`.
@@ -55,7 +72,7 @@ Priority 4B adds notification columns through a fixed non-destructive SQLite com
 
 ---
 
-## 4. Run the WPF Desktop Application
+## 5. Run the WPF Desktop Application
 Launch the WPF UI:
 ```powershell
 dotnet run --project KicsitLibrary.Desktop
@@ -63,7 +80,7 @@ dotnet run --project KicsitLibrary.Desktop
 
 ---
 
-## 5. SQLite Local Database Inspections
+## 6. SQLite Local Database Inspections
 The default SQLite database is named `KicsitLibrary.db`. Relative paths are resolved from `AppContext.BaseDirectory`, normally `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`.
 - Connect to database using SQLite CLI:
   ```bash

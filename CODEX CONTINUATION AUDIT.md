@@ -1,5 +1,41 @@
 # Codex Continuation Audit
 
+## Priority 4C Completion Update
+
+Completion date: 2026-06-06
+
+Priority 4C is complete:
+
+- Added `IEmailTransport`, email request/result/options models, and a test fake.
+- Added asynchronous MailKit SMTP transport and database-backed email settings validation.
+- Added manual selected, retry, and pending-batch delivery methods to `NotificationService`.
+- Delivery attempts persist bounded retry metadata, timestamps, status, and sanitized failure reasons.
+- Disabled delivery stays pending; missing settings or recipients fail clearly before transport.
+- In-app records are blocked from SMTP and WhatsApp remains a placeholder.
+- Added Notification Center delivery, retry, validation, count, refresh, and read-state actions.
+- Overdue processing still creates records only and reports the pending manual-email count.
+- Seed defaults contain no SMTP credentials and keep email disabled.
+- Added ten fake-transport tests; all twenty-nine tests pass.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 29 tests passed, 0 failed, 0 skipped.
+
+Deferred by design:
+
+- Background scheduler and automatic delivery
+- WhatsApp delivery
+- Reports and exports
+- Encrypted SMTP secret storage
+- Migration baseline/adoption
+
+Exact next task: Priority 4D, a cancellation-aware background overdue scheduler with scoped services, single-instance duplicate protection, SQLite contention handling, and automated tests.
+
 ## Priority 4B Completion Update
 
 Completion date: 2026-06-06

@@ -25,17 +25,20 @@ This document contains a structured task list outlining the implementation steps
 
 ## Priority 4C: Manual Email Delivery
 - **Goal**: Add explicit operator-triggered SMTP delivery for existing pending email records.
-- [ ] Define SMTP configuration without committing credentials.
-- [ ] Add an email delivery abstraction and bounded retry handling.
-- [ ] Update pending/failed/sent records with attempt timestamps and failure details.
-- [ ] Add integration tests with a fake email transport.
-- [ ] Keep delivery manual; do not add a background scheduler in this slice.
+- [x] Define SMTP configuration without committing credentials.
+- [x] Add an email delivery abstraction and bounded retry handling.
+- [x] Update pending/failed/sent records with attempt timestamps and failure details.
+- [x] Add integration tests with a fake email transport.
+- [x] Add Notification Center actions for selected, retry, batch, and settings validation.
+- [x] Keep delivery manual; no background scheduler was added.
 
 ## Priority 4D: Background Overdue Scheduler
 - **Goal**: Add a cancellation-aware hosted scanner only after manual delivery is verified.
+- [ ] Define scheduler interval, startup behavior, and single-instance ownership policy.
 - [ ] Create a DI scope for each scan.
 - [ ] Prevent duplicate work across multiple app instances.
 - [ ] Add SQLite contention handling and operational logging.
+- [ ] Add cancellation, shutdown, and duplicate-send tests before enabling automatic delivery.
 
 ---
 

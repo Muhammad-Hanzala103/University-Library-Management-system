@@ -29,7 +29,14 @@ This document outlines modules that are currently implemented or stubbed, listin
 
 ### Notification Alert Engine
 - Manual overdue discovery and idempotent notification-record generation are implemented.
-- Email records are not delivered. They remain pending with `Email delivery pending`, or failed when the recipient email is missing.
+- Email records can be delivered manually from Notification Center through MailKit SMTP.
+- SMTP delivery is disabled by default. Empty development placeholders are seeded for host, user, password, and sender address.
+- SMTP credentials are stored in the local `SystemSettings` table. They are not committed in source or written to activity logs, but encrypted secret storage is not implemented yet.
+- Operators must populate `SmtpHost`, `SmtpUser`, `SmtpPassword`, and `SmtpFromEmail`, then enable `EmailNotificationEnabled`.
+- TLS mode is derived from `SmtpUseSsl`: port 465 uses implicit SSL, other SSL-enabled ports use STARTTLS, and disabling SSL uses an unencrypted connection.
+- Delivery is manual only; pending records are not sent at startup or by the overdue check.
+- Retry limits are bounded by `MaxNotificationRetryCount`. A delivery attempt increments `RetryCount`; validation blocks do not.
+- Provider-specific SMTP behavior and real-server interoperability are not covered by automated tests.
 - `InApp` records are persisted but there is no per-user popup/badge delivery mechanism yet.
 - WhatsApp remains a disabled placeholder.
 - There is no hosted/background scheduler.
@@ -45,7 +52,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
 
 ### Automated Test Coverage
-- Nineteen xUnit tests run against isolated temporary SQLite files.
-- Coverage protects circulation transitions, duplicate accession validation, seed insertion, overdue query rules, notification idempotency, cooldowns, missing email, retry/read state, dashboard overdue counting, and activity logging.
+- Twenty-nine xUnit tests run against isolated temporary SQLite files.
+- Coverage protects circulation transitions, duplicate accession validation, seed insertion, overdue query rules, notification idempotency, cooldowns, missing email, retry/read state, dashboard overdue counting, activity logging, manual email status transitions, retry limits, channel filtering, disabled delivery, and password redaction.
 - There is no clearance service or clearance eligibility helper, so the requested "active issue blocks student clearance" test is pending Priority 6.
-- The suite does not yet automate WPF UI interaction, multi-process concurrency, migration adoption, or real notification delivery.
+- The suite does not automate WPF UI interaction, multi-process concurrency, migration adoption, or a live SMTP server.

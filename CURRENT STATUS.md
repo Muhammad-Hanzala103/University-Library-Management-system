@@ -11,7 +11,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 3 (Circulation System)**: **100% Completed**
 - **Priority 4A (Database Initialization & Test Infrastructure)**: **100% Completed**
 - **Priority 4B (Deterministic Overdue & Notification Records)**: **100% Completed**
-- **Priority 4C to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 4C (Manual SMTP Delivery & Retry)**: **100% Completed**
+- **Priority 4D to 8 (Advanced Modules)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -31,6 +32,17 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Overdue Reminders and Notification Center views are wired into navigation.
 - Dashboard overdue totals now use active issue due dates instead of `BookCopy.Overdue`.
 - Nineteen isolated SQLite tests pass.
+
+### Priority 4C Foundation
+- `NotificationService` sends selected or all pending email records only through `IEmailTransport`.
+- `MailKitEmailTransport` provides fully asynchronous SMTP delivery; tests use `FakeEmailTransport`.
+- SMTP settings are read from `SystemSettings` and can be validated from Notification Center.
+- Email delivery is manual. No hosted service, timer, startup send, or automatic overdue send exists.
+- Successful attempts persist `Sent`, `SentAt`, `LastAttemptAt`, and retry metadata.
+- Failed attempts persist `Failed` and a sanitized `FailureReason`; disabled delivery remains pending.
+- In-app records never pass through SMTP, and WhatsApp remains a placeholder.
+- Notification Center exposes send selected, retry selected, send all pending, validate settings, refresh, and mark-read actions.
+- Twenty-nine isolated SQLite tests pass, including ten fake-transport delivery tests.
 
 ---
 
@@ -55,6 +67,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `ICirculationService.cs` / `CirculationService.cs`
 - `IOverdueService.cs` / `OverdueService.cs`
 - `INotificationService.cs` / `NotificationService.cs`
+- `IEmailTransport.cs` / `MailKitEmailTransport.cs`
+- `IEmailSettingsService.cs` / `EmailSettingsService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -96,7 +110,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
   - `ReportsView.xaml` & `ReportsViewModel.cs` (Mapped but not implemented)
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:
-  - SMTP notification delivery and a hosted overdue scheduler.
+- A hosted overdue scheduler. Manual SMTP delivery is complete.
   - `IReportService`: Custom reports generation and formatting.
   - `IClearanceService`: Student/Faculty final departure settlement database routines.
   - `IBackupSyncService`: Local backup scripts and Supabase sync logic.

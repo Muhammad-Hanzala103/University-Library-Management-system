@@ -181,10 +181,10 @@ namespace KicsitLibrary.Desktop.ViewModels
             {
                 var result = await _overdueService.ProcessOverdueNotificationsAsync(CurrentUserId);
                 var pendingEmails = await _notificationService.GetPendingEmailNotificationsAsync();
+                await RefreshAsync();
                 StatusMessage =
                     $"{actionLabel}: {result.Message} " +
                     $"{pendingEmails.Count} email record(s) are pending manual delivery in Notification Center.";
-                await RefreshAsync();
             }
             catch (Exception ex)
             {
