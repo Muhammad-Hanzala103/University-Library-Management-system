@@ -18,6 +18,7 @@ namespace KicsitLibrary.Reports.Providers
             Key = ReportKeys.OverdueBooks,
             Title = "Overdue Books Report",
             Description = "Active overdue issues with current fine and reminder status.",
+            Category = "Circulation Reports",
             Columns =
             [
                 Column("IssueRecordId", "Issue Record Id"),

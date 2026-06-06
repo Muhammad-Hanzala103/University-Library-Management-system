@@ -88,6 +88,17 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IReportDataProvider, OverdueBooksReportDataProvider>();
                     services.AddScoped<IReportDataProvider, FineReportDataProvider>();
                     services.AddScoped<IReportDataProvider, NotificationReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, StudentClearanceReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, StudentBorrowingHistoryReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, FacultyBorrowingHistoryReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, ReservationReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, LostDamagedBooksReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, DeletedBooksArchiveReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, VisitDetailReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, AuditReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, InventoryReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, NewArrivalsReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, StockVerificationReportDataProvider>();
                     services.AddScoped<IReportExporter, CsvReportExporter>();
                     services.AddScoped<IReportExporter, ExcelReportExporter>();
                     services.AddScoped<IReportExporter, PdfReportExporter>();

@@ -17,6 +17,7 @@ namespace KicsitLibrary.Reports.Providers
             Key = ReportKeys.Catalog,
             Title = "Library Catalog Report",
             Description = "Physical library copies with catalog and shelf metadata.",
+            Category = "Catalog Reports",
             Columns =
             [
                 Column("AccessionNumber", "Accession Number"),

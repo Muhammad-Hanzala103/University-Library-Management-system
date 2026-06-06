@@ -17,6 +17,7 @@ namespace KicsitLibrary.Reports.Providers
             Key = ReportKeys.Notifications,
             Title = "Notification Report",
             Description = "Notification delivery state, retries, and failures.",
+            Category = "Notification Reports",
             Columns =
             [
                 Column("NotificationId", "Notification Id"),

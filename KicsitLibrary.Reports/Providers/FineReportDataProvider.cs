@@ -17,6 +17,7 @@ namespace KicsitLibrary.Reports.Providers
             Key = ReportKeys.Fines,
             Title = "Fine Report",
             Description = "Fine balances, payments, and member details.",
+            Category = "Financial Reports",
             Columns =
             [
                 Column("FineId", "Fine Id"),

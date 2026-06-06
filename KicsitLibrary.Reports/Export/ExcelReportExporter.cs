@@ -53,6 +53,8 @@ namespace KicsitLibrary.Reports.Export
                     XLColor.FromHtml("#1B2A47");
                 worksheet.Range(headerRow, 1, headerRow, lastColumn).Style.Font.FontColor =
                     XLColor.White;
+                worksheet.Range(headerRow, 1, headerRow, lastColumn).Style.Alignment.Horizontal =
+                    XLAlignmentHorizontalValues.Center;
 
                 foreach (var row in report.Rows)
                 {
@@ -62,7 +64,8 @@ namespace KicsitLibrary.Reports.Export
                         var column = report.Columns[columnIndex];
                         SetCellValue(
                             worksheet.Cell(rowNumber, columnIndex + 1),
-                            row[column.Key]);
+                            row[column.Key],
+                            column.Format);
                     }
                     rowNumber++;
                 }
@@ -85,8 +88,31 @@ namespace KicsitLibrary.Reports.Export
                     }
                 }
 
+                if (report.Rows.Count > 0 && report.Columns.Count > 0)
+                {
+                    worksheet.Range(
+                        headerRow,
+                        1,
+                        headerRow + report.Rows.Count,
+                        report.Columns.Count).SetAutoFilter();
+                }
+
                 worksheet.SheetView.FreezeRows(headerRow);
                 worksheet.Columns().AdjustToContents();
+                foreach (var column in worksheet.ColumnsUsed())
+                {
+                    if (column.Width > 45)
+                    {
+                        column.Width = 45;
+                        column.Style.Alignment.WrapText = true;
+                    }
+                }
+                var usedRange = worksheet.RangeUsed();
+                if (usedRange != null)
+                {
+                    usedRange.Style.Alignment.Vertical =
+                        XLAlignmentVerticalValues.Top;
+                }
                 workbook.SaveAs(filePath);
 
                 return Task.FromResult(new ReportExportResult
@@ -111,7 +137,10 @@ namespace KicsitLibrary.Reports.Export
             }
         }
 
-        private static void SetCellValue(IXLCell cell, object? value)
+        private static void SetCellValue(
+            IXLCell cell,
+            object? value,
+            string? format)
         {
             switch (value)
             {
@@ -120,7 +149,10 @@ namespace KicsitLibrary.Reports.Export
                     break;
                 case DateTime dateTime:
                     cell.Value = dateTime;
-                    cell.Style.DateFormat.Format = "dd-MMM-yyyy HH:mm";
+                    cell.Style.DateFormat.Format =
+                        string.IsNullOrWhiteSpace(format)
+                            ? "dd-MMM-yyyy HH:mm"
+                            : format;
                     break;
                 case int integer:
                     cell.Value = integer;
@@ -130,7 +162,10 @@ namespace KicsitLibrary.Reports.Export
                     break;
                 case decimal decimalValue:
                     cell.Value = decimalValue;
-                    cell.Style.NumberFormat.Format = "#,##0.00";
+                    cell.Style.NumberFormat.Format =
+                        string.IsNullOrWhiteSpace(format)
+                            ? "#,##0.00"
+                            : NormalizeNumberFormat(format);
                     break;
                 case double doubleValue:
                     cell.Value = doubleValue;
@@ -142,6 +177,13 @@ namespace KicsitLibrary.Reports.Export
                     cell.Value = value.ToString() ?? string.Empty;
                     break;
             }
+        }
+
+        private static string NormalizeNumberFormat(string format)
+        {
+            return format.Equals("N2", StringComparison.OrdinalIgnoreCase)
+                ? "#,##0.00"
+                : format;
         }
     }
 }

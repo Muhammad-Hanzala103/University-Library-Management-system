@@ -1,272 +1,345 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KicsitLibrary.Core.Enums;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Reports.Contracts;
 using KicsitLibrary.Reports.Models;
 
-namespace KicsitLibrary.Desktop.ViewModels
+namespace KicsitLibrary.Desktop.ViewModels;
+
+public partial class ReportsDashboardViewModel : ObservableObject
 {
-    public partial class ReportsDashboardViewModel : ObservableObject
+    private static readonly string[] CategoryOrder =
+    [
+        "Catalog Reports",
+        "Circulation Reports",
+        "Financial Reports",
+        "Consumer Reports",
+        "Compliance Reports",
+        "Inventory Reports",
+        "Notification Reports"
+    ];
+
+    private readonly IReportService _reportService;
+    private readonly IReportExportService _reportExportService;
+    private readonly IAuthenticationService _authenticationService;
+    private readonly IReadOnlyList<ReportDefinition> _allReports;
+
+    public ObservableCollection<ReportCategoryGroup> ReportGroups { get; } = [];
+    public ObservableCollection<ReportFilterInputViewModel> FilterInputs { get; } = [];
+    public ReportPreviewViewModel Preview { get; } = new();
+
+    [ObservableProperty] private ReportDefinition? _selectedReport;
+    [ObservableProperty] private string _reportSearchText = string.Empty;
+    [ObservableProperty] private int _visibleReportCount;
+    [ObservableProperty] private bool _isBusy;
+    [ObservableProperty] private string _statusMessage = string.Empty;
+    [ObservableProperty] private string _errorMessage = string.Empty;
+
+    public ReportsDashboardViewModel(
+        IReportService reportService,
+        IReportExportService reportExportService,
+        IAuthenticationService authenticationService)
     {
-        private readonly IReportService _reportService;
-        private readonly IReportExportService _reportExportService;
-        private readonly IAuthenticationService _authenticationService;
+        _reportService = reportService ?? throw new ArgumentNullException(nameof(reportService));
+        _reportExportService = reportExportService ??
+            throw new ArgumentNullException(nameof(reportExportService));
+        _authenticationService = authenticationService ??
+            throw new ArgumentNullException(nameof(authenticationService));
+        _allReports = _reportService.GetDefinitions();
+        RebuildReportGroups();
+        SelectedReport = _allReports.FirstOrDefault();
+        BuildFilterInputs();
+        _ = RefreshPreviewAsync();
+    }
 
-        public ObservableCollection<ReportDefinition> Reports { get; }
-        public ReportPreviewViewModel Preview { get; } = new();
-        public IReadOnlyList<string> MemberTypeOptions { get; } =
-            ["", .. Enum.GetNames<MemberType>()];
-        public IReadOnlyList<string> BookStatusOptions { get; } =
-            ["", .. Enum.GetNames<BookStatus>()];
-        public IReadOnlyList<string> FineStatusOptions { get; } =
-            ["", .. Enum.GetNames<FineStatus>()];
-        public IReadOnlyList<string> NotificationStatusOptions { get; } =
-            ["", .. Enum.GetNames<NotificationStatus>()];
-        public IReadOnlyList<string> NotificationTypeOptions { get; } =
-            ["", .. Enum.GetNames<NotificationType>()];
-        public IReadOnlyList<string> ChannelOptions { get; } =
-            ["", "InApp", "Email", "WhatsApp"];
+    partial void OnReportSearchTextChanged(string value)
+    {
+        RebuildReportGroups();
+    }
 
-        [ObservableProperty] private ReportDefinition? _selectedReport;
-        [ObservableProperty] private bool _isBusy;
-        [ObservableProperty] private string _statusMessage = string.Empty;
-        [ObservableProperty] private string _errorMessage = string.Empty;
+    partial void OnSelectedReportChanged(ReportDefinition? value)
+    {
+        BuildFilterInputs();
+    }
 
-        [ObservableProperty] private string _searchText = string.Empty;
-        [ObservableProperty] private string _category = string.Empty;
-        [ObservableProperty] private string _department = string.Empty;
-        [ObservableProperty] private string _literatureCategory = string.Empty;
-        [ObservableProperty] private string _author = string.Empty;
-        [ObservableProperty] private string _publisher = string.Empty;
-        [ObservableProperty] private string _selectedStatus = string.Empty;
-        [ObservableProperty] private string _selectedMemberType = string.Empty;
-        [ObservableProperty] private DateTime? _fromDate;
-        [ObservableProperty] private DateTime? _toDate;
-        [ObservableProperty] private bool _overdueOnly;
-        [ObservableProperty] private string _minimumDays = string.Empty;
-        [ObservableProperty] private string _maximumDays = string.Empty;
-        [ObservableProperty] private string _minimumAmount = string.Empty;
-        [ObservableProperty] private string _maximumAmount = string.Empty;
-        [ObservableProperty] private string _selectedChannel = string.Empty;
-        [ObservableProperty] private string _selectedNotificationType = string.Empty;
+    [RelayCommand]
+    private async Task SelectReportAsync(ReportDefinition report)
+    {
+        SelectedReport = report;
+        await RefreshPreviewAsync();
+    }
 
-        [ObservableProperty] private bool _isCatalogReport;
-        [ObservableProperty] private bool _isIssuedReport;
-        [ObservableProperty] private bool _isOverdueReport;
-        [ObservableProperty] private bool _isFineReport;
-        [ObservableProperty] private bool _isNotificationReport;
-
-        public ReportsDashboardViewModel(
-            IReportService reportService,
-            IReportExportService reportExportService,
-            IAuthenticationService authenticationService)
+    [RelayCommand]
+    private async Task RefreshPreviewAsync()
+    {
+        if (SelectedReport == null)
         {
-            _reportService = reportService ??
-                throw new ArgumentNullException(nameof(reportService));
-            _reportExportService = reportExportService ??
-                throw new ArgumentNullException(nameof(reportExportService));
-            _authenticationService = authenticationService ??
-                throw new ArgumentNullException(nameof(authenticationService));
-            Reports = new ObservableCollection<ReportDefinition>(
-                _reportService.GetDefinitions());
-            SelectedReport = Reports.FirstOrDefault();
-            UpdateReportFlags();
-            _ = RefreshPreviewAsync();
+            ErrorMessage = "Select a report first.";
+            return;
         }
 
-        partial void OnSelectedReportChanged(ReportDefinition? value)
+        if (!TryBuildFilters(out var filters, out var validationError))
         {
-            UpdateReportFlags();
+            ErrorMessage = validationError;
+            return;
         }
 
-        [RelayCommand]
-        private async Task SelectReportAsync(ReportDefinition report)
+        IsBusy = true;
+        ErrorMessage = string.Empty;
+        try
         {
-            SelectedReport = report;
-            ClearFilterValues();
-            await RefreshPreviewAsync();
+            var result = await _reportService.GenerateAsync(
+                SelectedReport.Key,
+                filters,
+                _authenticationService.CurrentUser?.FullName ?? "Unknown User");
+            Preview.SetResult(result);
+            StatusMessage = $"{result.ReportTitle}: {result.TotalCount} record(s) loaded.";
         }
-
-        [RelayCommand]
-        private async Task RefreshPreviewAsync()
+        catch (Exception ex)
         {
-            if (SelectedReport == null)
+            ErrorMessage = $"Unable to generate report preview: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ClearFiltersAsync()
+    {
+        foreach (var input in FilterInputs)
+        {
+            input.Clear();
+        }
+        await RefreshPreviewAsync();
+    }
+
+    [RelayCommand]
+    private Task ExportCsvAsync() => ExportAsync(ReportFormat.CSV);
+
+    [RelayCommand]
+    private Task ExportExcelAsync() => ExportAsync(ReportFormat.Excel);
+
+    [RelayCommand]
+    private Task ExportPdfAsync() => ExportAsync(ReportFormat.PDF);
+
+    private async Task ExportAsync(ReportFormat format)
+    {
+        IsBusy = true;
+        ErrorMessage = string.Empty;
+        try
+        {
+            if (Preview.CurrentResult == null)
             {
-                ErrorMessage = "Select a report first.";
+                await RefreshPreviewAsync();
+            }
+
+            if (Preview.CurrentResult == null)
+            {
+                ErrorMessage = "Report preview could not be generated.";
                 return;
             }
 
-            IsBusy = true;
-            ErrorMessage = string.Empty;
-            try
+            var result = await _reportExportService.ExportAsync(
+                Preview.CurrentResult,
+                new ReportExportRequest { Format = format },
+                _authenticationService.CurrentUser?.Id);
+            if (result.Succeeded)
             {
-                var result = await _reportService.GenerateAsync(
-                    SelectedReport.Key,
-                    BuildFilters(),
-                    _authenticationService.CurrentUser?.FullName ?? "Unknown User");
-                Preview.SetResult(result);
-                StatusMessage =
-                    $"{result.ReportTitle}: {result.TotalCount} record(s) loaded.";
+                StatusMessage = result.Message;
             }
-            catch (Exception ex)
+            else
             {
-                ErrorMessage = $"Unable to generate report preview: {ex.Message}";
-            }
-            finally
-            {
-                IsBusy = false;
+                ErrorMessage = result.ErrorMessage ?? result.Message;
             }
         }
-
-        [RelayCommand]
-        private async Task ClearFiltersAsync()
+        catch (Exception ex)
         {
-            ClearFilterValues();
-            await RefreshPreviewAsync();
+            ErrorMessage = $"{format} export failed: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private void RebuildReportGroups()
+    {
+        var matching = _allReports
+            .Where(report =>
+                string.IsNullOrWhiteSpace(ReportSearchText) ||
+                report.Title.Contains(ReportSearchText, StringComparison.OrdinalIgnoreCase) ||
+                report.Description.Contains(ReportSearchText, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        VisibleReportCount = matching.Count;
+        ReportGroups.Clear();
+
+        foreach (var category in CategoryOrder)
+        {
+            var reports = matching
+                .Where(report => report.Category == category)
+                .OrderBy(report => report.Title)
+                .ToList();
+            if (reports.Count > 0)
+            {
+                ReportGroups.Add(new ReportCategoryGroup(category, reports));
+            }
+        }
+    }
+
+    private void BuildFilterInputs()
+    {
+        FilterInputs.Clear();
+        if (SelectedReport == null)
+        {
+            return;
         }
 
-        [RelayCommand]
-        private Task ExportCsvAsync() => ExportAsync(ReportFormat.CSV);
-
-        [RelayCommand]
-        private Task ExportExcelAsync() => ExportAsync(ReportFormat.Excel);
-
-        [RelayCommand]
-        private Task ExportPdfAsync() => ExportAsync(ReportFormat.PDF);
-
-        private async Task ExportAsync(ReportFormat format)
+        foreach (var filter in SelectedReport.Filters)
         {
-            IsBusy = true;
-            ErrorMessage = string.Empty;
-            try
+            FilterInputs.Add(new ReportFilterInputViewModel(filter));
+        }
+    }
+
+    private bool TryBuildFilters(
+        out IReadOnlyCollection<ReportFilter> filters,
+        out string validationError)
+    {
+        var values = new List<ReportFilter>();
+        foreach (var input in FilterInputs)
+        {
+            if (!input.TryCreateFilter(out var filter, out validationError))
             {
-                if (Preview.CurrentResult == null)
+                filters = [];
+                return false;
+            }
+            values.Add(filter);
+        }
+
+        filters = values;
+        validationError = string.Empty;
+        return true;
+    }
+}
+
+public sealed class ReportCategoryGroup(
+    string name,
+    IEnumerable<ReportDefinition> reports)
+{
+    public string Name { get; } = name;
+    public IReadOnlyList<ReportDefinition> Reports { get; } = reports.ToList();
+}
+
+public partial class ReportFilterInputViewModel : ObservableObject
+{
+    public ReportFilterInputViewModel(ReportFilter definition)
+    {
+        Definition = definition;
+        Options = ["", .. definition.Options];
+    }
+
+    public ReportFilter Definition { get; }
+    public string Label => Definition.Label;
+    public IReadOnlyList<string> Options { get; }
+    public bool IsText => Definition.Type == ReportFilterType.Text;
+    public bool IsDateRange => Definition.Type == ReportFilterType.DateRange;
+    public bool IsEnum => Definition.Type == ReportFilterType.Enum;
+    public bool IsNumberRange => Definition.Type == ReportFilterType.NumberRange;
+    public bool IsBoolean => Definition.Type == ReportFilterType.Boolean;
+
+    [ObservableProperty] private string _textValue = string.Empty;
+    [ObservableProperty] private string _secondaryTextValue = string.Empty;
+    [ObservableProperty] private string _selectedOption = string.Empty;
+    [ObservableProperty] private DateTime? _fromDate;
+    [ObservableProperty] private DateTime? _toDate;
+    [ObservableProperty] private bool _booleanValue;
+
+    public bool TryCreateFilter(out ReportFilter filter, out string error)
+    {
+        object? value = null;
+        object? secondaryValue = null;
+
+        switch (Definition.Type)
+        {
+            case ReportFilterType.Text:
+                value = TextValue;
+                break;
+            case ReportFilterType.Enum:
+                value = SelectedOption;
+                break;
+            case ReportFilterType.Boolean:
+                value = BooleanValue;
+                break;
+            case ReportFilterType.DateRange:
+                if (FromDate.HasValue && ToDate.HasValue && FromDate.Value.Date > ToDate.Value.Date)
                 {
-                    await RefreshPreviewAsync();
+                    filter = new ReportFilter();
+                    error = $"{Label}: the start date cannot be after the end date.";
+                    return false;
                 }
-
-                if (Preview.CurrentResult == null)
+                value = FromDate;
+                secondaryValue = ToDate;
+                break;
+            case ReportFilterType.NumberRange:
+                if (!TryParseOptionalDecimal(TextValue, out var minimum) ||
+                    !TryParseOptionalDecimal(SecondaryTextValue, out var maximum))
                 {
-                    ErrorMessage = "Report preview could not be generated.";
-                    return;
+                    filter = new ReportFilter();
+                    error = $"{Label}: enter valid numeric values.";
+                    return false;
                 }
-
-                var result = await _reportExportService.ExportAsync(
-                    Preview.CurrentResult,
-                    new ReportExportRequest { Format = format },
-                    _authenticationService.CurrentUser?.Id);
-                if (result.Succeeded)
+                if (minimum.HasValue && maximum.HasValue && minimum > maximum)
                 {
-                    StatusMessage = result.Message;
+                    filter = new ReportFilter();
+                    error = $"{Label}: the minimum cannot exceed the maximum.";
+                    return false;
                 }
-                else
-                {
-                    ErrorMessage =
-                        result.ErrorMessage ?? result.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = $"{format} export failed: {ex.Message}";
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+                value = minimum;
+                secondaryValue = maximum;
+                break;
         }
 
-        private IReadOnlyCollection<ReportFilter> BuildFilters()
+        filter = new ReportFilter
         {
-            if (SelectedReport == null)
-            {
-                return [];
-            }
+            Key = Definition.Key,
+            Label = Definition.Label,
+            Type = Definition.Type,
+            Value = value,
+            SecondaryValue = secondaryValue,
+            Options = Definition.Options
+        };
+        error = string.Empty;
+        return true;
+    }
 
-            var filters = new List<ReportFilter>();
-            foreach (var definition in SelectedReport.Filters)
-            {
-                filters.Add(new ReportFilter
-                {
-                    Key = definition.Key,
-                    Label = definition.Label,
-                    Type = definition.Type,
-                    Value = GetFilterValue(definition.Key),
-                    SecondaryValue = GetSecondaryFilterValue(definition.Key),
-                    Options = definition.Options
-                });
-            }
-            return filters;
-        }
+    public void Clear()
+    {
+        TextValue = string.Empty;
+        SecondaryTextValue = string.Empty;
+        SelectedOption = string.Empty;
+        FromDate = null;
+        ToDate = null;
+        BooleanValue = false;
+    }
 
-        private object? GetFilterValue(string key)
+    private static bool TryParseOptionalDecimal(string text, out decimal? value)
+    {
+        if (string.IsNullOrWhiteSpace(text))
         {
-            return key switch
-            {
-                "SearchText" => SearchText,
-                "Category" => Category,
-                "Department" => Department,
-                "LiteratureCategory" => LiteratureCategory,
-                "Author" => Author,
-                "Publisher" => Publisher,
-                "Status" => SelectedStatus,
-                "MemberType" => SelectedMemberType,
-                "DateRange" => FromDate,
-                "OverdueOnly" => OverdueOnly,
-                "DaysOverdue" => MinimumDays,
-                "FineAmount" => MinimumAmount,
-                "PaymentStatus" => SelectedStatus,
-                "Channel" => SelectedChannel,
-                "NotificationType" => SelectedNotificationType,
-                _ => null
-            };
+            value = null;
+            return true;
         }
 
-        private object? GetSecondaryFilterValue(string key)
+        if (decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed))
         {
-            return key switch
-            {
-                "DateRange" => ToDate,
-                "DaysOverdue" => MaximumDays,
-                "FineAmount" => MaximumAmount,
-                _ => null
-            };
+            value = parsed;
+            return true;
         }
 
-        private void ClearFilterValues()
-        {
-            SearchText = string.Empty;
-            Category = string.Empty;
-            Department = string.Empty;
-            LiteratureCategory = string.Empty;
-            Author = string.Empty;
-            Publisher = string.Empty;
-            SelectedStatus = string.Empty;
-            SelectedMemberType = string.Empty;
-            FromDate = null;
-            ToDate = null;
-            OverdueOnly = false;
-            MinimumDays = string.Empty;
-            MaximumDays = string.Empty;
-            MinimumAmount = string.Empty;
-            MaximumAmount = string.Empty;
-            SelectedChannel = string.Empty;
-            SelectedNotificationType = string.Empty;
-        }
-
-        private void UpdateReportFlags()
-        {
-            var key = SelectedReport?.Key;
-            IsCatalogReport = key == "catalog";
-            IsIssuedReport = key == "issued-books";
-            IsOverdueReport = key == "overdue-books";
-            IsFineReport = key == "fines";
-            IsNotificationReport = key == "notifications";
-        }
+        value = null;
+        return false;
     }
 }

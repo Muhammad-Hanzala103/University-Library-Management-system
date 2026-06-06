@@ -17,6 +17,7 @@ namespace KicsitLibrary.Reports.Providers
             Key = ReportKeys.IssuedBooks,
             Title = "Issued Books Report",
             Description = "Active issue records and their current due status.",
+            Category = "Circulation Reports",
             Columns =
             [
                 Column("IssueRecordId", "Issue Record Id"),

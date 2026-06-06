@@ -69,6 +69,15 @@ namespace KicsitLibrary.Reports.Export
                 return string.Empty;
             }
 
+            if (value is DateTime dateTime)
+            {
+                return dateTime.ToString(
+                    string.IsNullOrWhiteSpace(format)
+                        ? "yyyy-MM-dd HH:mm:ss"
+                        : format,
+                    CultureInfo.InvariantCulture);
+            }
+
             return value is IFormattable formattable
                 ? formattable.ToString(format, CultureInfo.InvariantCulture)
                 : value.ToString() ?? string.Empty;
