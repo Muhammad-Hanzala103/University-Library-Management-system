@@ -1,5 +1,30 @@
 # Codex Continuation Audit
 
+## Priority 4A Completion Update
+
+Completion date: 2026-06-06
+
+Priority 4A is complete:
+
+- Startup now uses `EnsureCreatedAsync` only; mixed migration fallback behavior was removed.
+- `DbSeeder.SeedAsync` seeds data only and no longer initializes schema.
+- Relative SQLite paths resolve from the desktop executable directory.
+- Fatal initialization or seeding errors stop startup.
+- `KicsitLibrary.Tests` is configured with xUnit, `Microsoft.NET.Test.Sdk`, the Visual Studio runner, and EF Core SQLite.
+- Nine tests pass against isolated temporary SQLite databases.
+- Coverage includes duplicate issue prevention, return availability, non-negative fines, overdue-day calculations, duplicate accession rejection, fresh-database seeding, notification-record persistence without sending, and activity-log writes.
+- Clearance blocking coverage remains pending because no clearance service/helper exists.
+- EF migrations remain pending until a safe baseline/adoption strategy is designed for databases created with `EnsureCreatedAsync`.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 9 tests passed.
+
 Audit date: 2026-06-06  
 Scope: Read-only continuation audit plus this report. No production code was changed.
 

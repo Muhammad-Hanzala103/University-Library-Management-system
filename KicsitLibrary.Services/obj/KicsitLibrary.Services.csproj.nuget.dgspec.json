@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Projects\\University Library Management system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj": {}
+    "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj": {}
   },
   "projects": {
-    "C:\\Projects\\University Library Management system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj": {
+    "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\University Library Management system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj",
+        "projectUniqueName": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj",
         "projectName": "KicsitLibrary.Core",
-        "projectPath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj",
+        "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj",
         "packagesPath": "C:\\Users\\hani7\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Core\\obj\\",
+        "outputPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -30,6 +30,7 @@
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {}
           }
@@ -44,10 +45,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "CommunityToolkit.Mvvm": {
@@ -85,18 +87,18 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Projects\\University Library Management system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
+    "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\University Library Management system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj",
+        "projectUniqueName": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj",
         "projectName": "KicsitLibrary.Data",
-        "projectPath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj",
+        "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj",
         "packagesPath": "C:\\Users\\hani7\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Data\\obj\\",
+        "outputPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -115,10 +117,11 @@
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Projects\\University Library Management system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj": {
-                "projectPath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj"
+              "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj": {
+                "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj"
               }
             }
           }
@@ -133,10 +136,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
@@ -194,18 +198,18 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Projects\\University Library Management system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj": {
+    "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\University Library Management system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj",
+        "projectUniqueName": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj",
         "projectName": "KicsitLibrary.Services",
-        "projectPath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj",
+        "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj",
         "packagesPath": "C:\\Users\\hani7\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Services\\obj\\",
+        "outputPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -224,10 +228,11 @@
         },
         "frameworks": {
           "net8.0": {
+            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Projects\\University Library Management system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
-                "projectPath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
+              "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
+                "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
               }
             }
           }
@@ -242,10 +247,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net8.0": {
+          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.Extensions.Configuration.Json": {
@@ -287,7 +293,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

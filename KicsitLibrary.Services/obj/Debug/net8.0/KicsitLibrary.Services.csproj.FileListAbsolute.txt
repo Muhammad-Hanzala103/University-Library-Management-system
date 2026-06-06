@@ -16,3 +16,21 @@ C:\Projects\University Library Management system\KicsitLibrary.Services\obj\Debu
 C:\Projects\University Library Management system\KicsitLibrary.Services\obj\Debug\net8.0\refint\KicsitLibrary.Services.dll
 C:\Projects\University Library Management system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.pdb
 C:\Projects\University Library Management system\KicsitLibrary.Services\obj\Debug\net8.0\ref\KicsitLibrary.Services.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\refint\KicsitLibrary.Services.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Services.deps.json
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Services.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Services.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Core.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Data.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Data.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Core.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.csproj.AssemblyReference.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.GeneratedMSBuildEditorConfig.editorconfig
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.AssemblyInfoInputs.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.AssemblyInfo.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.csproj.CoreCompileInputs.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.sourcelink.json
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLi.B8FD8F57.Up2Date
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\ref\KicsitLibrary.Services.dll

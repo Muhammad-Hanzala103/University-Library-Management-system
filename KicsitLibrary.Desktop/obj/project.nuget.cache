@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UpAil9x/73A=",
+  "dgSpecHash": "/kAuERRtjNM=",
   "success": true,
-  "projectFilePath": "C:\\Projects\\University Library Management system\\KicsitLibrary.Desktop\\KicsitLibrary.Desktop.csproj",
+  "projectFilePath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Desktop\\KicsitLibrary.Desktop.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\hani7\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\hani7\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

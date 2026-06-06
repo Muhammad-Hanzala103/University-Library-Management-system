@@ -6,9 +6,13 @@ This document outlines modules that are currently implemented or stubbed, listin
 
 ## 1. Placeholder & Stubbed Logic
 
-### Local Database Seeding Fallback
-- **Setting**: The SQLite database fallback uses `EnsureCreatedAsync` if EF migrations are missing or fail during execution.
-- **Risk**: While fine for development and testing, `EnsureCreatedAsync` does not support schema updates. Migrations must be added and applied before releasing to staging or production.
+### Database Initialization Strategy
+- **Decision**: Priority 4A uses `EnsureCreatedAsync` only. `MigrateAsync` is not called.
+- **Reason**: Existing development databases may have been created by `EnsureCreatedAsync`; adding a normal initial migration could conflict with those schemas.
+- **Path**: `Data Source=KicsitLibrary.db` resolves to `KicsitLibrary.Desktop/bin/<Configuration>/net8.0-windows/KicsitLibrary.db` when running from build output.
+- **Limitation**: `EnsureCreatedAsync` does not evolve an existing schema. A reviewed baseline/adoption plan remains required before staging or production migrations.
+- **Data safety**: Startup never deletes, recreates, or automatically relocates an existing database. Databases previously created under a different working directory must be identified and moved only through an explicit backup/restore procedure.
+- **Failure behavior**: Database initialization and seeding failures are fatal and stop startup instead of opening the application in a partial state.
 
 ### Navigation View Stubs
 - The following screens are registered in the main sidebar menu in `MainWindow.xaml` and mapped in `MainViewModel.cs` but do not have XAML Views implemented. They will load as blank/loading templates:
@@ -34,5 +38,8 @@ This document outlines modules that are currently implemented or stubbed, listin
 ### System Backups
 - Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
 
-### Unit Test Project Coverage
-- The `KicsitLibrary.Tests` assembly contains only a blank template file (`Class1.cs`). There is no unit test coverage for any service layer class (e.g. Catalog, Consumer, or Circulation).
+### Automated Test Coverage
+- Nine xUnit tests run against isolated temporary SQLite files.
+- Coverage currently protects core circulation transitions, duplicate accession validation, seed insertion, notification-record persistence, activity logging, and overdue/fine calculation foundations.
+- There is no clearance service or clearance eligibility helper, so the requested "active issue blocks student clearance" test is pending Priority 6.
+- The suite does not yet cover UI behavior, concurrency, reservations, migration adoption, or real notification delivery.

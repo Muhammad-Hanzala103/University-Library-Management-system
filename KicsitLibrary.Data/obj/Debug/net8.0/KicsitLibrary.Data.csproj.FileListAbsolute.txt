@@ -16,3 +16,21 @@ C:\Projects\University Library Management system\KicsitLibrary.Data\obj\Debug\ne
 C:\Projects\University Library Management system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.pdb
 C:\Projects\University Library Management system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.genruntimeconfig.cache
 C:\Projects\University Library Management system\KicsitLibrary.Data\obj\Debug\net8.0\ref\KicsitLibrary.Data.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\refint\KicsitLibrary.Data.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\bin\Debug\net8.0\KicsitLibrary.Data.deps.json
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\bin\Debug\net8.0\KicsitLibrary.Data.runtimeconfig.json
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\bin\Debug\net8.0\KicsitLibrary.Data.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\bin\Debug\net8.0\KicsitLibrary.Data.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\bin\Debug\net8.0\KicsitLibrary.Core.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\bin\Debug\net8.0\KicsitLibrary.Core.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.csproj.AssemblyReference.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.AssemblyInfoInputs.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.AssemblyInfo.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.csproj.CoreCompileInputs.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.sourcelink.json
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLi.68D88144.Up2Date
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\KicsitLibrary.Data.genruntimeconfig.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Data\obj\Debug\net8.0\ref\KicsitLibrary.Data.dll

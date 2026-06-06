@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
+using KicsitLibrary.Core.Helpers;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Data;
 
@@ -214,13 +215,9 @@ namespace KicsitLibrary.Services.Circulation
             }
 
             // 2. Calculate overdue details & fines
-            int lateDays = 0;
-            decimal calculatedFine = 0;
-            if (DateTime.UtcNow > issueRecord.ExpectedReturnDate)
-            {
-                lateDays = (int)(DateTime.UtcNow - issueRecord.ExpectedReturnDate).TotalDays;
-                calculatedFine = lateDays * issueRecord.FinePerDay;
-            }
+            var receivedAt = DateTime.UtcNow;
+            var lateDays = OverdueCalculator.CalculateOverdueDays(issueRecord.ExpectedReturnDate, receivedAt);
+            var calculatedFine = OverdueCalculator.CalculateFine(lateDays, issueRecord.FinePerDay);
 
             // If lost or damaged, add purchase price + admin surcharge (Rs. 200)
             if (condition == "Lost" || condition == "Damaged")
@@ -233,7 +230,7 @@ namespace KicsitLibrary.Services.Circulation
             if (calculatedFine > 0)
             {
                 decimal waivedAmt = 0;
-                decimal remaining = calculatedFine - collectedAmount;
+                decimal remaining = Math.Max(0, calculatedFine - Math.Max(0, collectedAmount));
 
                 if (remaining > 0 && !string.IsNullOrWhiteSpace(waiverReason))
                 {
@@ -269,7 +266,7 @@ namespace KicsitLibrary.Services.Circulation
             var receiveRecord = new ReceiveRecord
             {
                 IssueRecordId = issueRecord.Id,
-                ReceiveDate = DateTime.UtcNow,
+                ReceiveDate = receivedAt,
                 FineType = condition == "Normal" ? "Overdue" : condition,
                 FineAmount = calculatedFine,
                 Reason = condition,

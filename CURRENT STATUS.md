@@ -9,7 +9,16 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 1 (Library Catalog Management)**: **100% Completed**
 - **Priority 2 (Consumer Management)**: **100% Completed**
 - **Priority 3 (Circulation System)**: **100% Completed**
-- **Priority 4 to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 4A (Database Initialization & Test Infrastructure)**: **100% Completed**
+- **Priority 4B to 8 (Advanced Modules)**: **Pending Implementation**
+
+### Priority 4A Foundation
+- Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
+- Relative SQLite paths are resolved from the desktop executable directory.
+- Fatal database initialization or seeding failures stop application startup.
+- `KicsitLibrary.Tests` is a real xUnit test project with nine passing tests.
+- Tests use isolated temporary SQLite files and never use the development database.
+- Shared overdue-day and fine calculations are available through `OverdueCalculator`.
 
 ---
 

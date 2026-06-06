@@ -12,9 +12,6 @@ namespace KicsitLibrary.Data
     {
         public static async Task SeedAsync(KicsitLibraryDbContext context, IPasswordHasher passwordHasher)
         {
-            // Ensure database is created
-            await context.Database.EnsureCreatedAsync();
-
             // 1. Seed Roles
             var roles = new List<Role>
             {

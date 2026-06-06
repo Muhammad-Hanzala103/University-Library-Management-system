@@ -4,7 +4,15 @@ This document contains a structured task list outlining the implementation steps
 
 ---
 
-## Priority 4: Overdue Engine & Notifications
+## Priority 4A: Database Initialization & Test Infrastructure
+- [x] Remove mixed `MigrateAsync` and `EnsureCreatedAsync` startup behavior.
+- [x] Use `EnsureCreatedAsync` only for the current development database.
+- [x] Make the SQLite database path predictable relative to the desktop executable.
+- [x] Stop startup after fatal database initialization or seeding failures.
+- [x] Configure xUnit and isolated SQLite integration tests.
+- [x] Add circulation, catalog, seeding, notification-entity, activity-log, and overdue-calculation regression coverage.
+
+## Priority 4B: Overdue Engine & Notifications
 - **Goal**: Implement automatic background scanning for overdue books and notify users.
 - [ ] Create `INotificationService.cs` in `KicsitLibrary.Core/Interfaces/`.
 - [ ] Create `NotificationService.cs` in `KicsitLibrary.Services/`.

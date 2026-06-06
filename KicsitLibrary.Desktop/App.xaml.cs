@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Windows;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,7 @@ namespace KicsitLibrary.Desktop
             AppHost = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    config.SetBasePath(Directory.GetCurrentDirectory());
+                    config.SetBasePath(AppContext.BaseDirectory);
                     config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureServices((context, services) =>
@@ -43,6 +44,7 @@ namespace KicsitLibrary.Desktop
                     // Register DB Context Factory dynamically (SQL Server or SQLite)
                     if (dbProvider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
                     {
+                        connectionString = ResolveSqliteConnectionString(connectionString);
                         services.AddDbContextFactory<KicsitLibraryDbContext>(options =>
                             options.UseSqlite(connectionString, b => b.MigrationsAssembly("KicsitLibrary.Data")));
                     }
@@ -98,40 +100,34 @@ namespace KicsitLibrary.Desktop
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            await AppHost!.StartAsync();
-
-            // Run database migrations on startup
-            using (var scope = AppHost.Services.CreateScope())
+            try
             {
+                await AppHost!.StartAsync();
+
+                using var scope = AppHost.Services.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<KicsitLibraryDbContext>();
                 var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-                try
-                {
-                    await dbContext.Database.MigrateAsync();
-                }
-                catch (Exception ex)
-                {
-                    // Soft fall back to EnsureCreated if localdb isn't fully installed or migrations fail for testing
-                    try
-                    {
-                        await dbContext.Database.EnsureCreatedAsync();
-                    }
-                    catch (Exception innerEx)
-                    {
-                        MessageBox.Show($"Database initialization failed:\n{ex.Message}\n\nFallback Error:\n{innerEx.Message}", 
-                            "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
 
-                try
+                // Current development databases were created with EnsureCreated.
+                // Do not mix this path with migrations until a safe baseline strategy is implemented.
+                if (!await dbContext.Database.EnsureCreatedAsync())
                 {
-                    await DbSeeder.SeedAsync(dbContext, passwordHasher);
+                    if (!await dbContext.Database.CanConnectAsync())
+                    {
+                        throw new InvalidOperationException("The configured database exists but cannot be opened.");
+                    }
                 }
-                catch (Exception seedEx)
-                {
-                    MessageBox.Show($"Database seeding failed:\n{seedEx.Message}", 
-                        "Seeding Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                await DbSeeder.SeedAsync(dbContext, passwordHasher);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Database initialization failed. The application cannot continue.\n\n{ex.Message}",
+                    "Fatal Database Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                Shutdown(-1);
+                return;
             }
 
             var loginWindow = AppHost.Services.GetRequiredService<LoginWindow>();
@@ -148,6 +144,34 @@ namespace KicsitLibrary.Desktop
             }
 
             base.OnStartup(e);
+        }
+
+        private static string ResolveSqliteConnectionString(string? connectionString)
+        {
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("The SQLite connection string is not configured.");
+            }
+
+            var builder = new SqliteConnectionStringBuilder(connectionString);
+            if (string.IsNullOrWhiteSpace(builder.DataSource))
+            {
+                throw new InvalidOperationException("The SQLite data source is not configured.");
+            }
+
+            if (!builder.DataSource.Equals(":memory:", StringComparison.OrdinalIgnoreCase) &&
+                !Path.IsPathRooted(builder.DataSource))
+            {
+                builder.DataSource = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, builder.DataSource));
+            }
+
+            var databaseDirectory = Path.GetDirectoryName(builder.DataSource);
+            if (!string.IsNullOrWhiteSpace(databaseDirectory))
+            {
+                Directory.CreateDirectory(databaseDirectory);
+            }
+
+            return builder.ToString();
         }
 
         protected override async void OnExit(ExitEventArgs e)

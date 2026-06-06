@@ -11,3 +11,16 @@ C:\Projects\University Library Management system\KicsitLibrary.Core\obj\Debug\ne
 C:\Projects\University Library Management system\KicsitLibrary.Core\obj\Debug\net8.0\refint\KicsitLibrary.Core.dll
 C:\Projects\University Library Management system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.pdb
 C:\Projects\University Library Management system\KicsitLibrary.Core\obj\Debug\net8.0\ref\KicsitLibrary.Core.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.csproj.AssemblyReference.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.AssemblyInfoInputs.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.AssemblyInfo.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.csproj.CoreCompileInputs.cache
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.sourcelink.json
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\refint\KicsitLibrary.Core.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\KicsitLibrary.Core.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\bin\Debug\net8.0\KicsitLibrary.Core.deps.json
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\bin\Debug\net8.0\KicsitLibrary.Core.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\bin\Debug\net8.0\KicsitLibrary.Core.pdb
+C:\Project\University-Library-Management-system\KicsitLibrary.Core\obj\Debug\net8.0\ref\KicsitLibrary.Core.dll

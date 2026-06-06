@@ -6,57 +6,49 @@ Use the following commands from the repository root (`c:\Projects\University Lib
 
 ## 1. Project Compilation
 Build the entire solution containing all projects:
-```bash
-dotnet build
+```powershell
+dotnet build KicsitLibrary.slnx
 ```
 
 Clean the solution binaries:
-```bash
-dotnet clean
+```powershell
+dotnet clean KicsitLibrary.slnx
 ```
 
 ---
 
 ## 2. Test Execution
 Run the unit test project (ensure tests are discovered):
-```bash
-dotnet test
+```powershell
+dotnet test KicsitLibrary.slnx
 ```
 
 Run test execution with logging:
-```bash
-dotnet test --logger "console;verbosity=detailed"
+```powershell
+dotnet test KicsitLibrary.slnx --logger "console;verbosity=detailed"
 ```
+
+The test project uses a unique temporary SQLite file per test under `%TEMP%\KicsitLibrary.Tests`. It never opens `KicsitLibrary.db`.
 
 ---
 
-## 3. Database Initializer & Migration Scripts
-Because the database is SQLite, you can manage it using Entity Framework core commands:
-- Install Entity Framework CLI Tools:
-  ```bash
-  dotnet tool install --global dotnet-ef
-  ```
-- Generate an Initial Migration:
-  ```bash
-  dotnet ef migrations add InitialCreate --project KicsitLibrary.Data --startup-project KicsitLibrary.Desktop
-  ```
-- Apply Migration updates to Database:
-  ```bash
-  dotnet ef database update --project KicsitLibrary.Data --startup-project KicsitLibrary.Desktop
-  ```
+## 3. Database Initialization
+The current development strategy is `EnsureCreatedAsync` only.
+
+Do not run `dotnet ef migrations add InitialCreate` against the current database workflow. A baseline/adoption plan is required first because existing databases may have been created by `EnsureCreatedAsync`.
 
 ---
 
 ## 4. Run the WPF Desktop Application
 Launch the WPF UI:
-```bash
+```powershell
 dotnet run --project KicsitLibrary.Desktop
 ```
 
 ---
 
 ## 5. SQLite Local Database Inspections
-The default SQLite database is named `KicsitLibrary.db` and is created in the executing output directory (usually `/KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`).
+The default SQLite database is named `KicsitLibrary.db`. Relative paths are resolved from `AppContext.BaseDirectory`, normally `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`.
 - Connect to database using SQLite CLI:
   ```bash
   sqlite3 KicsitLibrary.db
