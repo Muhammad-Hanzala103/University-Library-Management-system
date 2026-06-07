@@ -19,6 +19,7 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
 
     public KicsitLibraryDbContext Context { get; }
     public string ConnectionString { get; }
+    public string DatabasePath => _databasePath;
 
     public static async Task<SqliteTestDatabase> CreateAsync(bool seed = false)
     {

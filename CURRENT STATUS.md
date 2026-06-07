@@ -20,7 +20,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 7A (Activity Log Browser & Audit Records Workflow)**: **100% Completed**
 - **Priority 7B (Inventory Management & Physical Stock Verification)**: **100% Completed**
 - **Priority 8A (Verified Local SQLite Backup Creation)**: **100% Completed**
-- **Priority 8B+ (Restore, Sync & Deployment)**: **Pending Implementation**
+- **Priority 8B (Verified Local SQLite Restore)**: **100% Completed**
+- **Priority 8C+ (Scheduling, Sync & Deployment)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -145,6 +146,19 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Super Admin/Admin can create and verify backups. Librarian/Auditor can view history. Other roles require the seeded backup permissions.
 - One hundred forty-eight isolated SQLite tests pass, including thirteen Priority 8A tests.
 
+### Priority 8B Verified Local SQLite Restore
+- Added verified restore preview, validation, history, status summaries, authorization, and activity logging.
+- Restore accepts only non-empty SQLite files that pass `PRAGMA integrity_check`, SHA-256 hashing, and required KICSIT schema-table checks.
+- Every approved restore creates a verified online safety backup before staging any replacement.
+- The active database is never overwritten while WPF, hosted services, or scoped DbContexts are running.
+- A verified staged copy and non-sensitive pending metadata are written beside the configured database; application restart is required.
+- Startup applies a pending restore before the host or any DbContext starts, creates an emergency copy, performs post-replacement integrity checks, and rolls back on simulated or real failure.
+- Startup restore results are imported into `RestoreHistories` and `ActivityLogs` after compatibility initialization.
+- Added additive `RestoreHistories` compatibility SQL and indexes without migrations or destructive schema changes.
+- Added Restore Management, restore preview/confirmation, restore history, and Backup Management integration.
+- Super Admin/Admin can stage restores. Librarian/Auditor can view restore history. Other roles require explicit permissions.
+- One hundred sixty-seven isolated SQLite tests pass, including nineteen Priority 8B tests.
+
 ---
 
 ## 2. Completed Components
@@ -238,7 +252,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Views & ViewModels**:
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:
-  - Verified local restore, automatic backup scheduling/retention, Supabase sync, and deployment remain pending.
+  - Automatic backup scheduling/retention, Supabase sync, and deployment remain pending.
 - **Final Release Documentation**:
   - Generate a complete professional repository-root `README.md` at final release so GitHub displays the project overview on the repository front page.
   - The final README must include the project title, overview, key features, technology stack, architecture, screenshots placeholder, installation guide, database setup, default login accounts, build and test commands, release notes, known limitations, future improvements, contributors, and license placeholder.

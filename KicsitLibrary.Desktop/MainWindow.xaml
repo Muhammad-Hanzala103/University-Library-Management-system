@@ -65,6 +65,9 @@
         <DataTemplate DataType="{x:Type vm:BackupManagementViewModel}">
             <views:BackupManagementView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:RestoreManagementViewModel}">
+            <views:RestoreManagementView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -151,6 +154,9 @@
                     <Button Style="{StaticResource SidebarButton}" Content="Backup Management"
                             Command="{Binding NavigateToBackupsCommand}"
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Backup Management}"/>
+                    <Button Style="{StaticResource SidebarButton}" Content="Restore Management"
+                            Command="{Binding NavigateToRestoresCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Restore Management}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Reports &amp; Analytics" 
                             Command="{Binding NavigateToReportsCommand}"

@@ -123,6 +123,30 @@ namespace KicsitLibrary.Data
                         "DeletedByUserId" INTEGER NULL
                     );
                     """);
+                await context.Database.ExecuteSqlRawAsync("""
+                    CREATE TABLE IF NOT EXISTS "RestoreHistories" (
+                        "Id" INTEGER NOT NULL CONSTRAINT "PK_RestoreHistories" PRIMARY KEY AUTOINCREMENT,
+                        "BackupFilePath" TEXT NOT NULL,
+                        "SafetyBackupFilePath" TEXT NULL,
+                        "RestoredDatabasePath" TEXT NOT NULL,
+                        "RequestedByUserId" INTEGER NOT NULL,
+                        "RequestedByUserName" TEXT NOT NULL,
+                        "StartedAt" TEXT NOT NULL,
+                        "FinishedAt" TEXT NULL,
+                        "Status" TEXT NOT NULL DEFAULT 'Started',
+                        "Reason" TEXT NULL,
+                        "ErrorMessage" TEXT NULL,
+                        "RolledBack" INTEGER NOT NULL DEFAULT 0,
+                        "ChecksumSha256" TEXT NULL,
+                        "MetadataJson" TEXT NULL,
+                        "CreatedAt" TEXT NOT NULL,
+                        "UpdatedAt" TEXT NULL,
+                        "IsDeleted" INTEGER NOT NULL DEFAULT 0,
+                        "DeletedAt" TEXT NULL,
+                        "DeletedReason" TEXT NULL,
+                        "DeletedByUserId" INTEGER NULL
+                    );
+                    """);
 
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_NotificationRecords_IssueRecordId\" " +
@@ -150,6 +174,12 @@ namespace KicsitLibrary.Data
                     "CREATE INDEX IF NOT EXISTS \"IX_BackupHistories_Status\" ON \"BackupHistories\" (\"Status\");");
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_BackupHistories_CreatedByUserName\" ON \"BackupHistories\" (\"CreatedByUserName\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_RestoreHistories_StartedAt\" ON \"RestoreHistories\" (\"StartedAt\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_RestoreHistories_Status\" ON \"RestoreHistories\" (\"Status\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_RestoreHistories_RequestedByUserName\" ON \"RestoreHistories\" (\"RequestedByUserName\");");
             }
             finally
             {

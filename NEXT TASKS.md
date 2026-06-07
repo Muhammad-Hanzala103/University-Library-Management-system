@@ -161,9 +161,27 @@ Deferred refinements:
 - [ ] Add a native folder picker; Priority 8A supports the default Documents path and typed custom paths.
 - [ ] Add WPF UI automation and multi-process backup coordination tests.
 
-## Priority 8B+: Restore, Sync & Deployment
+## Priority 8B: Verified Local SQLite Restore
+- **Goal**: Restore only from validated local SQLite backups without replacing an active database.
+- [x] Add restore request, preview, validation, result, history, and summary contracts.
+- [x] Add additive restore-history persistence and indexes without migrations.
+- [x] Require Admin/Super Admin authorization, reason, exact `RESTORE` confirmation, and a mandatory verified safety backup.
+- [x] Validate source files with size checks, `PRAGMA integrity_check`, SHA-256, and required KICSIT schema tables.
+- [x] Stage a verified copy and require application restart instead of replacing the active database.
+- [x] Apply pending restores before host/database startup with an emergency copy, post-restore verification, and rollback.
+- [x] Import startup results into restore history and activity logs.
+- [x] Add Restore Management, preview/confirmation, history details, and Backup Management integration.
+- [x] Add nineteen isolated restore tests; all one hundred sixty-seven tests pass.
+
+Deferred refinements:
+- [ ] Add WPF UI automation for restore confirmation and restart messaging.
+- [ ] Add cross-process ownership protection before supporting simultaneous desktop instances.
+- [ ] Add a native database-file picker; current restore paths are selected from backup history or typed manually.
+- [ ] Define an operator-reviewed retention policy for staged, emergency, and safety backup files.
+
+## Priority 8C+: Scheduling, Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
-- [ ] Implement database restore logic with automatic verification checks.
+- [ ] Implement automatic backup scheduling and retention only after an explicit file-safety policy is approved.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
 - [ ] Configure `appsettings.json` encryption routines for sensitive credentials.
 - [ ] Package the solution: configure ClickOnce deployment or an MSI installer package.

@@ -1,0 +1,71 @@
+<UserControl x:Class="KicsitLibrary.Desktop.Views.RestoreManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10">
+            <StackPanel>
+                <TextBlock Text="Verified Local SQLite Restore" FontSize="22" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}"/>
+                <WrapPanel Margin="0,8,0,0">
+                    <TextBlock Text="{Binding Summary.TotalRestores, StringFormat=Total: {0}}" Margin="0,0,18,0"/>
+                    <TextBlock Text="{Binding Summary.PendingRestarts, StringFormat=Pending restart: {0}}" Margin="0,0,18,0"/>
+                    <TextBlock Text="{Binding Summary.SuccessfulRestores, StringFormat=Completed: {0}}" Margin="0,0,18,0"/>
+                    <TextBlock Text="{Binding Summary.FailedRestores, StringFormat=Failed: {0}}" Margin="0,0,18,0"/>
+                    <TextBlock Text="{Binding Summary.RolledBackRestores, StringFormat=Rolled back: {0}}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,10">
+            <StackPanel>
+                <TextBlock Text="Backup database file path" FontWeight="SemiBold"/>
+                <TextBox Text="{Binding BackupFilePath, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8"/>
+                <WrapPanel>
+                    <Button Content="Preview Backup" Command="{Binding PreviewBackupCommand}"
+                            Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Validate Backup" Command="{Binding ValidateBackupCommand}"
+                            Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Refresh Restore History" Command="{Binding RefreshCommand}"
+                            Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <TextBox Width="180" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
+                    <ComboBox Width="150" ItemsSource="{Binding StatusOptions}"
+                              SelectedItem="{Binding SelectedStatus}" Margin="0,0,8,8"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}">
+            <DataGrid ItemsSource="{Binding RestoreHistory}"
+                      SelectedItem="{Binding SelectedRestore}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Started" Binding="{Binding CreatedAt, StringFormat={}{0:dd-MMM-yyyy HH:mm}}" Width="125"/>
+                    <DataGridTextColumn Header="Backup File" Binding="{Binding BackupFilePath}" Width="*"/>
+                    <DataGridTextColumn Header="Requested By" Binding="{Binding RequestedByUserName}" Width="125"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="110"/>
+                    <DataGridCheckBoxColumn Header="Rolled Back" Binding="{Binding RolledBack}" Width="85"/>
+                    <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="180"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <Border Grid.Row="3" Style="{StaticResource CardStyle}" Margin="0,10,0,0">
+            <StackPanel>
+                <Button Content="View Restore History Details"
+                        Command="{Binding ViewHistoryDetailsCommand}"
+                        Style="{StaticResource SecondaryButton}"
+                        HorizontalAlignment="Left"/>
+                <TextBlock Text="{Binding StatusMessage}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -109,11 +109,18 @@ This document outlines modules that are currently implemented or stubbed, listin
 - A process-level semaphore prevents overlapping backup operations within one application process. Separate desktop processes are not coordinated.
 - Custom destination paths are typed manually; a native folder-picker dialog remains deferred.
 - Retention settings are seeded but no automatic file/history deletion is implemented.
-- Restore, automatic scheduling, Supabase sync, and deployment remain unimplemented.
+- Verified local restore is implemented as a staged, restart-required operation. The active database is never replaced while application DbContexts are running.
+- Restore validation checks file size, SQLite integrity, SHA-256, and required KICSIT tables, but it does not prove semantic correctness of every row.
+- Startup creates an emergency copy and uses the mandatory safety backup for rollback protection. Staged, emergency, and safety files are retained; automatic cleanup is intentionally not implemented.
+- Only one pending restore is supported per configured database. Cross-process ownership protection is not implemented, so operators must not stage restores from multiple simultaneous application instances.
+- Restore accepts `.db` files. ZIP extraction is not implemented; use the retained database file produced by Backup Management.
+- Restore paths are selected from backup history or typed manually; a native file picker remains deferred.
+- A critical replacement plus rollback failure stops startup and preserves pending metadata for manual recovery.
+- Automatic scheduling, Supabase sync, and deployment remain unimplemented.
 - Backup history soft deletion never deletes physical backup files.
 - Metadata intentionally excludes all `SystemSettings`, including SMTP credentials.
 
 ### Automated Test Coverage
-- One hundred forty-eight xUnit tests run against isolated temporary SQLite files.
-- Coverage also protects real online backup files, integrity verification, SHA-256 checksums, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
+- One hundred sixty-seven xUnit tests run against isolated temporary SQLite files.
+- Coverage also protects real online backup and staged restore files, integrity/schema verification, SHA-256 checksums, safety backups, startup replacement, rollback, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

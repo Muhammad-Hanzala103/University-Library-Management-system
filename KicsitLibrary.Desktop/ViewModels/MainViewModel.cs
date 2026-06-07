@@ -141,6 +141,11 @@ namespace KicsitLibrary.Desktop.ViewModels
                     CurrentView = _currentScope?.ServiceProvider.GetService<BackupManagementViewModel>();
                     if (CurrentView is BackupManagementViewModel backups) _ = backups.RefreshAsync();
                     break;
+                case "Restore Management":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<RestoreManagementViewModel>();
+                    if (CurrentView is RestoreManagementViewModel restores) _ = restores.RefreshAsync();
+                    break;
                 default:
                     CurrentView = null;
                     break;
@@ -191,6 +196,9 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToBackups() => _navigationService.NavigateTo("Backup Management");
+
+        [RelayCommand]
+        private void NavigateToRestores() => _navigationService.NavigateTo("Restore Management");
 
         [RelayCommand]
         private void NavigateToReports() => _navigationService.NavigateTo("Reports & Analytics");

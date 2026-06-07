@@ -22,6 +22,7 @@ using KicsitLibrary.Services.Reservations;
 using KicsitLibrary.Services.Auditing;
 using KicsitLibrary.Services.Inventory;
 using KicsitLibrary.Services.Backup;
+using KicsitLibrary.Services.Restore;
 using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
@@ -121,6 +122,8 @@ namespace KicsitLibrary.Desktop
                     services.AddSingleton<IInventoryDialogService, InventoryDialogService>();
                     services.AddScoped<IBackupService, BackupService>();
                     services.AddSingleton<IBackupDialogService, BackupDialogService>();
+                    services.AddScoped<IRestoreService, RestoreService>();
+                    services.AddSingleton<IRestoreDialogService, RestoreDialogService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -169,6 +172,8 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<StockVerificationDetailsViewModel>();
                     services.AddTransient<BackupManagementViewModel>();
                     services.AddTransient<BackupDetailsViewModel>();
+                    services.AddTransient<RestoreManagementViewModel>();
+                    services.AddTransient<RestorePreviewViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
                     services.AddTransient<ReportsDashboardView>();
@@ -193,6 +198,8 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<StockVerificationDetailsWindow>();
                     services.AddTransient<BackupManagementView>();
                     services.AddTransient<BackupDetailsWindow>();
+                    services.AddTransient<RestoreManagementView>();
+                    services.AddTransient<RestorePreviewWindow>();
                 })
                 .Build();
         }
@@ -201,6 +208,25 @@ namespace KicsitLibrary.Desktop
         {
             try
             {
+                var configuration = AppHost!.Services.GetRequiredService<IConfiguration>();
+                var provider =
+                    configuration.GetValue<string>("SystemSettings:DatabaseProvider") ?? "SqlServer";
+                string? sqliteDatabasePath = null;
+                if (provider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
+                {
+                    var resolvedConnectionString = ResolveSqliteConnectionString(
+                        configuration.GetConnectionString("DefaultConnection"));
+                    sqliteDatabasePath =
+                        Path.GetFullPath(new SqliteConnectionStringBuilder(resolvedConnectionString).DataSource);
+                    var pendingRestore = await PendingRestoreProcessor.ApplyPendingRestoreAsync(
+                        sqliteDatabasePath);
+                    if (pendingRestore?.Status == "CriticalFailure")
+                    {
+                        throw new InvalidOperationException(
+                            $"Pending database restore and rollback failed: {pendingRestore.ErrorMessage}");
+                    }
+                }
+
                 await AppHost!.StartAsync();
 
                 using var scope = AppHost.Services.CreateScope();
@@ -218,6 +244,12 @@ namespace KicsitLibrary.Desktop
                 }
                 await DatabaseCompatibilityInitializer.ApplyAsync(dbContext);
                 await DbSeeder.SeedAsync(dbContext, passwordHasher);
+                if (!string.IsNullOrWhiteSpace(sqliteDatabasePath))
+                {
+                    await PendingRestoreProcessor.ImportResultAsync(
+                        dbContext,
+                        sqliteDatabasePath);
+                }
                 AppHost.Services
                     .GetRequiredService<OverdueSchedulerStartupSignal>()
                     .MarkReady();

@@ -1,5 +1,36 @@
 # Codex Continuation Audit
 
+## Priority 8B Completion Update
+
+Completion date: 2026-06-07
+
+- Added restore contracts, `RestoreHistory`, `IRestoreService`, and a staged `RestoreService`.
+- Restore validation requires a non-empty file, `PRAGMA integrity_check`, SHA-256, and the core KICSIT schema tables.
+- Every approved restore creates a verified online safety backup before writing pending metadata.
+- The live database is not replaced while the application is running; a verified staged copy is applied only during the next startup before the host and DbContexts open.
+- Startup creates an emergency copy, performs post-replacement validation, rolls back on failure, and stops on critical rollback failure.
+- Startup result metadata is imported into restore history and activity logs after additive compatibility initialization.
+- Added `RestoreHistories` compatibility SQL and indexes without EF migrations or destructive changes.
+- Added Restore Management, preview/confirmation, history details, navigation, DI, and Backup Management `Restore Selected`.
+- Super Admin/Admin can restore; Librarian/Auditor are view-only unless explicit permissions are changed.
+- Added nineteen isolated restore tests; one hundred sixty-seven tests pass.
+- No automatic backup scheduler, retention deletion, deployment, Supabase sync, EF migrations, WhatsApp delivery, or final README work was added.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 167 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Priority 8C, define and implement an explicit automatic backup scheduling and retention safety policy as a separate task. Do not combine it with Supabase sync, deployment, migrations, or final README generation.
+
 ## Priority 8A Completion Update
 
 Completion date: 2026-06-07

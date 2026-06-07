@@ -62,7 +62,9 @@ namespace KicsitLibrary.Data
                 new() { Code = "VIEW_INVENTORY", Name = "View Inventory", Description = "View furniture lists." },
                 new() { Code = "MANAGE_SYSTEM", Name = "Manage System Settings", Description = "Change fine rates and metadata." },
                 new() { Code = "VIEW_BACKUPS", Name = "View Backups", Description = "View local backup history." },
-                new() { Code = "MANAGE_BACKUPS", Name = "Manage Backups", Description = "Create and verify local backups." }
+                new() { Code = "MANAGE_BACKUPS", Name = "Manage Backups", Description = "Create and verify local backups." },
+                new() { Code = "VIEW_RESTORES", Name = "View Restores", Description = "View local restore history." },
+                new() { Code = "MANAGE_RESTORES", Name = "Manage Restores", Description = "Stage verified local database restores." }
             };
 
             foreach (var p in permissions)
@@ -77,10 +79,10 @@ namespace KicsitLibrary.Data
             // 3. Seed RolePermissions
             var rolePermissionMappings = new List<(Role role, string[] permissionCodes)>
             {
-                (adminRole, new[] { "MANAGE_USERS", "MANAGE_ROLES", "VIEW_REPORTS", "MANAGE_SYSTEM", "VIEW_BACKUPS", "MANAGE_BACKUPS" }),
-                (librarianRole, new[] { "MANAGE_BOOKS", "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_FINES", "MANAGE_RESERVATIONS", "VIEW_REPORTS", "MANAGE_VISITS", "MANAGE_AUDITS", "VIEW_AUDITS", "MANAGE_INVENTORY", "VIEW_INVENTORY", "VIEW_BACKUPS" }),
+                (adminRole, new[] { "MANAGE_USERS", "MANAGE_ROLES", "VIEW_REPORTS", "MANAGE_SYSTEM", "VIEW_BACKUPS", "MANAGE_BACKUPS", "VIEW_RESTORES", "MANAGE_RESTORES" }),
+                (librarianRole, new[] { "MANAGE_BOOKS", "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_FINES", "MANAGE_RESERVATIONS", "VIEW_REPORTS", "MANAGE_VISITS", "MANAGE_AUDITS", "VIEW_AUDITS", "MANAGE_INVENTORY", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES" }),
                 (assistantLibrarianRole, new[] { "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_RESERVATIONS", "VIEW_REPORTS" }),
-                (auditorRole, new[] { "VIEW_REPORTS", "VIEW_AUDITS", "VIEW_INVENTORY", "VIEW_BACKUPS" }),
+                (auditorRole, new[] { "VIEW_REPORTS", "VIEW_AUDITS", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES" }),
                 (viewerRole, new[] { "VIEW_REPORTS" })
             };
 

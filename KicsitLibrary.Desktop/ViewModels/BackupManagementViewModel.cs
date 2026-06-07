@@ -11,7 +11,8 @@ namespace KicsitLibrary.Desktop.ViewModels;
 public partial class BackupManagementViewModel(
     IBackupService backupService,
     IAuthenticationService authenticationService,
-    IBackupDialogService dialogService) : ObservableObject
+    IBackupDialogService dialogService,
+    IRestoreDialogService restoreDialogService) : ObservableObject
 {
     public IReadOnlyList<string> StatusOptions { get; } =
         ["", "InProgress", "Completed", "CompletedWithWarnings", "Failed"];
@@ -163,6 +164,19 @@ public partial class BackupManagementViewModel(
             return;
         }
         await dialogService.ShowBackupDetailsAsync(SelectedBackup);
+    }
+
+    [RelayCommand]
+    private async Task RestoreSelectedAsync()
+    {
+        if (SelectedBackup == null)
+        {
+            StatusMessage = "Select a backup first.";
+            return;
+        }
+
+        await restoreDialogService.ShowRestorePreviewAsync(SelectedBackup.BackupFilePath);
+        StatusMessage = "Restore preview closed. Refresh Restore Management to view any staged attempt.";
     }
 
     [RelayCommand]

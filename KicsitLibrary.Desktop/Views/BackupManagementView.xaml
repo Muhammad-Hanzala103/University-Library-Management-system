@@ -89,6 +89,7 @@
                     <Button Content="Verify Selected" Command="{Binding VerifySelectedCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
                     <Button Content="Open Backup Folder" Command="{Binding OpenBackupFolderCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
                     <Button Content="View Details" Command="{Binding ViewDetailsCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Restore Selected" Command="{Binding RestoreSelectedCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
                 </WrapPanel>
                 <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"/>
             </StackPanel>

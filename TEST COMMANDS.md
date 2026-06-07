@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 148
+Passed: 167
 Failed: 0
 Skipped: 0
 ```
@@ -115,6 +115,26 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 ```
 
 Priority 8A tests create isolated temporary source databases and temporary backup folders. They verify real database files, SQLite integrity checks, SHA-256 checksums, metadata redaction, non-overwrite behavior, ZIP contents, failure history, activity logs, ordering, authorization, and summaries.
+
+Run only Priority 8B restore tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~RestoreWorkflowTests"
+```
+
+Priority 8B tests use isolated temporary SQLite databases and folders. They cover real backup preview, integrity and schema validation, SHA-256, required confirmation/reason/safety backup, staged metadata, restore history, authorization, startup replacement, post-restore verification, simulated rollback, logging, compatibility indexes, and backup regression behavior. They never access `KicsitLibrary.db`.
+
+## Manual Restore Verification
+
+1. Sign in as Super Admin or Admin and create a fresh verified backup.
+2. Select the completed backup and choose **Restore Selected**.
+3. Confirm the preview shows the database path, size, SHA-256 checksum, integrity result, and detected record counts.
+4. Enter a reason and type `RESTORE` exactly; keep all safety and verification options enabled.
+5. Choose **Stage Restore** and confirm a verified safety backup path and restart-required message are shown.
+6. Close and restart the application.
+7. Confirm login succeeds, Restore Management shows a completed startup restore, and Activity Logs contains preview, validation, safety backup, staging, and startup application records.
+8. Confirm Librarian/Auditor can view restore history but cannot stage a restore.
+9. Confirm an invalid, empty, corrupted, or unrelated SQLite file is rejected.
 
 ## Manual Backup Verification
 
