@@ -52,7 +52,7 @@ namespace KicsitLibrary.Desktop.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/KicsitLibrary.Desktop;V1.0.0.0;component/views/bookformwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/KicsitLibrary.Desktop;component/views/bookformwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\BookFormWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
