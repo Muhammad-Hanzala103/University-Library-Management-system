@@ -18,7 +18,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 6A (Student & Faculty Clearance Workflow)**: **100% Completed**
 - **Priority 6B (Reservation Workflow Completion)**: **100% Completed**
 - **Priority 7A (Activity Log Browser & Audit Records Workflow)**: **100% Completed**
-- **Priority 7B to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 7B (Inventory Management & Physical Stock Verification)**: **100% Completed**
+- **Priority 8 (Backup, Sync & Deployment)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -122,6 +123,15 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Authorization grants full access to Super Admin/Admin, permission-based management to Librarian, view-only access to Auditor, and permission-based view access to other roles.
 - The Audit Report continues to use the existing report foundation and now includes audit number.
 - One hundred sixteen isolated SQLite tests pass, including sixteen Priority 7A tests.
+
+### Priority 7B Inventory and Stock Verification
+- Added authorization-aware inventory listing, details, create, update, quantity adjustment, damage, repair, soft-delete, restore, summaries, activity logs, and report export.
+- Added persisted stock-verification sessions and entries with expected/actual status, mismatch remarks, completion summaries, bulk missing marking, and explicit-only reconciliation.
+- Existing SQLite databases receive two new tables and unique indexes through the additive compatibility initializer; no migrations or destructive operations were added.
+- Added real Inventory Management and Stock Verification MVVM views, forms, detail dialogs, navigation, and DI registrations.
+- Inventory and Stock Verification reports now reflect current inventory and latest persisted verification results.
+- Document attachment metadata remains read-only; the upload/remove workflow is deferred.
+- One hundred thirty-five isolated SQLite tests pass, including nineteen Priority 7B tests.
 
 ---
 

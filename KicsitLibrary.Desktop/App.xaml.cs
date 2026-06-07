@@ -20,6 +20,7 @@ using KicsitLibrary.Services.Circulation;
 using KicsitLibrary.Services.Clearance;
 using KicsitLibrary.Services.Reservations;
 using KicsitLibrary.Services.Auditing;
+using KicsitLibrary.Services.Inventory;
 using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
@@ -114,6 +115,9 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IActivityLogBrowserService, ActivityLogBrowserService>();
                     services.AddScoped<IAuditRecordService, AuditRecordService>();
                     services.AddSingleton<IAuditDialogService, AuditDialogService>();
+                    services.AddScoped<IInventoryService, InventoryService>();
+                    services.AddScoped<IStockVerificationService, StockVerificationService>();
+                    services.AddSingleton<IInventoryDialogService, InventoryDialogService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -154,6 +158,12 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<AuditRecordsViewModel>();
                     services.AddTransient<AuditRecordFormViewModel>();
                     services.AddTransient<AuditRecordDetailsViewModel>();
+                    services.AddTransient<InventoryManagementViewModel>();
+                    services.AddTransient<InventoryItemFormViewModel>();
+                    services.AddTransient<InventoryDetailsViewModel>();
+                    services.AddTransient<InventoryAdjustmentViewModel>();
+                    services.AddTransient<StockVerificationViewModel>();
+                    services.AddTransient<StockVerificationDetailsViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
                     services.AddTransient<ReportsDashboardView>();
@@ -170,6 +180,12 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<AuditRecordsView>();
                     services.AddTransient<AuditRecordFormWindow>();
                     services.AddTransient<AuditRecordDetailsWindow>();
+                    services.AddTransient<InventoryManagementView>();
+                    services.AddTransient<InventoryItemFormWindow>();
+                    services.AddTransient<InventoryDetailsWindow>();
+                    services.AddTransient<InventoryAdjustmentWindow>();
+                    services.AddTransient<StockVerificationView>();
+                    services.AddTransient<StockVerificationDetailsWindow>();
                 })
                 .Build();
         }

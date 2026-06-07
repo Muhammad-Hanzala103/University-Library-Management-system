@@ -503,3 +503,15 @@ C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordDetailsWindow.g.cs
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordFormWindow.g.cs
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordsView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\InventoryAdjustmentWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\InventoryDetailsWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\InventoryItemFormWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\InventoryManagementView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StockVerificationDetailsWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StockVerificationView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\InventoryAdjustmentWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\InventoryDetailsWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\InventoryItemFormWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\InventoryManagementView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StockVerificationDetailsWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StockVerificationView.g.cs

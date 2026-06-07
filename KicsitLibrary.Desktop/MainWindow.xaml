@@ -56,6 +56,12 @@
         <DataTemplate DataType="{x:Type vm:AuditRecordsViewModel}">
             <views:AuditRecordsView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:InventoryManagementViewModel}">
+            <views:InventoryManagementView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StockVerificationViewModel}">
+            <views:StockVerificationView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -136,6 +142,9 @@
                     <Button Style="{StaticResource SidebarButton}" Content="Inventory Management" 
                             Command="{Binding NavigateToInventoryCommand}"
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Inventory Management}"/>
+                    <Button Style="{StaticResource SidebarButton}" Content="Stock Verification"
+                            Command="{Binding NavigateToStockVerificationCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Stock Verification}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Reports &amp; Analytics" 
                             Command="{Binding NavigateToReportsCommand}"

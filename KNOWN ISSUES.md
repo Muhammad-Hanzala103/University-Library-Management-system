@@ -58,7 +58,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Report previews use dynamic auto-generated DataGrid columns and are not covered by WPF UI automation.
 - Reservation reporting now reflects completed lifecycle states and active queue positions.
 - Visit status is derived as `Pending Follow Up` when a follow-up date exists and no action is recorded; `VisitRecord` has no persisted status field.
-- Stock Verification `Actual Status` currently equals the database status, and physical verification remarks state that on-shelf verification is pending.
+- Stock Verification reporting uses the latest persisted verification session. Before the first session, rows remain `Unverified`.
 - Student Clearance reporting now includes the same active-issue, pending-fine, and loss/damage counts used by the clearance service.
 
 ### Clearance Workflow
@@ -91,6 +91,14 @@ This document outlines modules that are currently implemented or stubbed, listin
 - No database compatibility columns or EF migrations were required for Priority 7A.
 - WPF UI automation and multi-process mutation concurrency are not covered.
 
+### Inventory and Stock Verification
+- Stock-verification sessions and entries are additive `CREATE TABLE IF NOT EXISTS` compatibility tables. EF migrations remain deferred.
+- Verification never changes `BookCopy` automatically; reconciliation requires an explicit action and reason.
+- Compatibility SQL adds unique indexes but does not add foreign-key constraints to existing databases, avoiding a destructive table rebuild.
+- Inventory document paths are displayed as existing metadata only. Upload/remove was not implemented because deep signature validation and managed application-data storage are a separate workflow.
+- Dashboard inventory totals remain unchanged; mismatch and unverified cards were not added to avoid expanding the dashboard scope.
+- WPF UI automation and cross-process inventory/verification write contention are not covered.
+
 ### Cloud Integration (Supabase Sync)
 - Currently, the database provider runs 100% locally on SQLite. There is no background worker that pushes local SQLite transaction records to a remote Supabase Postgres cloud instance.
 
@@ -98,6 +106,6 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
 
 ### Automated Test Coverage
-- One hundred sixteen xUnit tests run against isolated temporary SQLite files.
-- Coverage protects circulation, overdue, notification, reporting, student/faculty clearance blockers, reservation lifecycle transitions, activity-log browsing/filtering/details/export, audit CRUD/status/soft-delete/authorization, history, and physical PDF certificate generation.
+- One hundred thirty-five xUnit tests run against isolated temporary SQLite files.
+- Coverage also protects inventory lifecycle rules, activity logs, inventory reporting, stock-verification sessions, mismatch rules, completion summaries, explicit reconciliation, stock reporting, and authorization.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

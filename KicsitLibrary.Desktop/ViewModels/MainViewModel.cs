@@ -126,6 +126,16 @@ namespace KicsitLibrary.Desktop.ViewModels
                     if (CurrentView is AuditRecordsViewModel auditRecords)
                         _ = auditRecords.RefreshAsync();
                     break;
+                case "Inventory Management":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<InventoryManagementViewModel>();
+                    if (CurrentView is InventoryManagementViewModel inventory) _ = inventory.RefreshAsync();
+                    break;
+                case "Stock Verification":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<StockVerificationViewModel>();
+                    if (CurrentView is StockVerificationViewModel stock) _ = stock.RefreshAsync();
+                    break;
                 default:
                     CurrentView = null;
                     break;
@@ -170,6 +180,9 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToInventory() => _navigationService.NavigateTo("Inventory Management");
+
+        [RelayCommand]
+        private void NavigateToStockVerification() => _navigationService.NavigateTo("Stock Verification");
 
         [RelayCommand]
         private void NavigateToReports() => _navigationService.NavigateTo("Reports & Analytics");

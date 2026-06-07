@@ -50,6 +50,8 @@ namespace KicsitLibrary.Data
         public DbSet<SystemSettings> SystemSettings => Set<SystemSettings>();
         public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
         public DbSet<DeletedRecordArchive> DeletedRecordArchives => Set<DeletedRecordArchive>();
+        public DbSet<StockVerificationSessionRecord> StockVerificationSessions => Set<StockVerificationSessionRecord>();
+        public DbSet<StockVerificationEntry> StockVerificationEntries => Set<StockVerificationEntry>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -106,6 +108,8 @@ namespace KicsitLibrary.Data
             modelBuilder.Entity<Publisher>().HasIndex(p => p.Name);
             modelBuilder.Entity<BookMaster>().HasIndex(bm => bm.Subject);
             modelBuilder.Entity<InventoryItem>().HasIndex(ii => ii.ItemType);
+            modelBuilder.Entity<StockVerificationSessionRecord>().HasIndex(item => item.SessionNumber).IsUnique();
+            modelBuilder.Entity<StockVerificationEntry>().HasIndex(item => new { item.SessionId, item.BookCopyId }).IsUnique();
 
             // 2b. Enum to String Conversions
             modelBuilder.Entity<BookCopy>()
@@ -161,6 +165,12 @@ namespace KicsitLibrary.Data
 
             modelBuilder.Entity<IssueRecord>()
                 .Property(ir => ir.MemberType)
+                .HasConversion<string>();
+            modelBuilder.Entity<StockVerificationEntry>()
+                .Property(item => item.ExpectedStatus)
+                .HasConversion<string>();
+            modelBuilder.Entity<StockVerificationEntry>()
+                .Property(item => item.ActualStatus)
                 .HasConversion<string>();
 
             // 3. Relationships Configurations
@@ -246,6 +256,17 @@ namespace KicsitLibrary.Data
                 .HasOne(nr => nr.FacultyStaff)
                 .WithMany(fs => fs.NotificationRecords)
                 .HasForeignKey(nr => nr.FacultyStaffId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockVerificationEntry>()
+                .HasOne(item => item.Session)
+                .WithMany(session => session.Items)
+                .HasForeignKey(item => item.SessionId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<StockVerificationEntry>()
+                .HasOne(item => item.BookCopy)
+                .WithMany()
+                .HasForeignKey(item => item.BookCopyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 4. Global Query Filters for Soft Delete

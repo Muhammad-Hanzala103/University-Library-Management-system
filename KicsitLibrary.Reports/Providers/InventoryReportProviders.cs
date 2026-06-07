@@ -179,7 +179,7 @@ public sealed class StockVerificationReportDataProvider(KicsitLibraryDbContext c
     {
         Key = ReportKeys.StockVerification,
         Title = "Stock Verification Report",
-        Description = "Catalog copy status baseline for future physical verification.",
+        Description = "Latest physical stock-verification results and reconciliation state.",
         Category = "Inventory Reports",
         Columns =
         [
@@ -213,6 +213,15 @@ public sealed class StockVerificationReportDataProvider(KicsitLibraryDbContext c
         string generatedBy,
         CancellationToken cancellationToken = default)
     {
+        var latestSessionId = await Context.StockVerificationSessions.AsNoTracking()
+            .OrderByDescending(item => item.StartedAt)
+            .Select(item => (int?)item.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        var verification = latestSessionId.HasValue
+            ? await Context.StockVerificationEntries.AsNoTracking()
+                .Where(item => item.SessionId == latestSessionId.Value)
+                .ToDictionaryAsync(item => item.BookCopyId, cancellationToken)
+            : [];
         var copies = await Context.BookCopies.IgnoreQueryFilters().AsNoTracking()
             .Include(copy => copy.BookMaster).ThenInclude(book => book.Category)
             .Include(copy => copy.BookMaster.DepartmentCategory)
@@ -228,7 +237,8 @@ public sealed class StockVerificationReportDataProvider(KicsitLibraryDbContext c
         var rows = copies.Select(copy =>
         {
             var currentStatus = copy.IsDeleted ? BookStatus.Deleted : copy.AvailabilityStatus;
-            return new { Copy = copy, Status = currentStatus };
+            verification.TryGetValue(copy.Id, out var result);
+            return new { Copy = copy, Status = currentStatus, Result = result };
         })
         .Where(item =>
             TextMatches(search, item.Copy.AccessionNumber, item.Copy.BookMaster.Title) &&
@@ -245,13 +255,19 @@ public sealed class StockVerificationReportDataProvider(KicsitLibraryDbContext c
             ("Rack", item.Copy.RackNumber),
             ("Shelf", item.Copy.ShelfNumber),
             ("ExpectedStatus", item.Status.ToString()),
-            ("ActualStatus", item.Status.ToString()),
+            ("ActualStatus", item.Result?.ActualStatus?.ToString() ?? "Unverified"),
             ("LastIssueDate", item.Copy.LastIssuedDate?.ToLocalTime()),
             ("LastReceiveDate", item.Copy.LastReceivedDate?.ToLocalTime()),
-            ("VerificationRemarks", "Physical verification pending")))
+            ("VerificationRemarks", item.Result?.VerificationRemarks ?? "Physical verification pending")))
         .ToList();
 
-        var summary = new Dictionary<string, string> { ["Total Copies"] = rows.Count.ToString() };
+        var summary = new Dictionary<string, string>
+        {
+            ["Total Copies"] = rows.Count.ToString(),
+            ["Matched"] = verification.Values.Count(item => item.ActualStatus.HasValue && !item.IsMismatch).ToString(),
+            ["Mismatched"] = verification.Values.Count(item => item.ActualStatus.HasValue && item.IsMismatch).ToString(),
+            ["Unverified"] = verification.Values.Count(item => !item.ActualStatus.HasValue).ToString()
+        };
         foreach (var value in new[]
                  {
                      BookStatus.Available, BookStatus.Issued, BookStatus.Reserved,

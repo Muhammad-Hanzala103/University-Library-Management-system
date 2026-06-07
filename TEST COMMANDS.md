@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 116
+Passed: 135
 Failed: 0
 Skipped: 0
 ```
@@ -99,6 +99,26 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 ```
 
 Priority 7A tests use isolated temporary SQLite databases and a capturing report-export double. They cover latest-log ordering, filters, details, result limits, snapshot export, audit creation, duplicate rejection, update, status changes, soft deletion, activity logs, report compatibility, and authorization.
+
+Run only Priority 7B inventory and stock-verification tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~InventoryStockVerificationWorkflowTests"
+```
+
+Priority 7B tests use isolated temporary SQLite files. They cover inventory validation and lifecycle actions, activity logs, both reports, verification sessions, mismatch rules, completion summaries, explicit reconciliation, and authorization.
+
+## Manual Inventory and Stock Verification
+
+1. Open **Inventory Management**, add an item, and verify the quantity validation.
+2. Adjust quantities with a reason, then mark units damaged and repaired.
+3. Soft-delete with a reason, enable **Include deleted**, and restore the item.
+4. Export the Inventory Report and confirm current values.
+5. Open **Stock Verification** and start a new session.
+6. Verify a copy with a matching status, then verify another with a different status and required remarks.
+7. Confirm verification alone does not change `BookCopy`; use **Reconcile Selected** with a reason to apply an explicit status change.
+8. Complete the session and export the Stock Verification Report.
+9. Confirm inventory and verification actions appear in Activity Logs.
 
 ## 3. Manual SMTP Verification
 

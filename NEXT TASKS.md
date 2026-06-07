@@ -132,8 +132,16 @@ Deferred refinements:
 
 ## Priority 7B: Inventory & Stock Verification Workflow
 - **Goal**: Complete physical inventory reconciliation and stock-verification operations.
-- [ ] Create `InventoryManagementViewModel.cs` and `InventoryManagementView.xaml` to track and reconcile physical stock levels.
-- [ ] Add support for listing new book copy arrivals and catalog compliance records.
+- [x] Add inventory models, authorization-aware CRUD, quantity adjustments, damage/repair actions, soft delete/restore, summaries, and activity logs.
+- [x] Add persisted stock-verification sessions and entries through additive SQLite compatibility tables.
+- [x] Add verification, mismatch remarks, bulk missing marking, completion summaries, and explicit-only reconciliation.
+- [x] Create real Inventory Management and Stock Verification MVVM views, dialogs, navigation, and DI registrations.
+- [x] Update Inventory and Stock Verification reports without changing the sixteen-report foundation.
+- [x] Add nineteen isolated SQLite tests; all one hundred thirty-five tests pass.
+
+Deferred refinements:
+- [ ] Implement safe inventory document upload/removal only as a separately approved workflow with signature validation and application-data storage.
+- [ ] Add WPF UI automation and multi-process inventory contention testing.
 
 ---
 

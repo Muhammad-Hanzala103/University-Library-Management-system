@@ -58,6 +58,47 @@ namespace KicsitLibrary.Data
                 await AddMissingColumnsAsync(connection, "NotificationRecords", NotificationColumns);
                 await AddMissingColumnsAsync(connection, "Students", StudentClearanceColumns);
                 await AddMissingColumnsAsync(connection, "FacultyStaff", FacultyClearanceColumns);
+                await context.Database.ExecuteSqlRawAsync("""
+                    CREATE TABLE IF NOT EXISTS "StockVerificationSessions" (
+                        "Id" INTEGER NOT NULL CONSTRAINT "PK_StockVerificationSessions" PRIMARY KEY AUTOINCREMENT,
+                        "SessionNumber" TEXT NOT NULL,
+                        "StartedAt" TEXT NOT NULL,
+                        "CompletedAt" TEXT NULL,
+                        "Status" TEXT NOT NULL,
+                        "StartedByUserId" INTEGER NOT NULL,
+                        "CompletedByUserId" INTEGER NULL,
+                        "Remarks" TEXT NULL,
+                        "CreatedAt" TEXT NOT NULL,
+                        "UpdatedAt" TEXT NULL,
+                        "IsDeleted" INTEGER NOT NULL DEFAULT 0,
+                        "DeletedAt" TEXT NULL,
+                        "DeletedReason" TEXT NULL,
+                        "DeletedByUserId" INTEGER NULL
+                    );
+                    """);
+                await context.Database.ExecuteSqlRawAsync("""
+                    CREATE TABLE IF NOT EXISTS "StockVerificationEntries" (
+                        "Id" INTEGER NOT NULL CONSTRAINT "PK_StockVerificationEntries" PRIMARY KEY AUTOINCREMENT,
+                        "SessionId" INTEGER NOT NULL,
+                        "BookCopyId" INTEGER NOT NULL,
+                        "ExpectedStatus" TEXT NOT NULL,
+                        "ActualStatus" TEXT NULL,
+                        "VerificationRemarks" TEXT NULL,
+                        "VerifiedAt" TEXT NULL,
+                        "VerifiedByUserId" INTEGER NULL,
+                        "IsMismatch" INTEGER NOT NULL DEFAULT 0,
+                        "IsReconciled" INTEGER NOT NULL DEFAULT 0,
+                        "ReconciledAt" TEXT NULL,
+                        "ReconciledByUserId" INTEGER NULL,
+                        "ReconciliationReason" TEXT NULL,
+                        "CreatedAt" TEXT NOT NULL,
+                        "UpdatedAt" TEXT NULL,
+                        "IsDeleted" INTEGER NOT NULL DEFAULT 0,
+                        "DeletedAt" TEXT NULL,
+                        "DeletedReason" TEXT NULL,
+                        "DeletedByUserId" INTEGER NULL
+                    );
+                    """);
 
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_NotificationRecords_IssueRecordId\" " +
@@ -75,6 +116,10 @@ namespace KicsitLibrary.Data
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_FacultyStaff_ClearanceStatus\" " +
                     "ON \"FacultyStaff\" (\"ClearanceStatus\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS \"IX_StockVerificationSessions_SessionNumber\" ON \"StockVerificationSessions\" (\"SessionNumber\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS \"IX_StockVerificationEntries_SessionId_BookCopyId\" ON \"StockVerificationEntries\" (\"SessionId\", \"BookCopyId\");");
             }
             finally
             {
