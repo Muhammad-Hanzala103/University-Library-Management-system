@@ -522,22 +522,18 @@ public sealed class ReservationService : IReservationService
     {
         if (memberType == MemberType.Student)
         {
-            return await _context.Students.AsNoTracking()
-                .Where(member => member.Id == memberId)
-                .Select(member => new ValueTuple<bool, bool>(
-                    member.ActiveStatus,
-                    member.ClearanceStatus == ClearanceStatus.Cleared))
-                .Cast<(bool IsActive, bool IsCleared)?>()
-                .FirstOrDefaultAsync(cancellationToken);
+            var member = await _context.Students.AsNoTracking()
+                .FirstOrDefaultAsync(item => item.Id == memberId, cancellationToken);
+            return member == null
+                ? null
+                : (member.ActiveStatus, member.ClearanceStatus == ClearanceStatus.Cleared);
         }
 
-        return await _context.FacultyStaff.AsNoTracking()
-            .Where(member => member.Id == memberId)
-            .Select(member => new ValueTuple<bool, bool>(
-                member.ActiveStatus,
-                member.ClearanceStatus == ClearanceStatus.Cleared))
-            .Cast<(bool IsActive, bool IsCleared)?>()
-            .FirstOrDefaultAsync(cancellationToken);
+        var faculty = await _context.FacultyStaff.AsNoTracking()
+            .FirstOrDefaultAsync(item => item.Id == memberId, cancellationToken);
+        return faculty == null
+            ? null
+            : (faculty.ActiveStatus, faculty.ClearanceStatus == ClearanceStatus.Cleared);
     }
 
     private async Task<int> GetExpiryDaysAsync(CancellationToken cancellationToken)

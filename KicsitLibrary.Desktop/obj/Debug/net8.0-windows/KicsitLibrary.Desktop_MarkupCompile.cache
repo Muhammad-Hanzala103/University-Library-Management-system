@@ -1,20 +1,20 @@
 ﻿KicsitLibrary.Desktop
-
+1.0.0.0
 
 winexe
 C#
 .cs
-C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\
+c:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\
 KicsitLibrary.Desktop
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\App.xaml
+c:\Project\University-Library-Management-system\KicsitLibrary.Desktop\App.xaml
 28-1542317852
 
-62-2078766255
-279494009691
+64427181037
+279-1750005343
 LoginWindow.xaml;MainWindow.xaml;Themes\Colors.xaml;Themes\Styles.xaml;Views\AuthorWindow.xaml;Views\BookCatalogView.xaml;Views\BookFormWindow.xaml;Views\ClearanceDashboardView.xaml;Views\ClearanceDetailsWindow.xaml;Views\ConsumerProfileWindow.xaml;Views\CopiesWindow.xaml;Views\DashboardView.xaml;Views\FacultyStaffClearanceView.xaml;Views\FacultyStaffFormWindow.xaml;Views\FacultyStaffManagementView.xaml;Views\FinesManagementView.xaml;Views\IssueMaterialView.xaml;Views\NotificationCenterView.xaml;Views\OverdueRemindersView.xaml;Views\PublisherWindow.xaml;Views\ReceiveMaterialView.xaml;Views\ReportPreviewView.xaml;Views\ReportsDashboardView.xaml;Views\StudentClearanceView.xaml;Views\StudentFormWindow.xaml;Views\StudentsManagementView.xaml;Views\VisitRecordsView.xaml;Views\VisitRecordWindow.xaml;
 
-False
+True
 

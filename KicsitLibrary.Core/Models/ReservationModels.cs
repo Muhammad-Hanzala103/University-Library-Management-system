@@ -35,7 +35,7 @@ public sealed class ReservationEligibilityResult
     public bool IsCleared { get; set; }
 }
 
-public sealed class ReservationActionResult
+public class ReservationActionResult
 {
     public bool Succeeded { get; set; }
     public string Message { get; set; } = string.Empty;

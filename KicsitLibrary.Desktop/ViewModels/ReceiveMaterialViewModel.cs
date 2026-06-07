@@ -15,6 +15,7 @@ namespace KicsitLibrary.Desktop.ViewModels
     {
         private readonly ICirculationService _circulationService;
         private readonly IAuthenticationService _authService;
+        private readonly IReservationService _reservationService;
         private readonly KicsitLibraryDbContext _context;
 
         [ObservableProperty] private string _accessionNumber = string.Empty;
@@ -40,10 +41,15 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         private IssueRecord? _loadedIssue;
 
-        public ReceiveMaterialViewModel(ICirculationService circulationService, IAuthenticationService authService, KicsitLibraryDbContext context)
+        public ReceiveMaterialViewModel(
+            ICirculationService circulationService,
+            IAuthenticationService authService,
+            IReservationService reservationService,
+            KicsitLibraryDbContext context)
         {
             _circulationService = circulationService ?? throw new ArgumentNullException(nameof(circulationService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService));
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
@@ -158,6 +164,7 @@ namespace KicsitLibrary.Desktop.ViewModels
             try
             {
                 var userId = _authService.CurrentUser?.Id ?? 1;
+                var bookMasterId = _loadedIssue.BookCopy.BookMasterId;
                 var record = await _circulationService.ReceiveBookAsync(
                     AccessionNumber.Trim(),
                     SelectedCondition,
@@ -167,7 +174,10 @@ namespace KicsitLibrary.Desktop.ViewModels
                     userId
                 );
 
-                StatusMessage = $"Material check-in successful! Record logged under transaction ID {record.Id}.";
+                var availability = await _reservationService.MarkReservationAvailableAsync(bookMasterId);
+                StatusMessage = availability.Succeeded
+                    ? $"Material check-in successful. Reservation queue updated. Transaction ID {record.Id}."
+                    : $"Material check-in successful. Transaction ID {record.Id}. {availability.ErrorMessage}";
                 ClearAll();
             }
             catch (Exception ex)

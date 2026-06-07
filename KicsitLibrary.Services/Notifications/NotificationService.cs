@@ -469,6 +469,110 @@ namespace KicsitLibrary.Services.Notifications
             };
         }
 
+        public async Task<int> CreateReservationAvailableNotificationsAsync(
+            Reservation reservation,
+            int? userId = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(reservation);
+            if (reservation.Id <= 0)
+            {
+                throw new InvalidOperationException("A persisted reservation is required.");
+            }
+
+            var memberName = reservation.MemberType == MemberType.Student
+                ? reservation.Student?.Name
+                : reservation.FacultyStaff?.Name;
+            var memberCode = reservation.MemberType == MemberType.Student
+                ? reservation.Student?.RegistrationNumber
+                : reservation.FacultyStaff?.PersonnelNumber;
+            var email = reservation.MemberType == MemberType.Student
+                ? reservation.Student?.Email
+                : reservation.FacultyStaff?.Email;
+            var bookTitle = reservation.BookMaster?.Title ?? "reserved library title";
+            var subject = $"Reserved title available: {bookTitle}";
+            var message =
+                $"Your reservation {reservation.ReservationNumber} for '{bookTitle}' is available " +
+                $"until {reservation.ExpiryDate.ToLocalTime():dd-MMM-yyyy}.";
+            var created = 0;
+
+            created += await AddReservationNotificationIfMissingAsync(
+                reservation,
+                "InApp",
+                memberName,
+                memberCode,
+                email,
+                subject,
+                message,
+                NotificationStatus.Pending,
+                null,
+                cancellationToken);
+            created += await AddReservationNotificationIfMissingAsync(
+                reservation,
+                "Email",
+                memberName,
+                memberCode,
+                email,
+                subject,
+                message,
+                string.IsNullOrWhiteSpace(email)
+                    ? NotificationStatus.Failed
+                    : NotificationStatus.Pending,
+                string.IsNullOrWhiteSpace(email)
+                    ? "Recipient email is missing."
+                    : "Email delivery pending.",
+                cancellationToken);
+
+            await _context.SaveChangesAsync(cancellationToken);
+            if (created > 0)
+            {
+                await _logService.LogActivityAsync(
+                    "Reservation Notifications Created",
+                    $"{created} notification record(s) created for reservation {reservation.ReservationNumber}.",
+                    userId);
+            }
+
+            return created;
+        }
+
+        private async Task<int> AddReservationNotificationIfMissingAsync(
+            Reservation reservation,
+            string channel,
+            string? memberName,
+            string? memberCode,
+            string? email,
+            string subject,
+            string message,
+            NotificationStatus status,
+            string? failureReason,
+            CancellationToken cancellationToken)
+        {
+            var key = $"reservation:{reservation.Id}:available:{channel.ToLowerInvariant()}";
+            if (await _context.NotificationRecords
+                .AnyAsync(item => item.DeduplicationKey == key, cancellationToken))
+            {
+                return 0;
+            }
+
+            _context.NotificationRecords.Add(new NotificationRecord
+            {
+                MemberType = reservation.MemberType,
+                StudentId = reservation.StudentId,
+                FacultyStaffId = reservation.FacultyStaffId,
+                NotificationType = NotificationType.ReservationAvailableReminder,
+                Channel = channel,
+                RecipientName = memberName ?? string.Empty,
+                RecipientCode = memberCode ?? string.Empty,
+                RecipientEmail = string.IsNullOrWhiteSpace(email) ? null : email.Trim(),
+                Subject = subject,
+                Message = message,
+                Status = status,
+                FailureReason = failureReason,
+                DeduplicationKey = key
+            });
+            return 1;
+        }
+
         private static string NormalizeChannel(string channel)
         {
             if (channel.Equals("InApp", StringComparison.OrdinalIgnoreCase))
