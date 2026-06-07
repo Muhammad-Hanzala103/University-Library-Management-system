@@ -106,6 +106,18 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Dashboard inventory totals remain unchanged; mismatch and unverified cards were not added to avoid expanding the dashboard scope.
 - WPF UI automation and cross-process inventory/verification write contention are not covered.
 
+### Secure Document Upload Workflow
+- Priority 9A stores administrative documents in managed local storage and keeps `DocumentUploads` records in SQLite. It does not upload documents to cloud storage.
+- Physical file deletion is intentionally deferred. Soft delete marks the database record inactive/deleted and leaves the stored file on disk.
+- Document storage settings are seeded in `SystemSettings`, but there is no operator-facing Settings screen yet for `DocumentStorageRoot`, `DocumentMaxFileSizeMb`, `DocumentAllowPhysicalDelete`, or `DocumentAllowedExtensions`.
+- The copy action uses a standard WPF save dialog to choose a destination path and then copies to that destination folder. A native folder-picker dialog remains deferred.
+- Basic signature checks are implemented for PDF, PNG, JPG/JPEG, DOCX, and XLSX. They reduce obvious mismatch risk but are not full malware scanning or deep file-content validation.
+- Stored document paths are not exposed in the UI; details show generated stored file names and metadata only.
+- Audit, Visit, and Inventory links are stored through `RelatedEntityType` and `RelatedEntityId`. Inline related-document panels inside those existing detail screens remain deferred to avoid rewriting stable modules.
+- `AuditFile` and `VisitFile` entities are preserved unchanged; Priority 9A does not migrate or replace those attachment records.
+- SOP Documents and National Library Rates Documents reports are added. No broader report redesign was done.
+- WPF UI automation does not cover the new document screens; service and report behavior is covered by isolated SQLite/temp-folder tests.
+
 ### Cloud Integration (Supabase Sync)
 - Currently, the database provider runs 100% locally on SQLite. There is no background worker that pushes local SQLite transaction records to a remote Supabase Postgres cloud instance.
 
@@ -135,10 +147,10 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Metadata intentionally excludes all `SystemSettings`, including SMTP credentials.
 
 ### Automated Test Coverage
-- Two hundred three xUnit tests run against isolated temporary SQLite files and directories.
+- Two hundred twenty xUnit tests run against isolated temporary SQLite files and directories.
 - Branding tests cover the centralized product name, key UI files, and the default/on-off hint preference behavior.
-- Coverage also protects real online backup and staged restore files, automatic backup scheduling, retention safety rules, ownership lock acquisition/release, stale-lock cleanup, cross-service backup/restore/scheduler/retention lock failures, integrity/schema verification, SHA-256 checksums, safety backups, startup replacement, rollback, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
-- The suite does not automate WPF UI interaction, real-time hourly worker delays, deployment-scale multi-process stress testing, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.
+- Coverage also protects real online backup and staged restore files, automatic backup scheduling, retention safety rules, ownership lock acquisition/release, stale-lock cleanup, cross-service backup/restore/scheduler/retention lock failures, secure document validation/upload/storage/logging/filtering/authorization/soft-delete/restore/reporting, integrity/schema verification, SHA-256 checksums, safety backups, startup replacement, rollback, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
+- The suite does not automate WPF UI interaction, real-time hourly worker delays, deployment-scale multi-process stress testing, migration adoption, a live SMTP server, malware scanning, or visual PDF/Excel layout inspection.
 
 ### Database and Backup Ownership
 - Priority 8D uses an OS named mutex for the application instance and per-domain lease files for database, backup, restore, and scheduler critical operations.

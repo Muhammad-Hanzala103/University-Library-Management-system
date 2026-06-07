@@ -118,6 +118,11 @@ namespace KicsitLibrary.Data
             modelBuilder.Entity<RestoreHistory>().HasIndex(item => item.StartedAt);
             modelBuilder.Entity<RestoreHistory>().HasIndex(item => item.Status);
             modelBuilder.Entity<RestoreHistory>().HasIndex(item => item.RequestedByUserName);
+            modelBuilder.Entity<DocumentUpload>().HasIndex(item => item.DocumentType);
+            modelBuilder.Entity<DocumentUpload>().HasIndex(item => item.UploadDate);
+            modelBuilder.Entity<DocumentUpload>().HasIndex(item => item.UploadedBy);
+            modelBuilder.Entity<DocumentUpload>().HasIndex(item => new { item.RelatedEntityType, item.RelatedEntityId });
+            modelBuilder.Entity<DocumentUpload>().HasIndex(item => item.FileSha256);
 
             // 2b. Enum to String Conversions
             modelBuilder.Entity<BookCopy>()
@@ -275,6 +280,12 @@ namespace KicsitLibrary.Data
                 .HasOne(item => item.BookCopy)
                 .WithMany()
                 .HasForeignKey(item => item.BookCopyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DocumentUpload>()
+                .HasOne(item => item.UploadedByUser)
+                .WithMany()
+                .HasForeignKey(item => item.UploadedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 4. Global Query Filters for Soft Delete

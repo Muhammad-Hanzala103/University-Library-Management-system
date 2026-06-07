@@ -1,0 +1,65 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.DocumentDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Document Details"
+        Width="620" Height="600"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgBrush}">
+    <ScrollViewer>
+        <Border Style="{StaticResource CardStyle}" Margin="15">
+            <StackPanel>
+                <TextBlock Text="{Binding Details.DocumentTitle}" FontSize="22" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,12"/>
+
+                <UniformGrid Columns="2">
+                    <TextBlock Text="Document Type" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.DocumentType}"/>
+                    <TextBlock Text="Version" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.VersionNumber}"/>
+                    <TextBlock Text="Original File" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.OriginalFileName}"/>
+                    <TextBlock Text="Stored File" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.StoredFileName}"/>
+                    <TextBlock Text="Size" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.FileSizeBytes, StringFormat={}{0:N0} bytes}"/>
+                    <TextBlock Text="Uploaded By" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.UploadedBy}"/>
+                    <TextBlock Text="Upload Date" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.UploadDate, StringFormat={}{0:dd-MMM-yyyy}}"/>
+                    <TextBlock Text="Expiry Date" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.ExpiryDate, StringFormat={}{0:dd-MMM-yyyy}}"/>
+                    <TextBlock Text="Status" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.ActiveStatus}"/>
+                    <TextBlock Text="Content Type" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.ContentType}"/>
+                    <TextBlock Text="SHA256" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.FileSha256}" TextWrapping="Wrap"/>
+                    <TextBlock Text="Related Entity" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.RelatedEntityType}"/>
+                    <TextBlock Text="Related Entity Id" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.RelatedEntityId}"/>
+                    <TextBlock Text="Deleted By" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.DeletedBy}"/>
+                    <TextBlock Text="Deleted Reason" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Details.DeletedReason}" TextWrapping="Wrap"/>
+                </UniformGrid>
+
+                <TextBlock Text="Description" FontWeight="SemiBold" Margin="0,14,0,2"/>
+                <TextBlock Text="{Binding Details.Description}" TextWrapping="Wrap"/>
+
+                <TextBlock Text="Remarks" FontWeight="SemiBold" Margin="0,14,0,2"/>
+                <TextBlock Text="{Binding Details.Remarks}" TextWrapping="Wrap"/>
+
+                <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"
+                           Foreground="{StaticResource SecondaryBrush}" Margin="0,14,0,12"/>
+
+                <WrapPanel HorizontalAlignment="Right">
+                    <Button Content="Open Document" Command="{Binding OpenCommand}" Style="{StaticResource PrimaryButton}"
+                            ToolTip="Open the stored document after authorization and file checks." Margin="0,0,8,0"/>
+                    <Button Content="Copy To" Command="{Binding CopyToCommand}" Style="{StaticResource SecondaryButton}"
+                            ToolTip="Copy this document to another folder."/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</Window>

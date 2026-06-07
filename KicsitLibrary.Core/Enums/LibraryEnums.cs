@@ -53,6 +53,7 @@ namespace KicsitLibrary.Core.Enums
         AuditEvidence,
         VisitEvidence,
         Invoice,
+        InventoryDocument,
         GeneralDocument
     }
 

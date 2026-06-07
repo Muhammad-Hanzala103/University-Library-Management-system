@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite directory and file per test unde
 Current expected result:
 
 ```text
-Passed: 203
+Passed: 220
 Failed: 0
 Skipped: 0
 ```
@@ -147,6 +147,31 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 ```
 
 Priority 8D tests use isolated temporary SQLite databases and temporary backup folders. They cover application instance locks, critical operation overlap/timeouts, non-sensitive lease metadata, idempotent release, stale detection/cleanup, cleanup authorization, backup/restore/scheduler/retention lock integration, and no access to `KicsitLibrary.db`.
+
+Run only Priority 9A secure document workflow tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~DocumentWorkflowTests"
+```
+
+Priority 9A tests use isolated temporary SQLite databases, temporary source folders, and temporary document storage folders. They cover valid PDF/PNG upload, executable/disallowed/oversized rejection, generated filenames, path traversal neutralization, SHA-256 storage, configured storage root use, activity logs, document-type filtering, unauthorized open blocking, soft delete, restore, missing-file reporting, SOP document reporting, and copy logging. They never access `KicsitLibrary.db` and never open external applications.
+
+## Manual Document Workflow Verification
+
+1. Sign in as Super Admin or Admin and open **Documents**.
+2. Select **Upload Document**, choose a valid `.pdf`, `.docx`, `.xlsx`, `.jpg`, `.jpeg`, or `.png`, and confirm **Validate** succeeds before upload.
+3. Upload Library SOP, National Library Rates, Audit Evidence, Visit Evidence, Inventory Document, and General Document examples.
+4. Confirm the grid shows title, type, version, original file name, size, uploader, upload date, expiry date, status, and related entity metadata.
+5. Apply search, document type, active status, uploader, date range, expired-only, missing-file-only, and related-entity filters.
+6. Open details and confirm raw stored paths are not displayed, while SHA-256, stored file name, status, remarks, and related metadata appear.
+7. Use **Open Document** on a harmless local test document and confirm an Activity Log entry is written.
+8. Use **Copy To** and confirm the selected document is copied without overwriting existing files.
+9. Soft-delete with a reason and confirm the row becomes inactive while the physical stored file remains.
+10. Restore the document and confirm it returns to active status if the stored file still exists.
+11. Temporarily move a stored test file out of storage and confirm the document shows `Missing File`.
+12. Sign in as Auditor and confirm only Audit Evidence and Visit Evidence documents can be opened.
+13. Sign in as Read Only Viewer and confirm metadata can be viewed only when `VIEW_DOCUMENTS` is granted and open/upload/delete/restore remain blocked.
+14. Open **Reports** and run SOP Documents and National Library Rates Documents reports.
 
 ## Manual Ownership Verification
 
@@ -265,6 +290,8 @@ Priority 6A uses the same initializer to add faculty/student clearance columns a
 Priority 8C stores automatic backup scheduler and retention configuration in existing `SystemSettings` rows. It adds no EF migrations and no destructive schema changes.
 
 Priority 8D stores ownership configuration in existing `SystemSettings` rows and adds no EF migrations or destructive schema changes.
+
+Priority 9A adds `DocumentUploads` compatibility table/columns/indexes only through safe SQLite compatibility SQL. It adds no EF migrations, does not delete existing databases, and does not rename `KicsitLibrary.db`.
 
 ## 7. Manual Clearance Verification
 

@@ -26,6 +26,7 @@ using KicsitLibrary.Services.Restore;
 using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Services.Ownership;
 using KicsitLibrary.Services.Preferences;
+using KicsitLibrary.Services.Documents;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
 using KicsitLibrary.Reports.Export;
@@ -108,6 +109,8 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IReportDataProvider, InventoryReportDataProvider>();
                     services.AddScoped<IReportDataProvider, NewArrivalsReportDataProvider>();
                     services.AddScoped<IReportDataProvider, StockVerificationReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, SopDocumentsReportDataProvider>();
+                    services.AddScoped<IReportDataProvider, NationalLibraryRatesDocumentsReportDataProvider>();
                     services.AddScoped<IReportExporter, CsvReportExporter>();
                     services.AddScoped<IReportExporter, ExcelReportExporter>();
                     services.AddScoped<IReportExporter, PdfReportExporter>();
@@ -132,6 +135,9 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IRestoreService, RestoreService>();
                     services.AddSingleton<IRestoreDialogService, RestoreDialogService>();
                     services.AddSingleton<IDatabaseOwnershipService, DatabaseOwnershipService>();
+                    services.AddScoped<IDocumentStorageService, DocumentStorageService>();
+                    services.AddScoped<IDocumentService, DocumentService>();
+                    services.AddSingleton<IDocumentDialogService, DocumentDialogService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -182,6 +188,9 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<BackupDetailsViewModel>();
                     services.AddTransient<RestoreManagementViewModel>();
                     services.AddTransient<RestorePreviewViewModel>();
+                    services.AddTransient<DocumentManagementViewModel>();
+                    services.AddTransient<DocumentUploadViewModel>();
+                    services.AddTransient<DocumentDetailsViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
                     services.AddTransient<ReportsDashboardView>();
@@ -208,6 +217,9 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<BackupDetailsWindow>();
                     services.AddTransient<RestoreManagementView>();
                     services.AddTransient<RestorePreviewWindow>();
+                    services.AddTransient<DocumentManagementView>();
+                    services.AddTransient<DocumentUploadWindow>();
+                    services.AddTransient<DocumentDetailsWindow>();
                 })
                 .Build();
         }

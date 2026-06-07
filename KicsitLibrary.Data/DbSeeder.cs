@@ -68,7 +68,10 @@ namespace KicsitLibrary.Data
                 new() { Code = "VIEW_RESTORES", Name = "View Restores", Description = "View local restore history." },
                 new() { Code = "MANAGE_RESTORES", Name = "Manage Restores", Description = "Stage verified local database restores." },
                 new() { Code = "VIEW_OWNERSHIP_STATUS", Name = "View Ownership Status", Description = "View cross process database ownership status." },
-                new() { Code = "MANAGE_OWNERSHIP_STATUS", Name = "Manage Ownership Status", Description = "Cleanup stale ownership lock files." }
+                new() { Code = "MANAGE_OWNERSHIP_STATUS", Name = "Manage Ownership Status", Description = "Cleanup stale ownership lock files." },
+                new() { Code = "VIEW_DOCUMENTS", Name = "View Documents", Description = "View document metadata." },
+                new() { Code = "OPEN_DOCUMENTS", Name = "Open Documents", Description = "Open or copy stored administrative documents." },
+                new() { Code = "MANAGE_DOCUMENTS", Name = "Manage Documents", Description = "Upload, delete, and restore administrative documents." }
             };
 
             foreach (var p in permissions)
@@ -83,11 +86,11 @@ namespace KicsitLibrary.Data
             // 3. Seed RolePermissions
             var rolePermissionMappings = new List<(Role role, string[] permissionCodes)>
             {
-                (adminRole, new[] { "MANAGE_USERS", "MANAGE_ROLES", "VIEW_REPORTS", "MANAGE_SYSTEM", "VIEW_BACKUPS", "MANAGE_BACKUPS", "MANAGE_AUTOMATIC_BACKUPS", "VIEW_RESTORES", "MANAGE_RESTORES", "VIEW_OWNERSHIP_STATUS", "MANAGE_OWNERSHIP_STATUS" }),
-                (librarianRole, new[] { "MANAGE_BOOKS", "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_FINES", "MANAGE_RESERVATIONS", "VIEW_REPORTS", "MANAGE_VISITS", "MANAGE_AUDITS", "VIEW_AUDITS", "MANAGE_INVENTORY", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES", "VIEW_OWNERSHIP_STATUS" }),
+                (adminRole, new[] { "MANAGE_USERS", "MANAGE_ROLES", "VIEW_REPORTS", "MANAGE_SYSTEM", "VIEW_BACKUPS", "MANAGE_BACKUPS", "MANAGE_AUTOMATIC_BACKUPS", "VIEW_RESTORES", "MANAGE_RESTORES", "VIEW_OWNERSHIP_STATUS", "MANAGE_OWNERSHIP_STATUS", "VIEW_DOCUMENTS", "OPEN_DOCUMENTS", "MANAGE_DOCUMENTS" }),
+                (librarianRole, new[] { "MANAGE_BOOKS", "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_FINES", "MANAGE_RESERVATIONS", "VIEW_REPORTS", "MANAGE_VISITS", "MANAGE_AUDITS", "VIEW_AUDITS", "MANAGE_INVENTORY", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES", "VIEW_OWNERSHIP_STATUS", "VIEW_DOCUMENTS", "OPEN_DOCUMENTS", "MANAGE_DOCUMENTS" }),
                 (assistantLibrarianRole, new[] { "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_RESERVATIONS", "VIEW_REPORTS" }),
-                (auditorRole, new[] { "VIEW_REPORTS", "VIEW_AUDITS", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES", "VIEW_OWNERSHIP_STATUS" }),
-                (viewerRole, new[] { "VIEW_REPORTS" })
+                (auditorRole, new[] { "VIEW_REPORTS", "VIEW_AUDITS", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES", "VIEW_OWNERSHIP_STATUS", "VIEW_DOCUMENTS", "OPEN_DOCUMENTS" }),
+                (viewerRole, new[] { "VIEW_REPORTS", "VIEW_DOCUMENTS" })
             };
 
             foreach (var mapping in rolePermissionMappings)
@@ -245,7 +248,11 @@ namespace KicsitLibrary.Data
                 { "CriticalOperationLockTimeoutSeconds", ("15", "Seconds to wait before timing out a critical operation lock", "System") },
                 { "AllowReadOnlySecondInstance", ("False", "Allow a second instance to open in read-only mode if SingleInstanceMode is True", "System") },
                 { "CleanupStaleLockFilesOnStartup", ("True", "Automatically clean up orphaned lock files during startup", "System") },
-                { "LockFileRetentionMinutes", ("120", "Minutes before an inactive lock file is considered stale and can be cleaned", "System") }
+                { "LockFileRetentionMinutes", ("120", "Minutes before an inactive lock file is considered stale and can be cleaned", "System") },
+                { "DocumentStorageRoot", ("", $"Empty uses Documents\\{ProductBrand.Name}\\Documents", "Documents") },
+                { "DocumentMaxFileSizeMb", ("25", "Maximum uploaded document file size in MB", "Documents") },
+                { "DocumentAllowPhysicalDelete", ("False", "Future flag for physical deletion cleanup; soft delete remains default", "Documents") },
+                { "DocumentAllowedExtensions", (".pdf,.docx,.xlsx,.jpg,.jpeg,.png", "Allowed document upload extensions", "Documents") }
             };
 
             foreach (var setting in defaultSettings)

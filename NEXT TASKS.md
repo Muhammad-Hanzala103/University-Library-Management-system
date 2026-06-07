@@ -240,6 +240,28 @@ Deferred refinements:
 - [ ] Add WPF UI automation for ownership status and cleanup buttons.
 - [ ] Add an operator-facing Settings screen for ownership settings instead of database-only `SystemSettings` editing.
 
+## Priority 9A: Secure Document Upload Workflow
+- **Goal**: Add a safe local document upload and management workflow for administrative library documents.
+- [x] Add document upload request/result/list/details/validation/download/delete/storage/summary models.
+- [x] Add `IDocumentService` and `DocumentService` with validation, upload, listing, details, open, copy, soft delete, restore, summaries, and related-entity lookup.
+- [x] Add `IDocumentStorageService` and `DocumentStorageService` with configurable root, default Documents-folder storage, path normalization, generated names, non-overwrite behavior, and reparse-point checks.
+- [x] Support Library SOP, National Library Rates, Library Policy, Audit Evidence, Visit Evidence, Invoice, Inventory Document, and General Document.
+- [x] Reject blocked executable/script extensions and validate allowed extensions plus practical file signatures.
+- [x] Persist original filename, generated stored name/path, size, SHA-256, content type, uploader, version, expiry, remarks, and related entity metadata.
+- [x] Add non-destructive SQLite compatibility for `DocumentUploads` additive fields, safe table creation if missing, and document indexes.
+- [x] Seed document settings and document permissions without destructive changes.
+- [x] Add Documents navigation, management grid, filters, upload window, details window, open/copy/delete/restore actions, and DI registrations.
+- [x] Add SOP Documents and National Library Rates Documents report providers only.
+- [x] Add seventeen isolated SQLite/temp-folder tests; all 220 tests pass.
+- [x] Keep deployment, Supabase sync, EF migrations, WhatsApp delivery, final README, namespace/database rename, and production database access out of this task.
+
+Deferred refinements:
+- [ ] Add WPF UI automation for document upload, details, filtering, copy, delete, and restore screens.
+- [ ] Add inline related-document panels inside Audit, Visit, and Inventory details after manual UI validation.
+- [ ] Add a native folder picker for document copy destinations; current WPF flow uses a save dialog to choose the destination folder.
+- [ ] Add a future reviewed physical-file cleanup task. Priority 9A soft-deletes records only.
+- [ ] Add an operator-facing Settings screen for document storage limits and allowed extensions.
+
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.

@@ -1,0 +1,61 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.DocumentUploadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Upload Document"
+        Width="620" Height="650"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgBrush}">
+    <ScrollViewer>
+        <Border Style="{StaticResource CardStyle}" Margin="15">
+            <StackPanel>
+                <TextBlock Text="Upload Document" FontSize="22" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,12"/>
+
+                <TextBlock Text="Document title"/>
+                <TextBox Text="{Binding DocumentTitle, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,10"/>
+
+                <TextBlock Text="Document type"/>
+                <ComboBox ItemsSource="{Binding DocumentTypes}" SelectedItem="{Binding SelectedDocumentType}" Margin="0,2,0,10"/>
+
+                <TextBlock Text="Version number"/>
+                <TextBox Text="{Binding VersionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,10"/>
+
+                <TextBlock Text="Description"/>
+                <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                         Height="70" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,2,0,10"/>
+
+                <TextBlock Text="Source file"/>
+                <DockPanel Margin="0,2,0,10">
+                    <Button DockPanel.Dock="Right" Content="Browse" Command="{Binding BrowseFileCommand}"
+                            Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                            ToolTip="Select a PDF, Office document, or image file to validate and upload."/>
+                    <TextBox Text="{Binding SourceFilePath, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+
+                <TextBlock Text="Expiry date"/>
+                <DatePicker SelectedDate="{Binding ExpiryDate}" Margin="0,2,0,10"/>
+
+                <TextBlock Text="Related entity type"/>
+                <TextBox Text="{Binding RelatedEntityType, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,10"/>
+
+                <TextBlock Text="Related entity id"/>
+                <TextBox Text="{Binding RelatedEntityIdText, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,10"/>
+
+                <TextBlock Text="Remarks"/>
+                <TextBox Text="{Binding Remarks, UpdateSourceTrigger=PropertyChanged}"
+                         Height="60" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,2,0,10"/>
+
+                <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"
+                           Foreground="{StaticResource SecondaryBrush}" Margin="0,0,0,12"/>
+
+                <WrapPanel HorizontalAlignment="Right">
+                    <Button Content="Validate" Command="{Binding ValidateCommand}" Style="{StaticResource SecondaryButton}"
+                            ToolTip="Check file type, size, signature, and checksum before upload." Margin="0,0,8,0"/>
+                    <Button Content="Upload" Command="{Binding UploadCommand}" Style="{StaticResource PrimaryButton}"
+                            ToolTip="Save the validated document into managed storage." Margin="0,0,8,0"/>
+                    <Button Content="Cancel" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButton}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</Window>

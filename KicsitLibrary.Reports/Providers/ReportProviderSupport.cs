@@ -30,6 +30,8 @@ namespace KicsitLibrary.Reports.Providers
         public const string Inventory = "inventory";
         public const string NewArrivals = "new-arrivals";
         public const string StockVerification = "stock-verification";
+        public const string SopDocuments = "sop-documents";
+        public const string NationalLibraryRatesDocuments = "national-library-rates-documents";
     }
 
     internal static class ReportFilterKeys
@@ -72,6 +74,9 @@ namespace KicsitLibrary.Reports.Providers
         public const string ReceivedDateRange = "ReceivedDateRange";
         public const string Rack = "Rack";
         public const string Shelf = "Shelf";
+        public const string DocumentType = "DocumentType";
+        public const string UploadedBy = "UploadedBy";
+        public const string MissingFileOnly = "MissingFileOnly";
     }
 
     public abstract class ReportDataProviderBase : IReportDataProvider

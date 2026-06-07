@@ -36,6 +36,22 @@ namespace KicsitLibrary.Data
                 ["ClearedByUserId"] = "INTEGER NULL"
             };
 
+        private static readonly IReadOnlyDictionary<string, string> DocumentUploadColumns =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["UploadedBy"] = "TEXT NOT NULL DEFAULT ''",
+                ["OriginalFileName"] = "TEXT NOT NULL DEFAULT ''",
+                ["StoredFileName"] = "TEXT NOT NULL DEFAULT ''",
+                ["StoredFilePath"] = "TEXT NOT NULL DEFAULT ''",
+                ["FileExtension"] = "TEXT NOT NULL DEFAULT ''",
+                ["ContentType"] = "TEXT NOT NULL DEFAULT ''",
+                ["FileSizeBytes"] = "INTEGER NOT NULL DEFAULT 0",
+                ["FileSha256"] = "TEXT NOT NULL DEFAULT ''",
+                ["RelatedEntityType"] = "TEXT NOT NULL DEFAULT ''",
+                ["RelatedEntityId"] = "INTEGER NULL",
+                ["DeletedBy"] = "TEXT NOT NULL DEFAULT ''"
+            };
+
         public static async Task ApplyAsync(KicsitLibraryDbContext context)
         {
             if (!string.Equals(
@@ -58,6 +74,39 @@ namespace KicsitLibrary.Data
                 await AddMissingColumnsAsync(connection, "NotificationRecords", NotificationColumns);
                 await AddMissingColumnsAsync(connection, "Students", StudentClearanceColumns);
                 await AddMissingColumnsAsync(connection, "FacultyStaff", FacultyClearanceColumns);
+                await context.Database.ExecuteSqlRawAsync("""
+                    CREATE TABLE IF NOT EXISTS "DocumentUploads" (
+                        "Id" INTEGER NOT NULL CONSTRAINT "PK_DocumentUploads" PRIMARY KEY AUTOINCREMENT,
+                        "DocumentTitle" TEXT NOT NULL,
+                        "DocumentType" TEXT NOT NULL,
+                        "VersionNumber" TEXT NOT NULL,
+                        "UploadDate" TEXT NOT NULL,
+                        "UploadedByUserId" INTEGER NOT NULL,
+                        "UploadedBy" TEXT NOT NULL DEFAULT '',
+                        "OriginalFileName" TEXT NOT NULL DEFAULT '',
+                        "StoredFileName" TEXT NOT NULL DEFAULT '',
+                        "StoredFilePath" TEXT NOT NULL DEFAULT '',
+                        "FilePath" TEXT NOT NULL,
+                        "FileExtension" TEXT NOT NULL DEFAULT '',
+                        "ContentType" TEXT NOT NULL DEFAULT '',
+                        "FileSizeBytes" INTEGER NOT NULL DEFAULT 0,
+                        "FileSha256" TEXT NOT NULL DEFAULT '',
+                        "Description" TEXT NULL,
+                        "ActiveStatus" INTEGER NOT NULL,
+                        "ExpiryDate" TEXT NULL,
+                        "Remarks" TEXT NULL,
+                        "RelatedEntityType" TEXT NOT NULL DEFAULT '',
+                        "RelatedEntityId" INTEGER NULL,
+                        "CreatedAt" TEXT NOT NULL,
+                        "UpdatedAt" TEXT NULL,
+                        "IsDeleted" INTEGER NOT NULL DEFAULT 0,
+                        "DeletedAt" TEXT NULL,
+                        "DeletedReason" TEXT NULL,
+                        "DeletedByUserId" INTEGER NULL,
+                        "DeletedBy" TEXT NOT NULL DEFAULT ''
+                    );
+                    """);
+                await AddMissingColumnsAsync(connection, "DocumentUploads", DocumentUploadColumns);
                 await context.Database.ExecuteSqlRawAsync("""
                     CREATE TABLE IF NOT EXISTS "StockVerificationSessions" (
                         "Id" INTEGER NOT NULL CONSTRAINT "PK_StockVerificationSessions" PRIMARY KEY AUTOINCREMENT,
@@ -180,6 +229,16 @@ namespace KicsitLibrary.Data
                     "CREATE INDEX IF NOT EXISTS \"IX_RestoreHistories_Status\" ON \"RestoreHistories\" (\"Status\");");
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_RestoreHistories_RequestedByUserName\" ON \"RestoreHistories\" (\"RequestedByUserName\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_DocumentUploads_DocumentType\" ON \"DocumentUploads\" (\"DocumentType\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_DocumentUploads_UploadDate\" ON \"DocumentUploads\" (\"UploadDate\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_DocumentUploads_UploadedBy\" ON \"DocumentUploads\" (\"UploadedBy\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_DocumentUploads_RelatedEntityType_RelatedEntityId\" ON \"DocumentUploads\" (\"RelatedEntityType\", \"RelatedEntityId\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_DocumentUploads_FileSha256\" ON \"DocumentUploads\" (\"FileSha256\");");
             }
             finally
             {

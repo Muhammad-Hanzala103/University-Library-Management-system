@@ -68,6 +68,9 @@
         <DataTemplate DataType="{x:Type vm:RestoreManagementViewModel}">
             <views:RestoreManagementView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DocumentManagementViewModel}">
+            <views:DocumentManagementView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -174,6 +177,10 @@
                             Command="{Binding NavigateToRestoresCommand}"
                             ToolTip="Validate and stage a safe database restore."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Restore}"/>
+                    <Button Style="{StaticResource SidebarButton}" Content="Documents"
+                            Command="{Binding NavigateToDocumentsCommand}"
+                            ToolTip="Upload, verify, and manage administrative library documents."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Documents}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Reports" 
                             Command="{Binding NavigateToReportsCommand}"
@@ -261,14 +268,7 @@
 
             <!-- Content Area Viewport -->
             <Grid Grid.Row="1" Margin="15">
-                <!-- If CurrentView is null, show a landing/dashboard template draft -->
-                <ContentControl Content="{Binding CurrentView}">
-                    <ContentControl.ContentTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="Loading View..."/>
-                        </DataTemplate>
-                    </ContentControl.ContentTemplate>
-                </ContentControl>
+                <ContentControl Content="{Binding CurrentView}"/>
                 
                 <!-- Placeholder when view is empty (Standard Phase 1 landing look) -->
                 <Grid Visibility="{Binding CurrentView, Converter={local:NullToVisibilityConverter}}">

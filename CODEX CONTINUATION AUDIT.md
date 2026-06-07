@@ -1,5 +1,39 @@
 # Codex Continuation Audit
 
+## Priority 9A Completion Update
+
+Completion date: 2026-06-08
+
+- Implemented the Secure Document Upload Workflow only.
+- Added document upload/list/details/validation/download/delete/storage/summary models.
+- Added `IDocumentService`, `DocumentService`, `IDocumentStorageService`, and `DocumentStorageService`.
+- Supported Library SOP, National Library Rates, Library Policy, Audit Evidence, Visit Evidence, Invoice, Inventory Document, and General Document.
+- Enforced title/type/source-file requirements, max file size, extension allowlist, executable/script blocking, basic file signatures, generated stored filenames, SHA-256 storage, and non-overwriting managed storage.
+- Default document storage resolves to the current user's `Documents\Ilm-o-Kutub System\Documents`; `SystemSettings.DocumentStorageRoot` can override it.
+- Added soft-delete and restore behavior. Physical deletion remains deferred.
+- Added additive SQLite compatibility for `DocumentUploads` columns, safe table creation if missing, and indexes without migrations or destructive schema changes.
+- Seeded document settings and permissions non-destructively.
+- Added Documents navigation, management view, upload window, details window, dialog service, and DI registrations.
+- Removed the explicit `ContentControl.ContentTemplate` loading override in `MainWindow.xaml` so implicit DataTemplate mappings render actual module views.
+- Added SOP Documents and National Library Rates Documents report providers only.
+- Added seventeen real Priority 9A tests using isolated SQLite databases and temporary document folders.
+- No deployment, Supabase sync, EF migrations, WhatsApp delivery, final README, namespace rename, database rename, or production database access was implemented.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 220 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Manually verify the Documents module UI in the WPF application, then add WPF UI automation or inline related-document panels for Audit/Visit/Inventory as a separate approved follow-up. Do not start deployment, Supabase sync, EF migrations, WhatsApp delivery, or final README generation in the next slice.
+
 ## Priority 8D Completion Update
 
 Completion date: 2026-06-07

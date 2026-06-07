@@ -166,6 +166,11 @@ namespace KicsitLibrary.Desktop.ViewModels
                     CurrentView = _currentScope?.ServiceProvider.GetService<RestoreManagementViewModel>();
                     if (CurrentView is RestoreManagementViewModel restores) _ = restores.RefreshAsync();
                     break;
+                case "Documents":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<DocumentManagementViewModel>();
+                    if (CurrentView is DocumentManagementViewModel documents) _ = documents.RefreshAsync();
+                    break;
                 default:
                     CurrentView = null;
                     break;
@@ -219,6 +224,9 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToRestores() => _navigationService.NavigateTo("Restore");
+
+        [RelayCommand]
+        private void NavigateToDocuments() => _navigationService.NavigateTo("Documents");
 
         [RelayCommand]
         private void NavigateToReports() => _navigationService.NavigateTo("Reports");

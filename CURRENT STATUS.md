@@ -24,6 +24,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Product Branding & Management UI Refinement**: **100% Completed**
 - **Priority 8C (Automatic Backup Scheduling & Retention Safety Policy)**: **100% Completed**
 - **Priority 8D (Cross Process Database and Backup Ownership Protection)**: **100% Completed**
+- **Priority 9A (Secure Document Upload Workflow)**: **100% Completed**
 - **Priority 8E+ (Sync & Deployment)**: **Pending Implementation**
 
 ### Product Branding and UI Refinement
@@ -35,7 +36,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Show Helpful Hints** is available in the main top bar, defaults to enabled, updates the current session immediately, and controls practical WPF tooltips on navigation and important actions.
 - Reports and clearance certificates include the product name while preserving the institution name as a separate identity.
 - New backups default to `Documents\Ilm-o-Kutub Backups`; reports to `Documents\Ilm-o-Kutub Reports`; certificates to `Documents\Ilm-o-Kutub Certificates`.
-- Four branding/hint regression tests were added during the branding phase. The full isolated suite now passes with 203 tests after Priority 8D.
+- Four branding/hint regression tests were added during the branding phase. The full isolated suite now passes with 220 tests after Priority 9A.
 - Automatic backup scheduling and retention safety are implemented. Deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README generation were not started.
 
 ### GitHub Repository Rename
@@ -215,6 +216,21 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - Backup Management now includes ownership status, last ownership message, stale lock count, refresh status, and cleanup stale lock file actions.
 - Two hundred three isolated SQLite tests pass, including fifteen real Priority 8D ownership tests.
 
+### Priority 9A Secure Document Upload Workflow
+- Added managed document upload models, `IDocumentService`, and `IDocumentStorageService` for administrative documents.
+- Supported document types are Library SOP, National Library Rates, Library Policy, Audit Evidence, Visit Evidence, Invoice, Inventory Document, and General Document.
+- Upload validation requires a title, known document type, existing source file, configured max size, extension allowlist, blocked executable/script extensions, and basic signatures for PDF, PNG, JPG/JPEG, DOCX, and XLSX.
+- Files are copied to managed storage outside the source tree. The default root is `%USERPROFILE%\Documents\Ilm-o-Kutub System\Documents`, or `SystemSettings.DocumentStorageRoot` when configured.
+- Stored names are generated, timestamped, non-overwriting, and independent of user-supplied filenames. SHA-256, size, original file name, content type, and related entity metadata are persisted.
+- Soft delete and restore affect records only by default; physical file deletion remains deferred.
+- Missing physical files keep their database records and show a `Missing File` status.
+- Added non-destructive SQLite compatibility support for the `DocumentUploads` table, additive columns, and indexes without EF migrations.
+- Added document permissions and settings to `DbSeeder` without overwriting existing customized settings.
+- Added real Documents navigation with management grid, filters, upload dialog, details dialog, open, copy, soft delete, restore, and clear-filter actions.
+- Added SOP Documents and National Library Rates Documents report providers while preserving the existing report foundation.
+- Audit, Visit, and Inventory integration is provided through `RelatedEntityType` and `RelatedEntityId`; full inline module detail embedding is deferred.
+- Two hundred twenty isolated SQLite tests pass, including seventeen Priority 9A document workflow tests.
+
 ---
 
 ## 2. Completed Components
@@ -253,6 +269,8 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - `IAutomaticBackupSchedulerService.cs` / `AutomaticBackupSchedulerService.cs`
 - `IBackupRetentionService.cs` / `BackupRetentionService.cs`
 - `IDatabaseOwnershipService.cs` / `DatabaseOwnershipService.cs`
+- `IDocumentService.cs` / `DocumentService.cs`
+- `IDocumentStorageService.cs` / `DocumentStorageService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -268,6 +286,7 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - `ActivityLogsViewModel.cs` / `ActivityLogDetailsViewModel.cs`
 - `AuditRecordsViewModel.cs` / `AuditRecordFormViewModel.cs` / `AuditRecordDetailsViewModel.cs`
 - `BackupManagementViewModel.cs` / `BackupDetailsViewModel.cs`: manual backup, automatic backup scheduler, retention controls, and database/backup ownership status controls.
+- `DocumentManagementViewModel.cs` / `DocumentUploadViewModel.cs` / `DocumentDetailsViewModel.cs`: secure document listing, validation/upload, metadata details, open/copy, soft delete, and restore actions.
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.
@@ -283,6 +302,7 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - `ActivityLogsView.xaml` / `ActivityLogDetailsWindow.xaml`
 - `AuditRecordsView.xaml` / `AuditRecordFormWindow.xaml` / `AuditRecordDetailsWindow.xaml`
 - `BackupManagementView.xaml` / `BackupDetailsWindow.xaml`
+- `DocumentManagementView.xaml` / `DocumentUploadWindow.xaml` / `DocumentDetailsWindow.xaml`
 
 ### Navigation & Routes Wired
 - `"Dashboard"` -> `DashboardViewModel`
@@ -304,6 +324,7 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - `"Stock Verification"` -> `StockVerificationViewModel`
 - `"Backup"` -> `BackupManagementViewModel`
 - `"Restore"` -> `RestoreManagementViewModel`
+- `"Documents"` -> `DocumentManagementViewModel`
 
 ---
 
