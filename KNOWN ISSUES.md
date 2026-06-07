@@ -14,6 +14,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - **Data safety**: Startup never deletes, recreates, or automatically relocates an existing database. Databases previously created under a different working directory must be identified and moved only through an explicit backup/restore procedure.
 - **Failure behavior**: Database initialization and seeding failures are fatal and stop startup instead of opening the application in a partial state.
 - **Priority 4B compatibility**: Startup applies fixed, additive SQLite `ALTER TABLE` statements for new notification columns and creates indexes if missing. It does not delete or rebuild tables.
+- **Priority 6A compatibility**: Startup adds nullable/defaulted clearance columns to `Students` and `FacultyStaff` and creates clearance-status indexes. Existing rows default to `NotCleared`; no table rebuild or data deletion occurs.
 - **Remaining limitation**: SQLite cannot add the new `IssueRecordId` foreign-key constraint to an existing table without a table rebuild. Fresh databases receive the EF-configured constraint; upgraded development databases rely on service validation until migrations are adopted.
 
 ### Navigation View Stubs
@@ -59,7 +60,15 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Reservation reporting reflects existing records, but the reservation lifecycle UI/workflow remains partial.
 - Visit status is derived as `Pending Follow Up` when a follow-up date exists and no action is recorded; `VisitRecord` has no persisted status field.
 - Stock Verification `Actual Status` currently equals the database status, and physical verification remarks state that on-shelf verification is pending.
-- Student Clearance reporting calculates outstanding books/fines independently; the Priority 6 clearance service and approval workflow remain pending.
+- Student Clearance reporting now includes the same active-issue, pending-fine, and loss/damage counts used by the clearance service.
+
+### Clearance Workflow
+- Clearance checks use current `IssueRecord`, `Fine`, and `BookCopy` state; they do not complete or cancel reservations.
+- A loss/damage case is considered unresolved when the copy has a loss/damage/missing/repair status and the related issue is active or has an unpaid/partial fine.
+- Approval history is stored in structured `ActivityLog` details rather than a separate clearance-history table.
+- Certificate PDFs inherit the existing basic-ASCII limitation; non-ASCII names may render as `?`.
+- Faculty/staff clearance fields are additive and default existing members to `NotCleared`.
+- Approval does not deactivate member accounts automatically. Account archival remains an explicit policy decision.
 
 ### Cloud Integration (Supabase Sync)
 - Currently, the database provider runs 100% locally on SQLite. There is no background worker that pushes local SQLite transaction records to a remote Supabase Postgres cloud instance.
@@ -68,7 +77,6 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
 
 ### Automated Test Coverage
-- Sixty-eight xUnit tests run against isolated temporary SQLite files.
-- Coverage protects circulation, overdue and notification behavior plus all sixteen report definitions, advanced providers, filters, exporter selection, file naming, non-overwrite behavior, and physical CSV/XLSX/PDF creation.
-- There is no clearance service or clearance eligibility helper, so the requested "active issue blocks student clearance" test is pending Priority 6.
+- Eighty-two xUnit tests run against isolated temporary SQLite files.
+- Coverage protects circulation, overdue, notification, reporting, student/faculty clearance blockers, transactional state changes, activity logs, history, and physical PDF certificate generation.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

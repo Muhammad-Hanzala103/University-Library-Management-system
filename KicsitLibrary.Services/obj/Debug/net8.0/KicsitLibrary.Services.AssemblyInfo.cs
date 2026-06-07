@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KicsitLibrary.Services")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4612f4f7fcac0cf9d15f9ff1fd2b710f369b5dd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+91284ac0e4cf357e5a59922de587a106b9ff31de")]
 [assembly: System.Reflection.AssemblyProductAttribute("KicsitLibrary.Services")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KicsitLibrary.Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -69,6 +69,12 @@ namespace KicsitLibrary.Data
                     "CREATE UNIQUE INDEX IF NOT EXISTS \"IX_NotificationRecords_DeduplicationKey\" " +
                     "ON \"NotificationRecords\" (\"DeduplicationKey\") " +
                     "WHERE \"DeduplicationKey\" IS NOT NULL;");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_Students_ClearanceStatus\" " +
+                    "ON \"Students\" (\"ClearanceStatus\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_FacultyStaff_ClearanceStatus\" " +
+                    "ON \"FacultyStaff\" (\"ClearanceStatus\");");
             }
             finally
             {

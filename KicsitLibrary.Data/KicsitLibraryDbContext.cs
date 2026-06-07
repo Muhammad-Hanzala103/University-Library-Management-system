@@ -77,8 +77,10 @@ namespace KicsitLibrary.Data
             modelBuilder.Entity<Student>().HasIndex(s => s.AdmissionNumber);
             modelBuilder.Entity<Student>().HasIndex(s => s.PageNumber);
             modelBuilder.Entity<Student>().HasIndex(s => s.RegisterNumber);
+            modelBuilder.Entity<Student>().HasIndex(s => s.ClearanceStatus);
 
             modelBuilder.Entity<FacultyStaff>().HasIndex(fs => fs.PersonnelNumber).IsUnique();
+            modelBuilder.Entity<FacultyStaff>().HasIndex(fs => fs.ClearanceStatus);
 
             modelBuilder.Entity<IssueRecord>().HasIndex(ir => ir.AccessionNumber);
             modelBuilder.Entity<IssueRecord>().HasIndex(ir => ir.IssueDate);

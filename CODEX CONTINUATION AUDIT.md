@@ -1,5 +1,42 @@
 # Codex Continuation Audit
 
+## Priority 6A Completion Update
+
+Completion date: 2026-06-07
+
+Priority 6A is complete:
+
+- Added clearance check, blocking-item, certificate, action, and history models.
+- Added `IClearanceService` and transaction-safe `ClearanceService`.
+- Student and faculty/staff approval is blocked by active issues, unpaid/partial balances, and unresolved loss/damage cases.
+- Approval requires remarks and an authenticated user; revocation requires a reason.
+- Approval/revoke changes and their activity logs commit in one SQLite transaction.
+- Faculty/staff gained additive clearance status, date, remarks, and approving-user fields; students gained approving-user tracking.
+- Existing databases receive only safe additive columns and status indexes through `DatabaseCompatibilityInitializer`.
+- Added real PDF certificate generation with eligibility revalidation and activity logging.
+- Added a real Clearance dashboard, student/faculty worklists, blocking details, async actions, and borrowing/clearance history dialog.
+- Updated Student Clearance reporting to include unresolved lost/damaged cases.
+- Added fourteen clearance tests; all eighty-two tests pass.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 82 tests passed, 0 failed, 0 skipped.
+
+Deferred by design:
+
+- Reservation lifecycle completion
+- Automatic member-account deactivation after clearance
+- Dedicated clearance-history table
+- Embedded Unicode PDF fonts
+- Deployment, Supabase sync, WhatsApp delivery, and EF migrations
+
+Exact next task: Priority 6B, complete the reservation lifecycle with queue, expiry, cancellation, and fulfillment rules without changing Priority 6A clearance behavior.
+
 ## Priority 5B Completion Update
 
 Completion date: 2026-06-06

@@ -78,13 +78,25 @@ Deferred refinements:
 
 ---
 
-## Priority 6: Clearance System
-- **Goal**: Provide university clearance checkouts for graduating students and departing faculty.
-- [ ] Create `IClearanceService.cs` in `KicsitLibrary.Core/Interfaces/`.
-- [ ] Create `ClearanceService.cs` in `KicsitLibrary.Services/`.
-- [ ] Implement verification logic: check for outstanding books checkouts, unpaid fine balances, and active reservations.
-- [ ] Write database update routines to set `ClearanceStatus` to `Cleared`, archive active borrower card accounts, and log audited transitions.
-- [ ] Create view and viewmodel files for Clearance requests validation.
+## Priority 6A: Student & Faculty Clearance Workflow
+- **Goal**: Provide audited, certificate-producing library clearance for students and faculty/staff.
+- [x] Add clearance result, blocking-item, certificate, action, and history models.
+- [x] Implement student and faculty/staff clearance checks.
+- [x] Block active issues, unpaid/partial fines, and unresolved lost/damaged cases.
+- [x] Add transaction-safe approval and revocation with required remarks/reasons.
+- [x] Persist status, date, remarks, and approving user for both member types.
+- [x] Add non-destructive SQLite compatibility columns and indexes.
+- [x] Generate and log real PDF clearance certificates.
+- [x] Add Clearance dashboard, worklists, filters, details, and borrowing/history dialog.
+- [x] Update Student Clearance reporting with loss/damage blockers.
+- [x] Add fourteen isolated tests; all eighty-two tests pass.
+
+## Priority 6B: Reservation Lifecycle Completion
+- **Goal**: Complete reservation queue, availability, expiry, cancellation, and fulfillment behavior.
+- [ ] Define reservation state-transition rules and authorization boundaries.
+- [ ] Implement queue ordering, expiry processing, cancellation, and fulfillment.
+- [ ] Add reservation management MVVM screens and isolated SQLite tests.
+- [ ] Keep Priority 6A clearance rules backward compatible.
 
 ---
 

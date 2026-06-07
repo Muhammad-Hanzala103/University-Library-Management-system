@@ -15,7 +15,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 4D (Cancellation-Aware Background Scheduler)**: **100% Completed**
 - **Priority 5A (Reports & Export Foundation)**: **100% Completed**
 - **Priority 5B (Advanced Reports & Print Refinements)**: **100% Completed**
-- **Priority 6 to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 6A (Student & Faculty Clearance Workflow)**: **100% Completed**
+- **Priority 6B to 8 (Advanced Modules)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -81,6 +82,18 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - CSV output preserves safe escaping, headers for empty reports, and deterministic date formatting.
 - Sixty-eight isolated tests pass, including sixteen Priority 5B tests.
 
+### Priority 6A Clearance Workflow
+- Added transaction-safe student and faculty/staff clearance checking, approval, revocation, history, and certificate generation.
+- Active issues, unpaid/partial fines, and unresolved lost/damaged/missing/repair cases block approval with exact item details.
+- Approval requires remarks and the authenticated user; revocation requires a reason.
+- Student and faculty/staff records persist clearance status, date, remarks, and approving user ID.
+- Existing SQLite databases receive only additive clearance columns and status indexes through `DatabaseCompatibilityInitializer`.
+- Clearance certificates are real PDF files under `Documents\KICSIT Library Certificates` by default and are revalidated before export.
+- Approval, revocation, and certificate generation write activity logs.
+- Library Clearance navigation opens a real dashboard with student/faculty worklists, filters, validation details, actions, and borrowing/history dialog.
+- The Student Clearance Report now includes unresolved lost/damaged case counts.
+- Eighty-two isolated tests pass, including fourteen Priority 6A tests.
+
 ---
 
 ## 2. Completed Components
@@ -111,6 +124,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `IReportService` / `ReportService`
 - `IReportDataProvider` / sixteen production report providers
 - `IReportExporter` / CSV, Excel, and PDF exporters
+- `IClearanceService.cs` / `ClearanceService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -121,6 +135,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `IssueMaterialViewModel.cs` / `ReceiveMaterialViewModel.cs` / `FinesManagementViewModel.cs`: Circulation module.
 - `OverdueRemindersViewModel.cs` / `NotificationCenterViewModel.cs`: Manual overdue and notification-record operations.
 - `ReportsDashboardViewModel.cs` / `ReportPreviewViewModel.cs`: Report selection, filters, preview, and export operations.
+- `ClearanceDashboardViewModel.cs` / `StudentClearanceViewModel.cs` / `FacultyStaffClearanceViewModel.cs` / `ClearanceDetailsViewModel.cs`
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.
@@ -131,6 +146,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `IssueMaterialView.xaml` / `ReceiveMaterialView.xaml` / `FinesManagementView.xaml`
 - `OverdueRemindersView.xaml` / `NotificationCenterView.xaml`
 - `ReportsDashboardView.xaml` / `ReportPreviewView.xaml`
+- `ClearanceDashboardView.xaml` / `StudentClearanceView.xaml` / `FacultyStaffClearanceView.xaml` / `ClearanceDetailsWindow.xaml`
 
 ### Navigation & Routes Wired
 - `"Dashboard"` -> `DashboardViewModel`
@@ -144,6 +160,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `"Overdue Reminders"` -> `OverdueRemindersViewModel`
 - `"Notification Center"` -> `NotificationCenterViewModel`
 - `"Reports & Analytics"` -> `ReportsDashboardViewModel`
+- `"Clearance"` -> `ClearanceDashboardViewModel`
 
 ---
 
@@ -154,5 +171,4 @@ This document catalogs all implemented and pending files, services, entities, Vi
   - `InventoryManagementView.xaml` & `InventoryManagementViewModel.cs` (Mapped but not implemented)
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:
-  - `IClearanceService`: Student/Faculty final departure settlement database routines.
   - `IBackupSyncService`: Local backup scripts and Supabase sync logic.

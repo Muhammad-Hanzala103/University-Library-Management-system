@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 68
+Passed: 82
 Failed: 0
 Skipped: 0
 ```
@@ -75,6 +75,14 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 ```
 
 Priority 5B tests cover all eleven advanced providers, all sixteen registered definitions, wide PDF output, Excel metadata/headers, and empty/date-formatted CSV output.
+
+Run only Priority 6A clearance tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~ClearanceWorkflowTests"
+```
+
+Clearance tests use isolated temporary SQLite databases and temporary certificate folders. They do not access the development database or require a printer.
 
 ## 3. Manual SMTP Verification
 
@@ -125,9 +133,24 @@ Do not run `dotnet ef migrations add InitialCreate` against the current database
 
 Priority 4B adds notification columns through a fixed non-destructive SQLite compatibility initializer. This is not a replacement for the pending migration baseline.
 
+Priority 6A uses the same initializer to add faculty/student clearance columns and indexes without deleting or rebuilding existing tables.
+
+## 7. Manual Clearance Verification
+
+1. Open **Library Clearance** from the sidebar.
+2. Switch between Student Clearance and Faculty & Staff Clearance.
+3. Search and select a member, then select **Check Clearance**.
+4. Confirm active issues, pending fines, and loss/damage blockers appear with exact reasons.
+5. Enter approval remarks and approve an eligible member.
+6. Confirm status, date, and activity-log entry are persisted.
+7. Generate the certificate and open `%USERPROFILE%\Documents\KICSIT Library Certificates`.
+8. Add a new due after approval and confirm certificate generation is blocked.
+9. Enter a revoke reason and revoke clearance.
+10. Open Borrowing History and verify issue and clearance history records.
+
 ---
 
-## 7. Run the WPF Desktop Application
+## 8. Run the WPF Desktop Application
 Launch the WPF UI:
 ```powershell
 dotnet run --project KicsitLibrary.Desktop
@@ -135,7 +158,7 @@ dotnet run --project KicsitLibrary.Desktop
 
 ---
 
-## 8. SQLite Local Database Inspections
+## 9. SQLite Local Database Inspections
 The default SQLite database is named `KicsitLibrary.db`. Relative paths are resolved from `AppContext.BaseDirectory`, normally `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`.
 - Connect to database using SQLite CLI:
   ```bash
