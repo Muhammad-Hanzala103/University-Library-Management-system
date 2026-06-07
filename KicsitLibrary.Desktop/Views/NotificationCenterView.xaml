@@ -23,18 +23,22 @@
 
         <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,12">
             <StackPanel>
-                <TextBlock Text="NOTIFICATION CENTER" FontWeight="Bold"
+                <TextBlock Text="NOTIFICATIONS" FontWeight="Bold"
                            Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,10"/>
                 <WrapPanel>
                     <Button Content="Refresh" Style="{StaticResource SecondaryButton}"
                             Command="{Binding RefreshCommand}" Margin="0,0,8,0"/>
                     <Button Content="Send Selected Email" Style="{StaticResource PrimaryButton}"
+                            ToolTip="Deliver the selected pending email using configured SMTP settings."
                             Command="{Binding SendSelectedEmailCommand}" Margin="0,0,8,0"/>
                     <Button Content="Retry Selected" Style="{StaticResource PrimaryButton}"
+                            ToolTip="Retry the selected failed email within the configured retry limit."
                             Command="{Binding RetrySelectedCommand}" Margin="0,0,8,0"/>
                     <Button Content="Send All Pending Emails" Style="{StaticResource PrimaryButton}"
+                            ToolTip="Attempt delivery of all pending email notification records."
                             Command="{Binding SendAllPendingEmailsCommand}" Margin="0,0,8,0"/>
                     <Button Content="Validate Email Settings" Style="{StaticResource SecondaryButton}"
+                            ToolTip="Check whether required SMTP settings are present and enabled."
                             Command="{Binding ValidateEmailSettingsCommand}" Margin="0,0,8,0"/>
                     <Button Content="Mark Selected As Read" Style="{StaticResource PrimaryButton}"
                             Command="{Binding MarkSelectedAsReadCommand}" Margin="0,0,8,0"/>

@@ -177,7 +177,7 @@ public partial class BackupManagementViewModel(
         }
 
         await restoreDialogService.ShowRestorePreviewAsync(SelectedBackup.BackupFilePath);
-        StatusMessage = "Restore preview closed. Refresh Restore Management to view any staged attempt.";
+        StatusMessage = "Restore preview closed. Refresh Restore to view any staged attempt.";
     }
 
     [RelayCommand]

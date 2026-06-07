@@ -227,7 +227,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                 await RefreshAsync();
                 StatusMessage =
                     $"{actionLabel}: {result.Message} " +
-                    $"{pendingEmails.Count} email record(s) are pending manual delivery in Notification Center.";
+                    $"{pendingEmails.Count} email record(s) are pending manual delivery in Notifications.";
                 if (!result.Succeeded && !result.WasSkipped)
                 {
                     ErrorMessage = result.FailureReason ?? result.Message;

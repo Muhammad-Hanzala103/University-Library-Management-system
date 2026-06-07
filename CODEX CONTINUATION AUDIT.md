@@ -1,5 +1,38 @@
 # Codex Continuation Audit
 
+## Product Branding and Management UI Refinement Completion
+
+Completion date: 2026-06-07
+
+- Renamed current user-visible product branding to **Ilm-o-Kutub System** while preserving the institution identity separately.
+- Added centralized `ProductBrand` values for visible product, repository, institution, and default artifact folders.
+- Preserved `KicsitLibrary.*` projects, namespaces, assembly name, solution name, database schema, and `KicsitLibrary.db` for compatibility and data safety.
+- Updated the shell, login, dashboard welcome state, library card, report exports, clearance certificates, backup/restore metadata, defaults, and desktop assembly product metadata.
+- Applied a professional management palette through shared colors and styles: off-white background, white cards, charcoal sidebar, muted blue actions, teal accent, restrained semantic colors, dark slate text, and soft gray borders.
+- Polished visible module labels without removing navigation items or changing module implementations.
+- Added the global **Show Helpful Hints** top-bar toggle, default enabled and session-only, backed by `IHintService` and `HintService`.
+- Added practical toggle-controlled tooltips to sidebar and important circulation, backup/restore, report, clearance, reservation, audit, inventory, notification, and scheduler actions.
+- Removed the artificial login delay; authentication behavior is otherwise unchanged.
+- Updated exact legacy default report and sender branding during seeding without overwriting customized values.
+- Added four branding/hint regression tests; all 171 tests pass.
+- Documented the manual GitHub rename target `Ilm-o-Kutub-System` and the safe `gh repo rename` command without running it.
+- No automatic backup scheduler, deployment, Supabase sync, EF migrations, WhatsApp delivery, or final README work was added.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 171 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Priority 8C, define and implement the automatic backup scheduling and retention safety policy as a separate task. Do not combine it with Supabase sync, deployment, migrations, WhatsApp delivery, or final README generation.
+
 ## Priority 8B Completion Update
 
 Completion date: 2026-06-07

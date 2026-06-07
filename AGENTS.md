@@ -23,12 +23,19 @@ This document outlines the strict guidelines and patterns that any AI coding age
 ---
 
 ## 3. UI Styling & Theme Constraints
-- **Navy Theme Design System**: The app uses a strict navy color system. Use colors defined in [Colors.xaml](file:///c:/Projects/University%20Library%20Management%20system/KicsitLibrary.Desktop/Themes/Colors.xaml) via static resources:
-  - Primary color: `#1B2A47` (`PrimaryBrush`)
-  - Slate secondary: `#2A3F6D` (`SecondaryBrush`)
-  - Accent: `#005A9C` (`AccentBrush`)
-  - Background: `#F4F6F9` (`BgBrush`)
-  - Semantic: Success (`#10B981`), Danger (`#EF4444`), Warning (`#F59E0B`)
+- **Ilm-o-Kutub Management Theme**: Use colors defined in [Colors.xaml](file:///c:/Project/University-Library-Management-system/KicsitLibrary.Desktop/Themes/Colors.xaml) via static resources:
+  - Sidebar: `#1F2937` (`PrimaryBrush`)
+  - Sidebar selected: `#374151` (`SecondaryBrush`)
+  - Primary action: `#2563EB` (`AccentBrush`)
+  - Primary hover: `#1D4ED8` (`AccentHoverBrush`)
+  - Operational accent: `#0F766E` (`OperationalAccentBrush`)
+  - Background: `#F5F7FA` (`BgBrush`)
+  - Card: `#FFFFFF` (`CardBgBrush`)
+  - Border: `#D1D5DB` (`BorderBrush`)
+  - Semantic: Success (`#15803D`), Danger (`#B91C1C`), Warning (`#D97706`)
+- **Visual direction**: Keep the interface suitable for administrative office use. Do not add gradients, neon/purple palettes, glass effects, or chatbot-style presentation.
+- **Visible branding**: Use `ProductBrand.Name` in code-generated artifacts and **Ilm-o-Kutub System** in XAML. Keep the institution name separate.
+- **Hints**: Important new buttons should have short practical `ToolTip` text. Shared button styles honor the global session-level **Show Helpful Hints** setting.
 - **Card Styles**: Use `<Border Style="{StaticResource CardStyle}">` to wrap layouts. Never write raw shadow effects or borders manually.
 - **WPF StringFormat Escape**: When binding string formats that start with curly braces in DataGrids or labels, prefix them with `{}` to avoid compiler error `MC1000`. Example:
   `StringFormat='{}{0:N0}'` instead of `StringFormat='{0:N0}'`.

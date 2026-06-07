@@ -1,6 +1,6 @@
 # Build, Test, and Database Inspection Commands
 
-Use the following commands from the repository root (`c:\Projects\University Library Management system\`) to build, run, and maintain the system.
+Use the following commands from the repository root (`c:\Project\University-Library-Management-system\`) to build, run, and maintain Ilm-o-Kutub System.
 
 ---
 
@@ -33,10 +33,18 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 167
+Passed: 171
 Failed: 0
 Skipped: 0
 ```
+
+Run only branding and helpful-hint tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~BrandingAndHintsTests"
+```
+
+These tests verify the centralized visible product name, key UI/configuration branding, the default-enabled hint preference, and off/on toggling.
 
 Run only Priority 4B tests:
 
@@ -132,14 +140,14 @@ Priority 8B tests use isolated temporary SQLite databases and folders. They cove
 4. Enter a reason and type `RESTORE` exactly; keep all safety and verification options enabled.
 5. Choose **Stage Restore** and confirm a verified safety backup path and restart-required message are shown.
 6. Close and restart the application.
-7. Confirm login succeeds, Restore Management shows a completed startup restore, and Activity Logs contains preview, validation, safety backup, staging, and startup application records.
+7. Confirm login succeeds, Restore shows a completed startup restore, and Activity Logs contains preview, validation, safety backup, staging, and startup application records.
 8. Confirm Librarian/Auditor can view restore history but cannot stage a restore.
 9. Confirm an invalid, empty, corrupted, or unrelated SQLite file is rejected.
 
 ## Manual Backup Verification
 
-1. Sign in as Super Admin or Admin and open **Backup Management**.
-2. Confirm the default destination is `%USERPROFILE%\Documents\KICSIT Library Backups`.
+1. Sign in as Super Admin or Admin and open **Backup**.
+2. Confirm the default destination is `%USERPROFILE%\Documents\Ilm-o-Kutub Backups`.
 3. Enter a reason, keep **Verify after creation** enabled, and select **Create Backup**.
 4. Confirm a `.db` file and `.metadata.json` file are created with a timestamped name.
 5. Select the history row and use **Verify Selected**; confirm verification is `Passed` and a SHA-256 checksum is shown.
@@ -151,7 +159,7 @@ Priority 8B tests use isolated temporary SQLite databases and folders. They cove
 
 ## Manual Inventory and Stock Verification
 
-1. Open **Inventory Management**, add an item, and verify the quantity validation.
+1. Open **Inventory**, add an item, and verify the quantity validation.
 2. Adjust quantities with a reason, then mark units damaged and repaired.
 3. Soft-delete with a reason, enable **Include deleted**, and restore the item.
 4. Export the Inventory Report and confirm current values.
@@ -166,7 +174,7 @@ Priority 8B tests use isolated temporary SQLite databases and folders. They cove
 1. Back up the development database before changing settings.
 2. Populate `SmtpHost`, `SmtpPort`, `SmtpUseSsl`, `SmtpUser`, `SmtpPassword`, `SmtpFromEmail`, and `SmtpFromName` in `SystemSettings`.
 3. Set `EmailNotificationEnabled` to `True`.
-4. Open Notification Center and select **Validate Email Settings**.
+4. Open Notifications and select **Validate Email Settings**.
 5. Run the overdue check to create pending email records.
 6. Use **Send Selected Email** or **Send All Pending Emails**.
 7. Confirm the record status, `SentAt`, `LastAttemptAt`, `RetryCount`, and any `FailureReason`.
@@ -187,7 +195,7 @@ Priority 8B tests use isolated temporary SQLite databases and folders. They cove
 
 ## 5. Manual Reports Verification
 
-1. Open **Reports & Analytics** from the sidebar.
+1. Open **Reports** from the sidebar.
 2. Search reports by name and confirm the visible report count changes.
 3. Confirm all sixteen report cards appear under the seven report categories.
 4. Select each Priority 5B report and confirm real database rows appear.
@@ -196,7 +204,7 @@ Priority 8B tests use isolated temporary SQLite databases and folders. They cove
 7. Confirm **Clear Filters** restores the full preview.
 8. Export CSV, Excel, and PDF.
 9. Confirm the success message includes the generated file path.
-10. Open `%USERPROFILE%\Documents\KICSIT Library Reports`.
+10. Open `%USERPROFILE%\Documents\Ilm-o-Kutub Reports`.
 11. Verify the file name includes the report name and timestamp.
 12. Confirm repeated exports create unique files instead of overwriting.
 13. Confirm wide PDF reports have page metadata, repeated headers, and page numbers.
@@ -215,12 +223,12 @@ Priority 6A uses the same initializer to add faculty/student clearance columns a
 ## 7. Manual Clearance Verification
 
 1. Open **Library Clearance** from the sidebar.
-2. Switch between Student Clearance and Faculty & Staff Clearance.
+2. Switch between Student Clearance and Faculty and Staff Clearance.
 3. Search and select a member, then select **Check Clearance**.
 4. Confirm active issues, pending fines, and loss/damage blockers appear with exact reasons.
 5. Enter approval remarks and approve an eligible member.
 6. Confirm status, date, and activity-log entry are persisted.
-7. Generate the certificate and open `%USERPROFILE%\Documents\KICSIT Library Certificates`.
+7. Generate the certificate and open `%USERPROFILE%\Documents\Ilm-o-Kutub Certificates`.
 8. Add a new due after approval and confirm certificate generation is blocked.
 9. Enter a revoke reason and revoke clearance.
 10. Open Borrowing History and verify issue and clearance history records.
@@ -233,7 +241,7 @@ Priority 6A uses the same initializer to add faculty/student clearance columns a
 4. Open a title queue and confirm first-come-first-served positions.
 5. Return a normally issued copy and confirm the first queue item becomes `Available`.
 6. Confirm no book is issued automatically and no email is sent automatically.
-7. Open Notification Center and confirm in-app and email records exist without duplicates.
+7. Open Notifications and confirm in-app and email records exist without duplicates.
 8. Confirm a missing member email produces a failed email record with a clear reason.
 9. Fulfill the first queue item and confirm an issue record is created, the copy becomes `Issued`, and the reservation stores the accession number with status `Issued`.
 10. Cancel or expire an active reservation with a reason and confirm an activity-log row is written.
@@ -258,11 +266,25 @@ dotnet run --project KicsitLibrary.Desktop
 8. Change status with remarks and verify the Activity Log entry.
 9. Delete an audit with a reason and confirm it disappears from the active list while an archive row and activity log remain.
 10. Sign in as Auditor and confirm records/logs are viewable but audit mutation is blocked.
-11. Open **Reports & Analytics**, run Audit Report, and confirm the audit number and current status appear.
+11. Open **Reports**, run Audit Report, and confirm the audit number and current status appear.
+
+## 11. Manual Branding and Helpful Hints Verification
+
+1. Launch the desktop application and confirm the login title shows **Ilm-o-Kutub System**.
+2. Sign in and confirm the window title, sidebar product header, and dashboard welcome state show **Ilm-o-Kutub System**.
+3. Confirm the institution name remains separate in the top bar and generated reports.
+4. Verify the sidebar uses the concise module labels documented in `CURRENT STATUS.md`.
+5. Hover over sidebar items and important actions; confirm practical tooltips appear.
+6. Clear **Show Helpful Hints** in the top bar and confirm button/menu tooltips stop appearing immediately.
+7. Enable **Show Helpful Hints** and confirm tooltips return.
+8. Export an Excel and PDF report and confirm **Ilm-o-Kutub System** appears above the report and institution titles.
+9. Generate a clearance certificate and confirm the same product branding.
+10. Create a backup and confirm its metadata contains `Ilm-o-Kutub System` and its filename begins `Ilm-o-Kutub_Backup_`.
+11. Confirm the application still uses the existing `KicsitLibrary.db` and does not create or delete a renamed database.
 
 ---
 
-## 11. SQLite Local Database Inspections
+## 12. SQLite Local Database Inspections
 The default SQLite database is named `KicsitLibrary.db`. Relative paths are resolved from `AppContext.BaseDirectory`, normally `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`.
 - Connect to database using SQLite CLI:
   ```bash

@@ -23,6 +23,7 @@
         <Grid Grid.Row="0" Margin="0,0,0,15">
             <TextBlock Text="Welcome back, Librarian!" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource TextDarkBrush}"/>
             <Button Content="Refresh Statistics" Style="{StaticResource SecondaryButton}" 
+                    ToolTip="Reload dashboard totals and recent activity."
                     Command="{Binding LoadStatsCommand}" HorizontalAlignment="Right" Padding="12,6"/>
         </Grid>
 
@@ -295,14 +296,14 @@
                 <!-- Section 4: Quick Actions -->
                 <TextBlock Text="QUICK SHORTCUTS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,10,0,10"/>
                 <UniformGrid Columns="4" Margin="0,0,0,10">
-                    <Button Style="{StaticResource SecondaryButton}" Content="Issue Material" Command="{Binding QuickIssueCommand}" Margin="0,0,10,10" Padding="12,12"/>
-                    <Button Style="{StaticResource SecondaryButton}" Content="Receive Material" Command="{Binding QuickReceiveCommand}" Margin="0,0,10,10" Padding="12,12"/>
-                    <Button Style="{StaticResource SecondaryButton}" Content="Search Book Catalog" Command="{Binding QuickCatalogCommand}" Margin="0,0,10,10" Padding="12,12"/>
-                    <Button Style="{StaticResource SecondaryButton}" Content="Add Student" Command="{Binding QuickStudentsCommand}" Margin="0,0,0,10" Padding="12,12"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="Issue Material" Command="{Binding QuickIssueCommand}" ToolTip="Open the issue workflow." Margin="0,0,10,10" Padding="12,12"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="Receive Material" Command="{Binding QuickReceiveCommand}" ToolTip="Open the return workflow." Margin="0,0,10,10" Padding="12,12"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="Search Book Catalog" Command="{Binding QuickCatalogCommand}" ToolTip="Open catalog search and copy management." Margin="0,0,10,10" Padding="12,12"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="Add Student" Command="{Binding QuickStudentsCommand}" ToolTip="Open student account management." Margin="0,0,0,10" Padding="12,12"/>
                     
-                    <Button Style="{StaticResource SecondaryButton}" Content="Add Faculty/Staff" Command="{Binding QuickFacultyCommand}" Margin="0,0,10,0" Padding="12,12"/>
-                    <Button Style="{StaticResource SecondaryButton}" Content="Overdue Report" Command="{Binding QuickOverdueCommand}" Margin="0,0,10,0" Padding="12,12"/>
-                    <Button Style="{StaticResource SecondaryButton}" Content="Fines Report" Command="{Binding QuickFinesCommand}" Margin="0,0,10,0" Padding="12,12"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="Add Faculty/Staff" Command="{Binding QuickFacultyCommand}" ToolTip="Open faculty and staff account management." Margin="0,0,10,0" Padding="12,12"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="Overdue Report" Command="{Binding QuickOverdueCommand}" ToolTip="Open overdue loans and reminders." Margin="0,0,10,0" Padding="12,12"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="Fines Report" Command="{Binding QuickFinesCommand}" ToolTip="Open fine collection and adjustment records." Margin="0,0,10,0" Padding="12,12"/>
                     <Button Style="{StaticResource SecondaryButton}" Content="Settings" Command="{Binding QuickSettingsCommand}" Margin="0,0,0,0" Padding="12,12"/>
                 </UniformGrid>
                 

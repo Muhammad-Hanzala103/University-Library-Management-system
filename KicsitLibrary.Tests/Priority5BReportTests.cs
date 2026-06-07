@@ -1,4 +1,5 @@
 using ClosedXML.Excel;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
 using KicsitLibrary.Reports.Contracts;
@@ -293,8 +294,9 @@ public class Priority5BReportTests
 
         using var workbook = new XLWorkbook(result.FilePath!);
         var sheet = workbook.Worksheet("Report");
-        Assert.Equal("Wide Report", sheet.Cell(1, 1).GetString());
-        Assert.Equal("KICSIT", sheet.Cell(2, 1).GetString());
+        Assert.Equal(ProductBrand.Name, sheet.Cell(1, 1).GetString());
+        Assert.Equal("Wide Report", sheet.Cell(2, 1).GetString());
+        Assert.Equal("KICSIT", sheet.Cell(3, 1).GetString());
         Assert.True(sheet.AutoFilter.IsEnabled);
     }
 

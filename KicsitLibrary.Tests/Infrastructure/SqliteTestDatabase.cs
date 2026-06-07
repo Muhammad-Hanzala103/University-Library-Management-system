@@ -1,3 +1,4 @@
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
 using KicsitLibrary.Data;
@@ -166,7 +167,7 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
             ["SmtpUser"] = "test-user",
             ["SmtpPassword"] = password,
             ["SmtpFromEmail"] = "library@test.invalid",
-            ["SmtpFromName"] = "KICSIT Library"
+            ["SmtpFromName"] = ProductBrand.Name
         };
 
         foreach (var value in values)

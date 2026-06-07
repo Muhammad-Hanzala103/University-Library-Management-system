@@ -1,4 +1,4 @@
-# Next Development Priorities (Phases 4 - 8)
+# Next Development Priorities for Ilm-o-Kutub System
 
 This document contains a structured task list outlining the implementation steps for the remaining modules.
 
@@ -19,7 +19,7 @@ This document contains a structured task list outlining the implementation steps
 - [x] Implement `INotificationService` record creation, retry, read state, and cooldown checks.
 - [x] Persist notification recipient snapshots, retry metadata, and deduplication keys.
 - [x] Add non-destructive SQLite compatibility columns and indexes.
-- [x] Add Overdue Reminders and Notification Center MVVM views.
+- [x] Add Overdue Reminders and Notifications MVVM views.
 - [x] Wire navigation, DI, dashboard overdue counting, settings, and audit logs.
 - [x] Add ten Priority 4B tests; all nineteen tests pass.
 
@@ -29,7 +29,7 @@ This document contains a structured task list outlining the implementation steps
 - [x] Add an email delivery abstraction and bounded retry handling.
 - [x] Update pending/failed/sent records with attempt timestamps and failure details.
 - [x] Add integration tests with a fake email transport.
-- [x] Add Notification Center actions for selected, retry, batch, and settings validation.
+- [x] Add Notifications actions for selected, retry, batch, and settings validation.
 - [x] Keep delivery manual; no background scheduler was added.
 
 ## Priority 4D: Background Overdue Scheduler
@@ -55,7 +55,7 @@ Remaining deployment concern:
 - [x] Add safe Documents-folder storage and non-overwriting file names.
 - [x] Log export success and failure.
 - [x] Add Reports dashboard, report-specific filters, preview, empty state, and export actions.
-- [x] Wire Reports & Analytics navigation and DI.
+- [x] Wire Reports navigation and DI.
 - [x] Add thirteen isolated provider/export tests; all fifty-two tests pass.
 
 ## Priority 5B: Extended Reports & Print Refinement
@@ -135,7 +135,7 @@ Deferred refinements:
 - [x] Add inventory models, authorization-aware CRUD, quantity adjustments, damage/repair actions, soft delete/restore, summaries, and activity logs.
 - [x] Add persisted stock-verification sessions and entries through additive SQLite compatibility tables.
 - [x] Add verification, mismatch remarks, bulk missing marking, completion summaries, and explicit-only reconciliation.
-- [x] Create real Inventory Management and Stock Verification MVVM views, dialogs, navigation, and DI registrations.
+- [x] Create real Inventory and Stock Verification MVVM views, dialogs, navigation, and DI registrations.
 - [x] Update Inventory and Stock Verification reports without changing the sixteen-report foundation.
 - [x] Add nineteen isolated SQLite tests; all one hundred thirty-five tests pass.
 
@@ -152,7 +152,7 @@ Deferred refinements:
 - [x] Add read-only `PRAGMA integrity_check` verification and SHA-256 checksums.
 - [x] Add metadata JSON, optional ZIP compression, backup history, summaries, filters, and activity logs.
 - [x] Add additive `BackupHistories` compatibility table and indexes without migrations.
-- [x] Add Backup Management and details MVVM screens, navigation, authorization, and DI.
+- [x] Add Backup and details MVVM screens, navigation, authorization, and DI.
 - [x] Seed manual-backup settings and backup view/manage permissions.
 - [x] Add thirteen isolated SQLite tests; all one hundred forty-eight tests pass.
 
@@ -166,11 +166,11 @@ Deferred refinements:
 - [x] Add restore request, preview, validation, result, history, and summary contracts.
 - [x] Add additive restore-history persistence and indexes without migrations.
 - [x] Require Admin/Super Admin authorization, reason, exact `RESTORE` confirmation, and a mandatory verified safety backup.
-- [x] Validate source files with size checks, `PRAGMA integrity_check`, SHA-256, and required KICSIT schema tables.
+- [x] Validate source files with size checks, `PRAGMA integrity_check`, SHA-256, and required application schema tables.
 - [x] Stage a verified copy and require application restart instead of replacing the active database.
 - [x] Apply pending restores before host/database startup with an emergency copy, post-restore verification, and rollback.
 - [x] Import startup results into restore history and activity logs.
-- [x] Add Restore Management, preview/confirmation, history details, and Backup Management integration.
+- [x] Add Restore, preview/confirmation, history details, and Backup integration.
 - [x] Add nineteen isolated restore tests; all one hundred sixty-seven tests pass.
 
 Deferred refinements:
@@ -178,6 +178,32 @@ Deferred refinements:
 - [ ] Add cross-process ownership protection before supporting simultaneous desktop instances.
 - [ ] Add a native database-file picker; current restore paths are selected from backup history or typed manually.
 - [ ] Define an operator-reviewed retention policy for staged, emergency, and safety backup files.
+
+## Product Branding and Management UI Refinement
+- [x] Rename all current user-visible product branding to **Ilm-o-Kutub System**.
+- [x] Keep the institution identity separate in reports and certificates.
+- [x] Preserve internal `KicsitLibrary.*` projects, namespaces, assembly name, solution name, and `KicsitLibrary.db` for compatibility.
+- [x] Centralize product and artifact-folder names in `ProductBrand`.
+- [x] Apply the professional management palette through shared colors and styles.
+- [x] Polish sidebar labels without removing navigation items.
+- [x] Add the global **Show Helpful Hints** session toggle.
+- [x] Add practical tooltips to navigation, circulation, backup/restore, reports, clearance, reservations, audits, inventory, notifications, and scheduler actions.
+- [x] Add four branding/hint regression tests; all 171 tests pass.
+- [x] Keep automatic backup scheduling, deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README work out of this phase.
+
+### GitHub Repository Rename Checklist
+- [ ] Go to the GitHub repository.
+- [ ] Open **Settings**.
+- [ ] Rename the repository to `Ilm-o-Kutub-System`.
+- [ ] Update the local remote URL after rename if needed.
+- [ ] Verify push and pull still work.
+- [ ] Generate the final `README.md` during final release.
+
+Safe CLI command for documentation only; do not run without authenticated access and explicit confirmation:
+
+```powershell
+gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
+```
 
 ## Priority 8C+: Scheduling, Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.

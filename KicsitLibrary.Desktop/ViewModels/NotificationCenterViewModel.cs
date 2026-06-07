@@ -73,7 +73,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                 UpdateCounts();
                 StatusMessage = $"Loaded {_allNotifications.Count} notification record(s).";
                 await _logService.LogActivityAsync(
-                    "Notification Center Refreshed",
+                    "Notifications Refreshed",
                     StatusMessage,
                     CurrentUserId);
             }

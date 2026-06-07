@@ -45,6 +45,7 @@
                     <ComboBox ItemsSource="{Binding Books}" SelectedItem="{Binding SelectedBook}"
                               DisplayMemberPath="Title" Margin="0,6,0,12"/>
                     <Button Content="Check Eligibility" Command="{Binding CheckEligibilityCommand}"
+                            ToolTip="Validate the selected member and title before creating a reservation."
                             Style="{StaticResource SecondaryButton}" Margin="0,0,0,12"/>
                     <TextBlock Text="{Binding Eligibility.Message}" TextWrapping="Wrap" FontWeight="SemiBold"/>
                     <TextBlock Text="{Binding Eligibility.ActiveReservationCount, StringFormat=Active reservations: {0}}" Margin="0,8,0,0"/>
@@ -57,7 +58,7 @@
             <DockPanel>
                 <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <Button Content="Create" Command="{Binding CreateCommand}" Style="{StaticResource PrimaryButton}" Margin="8,0"/>
+                    <Button Content="Create" Command="{Binding CreateCommand}" ToolTip="Save the eligible reservation and assign its queue position." Style="{StaticResource PrimaryButton}" Margin="8,0"/>
                     <Button Content="Close" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButton}"/>
                 </StackPanel>
             </DockPanel>

@@ -1,6 +1,6 @@
 # Current Project Status
 
-This document catalogs all implemented and pending files, services, entities, ViewModels, and views inside the University Library Management System.
+This document catalogs all implemented and pending files, services, entities, ViewModels, and views inside Ilm-o-Kutub System.
 
 ---
 
@@ -21,7 +21,37 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 7B (Inventory Management & Physical Stock Verification)**: **100% Completed**
 - **Priority 8A (Verified Local SQLite Backup Creation)**: **100% Completed**
 - **Priority 8B (Verified Local SQLite Restore)**: **100% Completed**
+- **Product Branding & Management UI Refinement**: **100% Completed**
 - **Priority 8C+ (Scheduling, Sync & Deployment)**: **Pending Implementation**
+
+### Product Branding and UI Refinement
+- The visible product name is now **Ilm-o-Kutub System** across the shell, login, dashboard welcome state, library card, report/PDF/Excel output, certificate output, backup metadata, restore metadata, application settings defaults, and assembly product metadata.
+- Internal projects, namespaces, executable assembly name, solution name, and `KicsitLibrary.db` remain unchanged for compatibility and data safety.
+- `ProductBrand` is the centralized source for product, repository, institution, and default artifact-folder names.
+- The global palette now uses off-white application surfaces, charcoal navigation, muted blue actions, teal operational accent, restrained semantic colors, dark slate text, and soft gray borders.
+- Main navigation labels are now concise: Dashboard, Book Catalog, Issue Material, Receive Material, Reservations, Fines, Overdue Reminders, Notifications, Students, Faculty and Staff, Visits, Library Clearance, Reports, Audit Records, Activity Logs, Inventory, Stock Verification, Backup, Restore, and Settings.
+- **Show Helpful Hints** is available in the main top bar, defaults to enabled, updates the current session immediately, and controls practical WPF tooltips on navigation and important actions.
+- Reports and clearance certificates include the product name while preserving the institution name as a separate identity.
+- New backups default to `Documents\Ilm-o-Kutub Backups`; reports to `Documents\Ilm-o-Kutub Reports`; certificates to `Documents\Ilm-o-Kutub Certificates`.
+- Four branding/hint regression tests were added. The full isolated suite now passes with 171 tests.
+- Automatic backup scheduling, deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README generation were not started.
+
+### GitHub Repository Rename
+The GitHub repository rename remains a manual owner action. The target repository name is `Ilm-o-Kutub-System`.
+
+Checklist:
+1. Go to the GitHub repository.
+2. Open **Settings**.
+3. Rename the repository to `Ilm-o-Kutub-System`.
+4. Update the local remote URL after rename if needed.
+5. Verify push and pull still work.
+6. Generate the final `README.md` only during the final release phase.
+
+Documented CLI alternative, to run only after authentication and explicit confirmation:
+
+```powershell
+gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
+```
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -71,7 +101,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - CSV, Excel, and PDF exporters consume `ReportResult` only and never query the database.
 - ClosedXML generates `.xlsx` files without requiring Microsoft Excel.
 - CSV and PDF generation use internal deterministic writers with no additional runtime applications.
-- Export paths default to the current user's Documents folder under `KICSIT Library Reports`.
+- Export paths default to the current user's Documents folder under `Ilm-o-Kutub Reports`.
 - File names are sanitized, timestamped, and made unique unless overwrite is explicitly requested.
 - Successful and failed export actions write activity-log records.
 - Reports & Analytics navigation opens a real dashboard with report-specific filters, dynamic preview, empty state, and export actions.
@@ -93,7 +123,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Approval requires remarks and the authenticated user; revocation requires a reason.
 - Student and faculty/staff records persist clearance status, date, remarks, and approving user ID.
 - Existing SQLite databases receive only additive clearance columns and status indexes through `DatabaseCompatibilityInitializer`.
-- Clearance certificates are real PDF files under `Documents\KICSIT Library Certificates` by default and are revalidated before export.
+- Clearance certificates are real PDF files under `Documents\Ilm-o-Kutub Certificates` by default and are revalidated before export.
 - Approval, revocation, and certificate generation write activity logs.
 - Library Clearance navigation opens a real dashboard with student/faculty worklists, filters, validation details, actions, and borrowing/history dialog.
 - The Student Clearance Report now includes unresolved lost/damaged case counts.
@@ -137,7 +167,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 
 ### Priority 8A Verified Local SQLite Backup Creation
 - Added manual online SQLite backups using `Microsoft.Data.Sqlite.SqliteConnection.BackupDatabase`; the live database file is not copied directly.
-- Every backup receives a timestamped, sanitized, non-overwriting file name under `Documents\KICSIT Library Backups` by default.
+- Every backup receives a timestamped, sanitized, non-overwriting file name under `Documents\Ilm-o-Kutub Backups` by default.
 - Backup verification reopens the generated database read-only, runs `PRAGMA integrity_check`, and computes a SHA-256 checksum.
 - Metadata JSON excludes system settings and SMTP credentials; optional ZIP compression includes the database and metadata while retaining the original database file.
 - Added persisted backup history, status summaries, filters, soft-delete support, and activity logs for creation, verification, compression failure, authorization denial, and history deletion.
@@ -148,7 +178,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 
 ### Priority 8B Verified Local SQLite Restore
 - Added verified restore preview, validation, history, status summaries, authorization, and activity logging.
-- Restore accepts only non-empty SQLite files that pass `PRAGMA integrity_check`, SHA-256 hashing, and required KICSIT schema-table checks.
+- Restore accepts only non-empty SQLite files that pass `PRAGMA integrity_check`, SHA-256 hashing, and required application schema-table checks.
 - Every approved restore creates a verified online safety backup before staging any replacement.
 - The active database is never overwritten while WPF, hosted services, or scoped DbContexts are running.
 - A verified staged copy and non-sensitive pending metadata are written beside the configured database; application restart is required.
@@ -230,27 +260,28 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `"Book Catalog"` -> `BookCatalogViewModel`
 - `"Issue Material"` -> `IssueMaterialViewModel`
 - `"Receive Material"` -> `ReceiveMaterialViewModel`
-- `"Fines Management"` -> `FinesManagementViewModel`
-- `"Students Management"` -> `StudentsManagementViewModel`
-- `"Faculty & Staff"` -> `FacultyStaffManagementViewModel`
-- `"Visit Records"` -> `VisitRecordsViewModel`
+- `"Fines"` -> `FinesManagementViewModel`
+- `"Students"` -> `StudentsManagementViewModel`
+- `"Faculty and Staff"` -> `FacultyStaffManagementViewModel`
+- `"Visits"` -> `VisitRecordsViewModel`
 - `"Overdue Reminders"` -> `OverdueRemindersViewModel`
-- `"Notification Center"` -> `NotificationCenterViewModel`
-- `"Reports & Analytics"` -> `ReportsDashboardViewModel`
-- `"Clearance"` -> `ClearanceDashboardViewModel`
+- `"Notifications"` -> `NotificationCenterViewModel`
+- `"Reports"` -> `ReportsDashboardViewModel`
+- `"Library Clearance"` -> `ClearanceDashboardViewModel`
 - `"Reservations"` -> `ReservationManagementViewModel`
 - `"Activity Logs"` -> `ActivityLogsViewModel`
 - `"Audit Records"` -> `AuditRecordsViewModel`
-- `"Inventory Management"` -> `InventoryManagementViewModel`
+- `"Inventory"` -> `InventoryManagementViewModel`
 - `"Stock Verification"` -> `StockVerificationViewModel`
-- `"Backup Management"` -> `BackupManagementViewModel`
+- `"Backup"` -> `BackupManagementViewModel`
+- `"Restore"` -> `RestoreManagementViewModel`
 
 ---
 
 ## 3. Pending Components
 
 - **Views & ViewModels**:
-  - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
+  - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (the Settings route exists, but the screen is not implemented)
 - **Services**:
   - Automatic backup scheduling/retention, Supabase sync, and deployment remain pending.
 - **Final Release Documentation**:

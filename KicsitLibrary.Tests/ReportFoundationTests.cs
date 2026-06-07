@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using ClosedXML.Excel;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
 using KicsitLibrary.Core.Interfaces;
@@ -135,7 +136,7 @@ public class ReportFoundationTests
     }
 
     [Fact]
-    public async Task ExcelExporter_CreatesWorkbookWithReportTitle()
+    public async Task ExcelExporter_CreatesWorkbookWithProductAndReportTitles()
     {
         using var directory = new TemporaryDirectory();
         var exporter = new ExcelReportExporter();
@@ -148,8 +149,11 @@ public class ReportFoundationTests
         Assert.True(File.Exists(result.FilePath));
         using var workbook = new XLWorkbook(result.FilePath!);
         Assert.Equal(
-            "Sample Report",
+            ProductBrand.Name,
             workbook.Worksheet("Report").Cell(1, 1).GetString());
+        Assert.Equal(
+            "Sample Report",
+            workbook.Worksheet("Report").Cell(2, 1).GetString());
     }
 
     [Fact]

@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Text.RegularExpressions;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
@@ -76,6 +77,7 @@ public class BackupWorkflowTests
         var result = await environment.Service.CreateBackupAsync(environment.Request());
         var metadata = await File.ReadAllTextAsync(result.MetadataFilePath);
 
+        Assert.Contains(ProductBrand.Name, metadata);
         Assert.DoesNotContain("top-secret-test-password", metadata);
         Assert.DoesNotContain("SmtpPassword", metadata);
     }
@@ -90,7 +92,7 @@ public class BackupWorkflowTests
         var fileName = Path.GetFileName(result.BackupFilePath);
 
         Assert.Matches(
-            new Regex(@"^KICSIT_Library_Backup_Admin__Test_User_\d{8}_\d{6}_\d{3}\.db$"),
+            new Regex(@"^Ilm-o-Kutub_Backup_Admin__Test_User_\d{8}_\d{6}_\d{3}\.db$"),
             fileName);
         Assert.DoesNotContain(":", fileName);
         Assert.DoesNotContain("/", fileName);

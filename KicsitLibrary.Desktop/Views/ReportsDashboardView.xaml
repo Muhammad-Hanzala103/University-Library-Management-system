@@ -21,7 +21,7 @@
             <StackPanel>
                 <DockPanel Margin="0,0,0,10">
                     <StackPanel>
-                        <TextBlock Text="REPORTS &amp; EXPORTS" FontWeight="Bold"
+                        <TextBlock Text="REPORTS" FontWeight="Bold"
                                    Foreground="{StaticResource PrimaryBrush}"/>
                         <TextBlock FontSize="11" Foreground="{StaticResource TextMutedBrush}">
                             <Run Text="{Binding VisibleReportCount}"/>

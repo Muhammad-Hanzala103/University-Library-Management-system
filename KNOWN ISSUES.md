@@ -6,6 +6,15 @@ This document outlines modules that are currently implemented or stubbed, listin
 
 ## 1. Placeholder & Stubbed Logic
 
+### Branding and UI Refinement Limitations
+- The visible product name is **Ilm-o-Kutub System**, but internal `KicsitLibrary.*` namespaces, projects, executable assembly name, solution name, and the `KicsitLibrary.db` file remain unchanged to avoid breaking code, restore compatibility, or user data.
+- The **Show Helpful Hints** preference is session-only. It defaults to enabled on each application start and is not written to `SystemSettings`.
+- Tooltips are wired through shared button styles and practical per-action text, but WPF hover behavior and visual palette rendering are not covered by automated UI tests.
+- Existing customized report and SMTP settings are preserved. Startup changes only exact legacy default branding values.
+- Legacy product-name literals remain only in the exact-value upgrade map and regression assertions needed to detect or replace old defaults; they are not displayed as current branding.
+- GitHub repository rename to `Ilm-o-Kutub-System` is a manual owner action and has not been performed.
+- Final `README.md` generation remains deferred until all modules, testing, deployment, and release packaging are complete.
+
 ### Database Initialization Strategy
 - **Decision**: Priority 4A uses `EnsureCreatedAsync` only. `MigrateAsync` is not called.
 - **Reason**: Existing development databases may have been created by `EnsureCreatedAsync`; adding a normal initial migration could conflict with those schemas.
@@ -18,9 +27,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - **Remaining limitation**: SQLite cannot add the new `IssueRecordId` foreign-key constraint to an existing table without a table rebuild. Fresh databases receive the EF-configured constraint; upgraded development databases rely on service validation until migrations are adopted.
 
 ### Navigation View Stubs
-- The following screens are registered in the main sidebar menu in `MainWindow.xaml` and mapped in `MainViewModel.cs` but do not have XAML Views implemented. They will load as blank/loading templates:
-  - `"Inventory Management"`
-  - `"System Settings"`
+- The `"Settings"` route is registered in the main sidebar but does not yet have a dedicated ViewModel or XAML view.
 
 ---
 
@@ -28,7 +35,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 
 ### Notification Alert Engine
 - Manual overdue discovery and idempotent notification-record generation are implemented.
-- Email records can be delivered manually from Notification Center through MailKit SMTP.
+- Email records can be delivered manually from Notifications through MailKit SMTP.
 - SMTP delivery is disabled by default. Empty development placeholders are seeded for host, user, password, and sender address.
 - SMTP credentials are stored in the local `SystemSettings` table. They are not committed in source or written to activity logs, but encrypted secret storage is not implemented yet.
 - Operators must populate `SmtpHost`, `SmtpUser`, `SmtpPassword`, and `SmtpFromEmail`, then enable `EmailNotificationEnabled`.
@@ -44,7 +51,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Scheduler timeout and shutdown cancellation are cooperative. EF Core and MailKit receive cancellation tokens, but an external provider or operating-system call may not stop instantaneously.
 - SQLite busy/locked errors receive three short retries. Other exceptions are persisted and logged without indefinite retry.
 - The worker polls settings every 30 seconds while disabled. There is no push-based settings notification.
-- The Overdue Reminders screen displays scheduler settings but does not edit them. A full System Settings screen remains pending.
+- The Overdue Reminders screen displays scheduler settings but does not edit them. A full Settings screen remains pending.
 - A stale persisted running flag after an abnormal process termination is cleared when scheduler status is next loaded.
 - Deduplication is enforced per issue, notification type, channel, local date, and cooldown query. Multi-process concurrency beyond the unique date key remains a deployment consideration.
 
@@ -110,10 +117,10 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Custom destination paths are typed manually; a native folder-picker dialog remains deferred.
 - Retention settings are seeded but no automatic file/history deletion is implemented.
 - Verified local restore is implemented as a staged, restart-required operation. The active database is never replaced while application DbContexts are running.
-- Restore validation checks file size, SQLite integrity, SHA-256, and required KICSIT tables, but it does not prove semantic correctness of every row.
+- Restore validation checks file size, SQLite integrity, SHA-256, and required application tables, but it does not prove semantic correctness of every row.
 - Startup creates an emergency copy and uses the mandatory safety backup for rollback protection. Staged, emergency, and safety files are retained; automatic cleanup is intentionally not implemented.
 - Only one pending restore is supported per configured database. Cross-process ownership protection is not implemented, so operators must not stage restores from multiple simultaneous application instances.
-- Restore accepts `.db` files. ZIP extraction is not implemented; use the retained database file produced by Backup Management.
+- Restore accepts `.db` files. ZIP extraction is not implemented; use the retained database file produced by Backup.
 - Restore paths are selected from backup history or typed manually; a native file picker remains deferred.
 - A critical replacement plus rollback failure stops startup and preserves pending metadata for manual recovery.
 - Automatic scheduling, Supabase sync, and deployment remain unimplemented.
@@ -121,6 +128,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Metadata intentionally excludes all `SystemSettings`, including SMTP credentials.
 
 ### Automated Test Coverage
-- One hundred sixty-seven xUnit tests run against isolated temporary SQLite files.
+- One hundred seventy-one xUnit tests run against isolated temporary SQLite files.
+- Branding tests cover the centralized product name, key UI files, and the default/on-off hint preference behavior.
 - Coverage also protects real online backup and staged restore files, integrity/schema verification, SHA-256 checksums, safety backups, startup replacement, rollback, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

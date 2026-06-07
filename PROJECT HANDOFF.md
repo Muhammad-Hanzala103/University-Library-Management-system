@@ -1,6 +1,8 @@
-# Project Handoff: University Library Management System (ULMS)
+# Project Handoff: Ilm-o-Kutub System
 
-This document provides a comprehensive overview of the architecture, structure, implementation status, and next steps for the WPF .NET 8 University Library Management System.
+This document provides a comprehensive overview of the architecture, structure, implementation status, and next steps for the .NET 8 WPF Ilm-o-Kutub System.
+
+The visible product rename is complete. Internal `KicsitLibrary.*` project/namespace names and `KicsitLibrary.db` remain unchanged for compatibility.
 
 ---
 
@@ -29,8 +31,8 @@ graph TD
    - `CatalogService` (Advanced book metadata, physical copies management, shelf locations, and auto-accession sequencing)
    - `ConsumerService` (Student and Faculty directories, CNIC validations, and digital library card vector outputs)
    - `CirculationService` (Check-outs, returns condition check, late calculations, and fine waived/paid collection operations)
-4. **`KicsitLibrary.Reports`**: Foundation project for report files and exports (FastReport, RDLC, or custom generators).
-5. **`KicsitLibrary.Tests`**: Unit test suite utilizing xUnit/NUnit. Currently only contains placeholder classes.
+4. **`KicsitLibrary.Reports`**: Data-first report contracts, sixteen providers, and CSV, Excel, and PDF exporters.
+5. **`KicsitLibrary.Tests`**: Real xUnit test suite using isolated temporary SQLite databases. The current suite has 171 passing tests.
 6. **`KicsitLibrary.Desktop`**: The WPF Shell project. Operates on the MVVM pattern utilizing the `CommunityToolkit.Mvvm` framework. Includes custom XAML style sheets, vector barcodes, and QR image helper classes.
 
 ---
@@ -40,19 +42,24 @@ graph TD
 - **Library Catalog**: Comprehensive book catalog, details forms, physical copy management, shelf mapping, and sequence-based auto-accession.
 - **Consumer Management**: Complete registration screens for Students, Faculty/Staff, and Visiting inspectors. Supports vector Code-39 barcodes and QR codes for Digital Library Cards.
 - **Circulation Management**: Material check-out validations, returned book physical condition processing, automated fine calculations, payment collections, and waivers.
+- **Overdue, Notifications, and Scheduler**: Deterministic overdue processing, notification records, manual SMTP delivery, and a disabled-by-default hosted scheduler.
+- **Reports and Clearance**: Sixteen reports, physical exports, student/faculty clearance checks, and branded PDF certificates.
+- **Reservations, Audit, and Inventory**: Complete reservation lifecycle, activity/audit workflows, inventory management, and physical stock verification.
+- **Backup and Restore**: Verified online SQLite backups and restart-staged, rollback-protected local restores.
+- **Branding and UI**: Ilm-o-Kutub System visible branding, professional management palette, concise navigation labels, and a session-only helpful-hints toggle.
 
 ---
 
 ## 3. Pending Modules & Priorities
-- **Priority 4: Overdue Engine & Notifications**: Automatic late item detection, overdue notifications, and background alert engine.
-- **Priority 5: Reports & Export**: Generation of checkout logs, catalog stats, and student fines, exporting to PDF, Excel, and CSV.
-- **Priority 6: Clearance System**: Integrated final clearance workflow for students and faculty graduating or leaving the university.
-- **Priority 7: Audit, Compliance & Operations**: Internal audits, document archiving, new arrival announcements, and inventory counts.
-- **Priority 8: System Utilities**: Data backup, database restore, Supabase sync integration, and installer configuration.
+- **Priority 8C**: Automatic backup scheduling and retention, subject to an explicit file-safety policy.
+- **Later utilities**: Supabase sync, protected credential storage, and installer/deployment packaging remain separate future tasks.
+- **Settings**: The sidebar route exists, but a complete Settings screen is not implemented.
+- **Final release documentation**: The repository-root `README.md` remains deferred until modules, testing, deployment, and release packaging are complete.
 
 ---
 
 ## 4. Known Risks & Considerations
 - **No EF Migrations**: Database initialization uses `EnsureCreatedAsync()`. EF migrations must be added before staging.
 - **SQLite Single User**: Uses SQLite, which lacks multi-user concurrent write capability. A migration to SQL Server will be required for multi-client deployment.
-- **Missing Tests**: The test suite is currently a stub and needs test coverage.
+- **UI automation**: Service and integration coverage is broad, but WPF visual interaction is still verified manually.
+- **Internal naming**: `KicsitLibrary.*` identifiers remain intentionally stable despite the visible product rename.

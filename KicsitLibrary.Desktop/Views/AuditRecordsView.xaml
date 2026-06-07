@@ -22,7 +22,7 @@
                     <CheckBox Content="Pending action only" IsChecked="{Binding PendingActionOnly}" VerticalAlignment="Center" Margin="0,0,10,8"/>
                     <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
                     <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
-                    <Button Content="Add Audit" Command="{Binding AddCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Add Audit" Command="{Binding AddCommand}" ToolTip="Create a formal audit record with scope and dates." Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Text="{Binding Summary.TotalCount, StringFormat=Total: {0}}" Margin="0,0,16,0"/>
@@ -55,11 +55,11 @@
                     <Button Content="View Details" Command="{Binding ViewDetailsCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
                     <ComboBox Width="125" ItemsSource="{Binding StatusValues}" SelectedItem="{Binding NewStatus}" Margin="0,0,8,8"/>
                     <TextBox Width="250" Text="{Binding ActionRemarks, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
-                    <Button Content="Change Status" Command="{Binding ChangeStatusCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
-                    <Button Content="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
-                    <Button Content="CSV" Command="{Binding ExportCsvCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
-                    <Button Content="Excel" Command="{Binding ExportExcelCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
-                    <Button Content="PDF" Command="{Binding ExportPdfCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Change Status" Command="{Binding ChangeStatusCommand}" ToolTip="Update the selected audit workflow status and log the change." Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}" Margin="0,0,8,8"/>
+                    <Button Content="CSV" Command="{Binding ExportCsvCommand}" ToolTip="Export the filtered audit records as CSV." Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Excel" Command="{Binding ExportExcelCommand}" ToolTip="Export the filtered audit records as Excel." Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="PDF" Command="{Binding ExportPdfCommand}" ToolTip="Export the filtered audit records as PDF." Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
                 </WrapPanel>
                 <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"/>
             </StackPanel>

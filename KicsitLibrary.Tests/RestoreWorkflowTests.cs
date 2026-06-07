@@ -1,4 +1,5 @@
 using System.Text.Json;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
@@ -126,6 +127,7 @@ public class RestoreWorkflowTests
 
         Assert.True(result.Succeeded, result.ErrorMessage);
         Assert.NotNull(metadata);
+        Assert.Equal(ProductBrand.Name, metadata.ProductName);
         Assert.True(File.Exists(metadata.StagedBackupFilePath));
         Assert.Equal(backup.ChecksumSha256, metadata.ChecksumSha256);
     }
