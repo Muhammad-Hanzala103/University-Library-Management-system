@@ -2,6 +2,7 @@
  
    <ItemGroup>
      <ProjectReference Include="..\KicsitLibrary.Data\KicsitLibrary.Data.csproj" />
+     <ProjectReference Include="..\KicsitLibrary.Reports\KicsitLibrary.Reports.csproj" />
    </ItemGroup>
  
    <ItemGroup>

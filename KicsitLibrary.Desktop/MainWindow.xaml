@@ -44,6 +44,9 @@
         <DataTemplate DataType="{x:Type vm:ReportsDashboardViewModel}">
             <views:ReportsDashboardView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ClearanceDashboardViewModel}">
+            <views:ClearanceDashboardView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -120,6 +123,10 @@
                     <Button Style="{StaticResource SidebarButton}" Content="Reports &amp; Analytics" 
                             Command="{Binding NavigateToReportsCommand}"
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reports &amp; Analytics}"/>
+
+                    <Button Style="{StaticResource SidebarButton}" Content="Library Clearance"
+                            Command="{Binding NavigateToClearanceCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Clearance}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="System Settings" 
                             Command="{Binding NavigateToSettingsCommand}"

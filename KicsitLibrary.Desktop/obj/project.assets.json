@@ -2461,6 +2461,7 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "KicsitLibrary.Data": "1.0.0",
+          "KicsitLibrary.Reports": "1.0.0",
           "MailKit": "4.16.0",
           "Microsoft.Extensions.Configuration.Json": "8.0.1",
           "Microsoft.Extensions.DependencyInjection": "8.0.1",

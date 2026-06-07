@@ -20,6 +20,10 @@ namespace KicsitLibrary.Core.Entities
         public DateTime JoiningDate { get; set; } = DateTime.UtcNow;
         public DateTime? LeavingDate { get; set; }
         public string? Remarks { get; set; }
+        public ClearanceStatus ClearanceStatus { get; set; } = ClearanceStatus.NotCleared;
+        public DateTime? ClearanceDate { get; set; }
+        public string? ClearanceRemarks { get; set; }
+        public int? ClearedByUserId { get; set; }
 
         public virtual ICollection<IssueRecord> IssueRecords { get; set; } = new List<IssueRecord>();
         public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();

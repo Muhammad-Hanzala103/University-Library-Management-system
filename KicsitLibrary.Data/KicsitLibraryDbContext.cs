@@ -121,6 +121,9 @@ namespace KicsitLibrary.Data
             modelBuilder.Entity<FacultyStaff>()
                 .Property(fs => fs.FacultyType)
                 .HasConversion<string>();
+            modelBuilder.Entity<FacultyStaff>()
+                .Property(fs => fs.ClearanceStatus)
+                .HasConversion<string>();
 
             modelBuilder.Entity<Fine>()
                 .Property(f => f.PaymentStatus)

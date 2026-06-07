@@ -17,6 +17,7 @@ using KicsitLibrary.Services.Logging;
 using KicsitLibrary.Services.Catalog;
 using KicsitLibrary.Services.Consumer;
 using KicsitLibrary.Services.Circulation;
+using KicsitLibrary.Services.Clearance;
 using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
@@ -104,6 +105,8 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IReportExporter, PdfReportExporter>();
                     services.AddScoped<IReportService, ReportService>();
                     services.AddScoped<IReportExportService, ReportExportService>();
+                    services.AddScoped<IClearanceService, ClearanceService>();
+                    services.AddSingleton<IClearanceDetailsDialogService, ClearanceDetailsDialogService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -132,10 +135,18 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<OverdueRemindersViewModel>();
                     services.AddTransient<NotificationCenterViewModel>();
                     services.AddTransient<ReportsDashboardViewModel>();
+                    services.AddTransient<ClearanceDashboardViewModel>();
+                    services.AddTransient<StudentClearanceViewModel>();
+                    services.AddTransient<FacultyStaffClearanceViewModel>();
+                    services.AddTransient<ClearanceDetailsViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
                     services.AddTransient<ReportsDashboardView>();
                     services.AddTransient<ReportPreviewView>();
+                    services.AddTransient<ClearanceDashboardView>();
+                    services.AddTransient<StudentClearanceView>();
+                    services.AddTransient<FacultyStaffClearanceView>();
+                    services.AddTransient<ClearanceDetailsWindow>();
                 })
                 .Build();
         }

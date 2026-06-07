@@ -21,6 +21,21 @@ namespace KicsitLibrary.Data
                 ["DeduplicationKey"] = "TEXT NULL"
             };
 
+        private static readonly IReadOnlyDictionary<string, string> StudentClearanceColumns =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ClearedByUserId"] = "INTEGER NULL"
+            };
+
+        private static readonly IReadOnlyDictionary<string, string> FacultyClearanceColumns =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ClearanceStatus"] = "TEXT NOT NULL DEFAULT 'NotCleared'",
+                ["ClearanceDate"] = "TEXT NULL",
+                ["ClearanceRemarks"] = "TEXT NULL",
+                ["ClearedByUserId"] = "INTEGER NULL"
+            };
+
         public static async Task ApplyAsync(KicsitLibraryDbContext context)
         {
             if (!string.Equals(
@@ -40,29 +55,9 @@ namespace KicsitLibrary.Data
 
             try
             {
-                var existingColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                await using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = "PRAGMA table_info('NotificationRecords');";
-                    await using var reader = await command.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
-                    {
-                        existingColumns.Add(reader.GetString(1));
-                    }
-                }
-
-                foreach (var column in NotificationColumns)
-                {
-                    if (existingColumns.Contains(column.Key))
-                    {
-                        continue;
-                    }
-
-                    await using var alterCommand = connection.CreateCommand();
-                    alterCommand.CommandText =
-                        $"ALTER TABLE \"NotificationRecords\" ADD COLUMN \"{column.Key}\" {column.Value};";
-                    await alterCommand.ExecuteNonQueryAsync();
-                }
+                await AddMissingColumnsAsync(connection, "NotificationRecords", NotificationColumns);
+                await AddMissingColumnsAsync(connection, "Students", StudentClearanceColumns);
+                await AddMissingColumnsAsync(connection, "FacultyStaff", FacultyClearanceColumns);
 
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_NotificationRecords_IssueRecordId\" " +
@@ -81,6 +76,36 @@ namespace KicsitLibrary.Data
                 {
                     await connection.CloseAsync();
                 }
+            }
+        }
+
+        private static async Task AddMissingColumnsAsync(
+            System.Data.Common.DbConnection connection,
+            string tableName,
+            IReadOnlyDictionary<string, string> columns)
+        {
+            var existingColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            await using (var command = connection.CreateCommand())
+            {
+                command.CommandText = $"PRAGMA table_info('{tableName}');";
+                await using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    existingColumns.Add(reader.GetString(1));
+                }
+            }
+
+            foreach (var column in columns)
+            {
+                if (existingColumns.Contains(column.Key))
+                {
+                    continue;
+                }
+
+                await using var alterCommand = connection.CreateCommand();
+                alterCommand.CommandText =
+                    $"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Key}\" {column.Value};";
+                await alterCommand.ExecuteNonQueryAsync();
             }
         }
     }

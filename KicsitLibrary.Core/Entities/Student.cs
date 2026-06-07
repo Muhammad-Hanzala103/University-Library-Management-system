@@ -29,6 +29,7 @@ namespace KicsitLibrary.Core.Entities
         public ClearanceStatus ClearanceStatus { get; set; } = ClearanceStatus.NotCleared;
         public DateTime? ClearanceDate { get; set; }
         public string? ClearanceRemarks { get; set; }
+        public int? ClearedByUserId { get; set; }
         public bool ActiveStatus { get; set; } = true;
 
         public virtual ICollection<IssueRecord> IssueRecords { get; set; } = new List<IssueRecord>();

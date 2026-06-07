@@ -5,9 +5,11 @@ FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\MainWindo
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\AuthorWindow.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\BookCatalogView.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\BookFormWindow.xaml;;
+FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\ClearanceDashboardView.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\ConsumerProfileWindow.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\CopiesWindow.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\DashboardView.xaml;;
+FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\FacultyStaffClearanceView.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\FacultyStaffFormWindow.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\FacultyStaffManagementView.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\FinesManagementView.xaml;;
@@ -18,6 +20,7 @@ FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\Pub
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\ReceiveMaterialView.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\ReportPreviewView.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\ReportsDashboardView.xaml;;
+FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\StudentClearanceView.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\StudentFormWindow.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\StudentsManagementView.xaml;;
 FC:\Project\University-Library-Management-system\KicsitLibrary.Desktop\Views\VisitRecordsView.xaml;;

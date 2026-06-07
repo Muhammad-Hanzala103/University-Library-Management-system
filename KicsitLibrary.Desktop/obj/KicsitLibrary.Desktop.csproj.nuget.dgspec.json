@@ -438,6 +438,9 @@
             "projectReferences": {
               "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
                 "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
+              },
+              "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
+                "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj"
               }
             }
           }

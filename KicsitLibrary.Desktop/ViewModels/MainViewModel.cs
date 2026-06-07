@@ -104,6 +104,10 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<ReportsDashboardViewModel>();
                     break;
+                case "Clearance":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<ClearanceDashboardViewModel>();
+                    break;
                 default:
                     CurrentView = null;
                     break;
@@ -148,6 +152,9 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToReports() => _navigationService.NavigateTo("Reports & Analytics");
+
+        [RelayCommand]
+        private void NavigateToClearance() => _navigationService.NavigateTo("Clearance");
 
         [RelayCommand]
         private void NavigateToSettings() => _navigationService.NavigateTo("System Settings");

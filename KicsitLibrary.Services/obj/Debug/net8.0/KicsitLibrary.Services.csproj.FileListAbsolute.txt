@@ -34,3 +34,5 @@ C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug
 C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLibrary.Services.sourcelink.json
 C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\KicsitLi.B8FD8F57.Up2Date
 C:\Project\University-Library-Management-system\KicsitLibrary.Services\obj\Debug\net8.0\ref\KicsitLibrary.Services.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Reports.dll
+C:\Project\University-Library-Management-system\KicsitLibrary.Services\bin\Debug\net8.0\KicsitLibrary.Reports.pdb

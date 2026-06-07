@@ -479,3 +479,11 @@ C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReportsDashboardView.g.cs
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReportPreviewView.baml
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReportsDashboardView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ClearanceDetailsWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ClearanceDashboardView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ClearanceDetailsWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FacultyStaffClearanceView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StudentClearanceView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ClearanceDashboardView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FacultyStaffClearanceView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StudentClearanceView.baml

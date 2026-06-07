@@ -1,0 +1,38 @@
+<UserControl x:Class="KicsitLibrary.Desktop.Views.ClearanceDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:KicsitLibrary.Desktop.ViewModels"
+             xmlns:views="clr-namespace:KicsitLibrary.Desktop.Views"
+             Background="Transparent">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type vm:StudentClearanceViewModel}">
+            <views:StudentClearanceView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:FacultyStaffClearanceViewModel}">
+            <views:FacultyStaffClearanceView/>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <UniformGrid Grid.Row="0" Columns="2" Margin="0,0,0,12">
+            <Button Command="{Binding ShowStudentsCommand}" Style="{StaticResource PrimaryButton}"
+                    Margin="0,0,6,0" Padding="16,12">
+                <StackPanel>
+                    <TextBlock Text="Student Clearance" FontWeight="Bold" FontSize="15"/>
+                    <TextBlock Text="Validate dues, approve, revoke, and issue certificates" FontSize="10"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding ShowFacultyCommand}" Style="{StaticResource SecondaryButton}"
+                    Margin="6,0,0,0" Padding="16,12">
+                <StackPanel>
+                    <TextBlock Text="Faculty &amp; Staff Clearance" FontWeight="Bold" FontSize="15"/>
+                    <TextBlock Text="Process departing faculty and staff library clearance" FontSize="10"/>
+                </StackPanel>
+            </Button>
+        </UniformGrid>
+        <ContentControl Grid.Row="1" Content="{Binding CurrentClearanceView}"/>
+    </Grid>
+</UserControl>

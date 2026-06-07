@@ -27,6 +27,7 @@ public sealed class StudentClearanceReportDataProvider(KicsitLibraryDbContext co
             Column("ClearanceStatus", "Clearance Status"),
             Column("PendingBooksCount", "Pending Books Count"),
             Column("PendingFineAmount", "Pending Fine Amount", "N2"),
+            Column("LostOrDamagedCaseCount", "Lost Or Damaged Cases"),
             Column("ClearanceDate", "Clearance Date", "dd-MMM-yyyy"),
             Column("ClearanceRemarks", "Clearance Remarks")
         ],
@@ -52,6 +53,8 @@ public sealed class StudentClearanceReportDataProvider(KicsitLibraryDbContext co
             .AsNoTracking()
             .Include(student => student.IssueRecords)
                 .ThenInclude(issue => issue.ReceiveRecord)
+            .Include(student => student.IssueRecords)
+                .ThenInclude(issue => issue.BookCopy)
             .Include(student => student.Fines)
             .OrderBy(student => student.RegistrationNumber)
             .ToListAsync(cancellationToken);
@@ -69,7 +72,21 @@ public sealed class StudentClearanceReportDataProvider(KicsitLibraryDbContext co
             var pendingFine = student.Fines
                 .Where(fine => fine.PaymentStatus is FineStatus.Unpaid or FineStatus.Partial)
                 .Sum(fine => Math.Max(0, fine.RemainingAmount));
-            return new { Student = student, PendingBooks = pendingBooks, PendingFine = pendingFine };
+            var lossCases = student.IssueRecords.Count(issue =>
+                issue.BookCopy.AvailabilityStatus is BookStatus.Lost or BookStatus.Damaged or
+                    BookStatus.Missing or BookStatus.UnderRepair &&
+                (issue.ReceiveRecord == null ||
+                 student.Fines.Any(fine =>
+                     fine.IssueRecordId == issue.Id &&
+                     fine.PaymentStatus is FineStatus.Unpaid or FineStatus.Partial &&
+                     fine.RemainingAmount > 0)));
+            return new
+            {
+                Student = student,
+                PendingBooks = pendingBooks,
+                PendingFine = pendingFine,
+                LossCases = lossCases
+            };
         })
         .Where(item =>
             TextMatches(search, item.Student.RegistrationNumber, item.Student.AdmissionNumber, item.Student.Name) &&
@@ -77,7 +94,7 @@ public sealed class StudentClearanceReportDataProvider(KicsitLibraryDbContext co
             ExactMatches(program, item.Student.Program) &&
             ExactMatches(batch, item.Student.Batch) &&
             ExactMatches(status, item.Student.ClearanceStatus.ToString()) &&
-            (!pendingOnly || item.PendingBooks > 0 || item.PendingFine > 0))
+            (!pendingOnly || item.PendingBooks > 0 || item.PendingFine > 0 || item.LossCases > 0))
         .Select(item => Row(
             ("RegistrationNumber", item.Student.RegistrationNumber),
             ("AdmissionNumber", item.Student.AdmissionNumber),
@@ -89,6 +106,7 @@ public sealed class StudentClearanceReportDataProvider(KicsitLibraryDbContext co
             ("ClearanceStatus", item.Student.ClearanceStatus.ToString()),
             ("PendingBooksCount", item.PendingBooks),
             ("PendingFineAmount", item.PendingFine),
+            ("LostOrDamagedCaseCount", item.LossCases),
             ("ClearanceDate", item.Student.ClearanceDate?.ToLocalTime()),
             ("ClearanceRemarks", item.Student.ClearanceRemarks)))
         .ToList();
@@ -96,7 +114,8 @@ public sealed class StudentClearanceReportDataProvider(KicsitLibraryDbContext co
         var inconsistent = rows.Count(row =>
             Equals(row["ClearanceStatus"], ClearanceStatus.Cleared.ToString()) &&
             (Convert.ToInt32(row["PendingBooksCount"]) > 0 ||
-             Convert.ToDecimal(row["PendingFineAmount"]) > 0));
+             Convert.ToDecimal(row["PendingFineAmount"]) > 0 ||
+             Convert.ToInt32(row["LostOrDamagedCaseCount"]) > 0));
 
         return await CreateResultAsync(filters, generatedBy, rows,
             new Dictionary<string, string>
@@ -106,6 +125,8 @@ public sealed class StudentClearanceReportDataProvider(KicsitLibraryDbContext co
                     !Equals(row["ClearanceStatus"], ClearanceStatus.Cleared.ToString())).ToString(),
                 ["Pending Books"] = rows.Sum(row => Convert.ToInt32(row["PendingBooksCount"])).ToString(),
                 ["Pending Fine"] = rows.Sum(row => Convert.ToDecimal(row["PendingFineAmount"])).ToString("N2"),
+                ["Lost Or Damaged Cases"] = rows.Sum(row =>
+                    Convert.ToInt32(row["LostOrDamagedCaseCount"])).ToString(),
                 ["Cleared With Outstanding Items"] = inconsistent.ToString()
             }, cancellationToken);
     }
