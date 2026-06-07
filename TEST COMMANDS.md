@@ -92,19 +92,6 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 
 Reservation tests use isolated temporary SQLite databases and fake email transport. They cover eligibility, queue order, expiry, cancellation, return availability, notification records, deduplication, missing email, fulfillment, activity logs, and queries without accessing the development database or sending email.
 
-## 8. Manual Reservation Verification
-
-1. Open **Reservations** from the sidebar.
-2. Create reservations for active, uncleared student and faculty/staff members.
-3. Confirm duplicate reservations, same-title active issues, and pending fines are blocked.
-4. Open a title queue and confirm first-come-first-served positions.
-5. Return a normally issued copy and confirm the first queue item becomes `Available`.
-6. Confirm no book is issued automatically and no email is sent automatically.
-7. Open Notification Center and confirm in-app and email records exist without duplicates.
-8. Confirm a missing member email produces a failed email record with a clear reason.
-9. Fulfill the first queue item and confirm an issue record is created, the copy becomes `Issued`, and the reservation stores the accession number with status `Issued`.
-10. Cancel or expire an active reservation with a reason and confirm an activity-log row is written.
-
 ## 3. Manual SMTP Verification
 
 1. Back up the development database before changing settings.
@@ -169,9 +156,22 @@ Priority 6A uses the same initializer to add faculty/student clearance columns a
 9. Enter a revoke reason and revoke clearance.
 10. Open Borrowing History and verify issue and clearance history records.
 
+## 8. Manual Reservation Verification
+
+1. Open **Reservations** from the sidebar.
+2. Create reservations for active, uncleared student and faculty/staff members.
+3. Confirm duplicate reservations, same-title active issues, and pending fines are blocked.
+4. Open a title queue and confirm first-come-first-served positions.
+5. Return a normally issued copy and confirm the first queue item becomes `Available`.
+6. Confirm no book is issued automatically and no email is sent automatically.
+7. Open Notification Center and confirm in-app and email records exist without duplicates.
+8. Confirm a missing member email produces a failed email record with a clear reason.
+9. Fulfill the first queue item and confirm an issue record is created, the copy becomes `Issued`, and the reservation stores the accession number with status `Issued`.
+10. Cancel or expire an active reservation with a reason and confirm an activity-log row is written.
+
 ---
 
-## 8. Run the WPF Desktop Application
+## 9. Run the WPF Desktop Application
 Launch the WPF UI:
 ```powershell
 dotnet run --project KicsitLibrary.Desktop
@@ -179,7 +179,7 @@ dotnet run --project KicsitLibrary.Desktop
 
 ---
 
-## 9. SQLite Local Database Inspections
+## 10. SQLite Local Database Inspections
 The default SQLite database is named `KicsitLibrary.db`. Relative paths are resolved from `AppContext.BaseDirectory`, normally `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`.
 - Connect to database using SQLite CLI:
   ```bash

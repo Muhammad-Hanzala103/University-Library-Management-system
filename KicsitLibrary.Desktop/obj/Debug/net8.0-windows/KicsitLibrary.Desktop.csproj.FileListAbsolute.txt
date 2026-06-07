@@ -487,3 +487,9 @@ C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ClearanceDashboardView.baml
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\FacultyStaffClearanceView.baml
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\StudentClearanceView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationFormWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationManagementView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationQueueWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationFormWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationManagementView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationQueueWindow.g.cs

@@ -57,7 +57,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - The UI exports to the default Documents folder. A user-selected save dialog remains deferred.
 - Providers currently materialize report rows before applying some complex text filters. Very large databases may require paging or server-side filter optimization.
 - Report previews use dynamic auto-generated DataGrid columns and are not covered by WPF UI automation.
-- Reservation reporting reflects existing records, but the reservation lifecycle UI/workflow remains partial.
+- Reservation reporting now reflects completed lifecycle states and active queue positions.
 - Visit status is derived as `Pending Follow Up` when a follow-up date exists and no action is recorded; `VisitRecord` has no persisted status field.
 - Stock Verification `Actual Status` currently equals the database status, and physical verification remarks state that on-shelf verification is pending.
 - Student Clearance reporting now includes the same active-issue, pending-fine, and loss/damage counts used by the clearance service.
