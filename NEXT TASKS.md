@@ -111,11 +111,28 @@ Deferred refinements:
 
 ---
 
-## Priority 7: Auditing, Compliance & Inventory
-- **Goal**: Implement internal compliance records and catalog shelf inspection tools.
+## Priority 7A: Activity Log Browser & Audit Records Workflow
+- **Goal**: Provide traceable compliance browsing and a complete audit-record lifecycle.
+- [x] Add latest-500 activity log browsing with search, action, entity, user, and date filters.
+- [x] Add activity details, summary values, and distinct filter options.
+- [x] Export the current activity view through existing CSV, Excel, and PDF exporters.
+- [x] Protect old-log soft deletion for Super Admin/Admin and archive the deleted-range summary.
+- [x] Add audit list, details, action, status-summary, and attachment projection models.
+- [x] Implement transaction-safe audit create, update, status change, and soft deletion.
+- [x] Validate unique audit number and required audit date, type, and status.
+- [x] Require remarks for status changes and reasons for deletion.
+- [x] Write activity logs for every audit mutation.
+- [x] Add Activity Logs and Audit Records MVVM screens, dialogs, navigation, and DI.
+- [x] Reuse the existing Audit Report and export pipeline.
+- [x] Add sixteen isolated SQLite tests; all one hundred sixteen tests pass.
+
+Deferred refinements:
+- [ ] Add soft-delete metadata to audit attachments only through an approved additive compatibility change.
+- [ ] Add UI automation and cross-process audit mutation contention tests before multi-client deployment.
+
+## Priority 7B: Inventory & Stock Verification Workflow
+- **Goal**: Complete physical inventory reconciliation and stock-verification operations.
 - [ ] Create `InventoryManagementViewModel.cs` and `InventoryManagementView.xaml` to track and reconcile physical stock levels.
-- [ ] Create `AuditRecordsViewModel.cs` and `AuditRecordsView.xaml` to display the `ActivityLog` table entries.
-- [ ] Implement visual search filters for activity logs by category, time, user, and level.
 - [ ] Add support for listing new book copy arrivals and catalog compliance records.
 
 ---

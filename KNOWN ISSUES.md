@@ -19,7 +19,6 @@ This document outlines modules that are currently implemented or stubbed, listin
 
 ### Navigation View Stubs
 - The following screens are registered in the main sidebar menu in `MainWindow.xaml` and mapped in `MainViewModel.cs` but do not have XAML Views implemented. They will load as blank/loading templates:
-  - `"Audit Records"`
   - `"Inventory Management"`
   - `"System Settings"`
 
@@ -80,6 +79,18 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Fulfillment is restricted to the first active queue member and reuses circulation eligibility. Multi-process races between separate desktop application instances remain a deployment concern.
 - No WPF UI automation covers the new reservation windows; service behavior is covered by isolated SQLite integration tests.
 
+### Activity Logs and Audit Records
+- Existing `ActivityLog` rows do not have dedicated entity, entity-ID, severity, outcome, or source columns. Priority 7A derives entity metadata from established `key=value` details and derives failure state from action/detail text.
+- Older unstructured log messages remain viewable and searchable but may show blank entity fields.
+- The default browser result is capped at the latest 500 matching rows; the service permits an explicit maximum of 2,000.
+- Activity-log deletion is not exposed in the normal UI. The protected service operation is restricted to Super Admin/Admin, soft-deletes matching rows, and writes a summary archive.
+- Admin access uses a documented role-name fallback because the seeded Admin role does not currently include `VIEW_AUDITS` or `MANAGE_AUDITS`.
+- Librarian management follows `MANAGE_AUDITS`; Auditor is view-only; other roles require `VIEW_AUDITS`.
+- `AuditFile` does not inherit `EntityBase` and has no soft-delete metadata. Attachments are therefore read-only in Priority 7A; add/remove actions were not implemented because they could not satisfy the no-permanent-delete rule safely.
+- Audit-number uniqueness is enforced by the service. A unique database index was not added because existing `EnsureCreated` databases may contain duplicates and no migration/adoption process exists.
+- No database compatibility columns or EF migrations were required for Priority 7A.
+- WPF UI automation and multi-process mutation concurrency are not covered.
+
 ### Cloud Integration (Supabase Sync)
 - Currently, the database provider runs 100% locally on SQLite. There is no background worker that pushes local SQLite transaction records to a remote Supabase Postgres cloud instance.
 
@@ -87,6 +98,6 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
 
 ### Automated Test Coverage
-- One hundred xUnit tests run against isolated temporary SQLite files.
-- Coverage protects circulation, overdue, notification, reporting, student/faculty clearance blockers, reservation eligibility and lifecycle transitions, queue ordering, return availability, fulfillment, activity logs, history, and physical PDF certificate generation.
+- One hundred sixteen xUnit tests run against isolated temporary SQLite files.
+- Coverage protects circulation, overdue, notification, reporting, student/faculty clearance blockers, reservation lifecycle transitions, activity-log browsing/filtering/details/export, audit CRUD/status/soft-delete/authorization, history, and physical PDF certificate generation.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

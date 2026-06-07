@@ -30,6 +30,8 @@
                 <TextBlock Text="{Binding Details.Remarks}" TextWrapping="Wrap" Margin="0,3,0,10"/>
                 <TextBlock Text="{Binding Details.CreatedBy, StringFormat=Created By: {0}}"/>
                 <TextBlock Text="{Binding Details.UpdatedBy, StringFormat=Updated By: {0}}"/>
+                <TextBlock Text="{Binding Details.CreatedAt, StringFormat=Created At: {0:dd-MMM-yyyy HH:mm}}"/>
+                <TextBlock Text="{Binding Details.UpdatedAt, StringFormat=Updated At: {0:dd-MMM-yyyy HH:mm}}"/>
                 <TextBlock Text="Attachments (read only)" FontWeight="Bold" Margin="0,12,0,4"/>
                 <DataGrid ItemsSource="{Binding Details.Attachments}" AutoGenerateColumns="True"
                           IsReadOnly="True" MaxHeight="180"/>

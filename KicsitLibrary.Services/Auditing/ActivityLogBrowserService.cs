@@ -35,6 +35,24 @@ public sealed class ActivityLogBrowserService : IActivityLogBrowserService
 
         if (!string.IsNullOrWhiteSpace(filter.Action))
             query = query.Where(item => item.Action == filter.Action);
+        if (!string.IsNullOrWhiteSpace(filter.EntityName))
+        {
+            var entityName = filter.EntityName.Trim();
+            query = query.Where(item =>
+                item.Detail.Contains($"EntityName={entityName}") ||
+                item.Detail.Contains($"TableName={entityName}") ||
+                item.Detail.Contains($"Entity={entityName}") ||
+                item.Detail.Contains($"MemberType={entityName}"));
+        }
+        if (filter.EntityId.HasValue)
+        {
+            var entityId = filter.EntityId.Value.ToString();
+            query = query.Where(item =>
+                item.Detail.Contains($"EntityId={entityId}") ||
+                item.Detail.Contains($"RecordId={entityId}") ||
+                item.Detail.Contains($"MemberId={entityId}") ||
+                item.Detail.Contains($"AuditRecordId={entityId}"));
+        }
         if (filter.UserId.HasValue)
             query = query.Where(item => item.UserId == filter.UserId.Value);
         if (filter.FromDate.HasValue)
@@ -57,13 +75,7 @@ public sealed class ActivityLogBrowserService : IActivityLogBrowserService
             .ThenByDescending(item => item.Id)
             .Take(Math.Clamp(filter.Limit <= 0 ? 500 : filter.Limit, 1, 2000))
             .ToListAsync(cancellationToken);
-        return candidates
-            .Select(Map)
-            .Where(item =>
-                (string.IsNullOrWhiteSpace(filter.EntityName) ||
-                 item.EntityName.Equals(filter.EntityName, StringComparison.OrdinalIgnoreCase)) &&
-                (!filter.EntityId.HasValue || item.EntityId == filter.EntityId))
-            .ToList();
+        return candidates.Select(Map).ToList();
     }
 
     public async Task<ActivityLogDetails> GetActivityLogDetailsAsync(

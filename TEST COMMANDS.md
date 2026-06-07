@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 100
+Passed: 116
 Failed: 0
 Skipped: 0
 ```
@@ -91,6 +91,14 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 ```
 
 Reservation tests use isolated temporary SQLite databases and fake email transport. They cover eligibility, queue order, expiry, cancellation, return availability, notification records, deduplication, missing email, fulfillment, activity logs, and queries without accessing the development database or sending email.
+
+Run only Priority 7A audit and activity-log tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~AuditComplianceWorkflowTests"
+```
+
+Priority 7A tests use isolated temporary SQLite databases and a capturing report-export double. They cover latest-log ordering, filters, details, result limits, snapshot export, audit creation, duplicate rejection, update, status changes, soft deletion, activity logs, report compatibility, and authorization.
 
 ## 3. Manual SMTP Verification
 
@@ -177,9 +185,23 @@ Launch the WPF UI:
 dotnet run --project KicsitLibrary.Desktop
 ```
 
+## 10. Manual Activity Log and Audit Verification
+
+1. Sign in as Super Admin or Admin and open **Activity Logs**.
+2. Confirm the latest records load and action, entity, user, and date filters work.
+3. Select a row and open details; verify full message, IDs, source/IP, and parsed metadata.
+4. Export the current view to CSV, Excel, and PDF and verify physical files are created.
+5. Open **Audit Records** and create an audit with full observations, findings, and suggestions.
+6. Confirm duplicate audit numbers are rejected.
+7. Edit the record and verify the updated full text persists.
+8. Change status with remarks and verify the Activity Log entry.
+9. Delete an audit with a reason and confirm it disappears from the active list while an archive row and activity log remain.
+10. Sign in as Auditor and confirm records/logs are viewable but audit mutation is blocked.
+11. Open **Reports & Analytics**, run Audit Report, and confirm the audit number and current status appear.
+
 ---
 
-## 10. SQLite Local Database Inspections
+## 11. SQLite Local Database Inspections
 The default SQLite database is named `KicsitLibrary.db`. Relative paths are resolved from `AppContext.BaseDirectory`, normally `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/`.
 - Connect to database using SQLite CLI:
   ```bash

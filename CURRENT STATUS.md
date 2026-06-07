@@ -17,7 +17,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 5B (Advanced Reports & Print Refinements)**: **100% Completed**
 - **Priority 6A (Student & Faculty Clearance Workflow)**: **100% Completed**
 - **Priority 6B (Reservation Workflow Completion)**: **100% Completed**
-- **Priority 7 to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 7A (Activity Log Browser & Audit Records Workflow)**: **100% Completed**
+- **Priority 7B to 8 (Advanced Modules)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -108,6 +109,20 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Reservation reporting now includes queue position and lifecycle-status summaries.
 - One hundred isolated SQLite tests pass, including eighteen Priority 6B tests.
 
+### Priority 7A Activity Logs and Audit Records
+- Added a read-only-by-default activity log browser with latest-500 loading, action/entity/user/date filters, full details, summaries, and distinct filter values.
+- Activity metadata is derived safely from existing structured detail fields without adding database columns.
+- Activity log snapshots export through the existing CSV, Excel, and PDF report exporters.
+- Old-log deletion exists only as a protected service operation for Super Admin/Admin; it soft-deletes rows, archives a range summary, and logs the action.
+- Added transaction-safe audit record creation, update, status change, and soft deletion with archive snapshots and activity logs.
+- Audit numbers are checked for uniqueness and required audit number, date, type, and status fields are validated.
+- Status changes and deletion require remarks/reasons.
+- Audit attachments are displayed read-only because the existing `AuditFile` entity has no soft-delete metadata.
+- Added Activity Logs and Audit Records navigation, searchable grids, detail dialogs, audit form, status/delete actions, and report exports.
+- Authorization grants full access to Super Admin/Admin, permission-based management to Librarian, view-only access to Auditor, and permission-based view access to other roles.
+- The Audit Report continues to use the existing report foundation and now includes audit number.
+- One hundred sixteen isolated SQLite tests pass, including sixteen Priority 7A tests.
+
 ---
 
 ## 2. Completed Components
@@ -140,6 +155,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `IReportExporter` / CSV, Excel, and PDF exporters
 - `IClearanceService.cs` / `ClearanceService.cs`
 - `IReservationService.cs` / `ReservationService.cs`
+- `IActivityLogBrowserService.cs` / `ActivityLogBrowserService.cs`
+- `IAuditRecordService.cs` / `AuditRecordService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -152,6 +169,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `ReportsDashboardViewModel.cs` / `ReportPreviewViewModel.cs`: Report selection, filters, preview, and export operations.
 - `ClearanceDashboardViewModel.cs` / `StudentClearanceViewModel.cs` / `FacultyStaffClearanceViewModel.cs` / `ClearanceDetailsViewModel.cs`
 - `ReservationManagementViewModel.cs` / `ReservationFormViewModel.cs` / `ReservationQueueViewModel.cs`
+- `ActivityLogsViewModel.cs` / `ActivityLogDetailsViewModel.cs`
+- `AuditRecordsViewModel.cs` / `AuditRecordFormViewModel.cs` / `AuditRecordDetailsViewModel.cs`
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.
@@ -164,6 +183,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `ReportsDashboardView.xaml` / `ReportPreviewView.xaml`
 - `ClearanceDashboardView.xaml` / `StudentClearanceView.xaml` / `FacultyStaffClearanceView.xaml` / `ClearanceDetailsWindow.xaml`
 - `ReservationManagementView.xaml` / `ReservationFormWindow.xaml` / `ReservationQueueWindow.xaml`
+- `ActivityLogsView.xaml` / `ActivityLogDetailsWindow.xaml`
+- `AuditRecordsView.xaml` / `AuditRecordFormWindow.xaml` / `AuditRecordDetailsWindow.xaml`
 
 ### Navigation & Routes Wired
 - `"Dashboard"` -> `DashboardViewModel`
@@ -179,13 +200,14 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `"Reports & Analytics"` -> `ReportsDashboardViewModel`
 - `"Clearance"` -> `ClearanceDashboardViewModel`
 - `"Reservations"` -> `ReservationManagementViewModel`
+- `"Activity Logs"` -> `ActivityLogsViewModel`
+- `"Audit Records"` -> `AuditRecordsViewModel`
 
 ---
 
 ## 3. Pending Components
 
 - **Views & ViewModels**:
-  - `AuditRecordsView.xaml` & `AuditRecordsViewModel.cs` (Mapped but not implemented)
   - `InventoryManagementView.xaml` & `InventoryManagementViewModel.cs` (Mapped but not implemented)
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:

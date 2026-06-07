@@ -106,6 +106,7 @@ public sealed class AuditReportDataProvider(KicsitLibraryDbContext context)
         Columns =
         [
             Column("AuditId", "Audit Id"),
+            Column("AuditNumber", "Audit Number"),
             Column("AuditType", "Audit Type"),
             Column("AuditDate", "Audit Date", "dd-MMM-yyyy"),
             Column("FinancialYear", "Financial Year"),
@@ -158,6 +159,7 @@ public sealed class AuditReportDataProvider(KicsitLibraryDbContext context)
                 string.IsNullOrWhiteSpace(item.ActionTaken))))
         .Select(item => Row(
             ("AuditId", item.Id),
+            ("AuditNumber", item.AuditNumber),
             ("AuditType", item.AuditType),
             ("AuditDate", AsLocalDate(item.AuditDate)),
             ("FinancialYear", item.FinancialYear),

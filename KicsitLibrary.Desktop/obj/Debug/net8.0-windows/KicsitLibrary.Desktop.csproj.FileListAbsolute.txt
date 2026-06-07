@@ -493,3 +493,13 @@ C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationFormWindow.g.cs
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationManagementView.g.cs
 C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ReservationQueueWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ActivityLogDetailsWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ActivityLogsView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordDetailsWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordFormWindow.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordsView.baml
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ActivityLogDetailsWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\ActivityLogsView.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordDetailsWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordFormWindow.g.cs
+C:\Project\University-Library-Management-system\KicsitLibrary.Desktop\obj\Debug\net8.0-windows\Views\AuditRecordsView.g.cs

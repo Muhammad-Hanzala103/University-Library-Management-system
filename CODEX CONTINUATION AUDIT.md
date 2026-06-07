@@ -1,5 +1,43 @@
 # Codex Continuation Audit
 
+## Priority 7A Completion Update
+
+Completion date: 2026-06-07
+
+Priority 7A is complete:
+
+- Added activity-log filter, list, details, summary, user-option, export, and protected-delete models.
+- Added `IActivityLogBrowserService` and `ActivityLogBrowserService`.
+- Latest activity logs load read-only by default with action, entity, entity ID, user, text, and date filters.
+- Full log details tolerate missing users and unstructured legacy metadata.
+- Current activity views export through the existing CSV, Excel, and PDF pipeline.
+- Old-log deletion is service-only, restricted to Super Admin/Admin, soft-deletes rows, archives the range summary, and logs the action.
+- Added audit list, details, action, status summary, filter, and attachment projection models.
+- Added `IAuditRecordService` and transaction-safe `AuditRecordService`.
+- Audit creation, updates, status changes, and soft deletion validate required fields and write activity logs atomically.
+- Audit deletion stores an archive snapshot and requires a reason; status changes require remarks.
+- Added Activity Logs and Audit Records screens, details dialogs, audit form, navigation, and DI.
+- Authorization uses roles plus existing `VIEW_AUDITS` and `MANAGE_AUDITS` permissions.
+- Audit attachments remain read-only because the existing entity cannot be soft-deleted safely.
+- Audit Report remains one of the existing sixteen reports and now includes audit number.
+- No database columns, migrations, deployment, backup/sync, Supabase, WhatsApp, or final README work was added.
+- Added sixteen isolated SQLite tests; all one hundred sixteen tests pass.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 116 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Priority 7B, implement Inventory Management and physical Stock Verification workflow with real SQLite reconciliation, activity logging, report compatibility, and isolated tests. Do not start backup/restore, deployment, Supabase sync, migrations, or release packaging in the same task.
+
 ## Priority 6B Completion Update
 
 Completion date: 2026-06-07
