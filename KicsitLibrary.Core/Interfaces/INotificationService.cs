@@ -40,5 +40,10 @@ namespace KicsitLibrary.Core.Interfaces
             string channel,
             int cooldownHours = 24,
             DateTime? asOfUtc = null);
+
+        Task<int> CreateReservationAvailableNotificationsAsync(
+            Reservation reservation,
+            int? userId = null,
+            CancellationToken cancellationToken = default);
     }
 }
