@@ -1,5 +1,40 @@
 # Codex Continuation Audit
 
+## Priority 8C Completion Update
+
+Completion date: 2026-06-07
+
+- Implemented disabled-by-default automatic local SQLite backup scheduling and retention safety policy.
+- Added automatic backup contracts and models: `AutomaticBackupSchedulerSettings`, `AutomaticBackupStatus`, `AutomaticBackupRunResult`, `BackupRetentionPreviewResult`, `BackupRetentionDeleteResult`, and `BackupRetentionCandidate`.
+- Added `IAutomaticBackupSchedulerService`, `AutomaticBackupSchedulerService`, `AutomaticBackupBackgroundService`, and `AutomaticBackupStartupSignal`.
+- Added `IBackupRetentionService` and `BackupRetentionService`.
+- Scheduler settings are stored non-destructively in existing `SystemSettings` rows. No EF migrations or schema rebuilds were added.
+- The scheduler creates a fresh DI scope per run, uses a single instance semaphore for manual and scheduled runs, honors cancellation, and calls the existing real `IBackupService`.
+- Automatic backup skips and logs when pending restore metadata exists.
+- Retention is disabled by default. History cleanup is soft-delete only unless `AutomaticBackupDeletePhysicalFiles=True`.
+- Retention protects the live database, latest successful backup, failed-verification backups, restore safety backups, emergency restore files, pending restore files, unsupported extensions, files outside the configured backup folder, and detectable symbolic/reparse paths.
+- Backup Management now exposes scheduler status, settings, run-now, refresh, save, retention preview/apply, open folder, physical deletion warning, and a candidate grid.
+- Super Admin/Admin can configure, run, and apply retention. Librarian/Auditor can view backup history/status. Other roles are blocked unless explicit permissions are granted.
+- Added `MANAGE_AUTOMATIC_BACKUPS` permission for future role customization; Admin receives it by default.
+- Test databases now use unique temporary directories so pending restore metadata cannot race across tests.
+- Added seventeen Priority 8C tests; all 188 tests pass.
+- No deployment, Supabase sync, EF migrations, WhatsApp delivery, document upload workflow, final README, namespace rename, or database rename was implemented.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 188 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Priority 8D planning, add cross-process database/backup ownership protection before any deployment packaging or Supabase sync work.
+
 ## Product Branding and Management UI Refinement Completion
 
 Completion date: 2026-06-07

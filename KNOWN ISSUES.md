@@ -115,7 +115,13 @@ This document outlines modules that are currently implemented or stubbed, listin
 - The native online backup call is synchronous internally and cannot be interrupted after it enters SQLite; it runs on a worker thread and observes cancellation before and after the native operation.
 - A process-level semaphore prevents overlapping backup operations within one application process. Separate desktop processes are not coordinated.
 - Custom destination paths are typed manually; a native folder-picker dialog remains deferred.
-- Retention settings are seeded but no automatic file/history deletion is implemented.
+- Automatic backup scheduling is implemented but disabled by default. Startup runs, retention, and physical file deletion are also disabled by default.
+- The automatic scheduler runs only while the desktop application is running after database initialization and login. It is not a Windows Service and does not run while the application is closed.
+- Automatic backup uses the existing real backup service, so it inherits the same SQLite online backup, verification, ZIP compression, activity logging, and authorization rules as manual backup.
+- Automatic backup is skipped while pending restore metadata exists.
+- Retention preview and apply are implemented. History cleanup is soft-delete only unless `AutomaticBackupDeletePhysicalFiles=True`.
+- Physical retention deletion is intentionally conservative: it protects the live database, latest successful backup, failed-verification backups, restore safety backups, emergency restore files, pending restore files, unsupported extensions, files outside the configured backup folder, and detectable symbolic/reparse paths.
+- Physical file deletion and database soft-delete updates cannot be made truly atomic together because the file system and SQLite transaction are separate resources. The service validates first, logs outcomes, and keeps history soft-delete as the durable database action.
 - Verified local restore is implemented as a staged, restart-required operation. The active database is never replaced while application DbContexts are running.
 - Restore validation checks file size, SQLite integrity, SHA-256, and required application tables, but it does not prove semantic correctness of every row.
 - Startup creates an emergency copy and uses the mandatory safety backup for rollback protection. Staged, emergency, and safety files are retained; automatic cleanup is intentionally not implemented.
@@ -123,12 +129,12 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Restore accepts `.db` files. ZIP extraction is not implemented; use the retained database file produced by Backup.
 - Restore paths are selected from backup history or typed manually; a native file picker remains deferred.
 - A critical replacement plus rollback failure stops startup and preserves pending metadata for manual recovery.
-- Automatic scheduling, Supabase sync, and deployment remain unimplemented.
-- Backup history soft deletion never deletes physical backup files.
+- Supabase sync and deployment remain unimplemented.
+- Manual backup history soft deletion never deletes physical backup files; automatic retention deletes physical files only when explicitly enabled and safety validation passes.
 - Metadata intentionally excludes all `SystemSettings`, including SMTP credentials.
 
 ### Automated Test Coverage
-- One hundred seventy-one xUnit tests run against isolated temporary SQLite files.
+- One hundred eighty-eight xUnit tests run against isolated temporary SQLite files and directories.
 - Branding tests cover the centralized product name, key UI files, and the default/on-off hint preference behavior.
-- Coverage also protects real online backup and staged restore files, integrity/schema verification, SHA-256 checksums, safety backups, startup replacement, rollback, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
+- Coverage also protects real online backup and staged restore files, automatic backup scheduling, retention safety rules, integrity/schema verification, SHA-256 checksums, safety backups, startup replacement, rollback, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

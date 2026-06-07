@@ -22,7 +22,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 8A (Verified Local SQLite Backup Creation)**: **100% Completed**
 - **Priority 8B (Verified Local SQLite Restore)**: **100% Completed**
 - **Product Branding & Management UI Refinement**: **100% Completed**
-- **Priority 8C+ (Scheduling, Sync & Deployment)**: **Pending Implementation**
+- **Priority 8C (Automatic Backup Scheduling & Retention Safety Policy)**: **100% Completed**
+- **Priority 8D+ (Sync & Deployment)**: **Pending Implementation**
 
 ### Product Branding and UI Refinement
 - The visible product name is now **Ilm-o-Kutub System** across the shell, login, dashboard welcome state, library card, report/PDF/Excel output, certificate output, backup metadata, restore metadata, application settings defaults, and assembly product metadata.
@@ -33,8 +34,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Show Helpful Hints** is available in the main top bar, defaults to enabled, updates the current session immediately, and controls practical WPF tooltips on navigation and important actions.
 - Reports and clearance certificates include the product name while preserving the institution name as a separate identity.
 - New backups default to `Documents\Ilm-o-Kutub Backups`; reports to `Documents\Ilm-o-Kutub Reports`; certificates to `Documents\Ilm-o-Kutub Certificates`.
-- Four branding/hint regression tests were added. The full isolated suite now passes with 171 tests.
-- Automatic backup scheduling, deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README generation were not started.
+- Four branding/hint regression tests were added during the branding phase. The full isolated suite now passes with 188 tests after Priority 8C.
+- Automatic backup scheduling and retention safety are implemented. Deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README generation were not started.
 
 ### GitHub Repository Rename
 The GitHub repository rename remains a manual owner action. The target repository name is `Ilm-o-Kutub-System`.
@@ -189,6 +190,18 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - Super Admin/Admin can stage restores. Librarian/Auditor can view restore history. Other roles require explicit permissions.
 - One hundred sixty-seven isolated SQLite tests pass, including nineteen Priority 8B tests.
 
+### Priority 8C Automatic Backup Scheduling and Retention Safety Policy
+- Added disabled-by-default automatic backup settings in `SystemSettings` for enablement, startup run, interval, startup delay, compression, verification, destination folder, retention policy, physical deletion, and last-run status.
+- Added `IAutomaticBackupSchedulerService`, `AutomaticBackupSchedulerService`, `AutomaticBackupBackgroundService`, `AutomaticBackupStartupSignal`, `IBackupRetentionService`, and `BackupRetentionService`.
+- Automatic backup creates a fresh DI scope per run, uses one scheduler semaphore, honors cancellation, waits until database initialization and login complete, and calls the existing real `IBackupService` for online SQLite backup, verification, compression, history, and logging.
+- Pending restore metadata causes automatic backup to skip and log a clear status instead of touching backup files.
+- Retention is disabled by default and performs history-only soft deletion unless physical deletion is explicitly enabled.
+- Retention protects the live database, latest successful backup, failed-verification backups, restore safety backups, emergency restore files, pending restore files, unsupported extensions, files outside the configured backup folder, and detectable symbolic/reparse paths.
+- Backup Management now includes scheduler status, settings, run-now, refresh, save, retention preview/apply, open-folder actions, physical deletion warning, and a retention candidate grid.
+- Super Admin/Admin can configure, run, and apply retention. Librarian/Auditor can view backup history and scheduler status. Other roles are blocked unless explicit permissions are granted.
+- Test databases now use unique temporary directories so pending restore metadata cannot race between test classes.
+- One hundred eighty-eight isolated SQLite tests pass, including seventeen Priority 8C scheduler/retention tests.
+
 ---
 
 ## 2. Completed Components
@@ -224,6 +237,8 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - `IActivityLogBrowserService.cs` / `ActivityLogBrowserService.cs`
 - `IAuditRecordService.cs` / `AuditRecordService.cs`
 - `IBackupService.cs` / `BackupService.cs`
+- `IAutomaticBackupSchedulerService.cs` / `AutomaticBackupSchedulerService.cs`
+- `IBackupRetentionService.cs` / `BackupRetentionService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -238,7 +253,7 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - `ReservationManagementViewModel.cs` / `ReservationFormViewModel.cs` / `ReservationQueueViewModel.cs`
 - `ActivityLogsViewModel.cs` / `ActivityLogDetailsViewModel.cs`
 - `AuditRecordsViewModel.cs` / `AuditRecordFormViewModel.cs` / `AuditRecordDetailsViewModel.cs`
-- `BackupManagementViewModel.cs` / `BackupDetailsViewModel.cs`
+- `BackupManagementViewModel.cs` / `BackupDetailsViewModel.cs`: manual backup plus automatic backup scheduler and retention controls.
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.
@@ -283,7 +298,7 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - **Views & ViewModels**:
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (the Settings route exists, but the screen is not implemented)
 - **Services**:
-  - Automatic backup scheduling/retention, Supabase sync, and deployment remain pending.
+  - Supabase sync and deployment remain pending.
 - **Final Release Documentation**:
   - Generate a complete professional repository-root `README.md` at final release so GitHub displays the project overview on the repository front page.
   - The final README must include the project title, overview, key features, technology stack, architecture, screenshots placeholder, installation guide, database setup, default login accounts, build and test commands, release notes, known limitations, future improvements, contributors, and license placeholder.

@@ -27,7 +27,9 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
         var databasePath = Path.Combine(
             Path.GetTempPath(),
             "KicsitLibrary.Tests",
-            $"{Guid.NewGuid():N}.db");
+            "Databases",
+            Guid.NewGuid().ToString("N"),
+            "KicsitLibrary.Tests.db");
         Directory.CreateDirectory(Path.GetDirectoryName(databasePath)!);
 
         var options = new DbContextOptionsBuilder<KicsitLibraryDbContext>()
@@ -221,6 +223,48 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
         }
     }
 
+    public async Task ConfigureAutomaticBackupSettingsAsync(
+        bool enabled,
+        string destinationFolder,
+        bool runOnStartup = false,
+        int intervalHours = 24,
+        int initialDelaySeconds = 60,
+        bool compress = false,
+        bool verifyAfterCreation = true,
+        bool retentionEnabled = false,
+        int retentionDays = 30,
+        int maxHistoryRows = 500,
+        bool deletePhysicalFiles = false)
+    {
+        var values = new Dictionary<string, string>
+        {
+            ["AutomaticBackupEnabled"] = enabled.ToString(),
+            ["AutomaticBackupRunOnStartup"] = runOnStartup.ToString(),
+            ["AutomaticBackupIntervalHours"] = intervalHours.ToString(),
+            ["AutomaticBackupInitialDelaySeconds"] = initialDelaySeconds.ToString(),
+            ["AutomaticBackupCompress"] = compress.ToString(),
+            ["AutomaticBackupVerifyAfterCreation"] = verifyAfterCreation.ToString(),
+            ["AutomaticBackupDestinationFolder"] = destinationFolder,
+            ["AutomaticBackupRetentionEnabled"] = retentionEnabled.ToString(),
+            ["AutomaticBackupRetentionDays"] = retentionDays.ToString(),
+            ["AutomaticBackupMaxHistoryRows"] = maxHistoryRows.ToString(),
+            ["AutomaticBackupDeletePhysicalFiles"] = deletePhysicalFiles.ToString(),
+            ["AutomaticBackupLastRunAt"] = string.Empty,
+            ["AutomaticBackupLastSuccessAt"] = string.Empty,
+            ["AutomaticBackupLastFailureAt"] = string.Empty,
+            ["AutomaticBackupLastMessage"] = string.Empty,
+            ["AutomaticBackupIsRunning"] = "False"
+        };
+
+        foreach (var value in values)
+        {
+            await SetSystemSettingAsync(
+                value.Key,
+                value.Value,
+                "AutomaticBackup");
+        }
+    }
+
     public async Task SetSystemSettingAsync(
         string key,
         string value,
@@ -277,7 +321,16 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
     {
         await Context.DisposeAsync();
 
-        if (File.Exists(_databasePath))
+        var databaseDirectory = Path.GetDirectoryName(_databasePath);
+        if (!string.IsNullOrWhiteSpace(databaseDirectory) &&
+            Directory.Exists(databaseDirectory) &&
+            databaseDirectory.StartsWith(
+                Path.Combine(Path.GetTempPath(), "KicsitLibrary.Tests", "Databases"),
+                StringComparison.OrdinalIgnoreCase))
+        {
+            Directory.Delete(databaseDirectory, recursive: true);
+        }
+        else if (File.Exists(_databasePath))
         {
             File.Delete(_databasePath);
         }

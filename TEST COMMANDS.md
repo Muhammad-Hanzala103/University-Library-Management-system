@@ -28,12 +28,12 @@ Run test execution with logging:
 dotnet test KicsitLibrary.slnx --logger "console;verbosity=detailed"
 ```
 
-The test project uses a unique temporary SQLite file per test under `%TEMP%\KicsitLibrary.Tests`. It never opens `KicsitLibrary.db`.
+The test project uses a unique temporary SQLite directory and file per test under `%TEMP%\KicsitLibrary.Tests`. It never opens `KicsitLibrary.db`.
 
 Current expected result:
 
 ```text
-Passed: 171
+Passed: 188
 Failed: 0
 Skipped: 0
 ```
@@ -132,6 +132,29 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 
 Priority 8B tests use isolated temporary SQLite databases and folders. They cover real backup preview, integrity and schema validation, SHA-256, required confirmation/reason/safety backup, staged metadata, restore history, authorization, startup replacement, post-restore verification, simulated rollback, logging, compatibility indexes, and backup regression behavior. They never access `KicsitLibrary.db`.
 
+Run only Priority 8C automatic backup scheduler and retention tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~AutomaticBackupSchedulerTests"
+```
+
+Priority 8C tests use isolated temporary SQLite databases and temporary backup folders. They cover disabled defaults, authorized real backup creation, overlap prevention, pending-restore skip, status persistence, existing backup-service history, ZIP compression, retention preview, latest/failed/safety/pending protections, history-only cleanup, physical safe-file deletion, authorization blocks, activity logs, and test database isolation.
+
+## Manual Automatic Backup and Retention Verification
+
+1. Sign in as Super Admin or Admin and open **Backup**.
+2. Confirm automatic backup, run on startup, retention, and physical deletion are disabled by default.
+3. Enter or keep a backup destination folder and select **Save Scheduler Settings**.
+4. Select **Run Backup Now** and confirm a verified backup history row is created.
+5. Enable **Create ZIP**, save settings, run again, and confirm the ZIP path appears.
+6. Select **Preview Retention** and confirm candidates show whether they can be deleted and why protected rows are kept.
+7. Enable retention with a safe age/count policy and keep **Delete physical files** unchecked for the first apply.
+8. Select **Apply Retention** and confirm old eligible rows are soft-deleted while physical files remain.
+9. Only after a verified manual review, enable **Delete physical files**, preview again, and confirm the warning dialog before applying.
+10. Confirm restore safety backups, pending restore files, failed-verification rows, the latest successful backup, and files outside the configured folder are not removed.
+11. Confirm Activity Logs include scheduler start/completion/skip/failure and retention deletion/skipped/completed entries.
+12. Sign in as Auditor and confirm backup history/status is viewable but configuration, run-now, and retention apply are blocked.
+
 ## Manual Restore Verification
 
 1. Sign in as Super Admin or Admin and create a fresh verified backup.
@@ -155,7 +178,7 @@ Priority 8B tests use isolated temporary SQLite databases and folders. They cove
 7. Use **Open Backup Folder** and **View Details**.
 8. Confirm `Backup Created` and `Backup Verification Passed` records appear in Activity Logs.
 9. Sign in as Auditor or Librarian and confirm history is viewable but creation is blocked.
-10. Confirm no restore, scheduler, retention deletion, sync, or deployment action is present.
+10. Confirm restore and automatic backup actions are present only in their approved screens, while sync and deployment actions are still absent.
 
 ## Manual Inventory and Stock Verification
 
@@ -219,6 +242,8 @@ Do not run `dotnet ef migrations add InitialCreate` against the current database
 Priority 4B adds notification columns through a fixed non-destructive SQLite compatibility initializer. This is not a replacement for the pending migration baseline.
 
 Priority 6A uses the same initializer to add faculty/student clearance columns and indexes without deleting or rebuilding existing tables.
+
+Priority 8C stores automatic backup scheduler and retention configuration in existing `SystemSettings` rows. It adds no EF migrations and no destructive schema changes.
 
 ## 7. Manual Clearance Verification
 

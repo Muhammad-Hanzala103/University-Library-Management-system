@@ -123,6 +123,10 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IStockVerificationService, StockVerificationService>();
                     services.AddSingleton<IInventoryDialogService, InventoryDialogService>();
                     services.AddScoped<IBackupService, BackupService>();
+                    services.AddScoped<IBackupRetentionService, BackupRetentionService>();
+                    services.AddSingleton<IAutomaticBackupSchedulerService, AutomaticBackupSchedulerService>();
+                    services.AddSingleton<AutomaticBackupStartupSignal>();
+                    services.AddHostedService<AutomaticBackupBackgroundService>();
                     services.AddSingleton<IBackupDialogService, BackupDialogService>();
                     services.AddScoped<IRestoreService, RestoreService>();
                     services.AddSingleton<IRestoreDialogService, RestoreDialogService>();
@@ -274,6 +278,9 @@ namespace KicsitLibrary.Desktop
             {
                 var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
                 mainWindow.Show();
+                AppHost.Services
+                    .GetRequiredService<AutomaticBackupStartupSignal>()
+                    .MarkReady();
             }
             else
             {

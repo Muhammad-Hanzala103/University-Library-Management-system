@@ -64,6 +64,7 @@ namespace KicsitLibrary.Data
                 new() { Code = "MANAGE_SYSTEM", Name = "Manage System Settings", Description = "Change fine rates and metadata." },
                 new() { Code = "VIEW_BACKUPS", Name = "View Backups", Description = "View local backup history." },
                 new() { Code = "MANAGE_BACKUPS", Name = "Manage Backups", Description = "Create and verify local backups." },
+                new() { Code = "MANAGE_AUTOMATIC_BACKUPS", Name = "Manage Automatic Backups", Description = "Configure automatic backups and apply retention." },
                 new() { Code = "VIEW_RESTORES", Name = "View Restores", Description = "View local restore history." },
                 new() { Code = "MANAGE_RESTORES", Name = "Manage Restores", Description = "Stage verified local database restores." }
             };
@@ -80,7 +81,7 @@ namespace KicsitLibrary.Data
             // 3. Seed RolePermissions
             var rolePermissionMappings = new List<(Role role, string[] permissionCodes)>
             {
-                (adminRole, new[] { "MANAGE_USERS", "MANAGE_ROLES", "VIEW_REPORTS", "MANAGE_SYSTEM", "VIEW_BACKUPS", "MANAGE_BACKUPS", "VIEW_RESTORES", "MANAGE_RESTORES" }),
+                (adminRole, new[] { "MANAGE_USERS", "MANAGE_ROLES", "VIEW_REPORTS", "MANAGE_SYSTEM", "VIEW_BACKUPS", "MANAGE_BACKUPS", "MANAGE_AUTOMATIC_BACKUPS", "VIEW_RESTORES", "MANAGE_RESTORES" }),
                 (librarianRole, new[] { "MANAGE_BOOKS", "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_FINES", "MANAGE_RESERVATIONS", "VIEW_REPORTS", "MANAGE_VISITS", "MANAGE_AUDITS", "VIEW_AUDITS", "MANAGE_INVENTORY", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES" }),
                 (assistantLibrarianRole, new[] { "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_RESERVATIONS", "VIEW_REPORTS" }),
                 (auditorRole, new[] { "VIEW_REPORTS", "VIEW_AUDITS", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES" }),
@@ -221,7 +222,23 @@ namespace KicsitLibrary.Data
                 { "BackupCompressionEnabled", ("False", "Compress manual backups by default", "Backup") },
                 { "BackupVerifyAfterCreation", ("True", "Verify manual backups after creation", "Backup") },
                 { "BackupRetentionDays", ("30", "Future retention policy; automatic deletion is not implemented", "Backup") },
-                { "BackupMaxHistoryRows", ("500", "Maximum backup history rows returned by default", "Backup") }
+                { "BackupMaxHistoryRows", ("500", "Maximum backup history rows returned by default", "Backup") },
+                { "AutomaticBackupEnabled", ("False", "Enable periodic automatic SQLite backups", "AutomaticBackup") },
+                { "AutomaticBackupRunOnStartup", ("False", "Run one automatic backup after startup delay", "AutomaticBackup") },
+                { "AutomaticBackupIntervalHours", ("24", "Hours between automatic backup runs", "AutomaticBackup") },
+                { "AutomaticBackupInitialDelaySeconds", ("60", "Delay before an enabled startup backup", "AutomaticBackup") },
+                { "AutomaticBackupCompress", ("False", "Create a ZIP for automatic backups", "AutomaticBackup") },
+                { "AutomaticBackupVerifyAfterCreation", ("True", "Verify automatic backups after creation", "AutomaticBackup") },
+                { "AutomaticBackupDestinationFolder", ("", $"Empty uses Documents\\{ProductBrand.BackupFolderName}", "AutomaticBackup") },
+                { "AutomaticBackupRetentionEnabled", ("False", "Enable automatic backup retention", "AutomaticBackup") },
+                { "AutomaticBackupRetentionDays", ("30", "Age threshold for automatic backup retention", "AutomaticBackup") },
+                { "AutomaticBackupMaxHistoryRows", ("500", "Maximum active backup history rows retained", "AutomaticBackup") },
+                { "AutomaticBackupDeletePhysicalFiles", ("False", "Allow retention to delete protected, validated linked files", "AutomaticBackup") },
+                { "AutomaticBackupLastRunAt", ("", "UTC timestamp of the most recent automatic backup invocation", "AutomaticBackup") },
+                { "AutomaticBackupLastSuccessAt", ("", "UTC timestamp of the most recent successful automatic backup", "AutomaticBackup") },
+                { "AutomaticBackupLastFailureAt", ("", "UTC timestamp of the most recent failed automatic backup", "AutomaticBackup") },
+                { "AutomaticBackupLastMessage", ("", "Summary of the most recent automatic backup invocation", "AutomaticBackup") },
+                { "AutomaticBackupIsRunning", ("False", "Persisted automatic backup running indicator", "AutomaticBackup") }
             };
 
             foreach (var setting in defaultSettings)

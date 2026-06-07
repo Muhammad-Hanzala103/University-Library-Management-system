@@ -157,7 +157,7 @@ Deferred refinements:
 - [x] Add thirteen isolated SQLite tests; all one hundred forty-eight tests pass.
 
 Deferred refinements:
-- [ ] Add automatic retention only with a separately approved scheduler and explicit file-safety policy.
+- [x] Add automatic retention only with a separately approved scheduler and explicit file-safety policy. Completed in Priority 8C.
 - [ ] Add a native folder picker; Priority 8A supports the default Documents path and typed custom paths.
 - [ ] Add WPF UI automation and multi-process backup coordination tests.
 
@@ -188,8 +188,8 @@ Deferred refinements:
 - [x] Polish sidebar labels without removing navigation items.
 - [x] Add the global **Show Helpful Hints** session toggle.
 - [x] Add practical tooltips to navigation, circulation, backup/restore, reports, clearance, reservations, audits, inventory, notifications, and scheduler actions.
-- [x] Add four branding/hint regression tests; all 171 tests pass.
-- [x] Keep automatic backup scheduling, deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README work out of this phase.
+- [x] Add four branding/hint regression tests; the full suite now has 188 passing tests after Priority 8C.
+- [x] Keep deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README work out of this phase.
 
 ### GitHub Repository Rename Checklist
 - [ ] Go to the GitHub repository.
@@ -205,9 +205,26 @@ Safe CLI command for documentation only; do not run without authenticated access
 gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 ```
 
-## Priority 8C+: Scheduling, Sync & Deployment
+## Priority 8C: Automatic Backup Scheduling & Retention Safety Policy
+- **Goal**: Add disabled-by-default automatic local SQLite backups and a conservative, logged retention policy.
+- [x] Seed non-destructive automatic backup settings with scheduler, retention, physical deletion, and status defaults all safe.
+- [x] Add scheduler contracts, result/status models, background service, startup signal, and scoped-service run pattern.
+- [x] Ensure every automatic backup calls the existing real `IBackupService` online SQLite backup, verification, compression, history, and logging behavior.
+- [x] Prevent overlapping manual/scheduled automatic backup runs with one scheduler semaphore.
+- [x] Skip automatic backup while pending restore metadata exists and record a clear status/log entry.
+- [x] Add retention preview and apply services with soft-delete history cleanup by default.
+- [x] Protect the live database, latest successful backup, failed-verification backups, restore safety backups, emergency restore files, pending restore files, unsupported extensions, files outside the configured backup folder, and detectable symbolic/reparse paths.
+- [x] Add Backup Management scheduler settings, status, run-now, save, preview retention, apply retention, open folder, physical deletion warning, and candidate grid.
+- [x] Enforce Admin/Super Admin scheduler configuration/run/retention authorization, with explicit permission support for future role customization.
+- [x] Add seventeen isolated SQLite scheduler/retention tests; all 188 tests pass.
+
+Deferred refinements:
+- [ ] Add WPF UI automation for automatic backup settings and retention confirmation.
+- [ ] Add cross-process backup/restore/scheduler ownership protection before supporting simultaneous desktop instances.
+- [ ] Add a native folder picker for backup destinations.
+
+## Priority 8D+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
-- [ ] Implement automatic backup scheduling and retention only after an explicit file-safety policy is approved.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
 - [ ] Configure `appsettings.json` encryption routines for sensitive credentials.
 - [ ] Package the solution: configure ClickOnce deployment or an MSI installer package.
