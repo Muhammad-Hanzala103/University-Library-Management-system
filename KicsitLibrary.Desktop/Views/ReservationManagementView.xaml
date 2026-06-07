@@ -1,0 +1,63 @@
+<UserControl x:Class="KicsitLibrary.Desktop.Views.ReservationManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="Reservation Management" FontSize="22" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,12"/>
+                <WrapPanel>
+                    <TextBox Width="220" Margin="0,0,8,8" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ComboBox Width="130" Margin="0,0,8,8" ItemsSource="{Binding StatusOptions}"
+                              SelectedItem="{Binding SelectedStatus}"/>
+                    <ComboBox Width="130" Margin="0,0,8,8" ItemsSource="{Binding MemberTypeOptions}"
+                              SelectedItem="{Binding SelectedMemberType}"/>
+                    <DatePicker Width="130" Margin="0,0,8,8" SelectedDate="{Binding FromDate}"/>
+                    <DatePicker Width="130" Margin="0,0,8,8" SelectedDate="{Binding ToDate}"/>
+                    <Button Content="Search" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Clear Filters" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Create Reservation" Command="{Binding CreateCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+            <DataGrid ItemsSource="{Binding Reservations}" SelectedItem="{Binding SelectedReservation}"
+                      AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Number" Binding="{Binding ReservationNumber}" Width="150"/>
+                    <DataGridTextColumn Header="Book" Binding="{Binding BookTitle}" Width="*"/>
+                    <DataGridTextColumn Header="Member" Binding="{Binding MemberName}" Width="150"/>
+                    <DataGridTextColumn Header="Code" Binding="{Binding MemberCode}" Width="120"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding MemberType}" Width="100"/>
+                    <DataGridTextColumn Header="Queue" Binding="{Binding QueuePosition}" Width="65"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="90"/>
+                    <DataGridTextColumn Header="Reserved" Binding="{Binding ReservationDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="105"/>
+                    <DataGridTextColumn Header="Expires" Binding="{Binding ExpiryDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="105"/>
+                    <DataGridTextColumn Header="Accession" Binding="{Binding AccessionNumber}" Width="110"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,12,0,0">
+            <StackPanel>
+                <WrapPanel>
+                    <TextBox Width="260" Margin="0,0,8,8" Text="{Binding ActionReason, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Button Content="Open Queue" Command="{Binding OpenQueueCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Mark Available" Command="{Binding MarkAvailableCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Fulfill" Command="{Binding FulfillCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Cancel" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Expire" Command="{Binding ExpireCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                </WrapPanel>
+                <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Foreground="{StaticResource SecondaryBrush}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

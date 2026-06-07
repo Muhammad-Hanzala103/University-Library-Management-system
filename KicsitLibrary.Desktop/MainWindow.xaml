@@ -47,6 +47,9 @@
         <DataTemplate DataType="{x:Type vm:ClearanceDashboardViewModel}">
             <views:ClearanceDashboardView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ReservationManagementViewModel}">
+            <views:ReservationManagementView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -91,6 +94,10 @@
                     <Button Style="{StaticResource SidebarButton}" Content="Fines Management" 
                             Command="{Binding NavigateToFinesCommand}"
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Fines Management}"/>
+
+                    <Button Style="{StaticResource SidebarButton}" Content="Reservations"
+                            Command="{Binding NavigateToReservationsCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reservations}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Overdue Reminders" 
                             Command="{Binding NavigateToOverdueCommand}"

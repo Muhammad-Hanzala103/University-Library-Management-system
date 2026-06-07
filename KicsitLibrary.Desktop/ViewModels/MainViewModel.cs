@@ -108,6 +108,12 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<ClearanceDashboardViewModel>();
                     break;
+                case "Reservations":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<ReservationManagementViewModel>();
+                    if (CurrentView is ReservationManagementViewModel reservations)
+                        _ = reservations.RefreshAsync();
+                    break;
                 default:
                     CurrentView = null;
                     break;
@@ -155,6 +161,9 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToClearance() => _navigationService.NavigateTo("Clearance");
+
+        [RelayCommand]
+        private void NavigateToReservations() => _navigationService.NavigateTo("Reservations");
 
         [RelayCommand]
         private void NavigateToSettings() => _navigationService.NavigateTo("System Settings");

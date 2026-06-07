@@ -1,0 +1,66 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.ReservationFormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Create Reservation" Height="650" Width="760"
+        WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="Member and Title Search" FontSize="18" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,10"/>
+                <WrapPanel>
+                    <ComboBox Width="140" ItemsSource="{Binding MemberTypes}" SelectedItem="{Binding SelectedMemberType}" Margin="0,0,8,8"/>
+                    <TextBox Width="220" Text="{Binding MemberSearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
+                    <TextBox Width="220" Text="{Binding BookSearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
+                    <Button Content="Search" Command="{Binding SearchCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Student" FontWeight="Bold"/>
+                    <ComboBox ItemsSource="{Binding Students}" SelectedItem="{Binding SelectedStudent}"
+                              DisplayMemberPath="Name" Margin="0,6,0,12"/>
+                    <TextBlock Text="Faculty / Staff" FontWeight="Bold"/>
+                    <ComboBox ItemsSource="{Binding FacultyStaff}" SelectedItem="{Binding SelectedFacultyStaff}"
+                              DisplayMemberPath="Name" Margin="0,6,0,12"/>
+                    <TextBlock Text="Remarks" FontWeight="Bold"/>
+                    <TextBox Text="{Binding Remarks}" AcceptsReturn="True" Height="75" Margin="0,6,0,0"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Book Title" FontWeight="Bold"/>
+                    <ComboBox ItemsSource="{Binding Books}" SelectedItem="{Binding SelectedBook}"
+                              DisplayMemberPath="Title" Margin="0,6,0,12"/>
+                    <Button Content="Check Eligibility" Command="{Binding CheckEligibilityCommand}"
+                            Style="{StaticResource SecondaryButton}" Margin="0,0,0,12"/>
+                    <TextBlock Text="{Binding Eligibility.Message}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Eligibility.ActiveReservationCount, StringFormat=Active reservations: {0}}" Margin="0,8,0,0"/>
+                    <TextBlock Text="{Binding Eligibility.AvailableCopyCount, StringFormat=Available copies: {0}}"/>
+                    <TextBlock Text="{Binding Eligibility.PendingFineAmount, StringFormat=Pending fines: Rs. {0:N2}}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,12,0,0">
+            <DockPanel>
+                <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Content="Create" Command="{Binding CreateCommand}" Style="{StaticResource PrimaryButton}" Margin="8,0"/>
+                    <Button Content="Close" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButton}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

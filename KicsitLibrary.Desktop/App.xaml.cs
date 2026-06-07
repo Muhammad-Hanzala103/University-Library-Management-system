@@ -18,6 +18,7 @@ using KicsitLibrary.Services.Catalog;
 using KicsitLibrary.Services.Consumer;
 using KicsitLibrary.Services.Circulation;
 using KicsitLibrary.Services.Clearance;
+using KicsitLibrary.Services.Reservations;
 using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
@@ -107,6 +108,8 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IReportExportService, ReportExportService>();
                     services.AddScoped<IClearanceService, ClearanceService>();
                     services.AddSingleton<IClearanceDetailsDialogService, ClearanceDetailsDialogService>();
+                    services.AddScoped<IReservationService, ReservationService>();
+                    services.AddSingleton<IReservationDialogService, ReservationDialogService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -139,6 +142,9 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<StudentClearanceViewModel>();
                     services.AddTransient<FacultyStaffClearanceViewModel>();
                     services.AddTransient<ClearanceDetailsViewModel>();
+                    services.AddTransient<ReservationManagementViewModel>();
+                    services.AddTransient<ReservationFormViewModel>();
+                    services.AddTransient<ReservationQueueViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
                     services.AddTransient<ReportsDashboardView>();
@@ -147,6 +153,9 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<StudentClearanceView>();
                     services.AddTransient<FacultyStaffClearanceView>();
                     services.AddTransient<ClearanceDetailsWindow>();
+                    services.AddTransient<ReservationManagementView>();
+                    services.AddTransient<ReservationFormWindow>();
+                    services.AddTransient<ReservationQueueWindow>();
                 })
                 .Build();
         }
