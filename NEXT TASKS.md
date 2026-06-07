@@ -93,10 +93,21 @@ Deferred refinements:
 
 ## Priority 6B: Reservation Lifecycle Completion
 - **Goal**: Complete reservation queue, availability, expiry, cancellation, and fulfillment behavior.
-- [ ] Define reservation state-transition rules and authorization boundaries.
-- [ ] Implement queue ordering, expiry processing, cancellation, and fulfillment.
-- [ ] Add reservation management MVVM screens and isolated SQLite tests.
-- [ ] Keep Priority 6A clearance rules backward compatible.
+- [x] Define reservation state-transition rules and authenticated action boundaries.
+- [x] Validate active status, clearance status, duplicate holds, same-title active issues, and pending fines.
+- [x] Implement deterministic queue ordering and configurable expiry processing.
+- [x] Implement cancellation, availability, and transaction-safe fulfillment through circulation validation.
+- [x] Create deduplicated in-app and email notification records when the first queue item becomes available.
+- [x] Integrate normal returns with first-queue availability without automatic issue or automatic email sending.
+- [x] Add Reservation Management, Create Reservation, and Reservation Queue MVVM screens.
+- [x] Update Reservation Report queue positions and lifecycle summaries.
+- [x] Add eighteen isolated SQLite tests; all one hundred tests pass.
+- [x] Keep Priority 6A clearance rules and existing circulation workflows backward compatible.
+
+Deferred refinements:
+- [ ] Add a configurable maximum active-reservation limit if the library approves a policy value.
+- [ ] Add scheduled reservation expiry processing only as a separately approved future task.
+- [ ] Add WPF UI automation and multi-process reservation concurrency testing before multi-client deployment.
 
 ---
 

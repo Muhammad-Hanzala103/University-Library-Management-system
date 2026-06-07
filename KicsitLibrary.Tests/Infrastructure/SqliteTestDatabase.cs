@@ -105,6 +105,7 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
             new SystemSettings { Key = "StudentIssueLimit", Value = "3", Group = "Borrowing" },
             new SystemSettings { Key = "DefaultIssueDays", Value = "14", Group = "Borrowing" },
             new SystemSettings { Key = "FinePerDay", Value = "10", Group = "Billing" },
+            new SystemSettings { Key = "ReservationExpiryDays", Value = "3", Group = "Reservation" },
             new SystemSettings { Key = "NotificationCooldownHours", Value = "24", Group = "Notifications" },
             new SystemSettings { Key = "MaxNotificationRetryCount", Value = "3", Group = "Notifications" });
         await Context.SaveChangesAsync();

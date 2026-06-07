@@ -1,5 +1,48 @@
 # Codex Continuation Audit
 
+## Priority 6B Completion Update
+
+Completion date: 2026-06-07
+
+Priority 6B is complete:
+
+- Added reservation queue, eligibility, action, availability, and fulfillment result models.
+- Added `IReservationService` and a complete `ReservationService`.
+- Active and uncleared members are checked for duplicate reservations, same-title active issues, and unpaid/partial fines.
+- Queue order is first-come-first-served by reservation date and ID.
+- Reservation expiry uses `ReservationExpiryDays` with a safe three-day default.
+- Cancellation, manual expiry, bulk expiry, availability, and fulfillment write activity logs.
+- Normal returns can mark the first queued reservation available without automatic issue.
+- Availability creates deduplicated in-app and email records through `NotificationService`; no automatic email is sent.
+- Missing member email is represented by a failed email record with a clear reason.
+- Fulfillment is limited to the first queue item, reuses circulation eligibility and issue creation, assigns an available copy, stores its accession number, and persists `Issued`.
+- Added Reservation Management, Create Reservation, and Reservation Queue MVVM screens and navigation.
+- Updated Reservation Report with queue position and lifecycle summaries.
+- Added eighteen isolated SQLite reservation tests; all one hundred tests pass.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 100 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Deferred by design:
+
+- Automatic reservation-expiry scheduler
+- Automatic email sending or in-app popup delivery
+- Configurable maximum active-reservation limit
+- WPF UI automation and multi-process concurrency protection
+- Deployment, Supabase sync, WhatsApp delivery, EF migrations, and final release README
+
+Exact next task: Priority 7A, implement the Activity Log browser and Audit Records workflow with filters, authorization, and isolated SQLite tests. Do not start inventory, deployment, backup/sync, or release packaging in the same task.
+
 ## Priority 6A Completion Update
 
 Completion date: 2026-06-07

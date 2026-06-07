@@ -65,12 +65,14 @@ public sealed class ReservationService : IReservationService
                     issue.BookCopy.BookMasterId == bookMasterId &&
                     issue.ReceiveRecord == null,
                 cancellationToken);
-        var pendingFines = await MemberFines(memberId, memberType)
+        var pendingFineAmounts = await MemberFines(memberId, memberType)
             .Where(fine =>
                 fine.RemainingAmount > 0 &&
                 (fine.PaymentStatus == FineStatus.Unpaid ||
                  fine.PaymentStatus == FineStatus.Partial))
-            .SumAsync(fine => fine.RemainingAmount, cancellationToken);
+            .Select(fine => fine.RemainingAmount)
+            .ToListAsync(cancellationToken);
+        var pendingFines = pendingFineAmounts.Sum();
         var availableCopies = await _context.BookCopies.AsNoTracking()
             .CountAsync(
                 copy =>

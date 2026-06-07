@@ -16,7 +16,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 5A (Reports & Export Foundation)**: **100% Completed**
 - **Priority 5B (Advanced Reports & Print Refinements)**: **100% Completed**
 - **Priority 6A (Student & Faculty Clearance Workflow)**: **100% Completed**
-- **Priority 6B to 8 (Advanced Modules)**: **Pending Implementation**
+- **Priority 6B (Reservation Workflow Completion)**: **100% Completed**
+- **Priority 7 to 8 (Advanced Modules)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -94,6 +95,19 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - The Student Clearance Report now includes unresolved lost/damaged case counts.
 - Eighty-two isolated tests pass, including fourteen Priority 6A tests.
 
+### Priority 6B Reservation Workflow
+- Added complete student and faculty/staff reservation eligibility, creation, queue, cancellation, expiry, availability, fulfillment, and query services.
+- Active, uncleared members are eligible only when they have no duplicate reservation, active issue for the same title, or unpaid/partial fine.
+- Queue order is deterministic by reservation date and record ID; only the first active queue member can be fulfilled.
+- Reservation expiry uses `ReservationExpiryDays`, defaulting safely to three days when the setting is absent or invalid.
+- Returned available copies can mark the first queued reservation `Available` without automatically issuing the book.
+- Availability creates deduplicated in-app and email notification records; no email is sent automatically.
+- Missing recipient email creates a clear failed email record while preserving the in-app notification.
+- Fulfillment reuses circulation validation and issue creation, assigns an available copy, stores the accession number, and marks the reservation `Issued`.
+- Added Reservation Management, Create Reservation, and Reservation Queue MVVM screens with real asynchronous actions.
+- Reservation reporting now includes queue position and lifecycle-status summaries.
+- One hundred isolated SQLite tests pass, including eighteen Priority 6B tests.
+
 ---
 
 ## 2. Completed Components
@@ -125,6 +139,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `IReportDataProvider` / sixteen production report providers
 - `IReportExporter` / CSV, Excel, and PDF exporters
 - `IClearanceService.cs` / `ClearanceService.cs`
+- `IReservationService.cs` / `ReservationService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -136,6 +151,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `OverdueRemindersViewModel.cs` / `NotificationCenterViewModel.cs`: Manual overdue and notification-record operations.
 - `ReportsDashboardViewModel.cs` / `ReportPreviewViewModel.cs`: Report selection, filters, preview, and export operations.
 - `ClearanceDashboardViewModel.cs` / `StudentClearanceViewModel.cs` / `FacultyStaffClearanceViewModel.cs` / `ClearanceDetailsViewModel.cs`
+- `ReservationManagementViewModel.cs` / `ReservationFormViewModel.cs` / `ReservationQueueViewModel.cs`
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.
@@ -147,6 +163,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `OverdueRemindersView.xaml` / `NotificationCenterView.xaml`
 - `ReportsDashboardView.xaml` / `ReportPreviewView.xaml`
 - `ClearanceDashboardView.xaml` / `StudentClearanceView.xaml` / `FacultyStaffClearanceView.xaml` / `ClearanceDetailsWindow.xaml`
+- `ReservationManagementView.xaml` / `ReservationFormWindow.xaml` / `ReservationQueueWindow.xaml`
 
 ### Navigation & Routes Wired
 - `"Dashboard"` -> `DashboardViewModel`
@@ -161,6 +178,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `"Notification Center"` -> `NotificationCenterViewModel`
 - `"Reports & Analytics"` -> `ReportsDashboardViewModel`
 - `"Clearance"` -> `ClearanceDashboardViewModel`
+- `"Reservations"` -> `ReservationManagementViewModel`
 
 ---
 

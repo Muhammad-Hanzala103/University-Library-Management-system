@@ -70,6 +70,16 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Faculty/staff clearance fields are additive and default existing members to `NotCleared`.
 - Approval does not deactivate member accounts automatically. Account archival remains an explicit policy decision.
 
+### Reservation Workflow
+- Reservation lifecycle states are `Pending`, `Available`, `Issued`, `Cancelled`, and `Expired`; `Issued` is the persisted fulfilled state because the existing enum has no separate `Fulfilled` value.
+- Reservation eligibility has no configured maximum active-reservation count. The service reports the current count, but no limit is enforced until the library approves a policy setting.
+- Expired reservations are processed when reservation management refreshes or when the explicit expiry service method is invoked. No new scheduler or background engine was added in Priority 6B.
+- A normal return is committed before the reservation availability hook runs. This protects completed circulation transactions; if the subsequent availability update fails, the operator receives a clear message and can retry from Reservation Management.
+- Availability creates records only. Email remains subject to the existing manual SMTP workflow, and in-app records still have no popup or badge delivery mechanism.
+- Reservation notification deduplication uses the existing unique `DeduplicationKey` field with reservation-specific keys; no new database columns or migration were required.
+- Fulfillment is restricted to the first active queue member and reuses circulation eligibility. Multi-process races between separate desktop application instances remain a deployment concern.
+- No WPF UI automation covers the new reservation windows; service behavior is covered by isolated SQLite integration tests.
+
 ### Cloud Integration (Supabase Sync)
 - Currently, the database provider runs 100% locally on SQLite. There is no background worker that pushes local SQLite transaction records to a remote Supabase Postgres cloud instance.
 
@@ -77,6 +87,6 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
 
 ### Automated Test Coverage
-- Eighty-two xUnit tests run against isolated temporary SQLite files.
-- Coverage protects circulation, overdue, notification, reporting, student/faculty clearance blockers, transactional state changes, activity logs, history, and physical PDF certificate generation.
+- One hundred xUnit tests run against isolated temporary SQLite files.
+- Coverage protects circulation, overdue, notification, reporting, student/faculty clearance blockers, reservation eligibility and lifecycle transitions, queue ordering, return availability, fulfillment, activity logs, history, and physical PDF certificate generation.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

@@ -21,6 +21,7 @@ public sealed class ReservationReportDataProvider(KicsitLibraryDbContext context
             Column("MemberType", "Member Type"),
             Column("MemberName", "Member Name"),
             Column("MemberCode", "Member Code"),
+            Column("QueuePosition", "Queue Position"),
             Column("ReservationDate", "Reservation Date", "dd-MMM-yyyy"),
             Column("ExpiryDate", "Expiry Date", "dd-MMM-yyyy"),
             Column("Status", "Status"),
@@ -56,6 +57,14 @@ public sealed class ReservationReportDataProvider(KicsitLibraryDbContext context
         var toDate = FilterReader.EndDate(filters, ReportFilterKeys.DateRange);
         var expiredOnly = FilterReader.Boolean(filters, ReportFilterKeys.ExpiredOnly);
         var today = DateTime.Now.Date;
+        var queuePositions = reservations
+            .Where(item => item.Status is ReservationStatus.Pending or ReservationStatus.Available)
+            .GroupBy(item => item.BookMasterId)
+            .SelectMany(group => group
+                .OrderBy(item => item.ReservationDate)
+                .ThenBy(item => item.Id)
+                .Select((item, index) => new { item.Id, Position = index + 1 }))
+            .ToDictionary(item => item.Id, item => item.Position);
 
         var rows = reservations.Where(item =>
         {
@@ -78,6 +87,7 @@ public sealed class ReservationReportDataProvider(KicsitLibraryDbContext context
             ("MemberType", item.MemberType.ToString()),
             ("MemberName", item.MemberType == MemberType.Student ? item.Student?.Name : item.FacultyStaff?.Name),
             ("MemberCode", item.MemberType == MemberType.Student ? item.Student?.RegistrationNumber : item.FacultyStaff?.PersonnelNumber),
+            ("QueuePosition", queuePositions.GetValueOrDefault(item.Id)),
             ("ReservationDate", AsLocalDate(item.ReservationDate)),
             ("ExpiryDate", AsLocalDate(item.ExpiryDate)),
             ("Status", item.Status.ToString()),
@@ -89,6 +99,9 @@ public sealed class ReservationReportDataProvider(KicsitLibraryDbContext context
             {
                 ["Reservations"] = rows.Count.ToString(),
                 ["Pending"] = rows.Count(row => Equals(row["Status"], ReservationStatus.Pending.ToString())).ToString(),
+                ["Available"] = rows.Count(row => Equals(row["Status"], ReservationStatus.Available.ToString())).ToString(),
+                ["Issued"] = rows.Count(row => Equals(row["Status"], ReservationStatus.Issued.ToString())).ToString(),
+                ["Cancelled"] = rows.Count(row => Equals(row["Status"], ReservationStatus.Cancelled.ToString())).ToString(),
                 ["Expired"] = rows.Count(row => Equals(row["Status"], ReservationStatus.Expired.ToString())).ToString()
             }, cancellationToken);
     }
