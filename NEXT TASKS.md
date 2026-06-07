@@ -43,7 +43,7 @@ This document contains a structured task list outlining the implementation steps
 - [x] Gate the hosted worker on successful database initialization.
 
 Remaining deployment concern:
-- [ ] Add cross-process ownership protection before supporting multiple simultaneous desktop application instances.
+- [x] Add cross-process ownership protection before supporting multiple simultaneous desktop application instances. Completed in Priority 8D.
 
 ---
 
@@ -159,7 +159,8 @@ Deferred refinements:
 Deferred refinements:
 - [x] Add automatic retention only with a separately approved scheduler and explicit file-safety policy. Completed in Priority 8C.
 - [ ] Add a native folder picker; Priority 8A supports the default Documents path and typed custom paths.
-- [ ] Add WPF UI automation and multi-process backup coordination tests.
+- [x] Add cross-process backup coordination protection. Completed in Priority 8D.
+- [ ] Add WPF UI automation for backup coordination screens.
 
 ## Priority 8B: Verified Local SQLite Restore
 - **Goal**: Restore only from validated local SQLite backups without replacing an active database.
@@ -175,7 +176,7 @@ Deferred refinements:
 
 Deferred refinements:
 - [ ] Add WPF UI automation for restore confirmation and restart messaging.
-- [ ] Add cross-process ownership protection before supporting simultaneous desktop instances.
+- [x] Add cross-process ownership protection before supporting simultaneous desktop instances. Completed in Priority 8D.
 - [ ] Add a native database-file picker; current restore paths are selected from backup history or typed manually.
 - [ ] Define an operator-reviewed retention policy for staged, emergency, and safety backup files.
 
@@ -220,10 +221,26 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 
 Deferred refinements:
 - [ ] Add WPF UI automation for automatic backup settings and retention confirmation.
-- [ ] Add cross-process backup/restore/scheduler ownership protection before supporting simultaneous desktop instances.
+- [x] Add cross-process backup/restore/scheduler ownership protection before supporting simultaneous desktop instances. Completed in Priority 8D.
 - [ ] Add a native folder picker for backup destinations.
 
-## Priority 8D+: Sync & Deployment
+## Priority 8D: Cross Process Database and Backup Ownership Protection
+- **Goal**: Coordinate app instances and critical database/backup operations through safe ownership locks.
+- [x] Read `CriticalOperationLockTimeoutSeconds` and `LockFileRetentionMinutes` from `SystemSettings` with safe defaults of 15 seconds and 120 minutes.
+- [x] Write non-sensitive lease metadata with operation, process, machine, user, acquired/expiry, lock name, and file path.
+- [x] Add separate lock domains for application instance, database, backup folder, restore, and scheduler health.
+- [x] Protect backup creation, restore staging, pending restore startup application, automatic scheduler runs, retention physical deletion, and compatibility initialization where safe.
+- [x] Make lock release idempotent and ensure `RunWithCriticalOperationLockAsync` releases in `finally`.
+- [x] Make stale cleanup skip active locks and delete only expired safe lock files.
+- [x] Log cleanup cleaned/skipped/failed outcomes and unauthorized cleanup attempts.
+- [x] Add Backup Management ownership status and stale cleanup actions.
+- [x] Add fifteen real isolated SQLite ownership tests; all 203 tests pass.
+
+Deferred refinements:
+- [ ] Add WPF UI automation for ownership status and cleanup buttons.
+- [ ] Add an operator-facing Settings screen for ownership settings instead of database-only `SystemSettings` editing.
+
+## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
 - [ ] Configure `appsettings.json` encryption routines for sensitive credentials.

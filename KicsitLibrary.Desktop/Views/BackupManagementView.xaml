@@ -196,6 +196,61 @@
             </Border>
 
             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10">
+                <StackPanel>
+                    <TextBlock Text="Database and Backup Ownership"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,8"/>
+                    <WrapPanel Margin="0,0,0,8">
+                        <TextBlock Text="{Binding ApplicationInstanceOwned, StringFormat=Application instance: {0}}" Margin="0,0,18,0"/>
+                        <TextBlock Text="{Binding DatabaseLockAvailable, StringFormat=Database lock available: {0}}" Margin="0,0,18,0"/>
+                        <TextBlock Text="{Binding BackupFolderLockAvailable, StringFormat=Backup folder lock available: {0}}" Margin="0,0,18,0"/>
+                        <TextBlock Text="{Binding RestoreLockAvailable, StringFormat=Restore lock available: {0}}" Margin="0,0,18,0"/>
+                        <TextBlock Text="{Binding SchedulerLockAvailable, StringFormat=Scheduler lock available: {0}}"/>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,0,0,8">
+                        <TextBlock Text="{Binding DetectedStaleLockFiles, StringFormat=Detected stale lock files: {0}}" Margin="0,0,18,0"/>
+                        <TextBlock Text="{Binding OwnershipLastMessage}" TextWrapping="Wrap" Foreground="{StaticResource TextMutedBrush}"/>
+                    </WrapPanel>
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Application instance" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ApplicationInstanceMessage}" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Database lock" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding DatabaseLockMessage}" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Backup folder lock" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding BackupFolderLockMessage}" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Restore lock" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding RestoreLockMessage}" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Scheduler lock" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SchedulerLockMessage}" TextWrapping="Wrap"/>
+                    </Grid>
+                    <WrapPanel>
+                        <Button Content="Refresh Ownership Status"
+                                Command="{Binding RefreshOwnershipStatusCommand}"
+                                ToolTip="Reload application, database, backup, restore, and scheduler lock status."
+                                Style="{StaticResource SecondaryButton}"
+                                Margin="0,0,8,8"/>
+                        <Button Content="Cleanup Stale Lock Files"
+                                Command="{Binding CleanupStaleLockFilesCommand}"
+                                IsEnabled="{Binding CanCleanupOwnershipLocks}"
+                                ToolTip="Remove only expired safe ownership lock files. Admin or Super Admin required."
+                                Style="{StaticResource DangerButton}"
+                                Margin="0,0,8,8"/>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10">
                 <DataGrid ItemsSource="{Binding BackupHistory}"
                           SelectedItem="{Binding SelectedBackup}"
                           AutoGenerateColumns="False"

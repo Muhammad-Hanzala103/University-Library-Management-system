@@ -1,5 +1,38 @@
 # Codex Continuation Audit
 
+## Priority 8D Completion Update
+
+Completion date: 2026-06-07
+
+- Completed cross-process database and backup ownership protection after the partial Trae/Blackbox attempts.
+- Preserved the Blackbox test infrastructure fix in `AutomaticBackupSchedulerTests`; existing fake ownership service coverage remains for those scheduler unit tests.
+- Replaced unsafe stale lock cleanup in `DatabaseOwnershipService` with per-domain lease files and conservative cleanup rules.
+- Ownership settings now read `CriticalOperationLockTimeoutSeconds` and `LockFileRetentionMinutes` from `SystemSettings`, defaulting to 15 seconds and 120 minutes.
+- Lease metadata includes operation name, process ID, machine name, user name, acquired/expiry timestamps, lock name, and lock path, without SMTP passwords, database passwords, connection strings, or settings values.
+- `GetOwnershipHealthAsync` now checks separate application instance, database, backup folder, restore, and scheduler domains.
+- `RunWithCriticalOperationLockAsync` releases in `finally`; release is idempotent; service disposal closes and removes locks owned by the process.
+- Backup creation, restore staging, pending restore startup application, automatic scheduler runs, retention physical deletion, and safe SQLite compatibility initialization use critical operation locks.
+- Lock timeout failures use the required message: `Another Ilm-o-Kutub System operation is already using this database or backup folder.`
+- Backup Management now shows ownership status, stale lock count, last ownership message, refresh status, and cleanup stale lock actions.
+- Admin/Super Admin can cleanup stale locks. Librarian/Auditor can view ownership status but cannot cleanup. Unauthorized cleanup attempts are logged.
+- Added `DatabaseOwnershipServiceTests` with fifteen real isolated SQLite ownership tests.
+- No document upload workflow, deployment, Supabase sync, EF migrations, WhatsApp delivery, final README, namespace rename, or database rename was implemented.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 203 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Add WPF UI automation/manual validation for the new Backup Management ownership panel, then continue with the next approved post-8D utility task only. Do not start document upload, deployment, Supabase sync, EF migrations, WhatsApp delivery, or final README without a separate explicit request.
+
 ## Priority 8C Completion Update
 
 Completion date: 2026-06-07

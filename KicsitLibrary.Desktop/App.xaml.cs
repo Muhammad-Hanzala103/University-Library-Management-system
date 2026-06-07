@@ -247,7 +247,7 @@ namespace KicsitLibrary.Desktop
                             using var conn = new SqliteConnection(builder.ToString());
                             await conn.OpenAsync();
                             using var cmd = conn.CreateCommand();
-                            cmd.CommandText = "SELECT SettingKey, SettingValue FROM SystemSettings WHERE SettingKey IN ('SingleInstanceMode', 'AllowReadOnlySecondInstance', 'CleanupStaleLockFilesOnStartup')";
+                            cmd.CommandText = "SELECT Key, Value FROM SystemSettings WHERE Key IN ('SingleInstanceMode', 'AllowReadOnlySecondInstance', 'CleanupStaleLockFilesOnStartup')";
                             using var reader = await cmd.ExecuteReaderAsync();
                             while (await reader.ReadAsync())
                             {
@@ -304,7 +304,17 @@ namespace KicsitLibrary.Desktop
                         throw new InvalidOperationException("The configured database exists but cannot be opened.");
                     }
                 }
-                await DatabaseCompatibilityInitializer.ApplyAsync(dbContext);
+                if (!string.IsNullOrWhiteSpace(sqliteDatabasePath))
+                {
+                    await ownershipService.RunWithCriticalOperationLockAsync(
+                        "Database Compatibility Initialization",
+                        sqliteDatabasePath,
+                        _ => DatabaseCompatibilityInitializer.ApplyAsync(dbContext));
+                }
+                else
+                {
+                    await DatabaseCompatibilityInitializer.ApplyAsync(dbContext);
+                }
                 await DbSeeder.SeedAsync(dbContext, passwordHasher);
                 if (!string.IsNullOrWhiteSpace(sqliteDatabasePath))
                 {

@@ -43,7 +43,7 @@ public sealed class BackupService(
             return Failure(startedAt, lockResult.ErrorMessage);
         }
 
-        await BackupLock.WaitAsync(cancellationToken);
+        var semaphoreHeld = false;
         BackupHistory? history = null;
         string backupPath = string.Empty;
         string metadataPath = string.Empty;
@@ -51,6 +51,8 @@ public sealed class BackupService(
 
         try
         {
+            await BackupLock.WaitAsync(cancellationToken);
+            semaphoreHeld = true;
             EnsureSqliteProvider();
             var user = authenticationService.CurrentUser!;
             var settings = await GetBackupSettingsAsync(cancellationToken);
@@ -204,7 +206,10 @@ public sealed class BackupService(
         }
         finally
         {
-            BackupLock.Release();
+            if (semaphoreHeld)
+            {
+                BackupLock.Release();
+            }
             await ownershipService.ReleaseCriticalOperationLockAsync("Backup Creation", dbPath);
         }
     }

@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite directory and file per test unde
 Current expected result:
 
 ```text
-Passed: 188
+Passed: 203
 Failed: 0
 Skipped: 0
 ```
@@ -140,6 +140,25 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 
 Priority 8C tests use isolated temporary SQLite databases and temporary backup folders. They cover disabled defaults, authorized real backup creation, overlap prevention, pending-restore skip, status persistence, existing backup-service history, ZIP compression, retention preview, latest/failed/safety/pending protections, history-only cleanup, physical safe-file deletion, authorization blocks, activity logs, and test database isolation.
 
+Run only Priority 8D database and backup ownership tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~DatabaseOwnershipServiceTests"
+```
+
+Priority 8D tests use isolated temporary SQLite databases and temporary backup folders. They cover application instance locks, critical operation overlap/timeouts, non-sensitive lease metadata, idempotent release, stale detection/cleanup, cleanup authorization, backup/restore/scheduler/retention lock integration, and no access to `KicsitLibrary.db`.
+
+## Manual Ownership Verification
+
+1. Sign in as Super Admin or Admin and open **Backup**.
+2. Confirm the **Database and Backup Ownership** panel shows application instance, database, backup folder, restore, and scheduler lock statuses.
+3. Select **Refresh Ownership Status** and confirm the last ownership message and stale lock count update.
+4. Start a long-running backup or restore operation in one application instance, then attempt a competing backup/restore from a second instance and confirm the second operation is blocked or the second instance is restricted according to `SingleInstanceMode`.
+5. Confirm blocked critical operations show: `Another Ilm-o-Kutub System operation is already using this database or backup folder.`
+6. Confirm **Cleanup Stale Lock Files** is enabled for Admin/Super Admin and removes only expired safe lock files.
+7. Sign in as Librarian or Auditor and confirm ownership status is viewable but stale cleanup is disabled.
+8. Confirm Activity Logs include lock acquisition/release, timeout, cleanup, and denied cleanup entries where applicable.
+
 ## Manual Automatic Backup and Retention Verification
 
 1. Sign in as Super Admin or Admin and open **Backup**.
@@ -245,6 +264,8 @@ Priority 6A uses the same initializer to add faculty/student clearance columns a
 
 Priority 8C stores automatic backup scheduler and retention configuration in existing `SystemSettings` rows. It adds no EF migrations and no destructive schema changes.
 
+Priority 8D stores ownership configuration in existing `SystemSettings` rows and adds no EF migrations or destructive schema changes.
+
 ## 7. Manual Clearance Verification
 
 1. Open **Library Clearance** from the sidebar.
@@ -321,7 +342,7 @@ The default SQLite database is named `KicsitLibrary.db`. Relative paths are reso
   ```
 - Inspect Active Library Settings:
   ```sql
-  SELECT SettingKey, SettingValue FROM SystemSettings;
+  SELECT Key, Value FROM SystemSettings;
   ```
 - Check Unpaid Fine Totals:
   ```sql

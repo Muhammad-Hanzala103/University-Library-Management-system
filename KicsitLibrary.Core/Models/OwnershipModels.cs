@@ -62,11 +62,18 @@ public sealed class BackupFolderOwnershipStatus
 public sealed class OwnershipHealthCheckResult
 {
     public bool Succeeded { get; set; }
+    public bool ApplicationInstanceOwned { get; set; }
     public bool DatabaseLockAvailable { get; set; }
     public bool BackupFolderLockAvailable { get; set; }
     public bool RestoreLockAvailable { get; set; }
     public bool SchedulerLockAvailable { get; set; }
     public int DetectedStaleLockFiles { get; set; }
+    public string ApplicationInstanceMessage { get; set; } = string.Empty;
+    public string DatabaseLockMessage { get; set; } = string.Empty;
+    public string BackupFolderLockMessage { get; set; } = string.Empty;
+    public string RestoreLockMessage { get; set; } = string.Empty;
+    public string SchedulerLockMessage { get; set; } = string.Empty;
+    public string LastOwnershipMessage { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public string ErrorMessage { get; set; } = string.Empty;
 }

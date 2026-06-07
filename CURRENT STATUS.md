@@ -23,7 +23,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 8B (Verified Local SQLite Restore)**: **100% Completed**
 - **Product Branding & Management UI Refinement**: **100% Completed**
 - **Priority 8C (Automatic Backup Scheduling & Retention Safety Policy)**: **100% Completed**
-- **Priority 8D+ (Sync & Deployment)**: **Pending Implementation**
+- **Priority 8D (Cross Process Database and Backup Ownership Protection)**: **100% Completed**
+- **Priority 8E+ (Sync & Deployment)**: **Pending Implementation**
 
 ### Product Branding and UI Refinement
 - The visible product name is now **Ilm-o-Kutub System** across the shell, login, dashboard welcome state, library card, report/PDF/Excel output, certificate output, backup metadata, restore metadata, application settings defaults, and assembly product metadata.
@@ -34,7 +35,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Show Helpful Hints** is available in the main top bar, defaults to enabled, updates the current session immediately, and controls practical WPF tooltips on navigation and important actions.
 - Reports and clearance certificates include the product name while preserving the institution name as a separate identity.
 - New backups default to `Documents\Ilm-o-Kutub Backups`; reports to `Documents\Ilm-o-Kutub Reports`; certificates to `Documents\Ilm-o-Kutub Certificates`.
-- Four branding/hint regression tests were added during the branding phase. The full isolated suite now passes with 188 tests after Priority 8C.
+- Four branding/hint regression tests were added during the branding phase. The full isolated suite now passes with 203 tests after Priority 8D.
 - Automatic backup scheduling and retention safety are implemented. Deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README generation were not started.
 
 ### GitHub Repository Rename
@@ -202,6 +203,18 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - Test databases now use unique temporary directories so pending restore metadata cannot race between test classes.
 - One hundred eighty-eight isolated SQLite tests pass, including seventeen Priority 8C scheduler/retention tests.
 
+### Priority 8D Cross Process Ownership Protection
+- Added `IDatabaseOwnershipService` / `DatabaseOwnershipService` with an application instance mutex plus per-domain critical operation lease files for database, backup, restore, and scheduler operations.
+- Ownership settings are seeded non-destructively: `SingleInstanceMode=True`, `CriticalOperationLockTimeoutSeconds=15`, `AllowReadOnlySecondInstance=False`, `CleanupStaleLockFilesOnStartup=True`, and `LockFileRetentionMinutes=120`.
+- Critical operation lease metadata includes operation name, process ID, machine name, user name, acquired time, expiry time, lock name, and lock file path. It does not include SMTP passwords, database passwords, connection strings, or system-setting values.
+- Backup creation, restore staging, pending restore startup application, automatic scheduler runs, retention physical deletion, and SQLite compatibility initialization use ownership locks where applicable.
+- Lock timeout failures return the clear message: `Another Ilm-o-Kutub System operation is already using this database or backup folder.`
+- Health checks now inspect separate application, database, backup, restore, and scheduler domains instead of reporting every domain from one lock probe.
+- Stale cleanup deletes only expired safe lock files or old unreadable files that can be opened exclusively; active locks are never deleted.
+- Unauthorized cleanup attempts are logged. Admin/Super Admin can cleanup. Librarian/Auditor can view ownership status through Backup Management but cannot cleanup.
+- Backup Management now includes ownership status, last ownership message, stale lock count, refresh status, and cleanup stale lock file actions.
+- Two hundred three isolated SQLite tests pass, including fifteen real Priority 8D ownership tests.
+
 ---
 
 ## 2. Completed Components
@@ -239,6 +252,7 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - `IBackupService.cs` / `BackupService.cs`
 - `IAutomaticBackupSchedulerService.cs` / `AutomaticBackupSchedulerService.cs`
 - `IBackupRetentionService.cs` / `BackupRetentionService.cs`
+- `IDatabaseOwnershipService.cs` / `DatabaseOwnershipService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -253,7 +267,7 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - `ReservationManagementViewModel.cs` / `ReservationFormViewModel.cs` / `ReservationQueueViewModel.cs`
 - `ActivityLogsViewModel.cs` / `ActivityLogDetailsViewModel.cs`
 - `AuditRecordsViewModel.cs` / `AuditRecordFormViewModel.cs` / `AuditRecordDetailsViewModel.cs`
-- `BackupManagementViewModel.cs` / `BackupDetailsViewModel.cs`: manual backup plus automatic backup scheduler and retention controls.
+- `BackupManagementViewModel.cs` / `BackupDetailsViewModel.cs`: manual backup, automatic backup scheduler, retention controls, and database/backup ownership status controls.
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.

@@ -13,6 +13,7 @@ public partial class BackupManagementViewModel(
     IBackupService backupService,
     IAutomaticBackupSchedulerService automaticBackupSchedulerService,
     IAuthenticationService authenticationService,
+    IDatabaseOwnershipService databaseOwnershipService,
     IBackupDialogService dialogService,
     IRestoreDialogService restoreDialogService) : ObservableObject
 {
@@ -56,6 +57,19 @@ public partial class BackupManagementViewModel(
     [ObservableProperty] private ObservableCollection<BackupRetentionCandidate> _retentionCandidates = [];
     [ObservableProperty] private int _retentionCandidateCount;
     [ObservableProperty] private long _retentionCandidateBytes;
+    [ObservableProperty] private bool _applicationInstanceOwned;
+    [ObservableProperty] private bool _databaseLockAvailable;
+    [ObservableProperty] private bool _backupFolderLockAvailable;
+    [ObservableProperty] private bool _restoreLockAvailable;
+    [ObservableProperty] private bool _schedulerLockAvailable;
+    [ObservableProperty] private int _detectedStaleLockFiles;
+    [ObservableProperty] private string _ownershipLastMessage = string.Empty;
+    [ObservableProperty] private string _applicationInstanceMessage = string.Empty;
+    [ObservableProperty] private string _databaseLockMessage = string.Empty;
+    [ObservableProperty] private string _backupFolderLockMessage = string.Empty;
+    [ObservableProperty] private string _restoreLockMessage = string.Empty;
+    [ObservableProperty] private string _schedulerLockMessage = string.Empty;
+    [ObservableProperty] private bool _canCleanupOwnershipLocks;
 
     [RelayCommand]
     public async Task RefreshAsync()
@@ -87,6 +101,7 @@ public partial class BackupManagementViewModel(
                 }));
             Summary = await backupService.GetBackupStatusSummaryAsync();
             await LoadAutomaticBackupAsync();
+            await LoadOwnershipStatusAsync();
             StatusMessage = $"{BackupHistory.Count} backup history record(s) loaded.";
         }
         catch (Exception ex)
@@ -383,6 +398,53 @@ public partial class BackupManagementViewModel(
             : result.ErrorMessage ?? result.Message;
     }
 
+    [RelayCommand]
+    private async Task RefreshOwnershipStatusAsync()
+    {
+        IsBusy = true;
+        try
+        {
+            await LoadOwnershipStatusAsync();
+            StatusMessage = "Ownership status refreshed.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Unable to refresh ownership status: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task CleanupStaleLockFilesAsync()
+    {
+        if (!CanCleanupOwnershipLocks)
+        {
+            StatusMessage =
+                "The current user cannot cleanup stale ownership lock files.";
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var cleaned = await databaseOwnershipService.CleanupStaleLockFilesAsync();
+            await LoadOwnershipStatusAsync();
+            StatusMessage =
+                $"Stale ownership cleanup completed. {cleaned} lock file(s) removed.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Ownership cleanup failed: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     private async Task LoadAutomaticBackupAsync()
     {
         var settings =
@@ -401,6 +463,35 @@ public partial class BackupManagementViewModel(
         AutomaticBackupLastMessage = status.LastMessage;
         AutomaticBackupIsRunning = status.IsRunning;
         CanManageAutomaticBackups = status.CanManage;
+    }
+
+    private async Task LoadOwnershipStatusAsync()
+    {
+        var health = await databaseOwnershipService.GetOwnershipHealthAsync();
+        ApplicationInstanceOwned = health.ApplicationInstanceOwned;
+        DatabaseLockAvailable = health.DatabaseLockAvailable;
+        BackupFolderLockAvailable = health.BackupFolderLockAvailable;
+        RestoreLockAvailable = health.RestoreLockAvailable;
+        SchedulerLockAvailable = health.SchedulerLockAvailable;
+        DetectedStaleLockFiles = health.DetectedStaleLockFiles;
+        OwnershipLastMessage = string.IsNullOrWhiteSpace(health.LastOwnershipMessage)
+            ? health.Message
+            : health.LastOwnershipMessage;
+        ApplicationInstanceMessage = health.ApplicationInstanceMessage;
+        DatabaseLockMessage = health.DatabaseLockMessage;
+        BackupFolderLockMessage = health.BackupFolderLockMessage;
+        RestoreLockMessage = health.RestoreLockMessage;
+        SchedulerLockMessage = health.SchedulerLockMessage;
+        CanCleanupOwnershipLocks = CanCurrentUserCleanupOwnershipLocks();
+    }
+
+    private bool CanCurrentUserCleanupOwnershipLocks()
+    {
+        var user = authenticationService.CurrentUser;
+        return user?.UserRoles.Any(userRole =>
+            userRole.Role.Name is "Super Admin" or "Admin" ||
+            userRole.Role.RolePermissions.Any(rolePermission =>
+                rolePermission.Permission.Code == "MANAGE_OWNERSHIP_STATUS")) == true;
     }
 
     private AutomaticBackupSchedulerSettings CreateAutomaticSettings() =>

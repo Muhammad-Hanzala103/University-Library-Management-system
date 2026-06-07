@@ -126,11 +126,13 @@ public sealed class RestoreService(
             };
         }
 
-        await RestoreLock.WaitAsync(cancellationToken);
+        var semaphoreHeld = false;
         RestoreHistory? history = null;
 
         try
         {
+            await RestoreLock.WaitAsync(cancellationToken);
+            semaphoreHeld = true;
             EnsureSqliteProvider();
             var user = authenticationService.CurrentUser;
             history = new RestoreHistory
@@ -289,7 +291,10 @@ public sealed class RestoreService(
         }
         finally
         {
-            RestoreLock.Release();
+            if (semaphoreHeld)
+            {
+                RestoreLock.Release();
+            }
             await ownershipService.ReleaseCriticalOperationLockAsync("Restore Staging", targetPath);
         }
     }

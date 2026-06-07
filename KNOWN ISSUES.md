@@ -47,13 +47,13 @@ This document outlines modules that are currently implemented or stubbed, listin
 - WhatsApp remains a disabled placeholder.
 - A hosted overdue scheduler is implemented but disabled by default.
 - Startup runs and automatic pending-email delivery are independently disabled by default.
-- Scheduler overlap protection uses an in-process semaphore. Separate desktop application processes are not coordinated by an OS mutex or distributed lease.
+- Scheduler overlap protection uses both an in-process semaphore and Priority 8D cross-process ownership locks for configured SQLite databases.
 - Scheduler timeout and shutdown cancellation are cooperative. EF Core and MailKit receive cancellation tokens, but an external provider or operating-system call may not stop instantaneously.
 - SQLite busy/locked errors receive three short retries. Other exceptions are persisted and logged without indefinite retry.
 - The worker polls settings every 30 seconds while disabled. There is no push-based settings notification.
 - The Overdue Reminders screen displays scheduler settings but does not edit them. A full Settings screen remains pending.
 - A stale persisted running flag after an abnormal process termination is cleared when scheduler status is next loaded.
-- Deduplication is enforced per issue, notification type, channel, local date, and cooldown query. Multi-process concurrency beyond the unique date key remains a deployment consideration.
+- Deduplication is enforced per issue, notification type, channel, local date, and cooldown query. Priority 8D adds local database ownership locks, but distributed/cloud multi-client contention remains a deployment consideration.
 
 ### Reports & Exports
 - Sixteen reports are implemented: the five Priority 5A reports plus Student Clearance, Student Borrowing History, Faculty Staff Borrowing History, Reservation, Lost And Damaged Books, Deleted Books Archive, Visit Detail, Audit, Inventory, New Arrivals, and Stock Verification.
@@ -83,7 +83,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - A normal return is committed before the reservation availability hook runs. This protects completed circulation transactions; if the subsequent availability update fails, the operator receives a clear message and can retry from Reservation Management.
 - Availability creates records only. Email remains subject to the existing manual SMTP workflow, and in-app records still have no popup or badge delivery mechanism.
 - Reservation notification deduplication uses the existing unique `DeduplicationKey` field with reservation-specific keys; no new database columns or migration were required.
-- Fulfillment is restricted to the first active queue member and reuses circulation eligibility. Multi-process races between separate desktop application instances remain a deployment concern.
+- Fulfillment is restricted to the first active queue member and reuses circulation eligibility. Priority 8D protects database-critical utility operations, but reservation-specific multi-process contention tests remain deferred.
 - No WPF UI automation covers the new reservation windows; service behavior is covered by isolated SQLite integration tests.
 
 ### Activity Logs and Audit Records
@@ -113,7 +113,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Manual verified SQLite backup creation is implemented with the Microsoft.Data.Sqlite online backup API.
 - Backup verification runs `PRAGMA integrity_check` and SHA-256 hashing against a separate read-only connection.
 - The native online backup call is synchronous internally and cannot be interrupted after it enters SQLite; it runs on a worker thread and observes cancellation before and after the native operation.
-- A process-level semaphore prevents overlapping backup operations within one application process. Separate desktop processes are not coordinated.
+- A process-level semaphore and Priority 8D ownership lease protect backup operations for the configured local SQLite database.
 - Custom destination paths are typed manually; a native folder-picker dialog remains deferred.
 - Automatic backup scheduling is implemented but disabled by default. Startup runs, retention, and physical file deletion are also disabled by default.
 - The automatic scheduler runs only while the desktop application is running after database initialization and login. It is not a Windows Service and does not run while the application is closed.
@@ -122,10 +122,11 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Retention preview and apply are implemented. History cleanup is soft-delete only unless `AutomaticBackupDeletePhysicalFiles=True`.
 - Physical retention deletion is intentionally conservative: it protects the live database, latest successful backup, failed-verification backups, restore safety backups, emergency restore files, pending restore files, unsupported extensions, files outside the configured backup folder, and detectable symbolic/reparse paths.
 - Physical file deletion and database soft-delete updates cannot be made truly atomic together because the file system and SQLite transaction are separate resources. The service validates first, logs outcomes, and keeps history soft-delete as the durable database action.
+- Retention physical deletion requires a Priority 8D critical operation lock before deleting files.
 - Verified local restore is implemented as a staged, restart-required operation. The active database is never replaced while application DbContexts are running.
 - Restore validation checks file size, SQLite integrity, SHA-256, and required application tables, but it does not prove semantic correctness of every row.
 - Startup creates an emergency copy and uses the mandatory safety backup for rollback protection. Staged, emergency, and safety files are retained; automatic cleanup is intentionally not implemented.
-- Only one pending restore is supported per configured database. Cross-process ownership protection is not implemented, so operators must not stage restores from multiple simultaneous application instances.
+- Only one pending restore is supported per configured database. Priority 8D ownership protection blocks competing restore/backup critical operations for the same local SQLite database.
 - Restore accepts `.db` files. ZIP extraction is not implemented; use the retained database file produced by Backup.
 - Restore paths are selected from backup history or typed manually; a native file picker remains deferred.
 - A critical replacement plus rollback failure stops startup and preserves pending metadata for manual recovery.
@@ -134,7 +135,15 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Metadata intentionally excludes all `SystemSettings`, including SMTP credentials.
 
 ### Automated Test Coverage
-- One hundred eighty-eight xUnit tests run against isolated temporary SQLite files and directories.
+- Two hundred three xUnit tests run against isolated temporary SQLite files and directories.
 - Branding tests cover the centralized product name, key UI files, and the default/on-off hint preference behavior.
-- Coverage also protects real online backup and staged restore files, automatic backup scheduling, retention safety rules, integrity/schema verification, SHA-256 checksums, safety backups, startup replacement, rollback, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
-- The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.
+- Coverage also protects real online backup and staged restore files, automatic backup scheduling, retention safety rules, ownership lock acquisition/release, stale-lock cleanup, cross-service backup/restore/scheduler/retention lock failures, integrity/schema verification, SHA-256 checksums, safety backups, startup replacement, rollback, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
+- The suite does not automate WPF UI interaction, real-time hourly worker delays, deployment-scale multi-process stress testing, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.
+
+### Database and Backup Ownership
+- Priority 8D uses an OS named mutex for the application instance and per-domain lease files for database, backup, restore, and scheduler critical operations.
+- Lease cleanup is intentionally conservative. It deletes only expired safe lock files or old unreadable files that can be opened exclusively.
+- Active lock files are never deleted by cleanup, even if they look old.
+- Lease files contain non-sensitive operational metadata only. They intentionally exclude `SystemSettings`, SMTP passwords, database passwords, and connection strings.
+- Ownership settings are stored in `SystemSettings`; there is no dedicated Settings screen yet to edit timeout, retention, read-only second instance, or startup cleanup policies.
+- Cross-process tests simulate competing ownership services against isolated local SQLite files. Full installer/runtime multi-instance stress testing remains a manual/deployment task.
