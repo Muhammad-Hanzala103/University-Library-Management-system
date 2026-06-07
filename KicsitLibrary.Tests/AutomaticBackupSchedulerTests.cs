@@ -467,6 +467,11 @@ public class AutomaticBackupSchedulerTests
                 .CreateDbContext());
         services.AddSingleton<IAuthenticationService>(
             new FakeAuthenticationService(user, canManage));
+
+        // Priority 8D ownership lock dependency
+        services.AddSingleton<IDatabaseOwnershipService>(
+            new FakeDatabaseOwnershipService());
+
         if (backupService == null)
         {
             services.AddScoped<IBackupService, BackupService>();
@@ -475,6 +480,7 @@ public class AutomaticBackupSchedulerTests
         {
             services.AddScoped(_ => backupService);
         }
+
         services.AddScoped<IBackupRetentionService, BackupRetentionService>();
         services.AddSingleton<IAutomaticBackupSchedulerService, AutomaticBackupSchedulerService>();
         var provider = services.BuildServiceProvider();
@@ -641,6 +647,68 @@ public class AutomaticBackupSchedulerTests
             });
 
         public Task LogoutAsync() => Task.CompletedTask;
+    }
+
+    private sealed class FakeDatabaseOwnershipService : IDatabaseOwnershipService
+    {
+        public Task<DatabaseOwnershipResult> AcquireApplicationInstanceLockAsync(
+            string databasePath,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new DatabaseOwnershipResult { Succeeded = true });
+
+        public Task ReleaseApplicationInstanceLockAsync() =>
+            Task.CompletedTask;
+
+        public Task<DatabaseOwnershipStatus> GetApplicationInstanceStatusAsync(
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new DatabaseOwnershipStatus { IsOwned = true });
+
+        public Task<CriticalOperationLockResult> AcquireCriticalOperationLockAsync(
+            string operationName,
+            string databasePath,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new CriticalOperationLockResult
+            {
+                Succeeded = true,
+                OperationName = operationName
+            });
+
+        public Task ReleaseCriticalOperationLockAsync(
+            string operationName,
+            string databasePath) =>
+            Task.CompletedTask;
+
+        public Task<T> RunWithCriticalOperationLockAsync<T>(
+            string operationName,
+            string databasePath,
+            Func<CancellationToken, Task<T>> operation,
+            CancellationToken cancellationToken = default) =>
+            operation(cancellationToken);
+
+        public Task RunWithCriticalOperationLockAsync(
+            string operationName,
+            string databasePath,
+            Func<CancellationToken, Task> operation,
+            CancellationToken cancellationToken = default) =>
+            operation(cancellationToken);
+
+        public Task<OwnershipHealthCheckResult> GetOwnershipHealthAsync(
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new OwnershipHealthCheckResult
+            {
+                Succeeded = true,
+                DatabaseLockAvailable = true,
+                BackupFolderLockAvailable = true,
+                RestoreLockAvailable = true,
+                SchedulerLockAvailable = true,
+                DetectedStaleLockFiles = 0,
+                Message = "Health check completed."
+            });
+
+        public Task<int> CleanupStaleLockFilesAsync(
+            bool bypassAuthorization = false,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(0);
     }
 
     private sealed class BlockingBackupService : IBackupService
