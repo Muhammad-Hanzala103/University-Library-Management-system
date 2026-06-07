@@ -145,9 +145,24 @@ Deferred refinements:
 
 ---
 
-## Priority 8: Backup, Sync & Deployment
-- **Goal**: Protect data integrity via local backup scripts, cloud replication, and packaging.
-- [ ] Create backup services executing SQL raw dumps (`.sql` scripts) or file-copy tasks of the SQLite `.db` database.
+## Priority 8A: Verified Local SQLite Backup Creation
+- **Goal**: Create safe, operator-triggered, verified backups without stopping normal SQLite use.
+- [x] Use the Microsoft.Data.Sqlite online backup API instead of copying the live database file.
+- [x] Add timestamped, sanitized, non-overwriting backup file creation.
+- [x] Add read-only `PRAGMA integrity_check` verification and SHA-256 checksums.
+- [x] Add metadata JSON, optional ZIP compression, backup history, summaries, filters, and activity logs.
+- [x] Add additive `BackupHistories` compatibility table and indexes without migrations.
+- [x] Add Backup Management and details MVVM screens, navigation, authorization, and DI.
+- [x] Seed manual-backup settings and backup view/manage permissions.
+- [x] Add thirteen isolated SQLite tests; all one hundred forty-eight tests pass.
+
+Deferred refinements:
+- [ ] Add automatic retention only with a separately approved scheduler and explicit file-safety policy.
+- [ ] Add a native folder picker; Priority 8A supports the default Documents path and typed custom paths.
+- [ ] Add WPF UI automation and multi-process backup coordination tests.
+
+## Priority 8B+: Restore, Sync & Deployment
+- **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Implement database restore logic with automatic verification checks.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
 - [ ] Configure `appsettings.json` encryption routines for sensitive credentials.

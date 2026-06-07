@@ -52,6 +52,7 @@ namespace KicsitLibrary.Data
         public DbSet<DeletedRecordArchive> DeletedRecordArchives => Set<DeletedRecordArchive>();
         public DbSet<StockVerificationSessionRecord> StockVerificationSessions => Set<StockVerificationSessionRecord>();
         public DbSet<StockVerificationEntry> StockVerificationEntries => Set<StockVerificationEntry>();
+        public DbSet<BackupHistory> BackupHistories => Set<BackupHistory>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -110,6 +111,9 @@ namespace KicsitLibrary.Data
             modelBuilder.Entity<InventoryItem>().HasIndex(ii => ii.ItemType);
             modelBuilder.Entity<StockVerificationSessionRecord>().HasIndex(item => item.SessionNumber).IsUnique();
             modelBuilder.Entity<StockVerificationEntry>().HasIndex(item => new { item.SessionId, item.BookCopyId }).IsUnique();
+            modelBuilder.Entity<BackupHistory>().HasIndex(item => item.CreatedAt);
+            modelBuilder.Entity<BackupHistory>().HasIndex(item => item.Status);
+            modelBuilder.Entity<BackupHistory>().HasIndex(item => item.CreatedByUserName);
 
             // 2b. Enum to String Conversions
             modelBuilder.Entity<BookCopy>()

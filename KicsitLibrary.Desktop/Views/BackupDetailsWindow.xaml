@@ -1,0 +1,38 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.BackupDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Backup Details"
+        Width="700"
+        Height="620"
+        WindowStartupLocation="CenterOwner">
+    <ScrollViewer>
+        <Border Style="{StaticResource CardStyle}" Margin="15">
+            <StackPanel>
+                <TextBlock Text="{Binding Backup.BackupFileName}" FontSize="21" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Backup.Status, StringFormat=Status: {0}}" Margin="0,8,0,0"/>
+                <TextBlock Text="{Binding Backup.VerificationStatus, StringFormat=Verification: {0}}"/>
+                <TextBlock Text="{Binding Backup.CreatedAt, StringFormat=Created: {0:dd-MMM-yyyy HH:mm:ss}}"/>
+                <TextBlock Text="{Binding Backup.VerifiedAt, StringFormat=Verified: {0:dd-MMM-yyyy HH:mm:ss}}"/>
+                <TextBlock Text="{Binding Backup.CreatedBy, StringFormat=Created by: {0}}"/>
+                <TextBlock Text="{Binding Backup.BackupSizeBytes, StringFormat=Size: {0:N0} bytes}"/>
+                <TextBlock Text="Checksum SHA-256" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <TextBox Text="{Binding Backup.ChecksumSha256}" IsReadOnly="True" TextWrapping="Wrap"/>
+                <TextBlock Text="Database path" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <TextBox Text="{Binding Backup.BackupFilePath}" IsReadOnly="True" TextWrapping="Wrap"/>
+                <TextBlock Text="Compressed path" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <TextBox Text="{Binding Backup.CompressedFilePath}" IsReadOnly="True" TextWrapping="Wrap"/>
+                <TextBlock Text="Reason" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <TextBlock Text="{Binding Backup.Reason}" TextWrapping="Wrap"/>
+                <TextBlock Text="Error" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <TextBlock Text="{Binding Backup.ErrorMessage}" TextWrapping="Wrap"/>
+                <TextBlock Text="Metadata JSON" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <TextBox Text="{Binding Backup.MetadataJson}"
+                         IsReadOnly="True"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         MinHeight="180"/>
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</Window>

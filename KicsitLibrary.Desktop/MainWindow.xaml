@@ -62,6 +62,9 @@
         <DataTemplate DataType="{x:Type vm:StockVerificationViewModel}">
             <views:StockVerificationView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BackupManagementViewModel}">
+            <views:BackupManagementView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -145,6 +148,9 @@
                     <Button Style="{StaticResource SidebarButton}" Content="Stock Verification"
                             Command="{Binding NavigateToStockVerificationCommand}"
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Stock Verification}"/>
+                    <Button Style="{StaticResource SidebarButton}" Content="Backup Management"
+                            Command="{Binding NavigateToBackupsCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Backup Management}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Reports &amp; Analytics" 
                             Command="{Binding NavigateToReportsCommand}"

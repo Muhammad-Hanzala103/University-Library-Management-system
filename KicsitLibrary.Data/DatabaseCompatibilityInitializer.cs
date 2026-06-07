@@ -99,6 +99,30 @@ namespace KicsitLibrary.Data
                         "DeletedByUserId" INTEGER NULL
                     );
                     """);
+                await context.Database.ExecuteSqlRawAsync("""
+                    CREATE TABLE IF NOT EXISTS "BackupHistories" (
+                        "Id" INTEGER NOT NULL CONSTRAINT "PK_BackupHistories" PRIMARY KEY AUTOINCREMENT,
+                        "BackupFileName" TEXT NOT NULL,
+                        "BackupFilePath" TEXT NOT NULL,
+                        "CompressedFilePath" TEXT NULL,
+                        "BackupSizeBytes" INTEGER NOT NULL DEFAULT 0,
+                        "ChecksumSha256" TEXT NULL,
+                        "CreatedByUserId" INTEGER NOT NULL,
+                        "CreatedByUserName" TEXT NOT NULL,
+                        "VerifiedAt" TEXT NULL,
+                        "VerificationStatus" TEXT NOT NULL DEFAULT 'Pending',
+                        "Reason" TEXT NULL,
+                        "Status" TEXT NOT NULL DEFAULT 'InProgress',
+                        "ErrorMessage" TEXT NULL,
+                        "MetadataJson" TEXT NULL,
+                        "CreatedAt" TEXT NOT NULL,
+                        "UpdatedAt" TEXT NULL,
+                        "IsDeleted" INTEGER NOT NULL DEFAULT 0,
+                        "DeletedAt" TEXT NULL,
+                        "DeletedReason" TEXT NULL,
+                        "DeletedByUserId" INTEGER NULL
+                    );
+                    """);
 
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_NotificationRecords_IssueRecordId\" " +
@@ -120,6 +144,12 @@ namespace KicsitLibrary.Data
                     "CREATE UNIQUE INDEX IF NOT EXISTS \"IX_StockVerificationSessions_SessionNumber\" ON \"StockVerificationSessions\" (\"SessionNumber\");");
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE UNIQUE INDEX IF NOT EXISTS \"IX_StockVerificationEntries_SessionId_BookCopyId\" ON \"StockVerificationEntries\" (\"SessionId\", \"BookCopyId\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_BackupHistories_CreatedAt\" ON \"BackupHistories\" (\"CreatedAt\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_BackupHistories_Status\" ON \"BackupHistories\" (\"Status\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_BackupHistories_CreatedByUserName\" ON \"BackupHistories\" (\"CreatedByUserName\");");
             }
             finally
             {

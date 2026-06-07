@@ -1,5 +1,33 @@
 # Codex Continuation Audit
 
+## Priority 8A Completion Update
+
+Completion date: 2026-06-07
+
+- Added `BackupHistory`, backup request/result/history/verification/settings/summary models, and `IBackupService`.
+- Added `BackupService` using the Microsoft.Data.Sqlite online backup API, separate read-only integrity verification, SHA-256 checksums, metadata JSON, optional ZIP compression, non-overwriting paths, and process-level overlap protection.
+- Added additive `BackupHistories` compatibility SQL and indexes without migrations or destructive changes.
+- Seeded backup defaults plus `VIEW_BACKUPS` and `MANAGE_BACKUPS` permissions.
+- Added Backup Management and details MVVM screens, navigation, authorization, and DI.
+- Super Admin/Admin can create and verify; Librarian/Auditor are view-only unless permissions are changed.
+- Added thirteen isolated SQLite tests; one hundred forty-eight tests pass.
+- No restore, scheduler, retention deletion, deployment, Supabase sync, migrations, WhatsApp, document upload, or final README work was added.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 148 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Priority 8B, implement verified local SQLite restore only, requiring an explicit pre-restore safety backup, exclusive database access, integrity validation before replacement, rollback on failure, and isolated tests. Do not include scheduling, retention deletion, deployment, Supabase sync, migrations, or final README work.
+
 ## Priority 7A Completion Update
 
 Completion date: 2026-06-07

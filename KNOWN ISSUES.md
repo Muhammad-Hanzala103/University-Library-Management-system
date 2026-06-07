@@ -103,9 +103,17 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Currently, the database provider runs 100% locally on SQLite. There is no background worker that pushes local SQLite transaction records to a remote Supabase Postgres cloud instance.
 
 ### System Backups
-- Database backup dump scripts, file replication utilities, and SQL recovery mechanisms are pending implementation.
+- Manual verified SQLite backup creation is implemented with the Microsoft.Data.Sqlite online backup API.
+- Backup verification runs `PRAGMA integrity_check` and SHA-256 hashing against a separate read-only connection.
+- The native online backup call is synchronous internally and cannot be interrupted after it enters SQLite; it runs on a worker thread and observes cancellation before and after the native operation.
+- A process-level semaphore prevents overlapping backup operations within one application process. Separate desktop processes are not coordinated.
+- Custom destination paths are typed manually; a native folder-picker dialog remains deferred.
+- Retention settings are seeded but no automatic file/history deletion is implemented.
+- Restore, automatic scheduling, Supabase sync, and deployment remain unimplemented.
+- Backup history soft deletion never deletes physical backup files.
+- Metadata intentionally excludes all `SystemSettings`, including SMTP credentials.
 
 ### Automated Test Coverage
-- One hundred thirty-five xUnit tests run against isolated temporary SQLite files.
-- Coverage also protects inventory lifecycle rules, activity logs, inventory reporting, stock-verification sessions, mismatch rules, completion summaries, explicit reconciliation, stock reporting, and authorization.
+- One hundred forty-eight xUnit tests run against isolated temporary SQLite files.
+- Coverage also protects real online backup files, integrity verification, SHA-256 checksums, history, metadata redaction, non-overwrite behavior, ZIP contents, failure handling, logging, ordering, summaries, and authorization.
 - The suite does not automate WPF UI interaction, real-time hourly worker delays, multi-process concurrency, migration adoption, a live SMTP server, or visual PDF/Excel layout inspection.

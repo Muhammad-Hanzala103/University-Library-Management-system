@@ -21,6 +21,7 @@ using KicsitLibrary.Services.Clearance;
 using KicsitLibrary.Services.Reservations;
 using KicsitLibrary.Services.Auditing;
 using KicsitLibrary.Services.Inventory;
+using KicsitLibrary.Services.Backup;
 using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
@@ -118,6 +119,8 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IInventoryService, InventoryService>();
                     services.AddScoped<IStockVerificationService, StockVerificationService>();
                     services.AddSingleton<IInventoryDialogService, InventoryDialogService>();
+                    services.AddScoped<IBackupService, BackupService>();
+                    services.AddSingleton<IBackupDialogService, BackupDialogService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -164,6 +167,8 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<InventoryAdjustmentViewModel>();
                     services.AddTransient<StockVerificationViewModel>();
                     services.AddTransient<StockVerificationDetailsViewModel>();
+                    services.AddTransient<BackupManagementViewModel>();
+                    services.AddTransient<BackupDetailsViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
                     services.AddTransient<ReportsDashboardView>();
@@ -186,6 +191,8 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<InventoryAdjustmentWindow>();
                     services.AddTransient<StockVerificationView>();
                     services.AddTransient<StockVerificationDetailsWindow>();
+                    services.AddTransient<BackupManagementView>();
+                    services.AddTransient<BackupDetailsWindow>();
                 })
                 .Build();
         }

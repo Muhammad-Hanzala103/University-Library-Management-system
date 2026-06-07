@@ -19,7 +19,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 6B (Reservation Workflow Completion)**: **100% Completed**
 - **Priority 7A (Activity Log Browser & Audit Records Workflow)**: **100% Completed**
 - **Priority 7B (Inventory Management & Physical Stock Verification)**: **100% Completed**
-- **Priority 8 (Backup, Sync & Deployment)**: **Pending Implementation**
+- **Priority 8A (Verified Local SQLite Backup Creation)**: **100% Completed**
+- **Priority 8B+ (Restore, Sync & Deployment)**: **Pending Implementation**
 
 ### Priority 4A Foundation
 - Startup uses `EnsureCreatedAsync` only. EF migrations remain deliberately deferred.
@@ -133,6 +134,17 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Document attachment metadata remains read-only; the upload/remove workflow is deferred.
 - One hundred thirty-five isolated SQLite tests pass, including nineteen Priority 7B tests.
 
+### Priority 8A Verified Local SQLite Backup Creation
+- Added manual online SQLite backups using `Microsoft.Data.Sqlite.SqliteConnection.BackupDatabase`; the live database file is not copied directly.
+- Every backup receives a timestamped, sanitized, non-overwriting file name under `Documents\KICSIT Library Backups` by default.
+- Backup verification reopens the generated database read-only, runs `PRAGMA integrity_check`, and computes a SHA-256 checksum.
+- Metadata JSON excludes system settings and SMTP credentials; optional ZIP compression includes the database and metadata while retaining the original database file.
+- Added persisted backup history, status summaries, filters, soft-delete support, and activity logs for creation, verification, compression failure, authorization denial, and history deletion.
+- Existing SQLite databases receive the `BackupHistories` table and indexes through the additive compatibility initializer; no migrations or destructive schema changes were added.
+- Added a real Backup Management MVVM screen, details dialog, navigation, and DI registrations.
+- Super Admin/Admin can create and verify backups. Librarian/Auditor can view history. Other roles require the seeded backup permissions.
+- One hundred forty-eight isolated SQLite tests pass, including thirteen Priority 8A tests.
+
 ---
 
 ## 2. Completed Components
@@ -167,6 +179,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `IReservationService.cs` / `ReservationService.cs`
 - `IActivityLogBrowserService.cs` / `ActivityLogBrowserService.cs`
 - `IAuditRecordService.cs` / `AuditRecordService.cs`
+- `IBackupService.cs` / `BackupService.cs`
 
 ### ViewModels (`KicsitLibrary.Desktop/ViewModels/`)
 - `MainViewModel.cs`: Shell navigation controller.
@@ -181,6 +194,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `ReservationManagementViewModel.cs` / `ReservationFormViewModel.cs` / `ReservationQueueViewModel.cs`
 - `ActivityLogsViewModel.cs` / `ActivityLogDetailsViewModel.cs`
 - `AuditRecordsViewModel.cs` / `AuditRecordFormViewModel.cs` / `AuditRecordDetailsViewModel.cs`
+- `BackupManagementViewModel.cs` / `BackupDetailsViewModel.cs`
 
 ### Views (`KicsitLibrary.Desktop/Views/` & Root)
 - `MainWindow.xaml` / `MainWindow.xaml.cs`: Primary shell window.
@@ -195,6 +209,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `ReservationManagementView.xaml` / `ReservationFormWindow.xaml` / `ReservationQueueWindow.xaml`
 - `ActivityLogsView.xaml` / `ActivityLogDetailsWindow.xaml`
 - `AuditRecordsView.xaml` / `AuditRecordFormWindow.xaml` / `AuditRecordDetailsWindow.xaml`
+- `BackupManagementView.xaml` / `BackupDetailsWindow.xaml`
 
 ### Navigation & Routes Wired
 - `"Dashboard"` -> `DashboardViewModel`
@@ -212,16 +227,18 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - `"Reservations"` -> `ReservationManagementViewModel`
 - `"Activity Logs"` -> `ActivityLogsViewModel`
 - `"Audit Records"` -> `AuditRecordsViewModel`
+- `"Inventory Management"` -> `InventoryManagementViewModel`
+- `"Stock Verification"` -> `StockVerificationViewModel`
+- `"Backup Management"` -> `BackupManagementViewModel`
 
 ---
 
 ## 3. Pending Components
 
 - **Views & ViewModels**:
-  - `InventoryManagementView.xaml` & `InventoryManagementViewModel.cs` (Mapped but not implemented)
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:
-  - `IBackupSyncService`: Local backup scripts and Supabase sync logic.
+  - Verified local restore, automatic backup scheduling/retention, Supabase sync, and deployment remain pending.
 - **Final Release Documentation**:
   - Generate a complete professional repository-root `README.md` at final release so GitHub displays the project overview on the repository front page.
   - The final README must include the project title, overview, key features, technology stack, architecture, screenshots placeholder, installation guide, database setup, default login accounts, build and test commands, release notes, known limitations, future improvements, contributors, and license placeholder.

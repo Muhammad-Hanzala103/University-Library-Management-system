@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite file per test under `%TEMP%\Kics
 Current expected result:
 
 ```text
-Passed: 135
+Passed: 148
 Failed: 0
 Skipped: 0
 ```
@@ -107,6 +107,27 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 ```
 
 Priority 7B tests use isolated temporary SQLite files. They cover inventory validation and lifecycle actions, activity logs, both reports, verification sessions, mismatch rules, completion summaries, explicit reconciliation, and authorization.
+
+Run only Priority 8A backup tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~BackupWorkflowTests"
+```
+
+Priority 8A tests create isolated temporary source databases and temporary backup folders. They verify real database files, SQLite integrity checks, SHA-256 checksums, metadata redaction, non-overwrite behavior, ZIP contents, failure history, activity logs, ordering, authorization, and summaries.
+
+## Manual Backup Verification
+
+1. Sign in as Super Admin or Admin and open **Backup Management**.
+2. Confirm the default destination is `%USERPROFILE%\Documents\KICSIT Library Backups`.
+3. Enter a reason, keep **Verify after creation** enabled, and select **Create Backup**.
+4. Confirm a `.db` file and `.metadata.json` file are created with a timestamped name.
+5. Select the history row and use **Verify Selected**; confirm verification is `Passed` and a SHA-256 checksum is shown.
+6. Enable **Create ZIP**, create another backup, and confirm the ZIP contains both the database and metadata file while the original `.db` remains.
+7. Use **Open Backup Folder** and **View Details**.
+8. Confirm `Backup Created` and `Backup Verification Passed` records appear in Activity Logs.
+9. Sign in as Auditor or Librarian and confirm history is viewable but creation is blocked.
+10. Confirm no restore, scheduler, retention deletion, sync, or deployment action is present.
 
 ## Manual Inventory and Stock Verification
 
