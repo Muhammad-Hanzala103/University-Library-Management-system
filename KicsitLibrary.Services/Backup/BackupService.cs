@@ -15,7 +15,8 @@ namespace KicsitLibrary.Services.Backup;
 
 public sealed class BackupService(
     KicsitLibraryDbContext context,
-    IAuthenticationService authenticationService) : IBackupService
+    IAuthenticationService authenticationService,
+    IDatabaseOwnershipService ownershipService) : IBackupService
 {
     private static readonly SemaphoreSlim BackupLock = new(1, 1);
 
@@ -34,6 +35,14 @@ public sealed class BackupService(
         }
 
         request ??= new BackupRequest();
+        
+        string dbPath = Path.GetFullPath(context.Database.GetDbConnection().DataSource);
+        var lockResult = await ownershipService.AcquireCriticalOperationLockAsync("Backup Creation", dbPath, cancellationToken);
+        if (!lockResult.Succeeded)
+        {
+            return Failure(startedAt, lockResult.ErrorMessage);
+        }
+
         await BackupLock.WaitAsync(cancellationToken);
         BackupHistory? history = null;
         string backupPath = string.Empty;
@@ -196,6 +205,7 @@ public sealed class BackupService(
         finally
         {
             BackupLock.Release();
+            await ownershipService.ReleaseCriticalOperationLockAsync("Backup Creation", dbPath);
         }
     }
 

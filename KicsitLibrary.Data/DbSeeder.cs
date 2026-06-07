@@ -66,7 +66,9 @@ namespace KicsitLibrary.Data
                 new() { Code = "MANAGE_BACKUPS", Name = "Manage Backups", Description = "Create and verify local backups." },
                 new() { Code = "MANAGE_AUTOMATIC_BACKUPS", Name = "Manage Automatic Backups", Description = "Configure automatic backups and apply retention." },
                 new() { Code = "VIEW_RESTORES", Name = "View Restores", Description = "View local restore history." },
-                new() { Code = "MANAGE_RESTORES", Name = "Manage Restores", Description = "Stage verified local database restores." }
+                new() { Code = "MANAGE_RESTORES", Name = "Manage Restores", Description = "Stage verified local database restores." },
+                new() { Code = "VIEW_OWNERSHIP_STATUS", Name = "View Ownership Status", Description = "View cross process database ownership status." },
+                new() { Code = "MANAGE_OWNERSHIP_STATUS", Name = "Manage Ownership Status", Description = "Cleanup stale ownership lock files." }
             };
 
             foreach (var p in permissions)
@@ -81,10 +83,10 @@ namespace KicsitLibrary.Data
             // 3. Seed RolePermissions
             var rolePermissionMappings = new List<(Role role, string[] permissionCodes)>
             {
-                (adminRole, new[] { "MANAGE_USERS", "MANAGE_ROLES", "VIEW_REPORTS", "MANAGE_SYSTEM", "VIEW_BACKUPS", "MANAGE_BACKUPS", "MANAGE_AUTOMATIC_BACKUPS", "VIEW_RESTORES", "MANAGE_RESTORES" }),
-                (librarianRole, new[] { "MANAGE_BOOKS", "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_FINES", "MANAGE_RESERVATIONS", "VIEW_REPORTS", "MANAGE_VISITS", "MANAGE_AUDITS", "VIEW_AUDITS", "MANAGE_INVENTORY", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES" }),
+                (adminRole, new[] { "MANAGE_USERS", "MANAGE_ROLES", "VIEW_REPORTS", "MANAGE_SYSTEM", "VIEW_BACKUPS", "MANAGE_BACKUPS", "MANAGE_AUTOMATIC_BACKUPS", "VIEW_RESTORES", "MANAGE_RESTORES", "VIEW_OWNERSHIP_STATUS", "MANAGE_OWNERSHIP_STATUS" }),
+                (librarianRole, new[] { "MANAGE_BOOKS", "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_FINES", "MANAGE_RESERVATIONS", "VIEW_REPORTS", "MANAGE_VISITS", "MANAGE_AUDITS", "VIEW_AUDITS", "MANAGE_INVENTORY", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES", "VIEW_OWNERSHIP_STATUS" }),
                 (assistantLibrarianRole, new[] { "ISSUE_BOOK", "RECEIVE_BOOK", "MANAGE_RESERVATIONS", "VIEW_REPORTS" }),
-                (auditorRole, new[] { "VIEW_REPORTS", "VIEW_AUDITS", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES" }),
+                (auditorRole, new[] { "VIEW_REPORTS", "VIEW_AUDITS", "VIEW_INVENTORY", "VIEW_BACKUPS", "VIEW_RESTORES", "VIEW_OWNERSHIP_STATUS" }),
                 (viewerRole, new[] { "VIEW_REPORTS" })
             };
 
@@ -238,7 +240,12 @@ namespace KicsitLibrary.Data
                 { "AutomaticBackupLastSuccessAt", ("", "UTC timestamp of the most recent successful automatic backup", "AutomaticBackup") },
                 { "AutomaticBackupLastFailureAt", ("", "UTC timestamp of the most recent failed automatic backup", "AutomaticBackup") },
                 { "AutomaticBackupLastMessage", ("", "Summary of the most recent automatic backup invocation", "AutomaticBackup") },
-                { "AutomaticBackupIsRunning", ("False", "Persisted automatic backup running indicator", "AutomaticBackup") }
+                { "AutomaticBackupIsRunning", ("False", "Persisted automatic backup running indicator", "AutomaticBackup") },
+                { "SingleInstanceMode", ("True", "Block multiple simultaneous desktop application instances", "System") },
+                { "CriticalOperationLockTimeoutSeconds", ("15", "Seconds to wait before timing out a critical operation lock", "System") },
+                { "AllowReadOnlySecondInstance", ("False", "Allow a second instance to open in read-only mode if SingleInstanceMode is True", "System") },
+                { "CleanupStaleLockFilesOnStartup", ("True", "Automatically clean up orphaned lock files during startup", "System") },
+                { "LockFileRetentionMinutes", ("120", "Minutes before an inactive lock file is considered stale and can be cleaned", "System") }
             };
 
             foreach (var setting in defaultSettings)

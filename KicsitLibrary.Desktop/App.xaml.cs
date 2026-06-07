@@ -24,6 +24,7 @@ using KicsitLibrary.Services.Inventory;
 using KicsitLibrary.Services.Backup;
 using KicsitLibrary.Services.Restore;
 using KicsitLibrary.Services.Notifications;
+using KicsitLibrary.Services.Ownership;
 using KicsitLibrary.Services.Preferences;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
@@ -130,6 +131,7 @@ namespace KicsitLibrary.Desktop
                     services.AddSingleton<IBackupDialogService, BackupDialogService>();
                     services.AddScoped<IRestoreService, RestoreService>();
                     services.AddSingleton<IRestoreDialogService, RestoreDialogService>();
+                    services.AddSingleton<IDatabaseOwnershipService, DatabaseOwnershipService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -214,26 +216,80 @@ namespace KicsitLibrary.Desktop
         {
             try
             {
+                await AppHost!.StartAsync();
+                
                 var configuration = AppHost!.Services.GetRequiredService<IConfiguration>();
                 var provider =
                     configuration.GetValue<string>("SystemSettings:DatabaseProvider") ?? "SqlServer";
                 string? sqliteDatabasePath = null;
+                
+                var ownershipService = AppHost.Services.GetRequiredService<IDatabaseOwnershipService>();
+                
                 if (provider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
                 {
                     var resolvedConnectionString = ResolveSqliteConnectionString(
                         configuration.GetConnectionString("DefaultConnection"));
                     sqliteDatabasePath =
                         Path.GetFullPath(new SqliteConnectionStringBuilder(resolvedConnectionString).DataSource);
-                    var pendingRestore = await PendingRestoreProcessor.ApplyPendingRestoreAsync(
-                        sqliteDatabasePath);
-                    if (pendingRestore?.Status == "CriticalFailure")
+                        
+                    var instanceLock = await ownershipService.AcquireApplicationInstanceLockAsync(sqliteDatabasePath);
+                    
+                    bool singleInstanceMode = true;
+                    bool allowReadOnly = false;
+                    bool cleanupStaleLocks = true;
+
+                    // Read settings directly to decide
+                    if (File.Exists(sqliteDatabasePath))
                     {
-                        throw new InvalidOperationException(
-                            $"Pending database restore and rollback failed: {pendingRestore.ErrorMessage}");
+                        try
+                        {
+                            var builder = new SqliteConnectionStringBuilder(resolvedConnectionString) { Mode = SqliteOpenMode.ReadOnly };
+                            using var conn = new SqliteConnection(builder.ToString());
+                            await conn.OpenAsync();
+                            using var cmd = conn.CreateCommand();
+                            cmd.CommandText = "SELECT SettingKey, SettingValue FROM SystemSettings WHERE SettingKey IN ('SingleInstanceMode', 'AllowReadOnlySecondInstance', 'CleanupStaleLockFilesOnStartup')";
+                            using var reader = await cmd.ExecuteReaderAsync();
+                            while (await reader.ReadAsync())
+                            {
+                                var key = reader.GetString(0);
+                                var val = reader.GetString(1);
+                                if (key == "SingleInstanceMode" && bool.TryParse(val, out var b1)) singleInstanceMode = b1;
+                                if (key == "AllowReadOnlySecondInstance" && bool.TryParse(val, out var b2)) allowReadOnly = b2;
+                                if (key == "CleanupStaleLockFilesOnStartup" && bool.TryParse(val, out var b3)) cleanupStaleLocks = b3;
+                            }
+                        }
+                        catch { /* Ignore if DB not fully created */ }
+                    }
+
+                    if (!instanceLock.Succeeded && singleInstanceMode && !allowReadOnly)
+                    {
+                        MessageBox.Show(
+                            "Another instance of Ilm-o-Kutub System is already running.\n\nThe application will now exit.",
+                            "Application Already Running",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                        Shutdown();
+                        return;
+                    }
+
+                    if (cleanupStaleLocks && instanceLock.Succeeded)
+                    {
+                        try { await ownershipService.CleanupStaleLockFilesAsync(true); } catch { }
+                    }
+
+                    if (instanceLock.Succeeded)
+                    {
+                        await ownershipService.RunWithCriticalOperationLockAsync("Apply Pending Restore", sqliteDatabasePath, async (ct) =>
+                        {
+                            var pendingRestore = await PendingRestoreProcessor.ApplyPendingRestoreAsync(sqliteDatabasePath);
+                            if (pendingRestore?.Status == "CriticalFailure")
+                            {
+                                throw new InvalidOperationException(
+                                    $"Pending database restore and rollback failed: {pendingRestore.ErrorMessage}");
+                            }
+                        });
                     }
                 }
-
-                await AppHost!.StartAsync();
 
                 using var scope = AppHost.Services.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<KicsitLibraryDbContext>();

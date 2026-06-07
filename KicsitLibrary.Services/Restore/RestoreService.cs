@@ -13,7 +13,8 @@ namespace KicsitLibrary.Services.Restore;
 public sealed class RestoreService(
     KicsitLibraryDbContext context,
     IAuthenticationService authenticationService,
-    IBackupService backupService) : IRestoreService
+    IBackupService backupService,
+    IDatabaseOwnershipService ownershipService) : IRestoreService
 {
     private static readonly SemaphoreSlim RestoreLock = new(1, 1);
 
@@ -111,13 +112,26 @@ public sealed class RestoreService(
     {
         request ??= new RestoreRequest();
         var startedAt = DateTime.UtcNow;
+        var targetPath = GetDatabasePath();
+        var lockResult = await ownershipService.AcquireCriticalOperationLockAsync("Restore Staging", targetPath, cancellationToken);
+        if (!lockResult.Succeeded)
+        {
+            return new RestoreResult
+            {
+                Succeeded = false,
+                Message = "Restore staging failed.",
+                ErrorMessage = lockResult.ErrorMessage,
+                StartedAt = startedAt,
+                FinishedAt = DateTime.UtcNow
+            };
+        }
+
         await RestoreLock.WaitAsync(cancellationToken);
         RestoreHistory? history = null;
 
         try
         {
             EnsureSqliteProvider();
-            var targetPath = GetDatabasePath();
             var user = authenticationService.CurrentUser;
             history = new RestoreHistory
             {
@@ -276,6 +290,7 @@ public sealed class RestoreService(
         finally
         {
             RestoreLock.Release();
+            await ownershipService.ReleaseCriticalOperationLockAsync("Restore Staging", targetPath);
         }
     }
 

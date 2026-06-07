@@ -220,8 +220,25 @@ public sealed class AutomaticBackupSchedulerService(
             scope.ServiceProvider.GetRequiredService<IBackupService>();
         var retentionService =
             scope.ServiceProvider.GetRequiredService<IBackupRetentionService>();
+        var ownershipService =
+            scope.ServiceProvider.GetRequiredService<IDatabaseOwnershipService>();
         AutomaticBackupSchedulerSettings? settings = null;
         var runStarted = false;
+        var liveDatabasePath = GetLiveDatabasePath(context);
+
+        var ownershipLock = await ownershipService.AcquireCriticalOperationLockAsync("Automatic Backup Scheduler", liveDatabasePath, cancellationToken);
+        if (!ownershipLock.Succeeded)
+        {
+            result.WasSkipped = true;
+            result.FinishedAt = DateTime.UtcNow;
+            result.Message = ownershipLock.ErrorMessage;
+            await RecordStandaloneResultAsync(
+                result,
+                "Automatic Backup Skipped",
+                CancellationToken.None);
+            _runLock.Release();
+            return result;
+        }
 
         try
         {
@@ -252,7 +269,6 @@ public sealed class AutomaticBackupSchedulerService(
                 return result;
             }
 
-            var liveDatabasePath = GetLiveDatabasePath(context);
             if (File.Exists(
                     PendingRestoreProcessor.GetPendingRequestPath(
                         liveDatabasePath)))
@@ -408,6 +424,7 @@ public sealed class AutomaticBackupSchedulerService(
             }
 
             _runLock.Release();
+            await ownershipService.ReleaseCriticalOperationLockAsync("Automatic Backup Scheduler", liveDatabasePath);
         }
     }
 

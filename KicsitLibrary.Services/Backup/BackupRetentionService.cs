@@ -13,7 +13,8 @@ namespace KicsitLibrary.Services.Backup;
 
 public sealed class BackupRetentionService(
     KicsitLibraryDbContext context,
-    IAuthenticationService authenticationService) : IBackupRetentionService
+    IAuthenticationService authenticationService,
+    IDatabaseOwnershipService ownershipService) : IBackupRetentionService
 {
     private static readonly StringComparer PathComparer =
         OperatingSystem.IsWindows()
@@ -157,9 +158,19 @@ public sealed class BackupRetentionService(
         }
 
         var result = new BackupRetentionDeleteResult();
+        var liveDatabasePath = GetLiveDatabasePath();
+        
+        if (settings.DeletePhysicalFiles)
+        {
+            var lockResult = await ownershipService.AcquireCriticalOperationLockAsync("Backup Retention", liveDatabasePath, cancellationToken);
+            if (!lockResult.Succeeded)
+            {
+                return DeleteFailure(lockResult.ErrorMessage);
+            }
+        }
+        
         try
         {
-            var liveDatabasePath = GetLiveDatabasePath();
             var knownRoot = await ResolveKnownBackupRootAsync(
                 settings,
                 cancellationToken);
@@ -265,6 +276,13 @@ public sealed class BackupRetentionService(
                 user?.Id,
                 CancellationToken.None);
             return result;
+        }
+        finally
+        {
+            if (settings.DeletePhysicalFiles)
+            {
+                await ownershipService.ReleaseCriticalOperationLockAsync("Backup Retention", liveDatabasePath);
+            }
         }
     }
 

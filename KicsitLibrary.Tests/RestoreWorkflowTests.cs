@@ -362,11 +362,12 @@ public class RestoreWorkflowTests
                 Path.Combine(root, "Backups"),
                 "Backup");
             var authentication = new FakeAuthenticationService(data.User, isAdmin);
-            var backupService = new BackupService(database.Context, authentication);
+            var ownershipService = new FakeDatabaseOwnershipService();
+            var backupService = new BackupService(database.Context, authentication, ownershipService);
             return new RestoreTestEnvironment(
                 database,
                 backupService,
-                new RestoreService(database.Context, authentication, backupService),
+                new RestoreService(database.Context, authentication, backupService, ownershipService),
                 data.User,
                 root);
         }
@@ -446,5 +447,18 @@ public class RestoreWorkflowTests
                 permissionCode is "VIEW_BACKUPS" or "MANAGE_BACKUPS" or
                     "VIEW_RESTORES" or "MANAGE_RESTORES");
         public Task LogoutAsync() => Task.CompletedTask;
+    }
+
+    private sealed class FakeDatabaseOwnershipService : IDatabaseOwnershipService
+    {
+        public Task<DatabaseOwnershipResult> AcquireApplicationInstanceLockAsync(string databasePath, CancellationToken cancellationToken = default) => Task.FromResult(new DatabaseOwnershipResult { Succeeded = true });
+        public Task ReleaseApplicationInstanceLockAsync() => Task.CompletedTask;
+        public Task<DatabaseOwnershipStatus> GetApplicationInstanceStatusAsync(CancellationToken cancellationToken = default) => Task.FromResult(new DatabaseOwnershipStatus { IsOwned = true });
+        public Task<CriticalOperationLockResult> AcquireCriticalOperationLockAsync(string operationName, string databasePath, CancellationToken cancellationToken = default) => Task.FromResult(new CriticalOperationLockResult { Succeeded = true });
+        public Task ReleaseCriticalOperationLockAsync(string operationName, string databasePath) => Task.CompletedTask;
+        public Task<T> RunWithCriticalOperationLockAsync<T>(string operationName, string databasePath, Func<CancellationToken, Task<T>> operation, CancellationToken cancellationToken = default) => operation(cancellationToken);
+        public Task RunWithCriticalOperationLockAsync(string operationName, string databasePath, Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default) => operation(cancellationToken);
+        public Task<OwnershipHealthCheckResult> GetOwnershipHealthAsync(CancellationToken cancellationToken = default) => Task.FromResult(new OwnershipHealthCheckResult { Succeeded = true });
+        public Task<int> CleanupStaleLockFilesAsync(bool bypassAuthorization = false, CancellationToken cancellationToken = default) => Task.FromResult(0);
     }
 }
