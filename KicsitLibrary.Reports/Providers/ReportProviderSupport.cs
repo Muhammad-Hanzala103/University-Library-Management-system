@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KicsitLibrary.Core;
 using KicsitLibrary.Data;
 using KicsitLibrary.Reports.Contracts;
 using KicsitLibrary.Reports.Models;
@@ -100,7 +101,7 @@ namespace KicsitLibrary.Reports.Providers
                 .Where(setting => setting.Key == "InstituteName")
                 .Select(setting => setting.Value)
                 .FirstOrDefaultAsync(cancellationToken) ??
-                "KICSIT Library";
+                ProductBrand.InstitutionName;
 
             return new ReportResult
             {

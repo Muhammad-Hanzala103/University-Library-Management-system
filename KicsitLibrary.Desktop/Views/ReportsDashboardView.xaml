@@ -49,6 +49,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Command="{Binding DataContext.SelectReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        ToolTip="Select this report and load its available filters."
                                                         CommandParameter="{Binding}"
                                                         Style="{StaticResource SecondaryButton}"
                                                         Width="175" Height="72" Margin="0,0,10,8" Padding="8">
@@ -78,8 +79,10 @@
                                Foreground="{StaticResource PrimaryBrush}"/>
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                         <Button Content="Refresh Preview" Style="{StaticResource PrimaryButton}"
+                                ToolTip="Run the selected report with the current filters."
                                 Command="{Binding RefreshPreviewCommand}" Margin="0,0,8,0"/>
                         <Button Content="Clear Filters" Style="{StaticResource SecondaryButton}"
+                                ToolTip="Reset all filters for the selected report."
                                 Command="{Binding ClearFiltersCommand}"/>
                     </StackPanel>
                 </DockPanel>
@@ -134,10 +137,13 @@
 
                 <WrapPanel Margin="0,5,0,0">
                     <Button Content="Export CSV" Style="{StaticResource SecondaryButton}"
+                            ToolTip="Export the current report rows as a CSV file."
                             Command="{Binding ExportCsvCommand}" Margin="0,0,8,0"/>
                     <Button Content="Export Excel" Style="{StaticResource SecondaryButton}"
+                            ToolTip="Generate a formatted Excel workbook for the current report."
                             Command="{Binding ExportExcelCommand}" Margin="0,0,8,0"/>
                     <Button Content="Export PDF" Style="{StaticResource SecondaryButton}"
+                            ToolTip="Generate a PDF file for the current report."
                             Command="{Binding ExportPdfCommand}"/>
                 </WrapPanel>
             </StackPanel>

@@ -50,9 +50,6 @@ namespace KicsitLibrary.Desktop.ViewModels
             IsBusy = true;
             try
             {
-                // Subtle delay to showcase modern premium loading transitions
-                await Task.Delay(800);
-
                 var user = await _authService.LoginAsync(Username, password);
                 if (user != null)
                 {

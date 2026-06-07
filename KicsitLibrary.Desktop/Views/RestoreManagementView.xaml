@@ -30,10 +30,13 @@
                 <TextBox Text="{Binding BackupFilePath, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8"/>
                 <WrapPanel>
                     <Button Content="Preview Backup" Command="{Binding PreviewBackupCommand}"
+                            ToolTip="Inspect backup contents and validation status without changing the database."
                             Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
                     <Button Content="Validate Backup" Command="{Binding ValidateBackupCommand}"
+                            ToolTip="Run SQLite integrity, schema, and checksum checks."
                             Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
                     <Button Content="Refresh Restore History" Command="{Binding RefreshCommand}"
+                            ToolTip="Reload staged, completed, failed, and rolled-back restore attempts."
                             Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
                     <TextBox Width="180" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
                     <ComboBox Width="150" ItemsSource="{Binding StatusOptions}"
@@ -61,6 +64,7 @@
         <Border Grid.Row="3" Style="{StaticResource CardStyle}" Margin="0,10,0,0">
             <StackPanel>
                 <Button Content="View Restore History Details"
+                        ToolTip="Show safety backup, checksum, status, and error details."
                         Command="{Binding ViewHistoryDetailsCommand}"
                         Style="{StaticResource SecondaryButton}"
                         HorizontalAlignment="Left"/>

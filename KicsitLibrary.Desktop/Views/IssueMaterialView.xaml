@@ -48,8 +48,8 @@
                     <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,20"/>
 
                     <!-- Action Buttons -->
-                    <Button Content="🔍 Validate Eligibility" Style="{StaticResource PrimaryButton}" Command="{Binding ValidateDetailsCommand}" Margin="0,0,0,10" Height="40"/>
-                    <Button Content="🧹 Clear All Fields" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" Height="40"/>
+                    <Button Content="🔍 Validate Eligibility" Style="{StaticResource PrimaryButton}" Command="{Binding ValidateDetailsCommand}" ToolTip="Check member eligibility, limits, and copy availability before issuing." Margin="0,0,0,10" Height="40"/>
+                    <Button Content="🧹 Clear All Fields" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" ToolTip="Clear the current issue form without saving." Height="40"/>
                 </StackPanel>
             </Border>
 
@@ -255,7 +255,8 @@
                                 </Border>
 
                                 <!-- Checkout Button -->
-                                <Button Content="📥 Confirm Book Issue" Style="{StaticResource PrimaryButton}" 
+                                <Button Content="📥 Confirm Book Issue" Style="{StaticResource PrimaryButton}"
+                                        ToolTip="Create the issue record after the displayed checks pass."
                                         Command="{Binding ConfirmIssueCommand}" Height="45" FontSize="14" FontWeight="Bold"
                                         IsEnabled="{Binding IsEligible}"/>
                             </StackPanel>

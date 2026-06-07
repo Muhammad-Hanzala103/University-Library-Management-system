@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KicsitLibrary.Desktop"
         mc:Ignorable="d"
-        Title="Login - KICSIT Library" Height="500" Width="420"
+        Title="Login - Ilm-o-Kutub System" Height="500" Width="420"
         WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
     
     <Border Background="{StaticResource BgBrush}" CornerRadius="12" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
@@ -38,7 +38,7 @@
                 <Border Width="64" Height="64" CornerRadius="32" Background="{StaticResource PrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,12">
                     <TextBlock Text="📚" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
-                <TextBlock Text="KICSIT LIBRARY" Foreground="{StaticResource PrimaryBrush}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Text="Ilm-o-Kutub System" Foreground="{StaticResource PrimaryBrush}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
                 <TextBlock Text="Dr A Q Khan Institute of Computer Sciences &amp; IT" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="0,3,0,0" HorizontalAlignment="Center"/>
             </StackPanel>
 
@@ -78,6 +78,7 @@
 
                 <!-- Login Button -->
                 <Button Style="{StaticResource PrimaryButton}" Content="Sign In" Height="40" FontSize="14"
+                        ToolTip="Sign in with an authorized library account."
                         Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordInput}" Margin="0,0,0,15"/>
 
                 <!-- Loading State overlay -->

@@ -24,6 +24,7 @@ using KicsitLibrary.Services.Inventory;
 using KicsitLibrary.Services.Backup;
 using KicsitLibrary.Services.Restore;
 using KicsitLibrary.Services.Notifications;
+using KicsitLibrary.Services.Preferences;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
 using KicsitLibrary.Reports.Export;
@@ -75,6 +76,7 @@ namespace KicsitLibrary.Desktop
                     // Register Services
                     services.AddSingleton<IPasswordHasher, PasswordHasher>();
                     services.AddSingleton<INavigationService, NavigationService>();
+                    services.AddSingleton<IHintService>(_ => HintService.Current);
                     services.AddScoped<IActivityLogService, ActivityLogService>();
                     services.AddSingleton<IAuthenticationService, AuthenticationService>();
                     services.AddScoped<IDashboardService, DashboardService>();

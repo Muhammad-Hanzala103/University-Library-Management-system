@@ -29,7 +29,7 @@ namespace KicsitLibrary.Core.Models
         public string User { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string FromEmail { get; set; } = string.Empty;
-        public string FromName { get; set; } = "KICSIT Library";
+        public string FromName { get; set; } = ProductBrand.Name;
         public bool EmailNotificationEnabled { get; set; }
         public int MaxNotificationRetryCount { get; set; } = 3;
     }

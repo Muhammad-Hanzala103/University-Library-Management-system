@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using KicsitLibrary.Services.Preferences;
 using System;
 using System.Diagnostics;
 using System.Windows;

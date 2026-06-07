@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using KicsitLibrary.Core;
 using KicsitLibrary.Reports.Models;
 
 namespace KicsitLibrary.Reports.Export
@@ -14,7 +15,7 @@ namespace KicsitLibrary.Reports.Export
             var directory = string.IsNullOrWhiteSpace(request.OutputDirectory)
                 ? Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "KICSIT Library Reports")
+                    ProductBrand.ReportFolderName)
                 : request.OutputDirectory;
             Directory.CreateDirectory(directory);
 

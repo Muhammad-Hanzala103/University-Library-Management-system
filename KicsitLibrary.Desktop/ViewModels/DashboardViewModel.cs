@@ -55,18 +55,18 @@ namespace KicsitLibrary.Desktop.ViewModels
         private void QuickCatalog() => _navigationService.NavigateTo("Book Catalog");
 
         [RelayCommand]
-        private void QuickStudents() => _navigationService.NavigateTo("Students Management");
+        private void QuickStudents() => _navigationService.NavigateTo("Students");
 
         [RelayCommand]
-        private void QuickFaculty() => _navigationService.NavigateTo("Faculty & Staff");
+        private void QuickFaculty() => _navigationService.NavigateTo("Faculty and Staff");
 
         [RelayCommand]
         private void QuickOverdue() => _navigationService.NavigateTo("Overdue Reminders");
 
         [RelayCommand]
-        private void QuickFines() => _navigationService.NavigateTo("Fines Management");
+        private void QuickFines() => _navigationService.NavigateTo("Fines");
 
         [RelayCommand]
-        private void QuickSettings() => _navigationService.NavigateTo("System Settings");
+        private void QuickSettings() => _navigationService.NavigateTo("Settings");
     }
 }

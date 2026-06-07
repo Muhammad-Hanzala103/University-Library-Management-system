@@ -70,11 +70,11 @@
                     <TextBlock Text="Revoke Reason" FontWeight="SemiBold" Margin="0,8,0,3"/>
                     <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding RevokeReason}"/>
                     <WrapPanel Margin="0,10,0,0">
-                        <Button Content="Check Clearance" Command="{Binding CheckClearanceCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/>
-                        <Button Content="Approve" Command="{Binding ApproveClearanceCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/>
-                        <Button Content="Revoke" Command="{Binding RevokeClearanceCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/>
-                        <Button Content="Generate Certificate" Command="{Binding GenerateCertificateCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/>
-                        <Button Content="Borrowing History" Command="{Binding OpenBorrowingHistoryCommand}" Style="{StaticResource SecondaryButton}"/>
+                        <Button Content="Check Clearance" Command="{Binding CheckClearanceCommand}" ToolTip="Check active issues, pending fines, and unresolved reservations." Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/>
+                        <Button Content="Approve" Command="{Binding ApproveClearanceCommand}" ToolTip="Approve clearance only when all current dues are resolved." Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/>
+                        <Button Content="Revoke" Command="{Binding RevokeClearanceCommand}" ToolTip="Revoke a previous clearance and record the reason." Style="{StaticResource DangerButton}" Margin="0,0,6,6"/>
+                        <Button Content="Generate Certificate" Command="{Binding GenerateCertificateCommand}" ToolTip="Create a branded PDF clearance certificate after revalidation." Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/>
+                        <Button Content="Borrowing History" Command="{Binding OpenBorrowingHistoryCommand}" ToolTip="Open the selected person's full borrowing history." Style="{StaticResource SecondaryButton}"/>
                     </WrapPanel>
                     <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource SuccessBrush}" TextWrapping="Wrap" Margin="0,8,0,0"/>
                     <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" TextWrapping="Wrap"

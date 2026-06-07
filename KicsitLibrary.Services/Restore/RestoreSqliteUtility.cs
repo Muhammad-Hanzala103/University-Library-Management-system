@@ -54,13 +54,13 @@ public static class RestoreSqliteUtility
                 ChecksumSha256 = checksum,
                 FileSizeBytes = fileInfo.Length,
                 ValidationMessage = passed
-                    ? "SQLite integrity and KICSIT schema checks passed."
+                    ? "SQLite integrity and application schema checks passed."
                     : "SQLite restore validation failed.",
                 ErrorMessage = passed
                     ? null
                     : !integrityPassed
                         ? $"SQLite integrity_check returned: {result}"
-                        : "The database does not contain the required KICSIT library tables."
+                        : "The database does not contain the required application tables."
             };
         }
         catch (Exception ex)

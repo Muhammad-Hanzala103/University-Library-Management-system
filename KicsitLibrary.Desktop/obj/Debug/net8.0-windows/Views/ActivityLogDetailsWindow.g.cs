@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using KicsitLibrary.Services.Preferences;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -51,7 +52,7 @@ namespace KicsitLibrary.Desktop.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/KicsitLibrary.Desktop;component/views/activitylogdetailswindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/KicsitLibrary.Desktop;V1.0.0.0;component/views/activitylogdetailswindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\ActivityLogDetailsWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

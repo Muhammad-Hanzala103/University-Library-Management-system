@@ -1,4 +1,5 @@
 using System.Text.Json;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
@@ -143,7 +144,7 @@ public sealed class ActivityLogBrowserService : IActivityLogBrowserService
         var report = new ReportResult
         {
             ReportTitle = "Activity Log Snapshot",
-            InstitutionName = "KICSIT Library",
+            InstitutionName = ProductBrand.InstitutionName,
             GeneratedAt = DateTime.UtcNow,
             GeneratedBy = _authenticationService.CurrentUser?.FullName ?? "Unknown User",
             Columns =

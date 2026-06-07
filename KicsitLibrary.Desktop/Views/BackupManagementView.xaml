@@ -47,6 +47,7 @@
                               VerticalAlignment="Bottom"
                               Margin="0,0,10,12"/>
                     <Button Content="Create Backup"
+                            ToolTip="Create and optionally verify a new local SQLite backup."
                             Command="{Binding CreateBackupCommand}"
                             Style="{StaticResource PrimaryButton}"
                             VerticalAlignment="Bottom"
@@ -59,8 +60,8 @@
                     <TextBox Width="130" Text="{Binding CreatedBy}" Margin="0,0,6,6"/>
                     <DatePicker Width="125" SelectedDate="{Binding FromDate}" Margin="0,0,6,6"/>
                     <DatePicker Width="125" SelectedDate="{Binding ToDate}" Margin="0,0,6,6"/>
-                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/>
-                    <Button Content="Clear Filters" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/>
+                    <Button Content="Refresh" Command="{Binding RefreshCommand}" ToolTip="Reload backup history and status from the database." Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/>
+                    <Button Content="Clear Filters" Command="{Binding ClearFiltersCommand}" ToolTip="Reset backup history filters." Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/>
                 </WrapPanel>
             </StackPanel>
         </Border>
@@ -86,10 +87,10 @@
         <Border Grid.Row="3" Style="{StaticResource CardStyle}" Margin="0,10,0,0">
             <StackPanel>
                 <WrapPanel>
-                    <Button Content="Verify Selected" Command="{Binding VerifySelectedCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
-                    <Button Content="Open Backup Folder" Command="{Binding OpenBackupFolderCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
-                    <Button Content="View Details" Command="{Binding ViewDetailsCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
-                    <Button Content="Restore Selected" Command="{Binding RestoreSelectedCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Verify Selected" Command="{Binding VerifySelectedCommand}" ToolTip="Run integrity and checksum verification on the selected backup." Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Open Backup Folder" Command="{Binding OpenBackupFolderCommand}" ToolTip="Open the folder containing local backup files." Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="View Details" Command="{Binding ViewDetailsCommand}" ToolTip="Show metadata, verification results, and file paths." Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Restore Selected" Command="{Binding RestoreSelectedCommand}" ToolTip="Open a validation preview before staging the selected backup." Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
                 </WrapPanel>
                 <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"/>
             </StackPanel>

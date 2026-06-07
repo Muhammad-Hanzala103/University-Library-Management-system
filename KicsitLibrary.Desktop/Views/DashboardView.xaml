@@ -303,7 +303,7 @@
                     <Button Style="{StaticResource SecondaryButton}" Content="Add Faculty/Staff" Command="{Binding QuickFacultyCommand}" Margin="0,0,10,0" Padding="12,12"/>
                     <Button Style="{StaticResource SecondaryButton}" Content="Overdue Report" Command="{Binding QuickOverdueCommand}" Margin="0,0,10,0" Padding="12,12"/>
                     <Button Style="{StaticResource SecondaryButton}" Content="Fines Report" Command="{Binding QuickFinesCommand}" Margin="0,0,10,0" Padding="12,12"/>
-                    <Button Style="{StaticResource SecondaryButton}" Content="System Settings" Command="{Binding QuickSettingsCommand}" Margin="0,0,0,0" Padding="12,12"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="Settings" Command="{Binding QuickSettingsCommand}" Margin="0,0,0,0" Padding="12,12"/>
                 </UniformGrid>
                 
             </StackPanel>

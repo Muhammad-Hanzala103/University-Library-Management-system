@@ -39,7 +39,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0" Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}"/>
-                        <Button Grid.Column="1" Content="🔍 Load" Style="{StaticResource PrimaryButton}" Command="{Binding LoadDetailsCommand}" Width="70" Margin="8,0,0,0"/>
+                        <Button Grid.Column="1" Content="🔍 Load" Style="{StaticResource PrimaryButton}" Command="{Binding LoadDetailsCommand}" ToolTip="Load the active issue and calculate the return details." Width="70" Margin="8,0,0,0"/>
                     </Grid>
 
                     <!-- Fields shown only when issue details are loaded -->
@@ -67,8 +67,8 @@
                         <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Remarks, UpdateSourceTrigger=PropertyChanged}" Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,15"/>
 
                         <!-- Actions -->
-                        <Button Content="📥 Confirm Return &amp; Save" Style="{StaticResource PrimaryButton}" Command="{Binding ConfirmReturnCommand}" Height="40" Margin="0,0,0,8"/>
-                        <Button Content="🧹 Cancel / Clear" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" Height="40"/>
+                        <Button Content="📥 Confirm Return &amp; Save" Style="{StaticResource PrimaryButton}" Command="{Binding ConfirmReturnCommand}" ToolTip="Complete the return, update copy availability, and save any fine." Height="40" Margin="0,0,0,8"/>
+                        <Button Content="🧹 Cancel / Clear" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" ToolTip="Clear the loaded return without saving changes." Height="40"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

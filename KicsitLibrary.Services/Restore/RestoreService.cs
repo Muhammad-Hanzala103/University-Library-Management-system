@@ -1,4 +1,5 @@
 using System.Text.Json;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
@@ -220,6 +221,7 @@ public sealed class RestoreService(
 
             var metadata = new PendingRestoreMetadata
             {
+                ProductName = ProductBrand.Name,
                 RestoreHistoryId = history.Id,
                 OriginalBackupFilePath = Path.GetFullPath(request.BackupFilePath),
                 StagedBackupFilePath = stagedPath,
@@ -356,7 +358,7 @@ public sealed class RestoreService(
         var root = string.IsNullOrWhiteSpace(settings.DefaultFolder)
             ? Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "KICSIT Library Backups")
+                ProductBrand.BackupFolderName)
             : settings.DefaultFolder;
         var safetyFolder = Path.Combine(root, "Restore Safety");
         return await backupService.CreateBackupAsync(new BackupRequest

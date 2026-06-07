@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:KicsitLibrary.Desktop.ViewModels"
         xmlns:views="clr-namespace:KicsitLibrary.Desktop.Views"
         mc:Ignorable="d"
-        Title="KICSIT Library Management System" Height="768" Width="1150"
+        Title="Ilm-o-Kutub System" Height="768" Width="1150"
         WindowStartupLocation="CenterScreen" Background="{StaticResource BgBrush}">
 
     <Window.Resources>
@@ -84,10 +84,10 @@
                 <RowDefinition Height="80"/>
             </Grid.RowDefinitions>
 
-            <!-- Institution Header -->
+            <!-- Product header -->
             <StackPanel Grid.Row="0" VerticalAlignment="Center" Margin="20,0">
-                <TextBlock Text="KICSIT LIBRARY" Foreground="{StaticResource TextLightBrush}" FontSize="18" FontWeight="Bold" FontFamily="Segoe UI"/>
-                <TextBlock Text="Management System" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="0,2,0,0"/>
+                <TextBlock Text="Ilm-o-Kutub" Foreground="{StaticResource TextLightBrush}" FontSize="18" FontWeight="Bold" FontFamily="Segoe UI"/>
+                <TextBlock Text="System" Foreground="#D1D5DB" FontSize="11" Margin="0,2,0,0"/>
             </StackPanel>
 
             <!-- Navigation Items -->
@@ -95,80 +95,100 @@
                 <StackPanel>
                     <Button Style="{StaticResource SidebarButton}" Content="Dashboard" 
                             Command="{Binding NavigateToDashboardCommand}" 
+                            ToolTip="Shows overall library statistics and quick actions."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Dashboard}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Book Catalog" 
                             Command="{Binding NavigateToCatalogCommand}"
+                            ToolTip="Manage titles, authors, publishers, copies, and accession numbers."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Book Catalog}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Issue Material" 
                             Command="{Binding NavigateToIssueCommand}"
+                            ToolTip="Issue available books to eligible students or faculty."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Issue Material}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Receive Material" 
                             Command="{Binding NavigateToReceiveCommand}"
+                            ToolTip="Receive returned books and calculate overdue fines."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Receive Material}"/>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Fines Management" 
+                    <Button Style="{StaticResource SidebarButton}" Content="Fines" 
                             Command="{Binding NavigateToFinesCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Fines Management}"/>
+                            ToolTip="Review, collect, waive, and track library fines."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Fines}"/>
 
                     <Button Style="{StaticResource SidebarButton}" Content="Reservations"
                             Command="{Binding NavigateToReservationsCommand}"
+                            ToolTip="Manage reservation requests and title queues."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reservations}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Overdue Reminders" 
                             Command="{Binding NavigateToOverdueCommand}"
+                            ToolTip="Review overdue loans and prepare reminder records."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Overdue Reminders}"/>
 
-                    <Button Style="{StaticResource SidebarButton}" Content="Notification Center"
+                    <Button Style="{StaticResource SidebarButton}" Content="Notifications"
                             Command="{Binding NavigateToNotificationsCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Notification Center}"/>
+                            ToolTip="Review notification history and manually deliver pending emails."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Notifications}"/>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Students Management" 
+                    <Button Style="{StaticResource SidebarButton}" Content="Students" 
                             Command="{Binding NavigateToStudentsCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Students Management}"/>
+                            ToolTip="Register students and maintain their library accounts."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Students}"/>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Faculty &amp; Staff" 
+                    <Button Style="{StaticResource SidebarButton}" Content="Faculty and Staff" 
                             Command="{Binding NavigateToFacultyCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Faculty &amp; Staff}"/>
+                            ToolTip="Register faculty and staff and maintain borrowing profiles."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Faculty and Staff}"/>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Visit Records" 
+                    <Button Style="{StaticResource SidebarButton}" Content="Visits" 
                             Command="{Binding NavigateToVisitsCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Visit Records}"/>
+                            ToolTip="Record accreditation, inspection, and official library visits."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Visits}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Audit Records" 
                             Command="{Binding NavigateToAuditCommand}"
+                            ToolTip="Manage formal audit records, findings, and follow-up status."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Audit Records}"/>
 
                     <Button Style="{StaticResource SidebarButton}" Content="Activity Logs"
                             Command="{Binding NavigateToActivityLogsCommand}"
+                            ToolTip="Review recorded user and system activity."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Activity Logs}"/>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Inventory Management" 
+                    <Button Style="{StaticResource SidebarButton}" Content="Inventory" 
                             Command="{Binding NavigateToInventoryCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Inventory Management}"/>
+                            ToolTip="Track library assets, quantities, condition, and location."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Inventory}"/>
                     <Button Style="{StaticResource SidebarButton}" Content="Stock Verification"
                             Command="{Binding NavigateToStockVerificationCommand}"
+                            ToolTip="Run and reconcile physical book stock verification sessions."
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Stock Verification}"/>
-                    <Button Style="{StaticResource SidebarButton}" Content="Backup Management"
+                    <Button Style="{StaticResource SidebarButton}" Content="Backup"
                             Command="{Binding NavigateToBackupsCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Backup Management}"/>
-                    <Button Style="{StaticResource SidebarButton}" Content="Restore Management"
+                            ToolTip="Create verified local database backups."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Backup}"/>
+                    <Button Style="{StaticResource SidebarButton}" Content="Restore"
                             Command="{Binding NavigateToRestoresCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Restore Management}"/>
+                            ToolTip="Validate and stage a safe database restore."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Restore}"/>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Reports &amp; Analytics" 
+                    <Button Style="{StaticResource SidebarButton}" Content="Reports" 
                             Command="{Binding NavigateToReportsCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reports &amp; Analytics}"/>
+                            ToolTip="Preview and export operational library reports."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reports}"/>
 
                     <Button Style="{StaticResource SidebarButton}" Content="Library Clearance"
                             Command="{Binding NavigateToClearanceCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Clearance}"/>
+                            ToolTip="Check dues and issue verified library clearance certificates."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Library Clearance}"/>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="System Settings" 
+                    <Button Style="{StaticResource SidebarButton}" Content="Settings" 
                             Command="{Binding NavigateToSettingsCommand}"
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=System Settings}"/>
+                            ToolTip="Open available application configuration options."
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Settings}"/>
                 </StackPanel>
             </ScrollViewer>
 
@@ -193,7 +213,8 @@
                     
                     <!-- Logout button placeholder -->
                     <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center"
-                            Command="{Binding LogoutCommand}">
+                            Command="{Binding LogoutCommand}"
+                            ToolTip="Sign out and return to the login screen.">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <TextBlock Text="❌" Foreground="{StaticResource TextMutedBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -225,10 +246,15 @@
                         <TextBlock Text="Dr A Q Khan Institute of Computer Sciences &amp; IT" Style="{StaticResource SubtitleTextStyle}" FontSize="11"/>
                     </StackPanel>
                     
-                    <!-- Quick Stats or Actions -->
+                    <!-- Session UI preferences -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Style="{StaticResource PrimaryButton}" Content="Issue Material" Padding="12,6" Margin="0,0,10,0"/>
-                        <Button Style="{StaticResource SecondaryButton}" Content="Add Book" Padding="12,6"/>
+                        <CheckBox Content="Show Helpful Hints"
+                                  IsChecked="{Binding ShowHelpfulHints, Mode=TwoWay}"
+                                  ToolTip="Turn practical hover guidance on or off."
+                                  ToolTipService.IsEnabled="{Binding ShowHelpfulHints}"
+                                  Foreground="{StaticResource TextDarkBrush}"
+                                  FontWeight="SemiBold"
+                                  VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -291,10 +317,13 @@
                                 <Border Width="80" Height="80" CornerRadius="40" Background="{StaticResource BgBrush}" Margin="0,0,0,15">
                                     <TextBlock Text="📚" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="KICSIT Library Management System" Style="{StaticResource TitleTextStyle}" FontSize="22" HorizontalAlignment="Center"/>
-                                <TextBlock Text="Welcome to the next generation Library Information System. Select any module from the sidebar menu to begin." 
+                                <TextBlock Text="Ilm-o-Kutub System" Style="{StaticResource TitleTextStyle}" FontSize="22" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Select a module from the sidebar to manage daily library operations." 
                                            Style="{StaticResource SubtitleTextStyle}" HorizontalAlignment="Center" Margin="0,5,0,25" TextAlignment="Center"/>
-                                <Button Style="{StaticResource PrimaryButton}" Content="Quick Search Book Catalog" HorizontalAlignment="Center" Padding="20,10"/>
+                                <Button Style="{StaticResource PrimaryButton}" Content="Quick Search Book Catalog"
+                                        Command="{Binding NavigateToCatalogCommand}"
+                                        ToolTip="Open the catalog to find books by title, author, or accession number."
+                                        HorizontalAlignment="Center" Padding="20,10"/>
                             </StackPanel>
                         </Grid>
                     </Border>

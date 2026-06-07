@@ -25,12 +25,13 @@ namespace KicsitLibrary.Reports.Export
                 var lastColumn = Math.Max(1, report.Columns.Count);
                 var rowNumber = 1;
 
-                worksheet.Cell(rowNumber, 1).Value = report.ReportTitle;
+                worksheet.Cell(rowNumber, 1).Value = report.ProductName;
                 worksheet.Range(rowNumber, 1, rowNumber, lastColumn).Merge();
                 worksheet.Cell(rowNumber, 1).Style.Font.Bold = true;
                 worksheet.Cell(rowNumber, 1).Style.Font.FontSize = 16;
                 rowNumber++;
 
+                worksheet.Cell(rowNumber++, 1).Value = report.ReportTitle;
                 worksheet.Cell(rowNumber++, 1).Value = report.InstitutionName;
                 worksheet.Cell(rowNumber++, 1).Value =
                     $"Generated: {report.GeneratedAt:dd-MMM-yyyy HH:mm:ss} by {report.GeneratedBy}";
@@ -50,7 +51,7 @@ namespace KicsitLibrary.Reports.Export
                 }
                 worksheet.Range(headerRow, 1, headerRow, lastColumn).Style.Font.Bold = true;
                 worksheet.Range(headerRow, 1, headerRow, lastColumn).Style.Fill.BackgroundColor =
-                    XLColor.FromHtml("#1B2A47");
+                    XLColor.FromHtml("#1F2937");
                 worksheet.Range(headerRow, 1, headerRow, lastColumn).Style.Font.FontColor =
                     XLColor.White;
                 worksheet.Range(headerRow, 1, headerRow, lastColumn).Style.Alignment.Horizontal =

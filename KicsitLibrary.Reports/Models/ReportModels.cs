@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KicsitLibrary.Core;
 
 namespace KicsitLibrary.Reports.Models
 {
@@ -60,6 +61,7 @@ namespace KicsitLibrary.Reports.Models
 
     public sealed class ReportResult
     {
+        public string ProductName { get; set; } = ProductBrand.Name;
         public string ReportTitle { get; set; } = string.Empty;
         public string InstitutionName { get; set; } = string.Empty;
         public DateTime GeneratedAt { get; set; }

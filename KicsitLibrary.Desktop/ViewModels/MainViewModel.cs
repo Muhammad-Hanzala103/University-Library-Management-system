@@ -11,6 +11,7 @@ namespace KicsitLibrary.Desktop.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IAuthenticationService _authService;
+        private readonly IHintService _hintService;
         private IServiceScope? _currentScope;
 
         [ObservableProperty]
@@ -25,10 +26,29 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private string _currentUserRole = "Super Admin";
 
-        public MainViewModel(INavigationService navigationService, IAuthenticationService authService)
+        public bool ShowHelpfulHints
+        {
+            get => _hintService.ShowHelpfulHints;
+            set
+            {
+                if (_hintService.ShowHelpfulHints == value)
+                {
+                    return;
+                }
+
+                _hintService.ShowHelpfulHints = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public MainViewModel(
+            INavigationService navigationService,
+            IAuthenticationService authService,
+            IHintService hintService)
         {
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _hintService = hintService ?? throw new ArgumentNullException(nameof(hintService));
 
             _navigationService.NavigationChanged += OnNavigationChanged;
 
@@ -68,15 +88,15 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<BookCatalogViewModel>();
                     break;
-                case "Students Management":
+                case "Students":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<StudentsManagementViewModel>();
                     break;
-                case "Faculty & Staff":
+                case "Faculty and Staff":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<FacultyStaffManagementViewModel>();
                     break;
-                case "Visit Records":
+                case "Visits":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<VisitRecordsViewModel>();
                     break;
@@ -88,7 +108,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<ReceiveMaterialViewModel>();
                     break;
-                case "Fines Management":
+                case "Fines":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<FinesManagementViewModel>();
                     break;
@@ -96,15 +116,15 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<OverdueRemindersViewModel>();
                     break;
-                case "Notification Center":
+                case "Notifications":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<NotificationCenterViewModel>();
                     break;
-                case "Reports & Analytics":
+                case "Reports":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<ReportsDashboardViewModel>();
                     break;
-                case "Clearance":
+                case "Library Clearance":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<ClearanceDashboardViewModel>();
                     break;
@@ -126,7 +146,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                     if (CurrentView is AuditRecordsViewModel auditRecords)
                         _ = auditRecords.RefreshAsync();
                     break;
-                case "Inventory Management":
+                case "Inventory":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<InventoryManagementViewModel>();
                     if (CurrentView is InventoryManagementViewModel inventory) _ = inventory.RefreshAsync();
@@ -136,12 +156,12 @@ namespace KicsitLibrary.Desktop.ViewModels
                     CurrentView = _currentScope?.ServiceProvider.GetService<StockVerificationViewModel>();
                     if (CurrentView is StockVerificationViewModel stock) _ = stock.RefreshAsync();
                     break;
-                case "Backup Management":
+                case "Backup":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<BackupManagementViewModel>();
                     if (CurrentView is BackupManagementViewModel backups) _ = backups.RefreshAsync();
                     break;
-                case "Restore Management":
+                case "Restore":
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<RestoreManagementViewModel>();
                     if (CurrentView is RestoreManagementViewModel restores) _ = restores.RefreshAsync();
@@ -165,22 +185,22 @@ namespace KicsitLibrary.Desktop.ViewModels
         private void NavigateToReceive() => _navigationService.NavigateTo("Receive Material");
 
         [RelayCommand]
-        private void NavigateToFines() => _navigationService.NavigateTo("Fines Management");
+        private void NavigateToFines() => _navigationService.NavigateTo("Fines");
 
         [RelayCommand]
         private void NavigateToOverdue() => _navigationService.NavigateTo("Overdue Reminders");
 
         [RelayCommand]
-        private void NavigateToNotifications() => _navigationService.NavigateTo("Notification Center");
+        private void NavigateToNotifications() => _navigationService.NavigateTo("Notifications");
 
         [RelayCommand]
-        private void NavigateToStudents() => _navigationService.NavigateTo("Students Management");
+        private void NavigateToStudents() => _navigationService.NavigateTo("Students");
 
         [RelayCommand]
-        private void NavigateToFaculty() => _navigationService.NavigateTo("Faculty & Staff");
+        private void NavigateToFaculty() => _navigationService.NavigateTo("Faculty and Staff");
 
         [RelayCommand]
-        private void NavigateToVisits() => _navigationService.NavigateTo("Visit Records");
+        private void NavigateToVisits() => _navigationService.NavigateTo("Visits");
 
         [RelayCommand]
         private void NavigateToAudit() => _navigationService.NavigateTo("Audit Records");
@@ -189,28 +209,28 @@ namespace KicsitLibrary.Desktop.ViewModels
         private void NavigateToActivityLogs() => _navigationService.NavigateTo("Activity Logs");
 
         [RelayCommand]
-        private void NavigateToInventory() => _navigationService.NavigateTo("Inventory Management");
+        private void NavigateToInventory() => _navigationService.NavigateTo("Inventory");
 
         [RelayCommand]
         private void NavigateToStockVerification() => _navigationService.NavigateTo("Stock Verification");
 
         [RelayCommand]
-        private void NavigateToBackups() => _navigationService.NavigateTo("Backup Management");
+        private void NavigateToBackups() => _navigationService.NavigateTo("Backup");
 
         [RelayCommand]
-        private void NavigateToRestores() => _navigationService.NavigateTo("Restore Management");
+        private void NavigateToRestores() => _navigationService.NavigateTo("Restore");
 
         [RelayCommand]
-        private void NavigateToReports() => _navigationService.NavigateTo("Reports & Analytics");
+        private void NavigateToReports() => _navigationService.NavigateTo("Reports");
 
         [RelayCommand]
-        private void NavigateToClearance() => _navigationService.NavigateTo("Clearance");
+        private void NavigateToClearance() => _navigationService.NavigateTo("Library Clearance");
 
         [RelayCommand]
         private void NavigateToReservations() => _navigationService.NavigateTo("Reservations");
 
         [RelayCommand]
-        private void NavigateToSettings() => _navigationService.NavigateTo("System Settings");
+        private void NavigateToSettings() => _navigationService.NavigateTo("Settings");
 
         [RelayCommand]
         private async Task LogoutAsync()

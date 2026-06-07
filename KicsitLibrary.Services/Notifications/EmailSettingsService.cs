@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
 using KicsitLibrary.Data;
@@ -32,7 +33,7 @@ namespace KicsitLibrary.Services.Notifications
                 User = Get(values, "SmtpUser"),
                 Password = Get(values, "SmtpPassword"),
                 FromEmail = Get(values, "SmtpFromEmail"),
-                FromName = Get(values, "SmtpFromName", "KICSIT Library"),
+                FromName = Get(values, "SmtpFromName", ProductBrand.Name),
                 EmailNotificationEnabled = ParseBoolean(
                     Get(values, "EmailNotificationEnabled"),
                     false),

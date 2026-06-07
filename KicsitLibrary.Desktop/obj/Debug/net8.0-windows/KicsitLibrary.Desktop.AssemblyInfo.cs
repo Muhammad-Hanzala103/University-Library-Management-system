@@ -12,9 +12,10 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("KicsitLibrary.Desktop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyDescriptionAttribute("Desktop library operations and administration system.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8e41e68c7953a6b408a1ad7401531d6fcda4c696")]
-[assembly: System.Reflection.AssemblyProductAttribute("KicsitLibrary.Desktop")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3a16c86f1e4e899a087961e316b109c7e25dc53b")]
+[assembly: System.Reflection.AssemblyProductAttribute("Ilm-o-Kutub System")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KicsitLibrary.Desktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
@@ -49,7 +50,7 @@ public sealed class BackupService(
 
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
             var safeUserName = SanitizeFilePart(user.FullName);
-            var baseName = $"KICSIT_Library_Backup_{safeUserName}_{timestamp}";
+            var baseName = $"Ilm-o-Kutub_Backup_{safeUserName}_{timestamp}";
             backupPath = ResolveUniquePath(destinationFolder, baseName, ".db");
             metadataPath = Path.ChangeExtension(backupPath, ".metadata.json");
             compressedPath = Path.ChangeExtension(backupPath, ".zip");
@@ -679,6 +680,7 @@ public sealed class BackupService(
             new
             {
                 SchemaVersion = 1,
+                ProductName = ProductBrand.Name,
                 history.BackupFileName,
                 history.BackupSizeBytes,
                 history.ChecksumSha256,
@@ -724,7 +726,7 @@ public sealed class BackupService(
                 ? configuredFolder.Trim()
                 : Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "KICSIT Library Backups");
+                    ProductBrand.BackupFolderName);
         return Path.GetFullPath(folder);
     }
 

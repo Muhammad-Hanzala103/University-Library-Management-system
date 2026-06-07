@@ -20,6 +20,9 @@
      <Nullable>enable</Nullable>
      <ImplicitUsings>enable</ImplicitUsings>
      <UseWPF>true</UseWPF>
+     <Title>Ilm-o-Kutub System</Title>
+     <Product>Ilm-o-Kutub System</Product>
+     <Description>Desktop library operations and administration system.</Description>
    </PropertyGroup>
  
    <ItemGroup>

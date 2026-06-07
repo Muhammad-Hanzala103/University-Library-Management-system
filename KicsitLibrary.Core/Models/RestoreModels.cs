@@ -97,6 +97,7 @@ public sealed class RestoreStatusSummary
 public sealed class PendingRestoreMetadata
 {
     public int SchemaVersion { get; set; } = 1;
+    public string ProductName { get; set; } = ProductBrand.Name;
     public int RestoreHistoryId { get; set; }
     public string OriginalBackupFilePath { get; set; } = string.Empty;
     public string StagedBackupFilePath { get; set; } = string.Empty;

@@ -126,7 +126,7 @@
                              TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
 
                     <!-- Action Taken -->
-                    <TextBlock Text="Action Taken by KICSIT Library" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBlock Text="Action Taken by Library" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                     <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding ActionTaken, UpdateSourceTrigger=PropertyChanged}" Height="60"
                              TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10"/>
                 </StackPanel>

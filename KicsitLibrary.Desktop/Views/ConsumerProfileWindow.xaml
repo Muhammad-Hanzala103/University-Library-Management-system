@@ -59,7 +59,7 @@
                     <!-- Institution Banner -->
                     <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" CornerRadius="4,4,0,0" Padding="15,10">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="KICSIT LIBRARY CARD" Foreground="{StaticResource TextLightBrush}" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="ILM-O-KUTUB CARD" Foreground="{StaticResource TextLightBrush}" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <TextBlock Text="Dr A Q Khan Institute of CS &amp; IT" Foreground="{StaticResource TextMutedBrush}" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                         </StackPanel>
                     </Border>

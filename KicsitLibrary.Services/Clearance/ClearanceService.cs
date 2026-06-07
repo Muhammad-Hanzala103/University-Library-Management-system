@@ -1,4 +1,5 @@
 using System.Globalization;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
 using KicsitLibrary.Core.Interfaces;
@@ -142,7 +143,7 @@ public sealed class ClearanceService : IClearanceService
             var directory = string.IsNullOrWhiteSpace(outputDirectory)
                 ? Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "KICSIT Library Certificates")
+                    ProductBrand.CertificateFolderName)
                 : outputDirectory;
             var export = await _pdfExporter.ExportAsync(
                 report,
@@ -467,7 +468,7 @@ public sealed class ClearanceService : IClearanceService
         var institution = await _context.SystemSettings.AsNoTracking()
             .Where(setting => setting.Key == "InstituteName")
             .Select(setting => setting.Value)
-            .FirstOrDefaultAsync(cancellationToken) ?? "KICSIT Library";
+            .FirstOrDefaultAsync(cancellationToken) ?? ProductBrand.InstitutionName;
         var issueQuery = _context.IssueRecords.AsNoTracking()
             .Where(issue => memberType == MemberType.Student
                 ? issue.StudentId == memberId

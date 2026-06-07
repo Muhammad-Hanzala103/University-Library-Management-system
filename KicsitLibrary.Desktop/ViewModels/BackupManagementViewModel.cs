@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KicsitLibrary.Core;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
 using KicsitLibrary.Desktop.Services;
@@ -47,7 +48,7 @@ public partial class BackupManagementViewModel(
                 DestinationFolder = string.IsNullOrWhiteSpace(settings.DefaultFolder)
                     ? Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                        "KICSIT Library Backups")
+                        ProductBrand.BackupFolderName)
                     : settings.DefaultFolder;
                 VerifyAfterCreation = settings.VerifyAfterCreation;
                 CompressBackup = settings.CompressionEnabled;
