@@ -229,14 +229,8 @@
 
             <!-- Content Area Viewport -->
             <Grid Grid.Row="1" Margin="15">
-                <!-- If CurrentView is null, show a landing/dashboard template draft -->
-                <ContentControl Content="{Binding CurrentView}">
-                    <ContentControl.ContentTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="Loading View..."/>
-                        </DataTemplate>
-                    </ContentControl.ContentTemplate>
-                </ContentControl>
+                <!-- Binds CurrentView; the implicit DataTemplates in Window.Resources map each ViewModel to its UserControl. -->
+                <ContentControl Content="{Binding CurrentView}"/>
                 
                 <!-- Placeholder when view is empty (Standard Phase 1 landing look) -->
                 <Grid Visibility="{Binding CurrentView, Converter={local:NullToVisibilityConverter}}">
