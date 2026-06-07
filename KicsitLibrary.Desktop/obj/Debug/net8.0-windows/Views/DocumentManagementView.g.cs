@@ -51,7 +51,7 @@ namespace KicsitLibrary.Desktop.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/KicsitLibrary.Desktop;component/views/documentmanagementview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/KicsitLibrary.Desktop;V1.0.0.0;component/views/documentmanagementview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\DocumentManagementView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
