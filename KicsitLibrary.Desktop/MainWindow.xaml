@@ -50,6 +50,12 @@
         <DataTemplate DataType="{x:Type vm:ReservationManagementViewModel}">
             <views:ReservationManagementView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ActivityLogsViewModel}">
+            <views:ActivityLogsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AuditRecordsViewModel}">
+            <views:AuditRecordsView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -122,6 +128,10 @@
                     <Button Style="{StaticResource SidebarButton}" Content="Audit Records" 
                             Command="{Binding NavigateToAuditCommand}"
                             Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Audit Records}"/>
+
+                    <Button Style="{StaticResource SidebarButton}" Content="Activity Logs"
+                            Command="{Binding NavigateToActivityLogsCommand}"
+                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Activity Logs}"/>
                     
                     <Button Style="{StaticResource SidebarButton}" Content="Inventory Management" 
                             Command="{Binding NavigateToInventoryCommand}"

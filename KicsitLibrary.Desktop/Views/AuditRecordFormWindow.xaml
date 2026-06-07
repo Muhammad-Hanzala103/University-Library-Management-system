@@ -1,0 +1,64 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.AuditRecordFormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding WindowTitle}" Height="760" Width="820"
+        WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Border Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Audit Number *" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.AuditNumber}" Margin="0,4,0,10"/>
+                        <TextBlock Text="Audit Date *" FontWeight="Bold"/>
+                        <DatePicker SelectedDate="{Binding Record.AuditDate}" Margin="0,4,0,10"/>
+                        <TextBlock Text="Audit Type *" FontWeight="Bold"/>
+                        <ComboBox ItemsSource="{Binding AuditTypes}" SelectedItem="{Binding Record.AuditType}" Margin="0,4,0,10"/>
+                        <TextBlock Text="Financial Year" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.FinancialYear}" Margin="0,4,0,10"/>
+                        <TextBlock Text="Status *" FontWeight="Bold"/>
+                        <ComboBox ItemsSource="{Binding StatusValues}" SelectedItem="{Binding Record.Status}" Margin="0,4,0,10"/>
+                        <TextBlock Text="Responsible Person" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.ResponsiblePerson}" Margin="0,4,0,10"/>
+                        <TextBlock Text="Inspection Detail" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.InspectionDetail}" AcceptsReturn="True" Height="80" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                        <TextBlock Text="Financial Detail" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.FinancialDetail}" AcceptsReturn="True" Height="80" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Observations" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.Observations}" AcceptsReturn="True" Height="80" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                        <TextBlock Text="Findings" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.Findings}" AcceptsReturn="True" Height="80" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                        <TextBlock Text="Suggestions" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.Suggestions}" AcceptsReturn="True" Height="80" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                        <TextBlock Text="Action Required" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.ActionRequired}" AcceptsReturn="True" Height="70" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                        <TextBlock Text="Action Taken" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.ActionTaken}" AcceptsReturn="True" Height="70" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                        <TextBlock Text="Remarks" FontWeight="Bold"/>
+                        <TextBox Text="{Binding Record.Remarks}" AcceptsReturn="True" Height="70" TextWrapping="Wrap" Margin="0,4,0,10"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </ScrollViewer>
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,12,0,0">
+            <DockPanel>
+                <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Content="Save" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" Margin="8,0"/>
+                    <Button Content="Cancel" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButton}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

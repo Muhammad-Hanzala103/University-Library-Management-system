@@ -1,0 +1,28 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.ActivityLogDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Activity Log Details" Height="600" Width="760"
+        WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Border Style="{StaticResource CardStyle}" Margin="16">
+            <StackPanel>
+                <TextBlock Text="Activity Log Details" FontSize="22" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,14"/>
+                <TextBlock Text="{Binding Details.CreatedAt, StringFormat=Date: {0:dd-MMM-yyyy HH:mm:ss}}"/>
+                <TextBlock Text="{Binding Details.UserName, StringFormat=User: {0}}" Margin="0,5"/>
+                <TextBlock Text="{Binding Details.Username, StringFormat=Username: {0}}"/>
+                <TextBlock Text="{Binding Details.Action, StringFormat=Action: {0}}" Margin="0,5"/>
+                <TextBlock Text="{Binding Details.EntityName, StringFormat=Entity: {0}}"/>
+                <TextBlock Text="{Binding Details.EntityId, StringFormat=Entity ID: {0}}" Margin="0,5"/>
+                <TextBlock Text="{Binding Details.Outcome, StringFormat=Outcome: {0}}"/>
+                <TextBlock Text="{Binding Details.Source, StringFormat=Source: {0}}" Margin="0,5"/>
+                <TextBlock Text="Full Message" FontWeight="Bold" Margin="0,12,0,4"/>
+                <TextBox Text="{Binding Details.FullDetail}" IsReadOnly="True" AcceptsReturn="True"
+                         TextWrapping="Wrap" MinHeight="120" VerticalScrollBarVisibility="Auto"/>
+                <TextBlock Text="Metadata" FontWeight="Bold" Margin="0,12,0,4"/>
+                <DataGrid ItemsSource="{Binding Details.Metadata}" AutoGenerateColumns="True"
+                          IsReadOnly="True" MaxHeight="220"/>
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</Window>

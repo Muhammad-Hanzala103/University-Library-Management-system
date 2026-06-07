@@ -114,6 +114,18 @@ namespace KicsitLibrary.Desktop.ViewModels
                     if (CurrentView is ReservationManagementViewModel reservations)
                         _ = reservations.RefreshAsync();
                     break;
+                case "Activity Logs":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<ActivityLogsViewModel>();
+                    if (CurrentView is ActivityLogsViewModel activityLogs)
+                        _ = activityLogs.RefreshAsync();
+                    break;
+                case "Audit Records":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<AuditRecordsViewModel>();
+                    if (CurrentView is AuditRecordsViewModel auditRecords)
+                        _ = auditRecords.RefreshAsync();
+                    break;
                 default:
                     CurrentView = null;
                     break;
@@ -152,6 +164,9 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToAudit() => _navigationService.NavigateTo("Audit Records");
+
+        [RelayCommand]
+        private void NavigateToActivityLogs() => _navigationService.NavigateTo("Activity Logs");
 
         [RelayCommand]
         private void NavigateToInventory() => _navigationService.NavigateTo("Inventory Management");

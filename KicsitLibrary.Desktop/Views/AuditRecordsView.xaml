@@ -1,0 +1,68 @@
+<UserControl x:Class="KicsitLibrary.Desktop.Views.AuditRecordsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="Audit Records" FontSize="22" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,10"/>
+                <WrapPanel>
+                    <TextBox Width="190" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
+                    <ComboBox Width="140" ItemsSource="{Binding AuditTypes}" SelectedItem="{Binding SelectedAuditType}" Margin="0,0,8,8"/>
+                    <ComboBox Width="125" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding SelectedStatus}" Margin="0,0,8,8"/>
+                    <TextBox Width="100" Text="{Binding FinancialYear}" Margin="0,0,8,8"/>
+                    <DatePicker Width="125" SelectedDate="{Binding FromDate}" Margin="0,0,8,8"/>
+                    <DatePicker Width="125" SelectedDate="{Binding ToDate}" Margin="0,0,8,8"/>
+                    <CheckBox Content="Pending action only" IsChecked="{Binding PendingActionOnly}" VerticalAlignment="Center" Margin="0,0,10,8"/>
+                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Add Audit" Command="{Binding AddCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Text="{Binding Summary.TotalCount, StringFormat=Total: {0}}" Margin="0,0,16,0"/>
+                    <TextBlock Text="{Binding Summary.DraftCount, StringFormat=Draft: {0}}" Margin="0,0,16,0"/>
+                    <TextBlock Text="{Binding Summary.UnderReviewCount, StringFormat=Under Review: {0}}" Margin="0,0,16,0"/>
+                    <TextBlock Text="{Binding Summary.PendingActionCount, StringFormat=Pending Actions: {0}}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+            <DataGrid ItemsSource="{Binding AuditRecords}" SelectedItem="{Binding SelectedAuditRecord}"
+                      AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Audit Number" Binding="{Binding AuditNumber}" Width="120"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding AuditType}" Width="120"/>
+                    <DataGridTextColumn Header="Date" Binding="{Binding AuditDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="100"/>
+                    <DataGridTextColumn Header="Financial Year" Binding="{Binding FinancialYear}" Width="95"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                    <DataGridTextColumn Header="Responsible" Binding="{Binding ResponsiblePerson}" Width="125"/>
+                    <DataGridTextColumn Header="Action Required" Binding="{Binding ActionRequired}" Width="*"/>
+                    <DataGridTextColumn Header="Action Taken" Binding="{Binding ActionTaken}" Width="*"/>
+                    <DataGridTextColumn Header="Updated" Binding="{Binding UpdatedAt, StringFormat={}{0:dd-MMM-yyyy HH:mm}}" Width="125"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,12,0,0">
+            <StackPanel>
+                <WrapPanel>
+                    <Button Content="Edit" Command="{Binding EditCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="View Details" Command="{Binding ViewDetailsCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <ComboBox Width="125" ItemsSource="{Binding StatusValues}" SelectedItem="{Binding NewStatus}" Margin="0,0,8,8"/>
+                    <TextBox Width="250" Text="{Binding ActionRemarks, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
+                    <Button Content="Change Status" Command="{Binding ChangeStatusCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="CSV" Command="{Binding ExportCsvCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="Excel" Command="{Binding ExportExcelCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                    <Button Content="PDF" Command="{Binding ExportPdfCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                </WrapPanel>
+                <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,39 @@
+<Window x:Class="KicsitLibrary.Desktop.Views.AuditRecordDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Audit Record Details" Height="720" Width="820"
+        WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Border Style="{StaticResource CardStyle}" Margin="16">
+            <StackPanel>
+                <TextBlock Text="{Binding Details.AuditNumber}" FontSize="22" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}"/>
+                <TextBlock Text="{Binding Details.AuditType, StringFormat=Type: {0}}" Margin="0,8,0,0"/>
+                <TextBlock Text="{Binding Details.AuditDate, StringFormat=Date: {0:dd-MMM-yyyy}}"/>
+                <TextBlock Text="{Binding Details.FinancialYear, StringFormat=Financial Year: {0}}"/>
+                <TextBlock Text="{Binding Details.Status, StringFormat=Status: {0}}"/>
+                <TextBlock Text="{Binding Details.ResponsiblePerson, StringFormat=Responsible: {0}}" Margin="0,0,0,10"/>
+                <TextBlock Text="Inspection Detail" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Details.InspectionDetail}" TextWrapping="Wrap" Margin="0,3,0,10"/>
+                <TextBlock Text="Financial Detail" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Details.FinancialDetail}" TextWrapping="Wrap" Margin="0,3,0,10"/>
+                <TextBlock Text="Observations" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Details.Observations}" TextWrapping="Wrap" Margin="0,3,0,10"/>
+                <TextBlock Text="Findings" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Details.Findings}" TextWrapping="Wrap" Margin="0,3,0,10"/>
+                <TextBlock Text="Suggestions" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Details.Suggestions}" TextWrapping="Wrap" Margin="0,3,0,10"/>
+                <TextBlock Text="Action Required / Taken" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Details.ActionRequired}" TextWrapping="Wrap" Margin="0,3,0,3"/>
+                <TextBlock Text="{Binding Details.ActionTaken}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <TextBlock Text="Remarks" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Details.Remarks}" TextWrapping="Wrap" Margin="0,3,0,10"/>
+                <TextBlock Text="{Binding Details.CreatedBy, StringFormat=Created By: {0}}"/>
+                <TextBlock Text="{Binding Details.UpdatedBy, StringFormat=Updated By: {0}}"/>
+                <TextBlock Text="Attachments (read only)" FontWeight="Bold" Margin="0,12,0,4"/>
+                <DataGrid ItemsSource="{Binding Details.Attachments}" AutoGenerateColumns="True"
+                          IsReadOnly="True" MaxHeight="180"/>
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</Window>

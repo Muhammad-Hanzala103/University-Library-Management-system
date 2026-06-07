@@ -12,7 +12,7 @@ public sealed class ActivityLogFilter
     public int Limit { get; set; } = 500;
 }
 
-public sealed class ActivityLogListItem
+public class ActivityLogListItem
 {
     public int ActivityLogId { get; set; }
     public DateTime CreatedAt { get; set; }
