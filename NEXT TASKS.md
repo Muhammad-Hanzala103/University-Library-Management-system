@@ -116,3 +116,11 @@ Deferred refinements:
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
 - [ ] Configure `appsettings.json` encryption routines for sensitive credentials.
 - [ ] Package the solution: configure ClickOnce deployment or an MSI installer package.
+
+---
+
+## Final Release Documentation
+- [ ] At final release, generate a complete professional `README.md` in the repository root so GitHub displays the project overview on the repository front page.
+- [ ] Include the project title, project overview, key features, technology stack, architecture, screenshots section placeholder, installation guide, database setup, default login accounts, build commands, test commands, release notes, known limitations, future improvements, contributors, and license placeholder.
+
+The project is still under active development. The final `README.md` will be generated after all main modules, testing, deployment, and release packaging are complete.

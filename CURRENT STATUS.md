@@ -172,3 +172,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
   - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (Mapped but not implemented)
 - **Services**:
   - `IBackupSyncService`: Local backup scripts and Supabase sync logic.
+- **Final Release Documentation**:
+  - Generate a complete professional repository-root `README.md` at final release so GitHub displays the project overview on the repository front page.
+  - The final README must include the project title, overview, key features, technology stack, architecture, screenshots placeholder, installation guide, database setup, default login accounts, build and test commands, release notes, known limitations, future improvements, contributors, and license placeholder.
+  - The project is still under active development, so the final `README.md` will be generated only after all main modules, testing, deployment, and release packaging are complete.
