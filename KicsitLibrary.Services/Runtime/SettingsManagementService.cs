@@ -290,8 +290,8 @@ namespace KicsitLibrary.Services
 
                 var json = JsonSerializer.Serialize(exportData, new JsonSerializerOptions { WriteIndented = true });
 
-                var paths = _runtimePathService.GetRuntimePaths();
-                var exportFolder = Path.Combine(paths.ReportsFolder, "Settings Exports");
+                var reportsRoot = await _runtimePathService.GetReportExportRootAsync(cancellationToken);
+                var exportFolder = Path.Combine(reportsRoot, "Settings Exports");
                 Directory.CreateDirectory(exportFolder);
 
                 var fileName = $"Settings_Snapshot_{DateTime.UtcNow:yyyyMMdd_HHmmss}.json";

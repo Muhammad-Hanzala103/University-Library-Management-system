@@ -59,11 +59,12 @@
                                 FontSize="10"
                                 FontWeight="SemiBold"
                                 Margin="0,0,0,4"/>
-                        <TextBlock Text="{Binding Category}"
-                                Padding="8"
+                        <Border Padding="8"
                                 Background="{StaticResource CardBgBrush}"
-                                   BorderThickness="1"
-                                BorderBrush="{StaticResource BorderBrush}"/>
+                                BorderThickness="1"
+                                BorderBrush="{StaticResource BorderBrush}">
+                            <TextBlock Text="{Binding Category}"/>
+                        </Border>
                     </StackPanel>
                     <StackPanel Grid.Column="1"
                             Margin="6,0,0,0">
@@ -71,11 +72,12 @@
                                 FontSize="10"
                                 FontWeight="SemiBold"
                                 Margin="0,0,0,4"/>
-                        <TextBlock Text="{Binding DataType}"
-                                Padding="8"
+                        <Border Padding="8"
                                 Background="{StaticResource CardBgBrush}"
-                                   BorderThickness="1"
-                                BorderBrush="{StaticResource BorderBrush}"/>
+                                BorderThickness="1"
+                                BorderBrush="{StaticResource BorderBrush}">
+                            <TextBlock Text="{Binding DataType}"/>
+                        </Border>
                     </StackPanel>
                 </Grid>
 
@@ -119,12 +121,12 @@
                             FontSize="10"
                             FontWeight="SemiBold"
                             Margin="0,0,0,4"/>
-                    <TextBlock Text="{Binding CurrentValueMasked}"
-                            Padding="8"
+                    <Border Padding="8"
                             Background="{StaticResource CardBgBrush}"
-                               BorderThickness="1"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            TextWrapping="Wrap"/>
+                            BorderThickness="1"
+                            BorderBrush="{StaticResource BorderBrush}">
+                        <TextBlock Text="{Binding CurrentValueMasked}" TextWrapping="Wrap"/>
+                    </Border>
                 </StackPanel>
 
                 <!-- New Value -->
