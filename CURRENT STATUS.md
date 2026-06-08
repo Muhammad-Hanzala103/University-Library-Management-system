@@ -27,6 +27,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 9A (Secure Document Upload Workflow)**: **100% Completed**
 - **Priority 9B (Deployment Preparation Audit & Release Readiness Plan)**: **100% Completed**
 - **Priority 9C (Release Data Location & Source Control Cleanup Plan)**: **100% Completed**
+- **Priority 9D (Release Database Relocation Workflow)**: **100% Completed**
 - **Priority 8E+ (Sync & Deployment)**: **Pending Implementation**
 
 ### Product Branding and UI Refinement
@@ -42,6 +43,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Automatic backup scheduling and retention safety are implemented. Deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README generation were not started.
 - Priority 9B deployment preparation is complete as documentation and smoke-test scripting only. No installer, ClickOnce package, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, final README, repository rename, namespace rename, or database rename was performed.
 - Priority 9C adds a guarded runtime data-location service and source-control cleanup plan only. Default development startup still uses executable-relative `KicsitLibrary.db`; no database relocation, tracked-artifact removal, installer packaging, EF migration, Supabase sync, WhatsApp delivery, or final README was performed.
+- Priority 9D completes the verified release database relocation workflow. It copies the source database through a stable snapshot, verifies both source and target SQLite integrity, compares SHA256 checksums, preserves the source database by default, creates a mandatory safety backup, preserves and restores an existing target on failure, and enables `UseReleaseDataRoot` only after successful verification. `DatabaseFileName` remains `KicsitLibrary.db`. Default development behavior remains unchanged unless relocation is explicitly requested.
 
 ### GitHub Repository Rename
 The GitHub repository rename remains a manual owner action. The target repository name is `Ilm-o-Kutub-System`.
@@ -254,8 +256,16 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - Restore staging uses the runtime staging path only when the runtime database path matches the active SQLite database path; otherwise existing beside-database pending restore behavior is preserved for startup compatibility.
 - Added `RUNTIME DATA LOCATION STRATEGY.md` and `SOURCE CONTROL CLEANUP PLAN.md`.
 - Updated the deployment smoke script to report runtime data mode, publish output, and non-destructive limitations.
-- Added eight isolated runtime path tests. The full isolated suite now passes with 228 tests after Priority 9C.
+- Added eight isolated runtime path tests.
 - Source-control cleanup remains a plan only; tracked generated artifacts were not removed.
+
+### Priority 9D Release Database Relocation Workflow
+- Added `IDatabaseRelocationService` and `DatabaseRelocationService` to implement a verified release database relocation workflow.
+- Added a mandatory verified safety backup before relocation, source integrity validation, and release-specific target verification.
+- Added stable source snapshot creation before copy, SHA256 checksum comparison against the source snapshot, and optional release runtime settings updates only after successful verification.
+- Added preservation of an existing target by snapshotting it before overwrite and rollback/restore behavior on failure.
+- Kept `DatabaseFileName` as `KicsitLibrary.db`, preserved the source database by default, and preserved current development startup behavior unless relocation is explicitly performed.
+- Two hundred forty-three isolated SQLite tests pass, including the completion of the release database relocation workflow.
 
 ---
 

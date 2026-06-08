@@ -33,6 +33,35 @@ Packages added:
 
 Exact next task: Decide and implement the approved release database relocation workflow, including verified backup and pending-restore preservation, before installer packaging. Do not remove tracked artifacts, create installers, add EF migrations, Supabase sync, WhatsApp delivery, or final README until separately requested.
 
+## Priority 9D Completion Update
+
+Completion date: 2026-06-08
+
+- Completed the Release Database Relocation Workflow only.
+- Added `DatabaseRelocationService` and `IDatabaseRelocationService` for verified relocation and release-setting updates.
+- Added mandatory safety backup creation before any relocation operation.
+- Added source validation with `PRAGMA integrity_check` and stable source snapshot creation before copying the database.
+- Added target verification after copy, including SHA256 checksum comparison against the stable source snapshot.
+- Added preservation of an existing target by snapshotting it before overwrite and restoring it on failure.
+- Added release runtime setting updates only after successful target verification, including `RuntimeDataRoot`, `UseReleaseDataRoot`, `RuntimeStorageMode`, and `DatabaseFileName`.
+- Kept `DatabaseFileName` as `KicsitLibrary.db` and preserved default development behavior unless relocation is explicitly performed.
+- Two hundred forty-three isolated tests pass, with 0 failed and 0 skipped.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 243 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Do not start Priority 9E yet. Continue verifying Priority 9D documentation and readiness until the next approved work request.
+
 ## Priority 9B Completion Update
 
 Completion date: 2026-06-08

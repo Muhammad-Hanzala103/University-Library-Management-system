@@ -295,8 +295,21 @@ Deferred refinements:
 - [x] Add eight isolated runtime path tests.
 - [x] Do not create installers, ClickOnce, MSIX, EF migrations, Supabase sync, WhatsApp delivery, final README, namespace rename, database rename, or tracked-artifact removal.
 
+## Priority 9D: Release Database Relocation Workflow
+- **Goal**: Implement a verified release database relocation workflow that preserves the source database and enables `UseReleaseDataRoot` only after successful verification.
+- [x] Add `IDatabaseRelocationService` and `DatabaseRelocationService`.
+- [x] Validate the live source database with `PRAGMA integrity_check` before relocation.
+- [x] Create a mandatory safety backup before relocation.
+- [x] Create a stable source snapshot before copying the database to the target.
+- [x] Preserve any existing target by snapshotting it before overwrite and restore it on failure.
+- [x] Verify the target database integrity and SHA256 checksum against the stable source snapshot after copy.
+- [x] Update `RuntimeDataRoot`, `UseReleaseDataRoot`, `RuntimeStorageMode`, and `DatabaseFileName` only after target verification succeeds.
+- [x] Keep `DatabaseFileName` as `KicsitLibrary.db` and preserve current development behavior unless relocation is explicitly performed.
+- [x] Two hundred forty-three isolated SQLite tests pass with completion of the relocation workflow.
+
 Deferred refinements:
-- [ ] Implement an approved database relocation workflow before enabling release-root startup.
+- [ ] Add explicit published UI guidance for relocation and release-root enablement in the next update.
+- [ ] Add WPF UI automation coverage for the relocation workflow once the release path has been validated.
 - [ ] Integrate report exports, certificates, ownership locks, logs, and temp folders with `IRuntimePathService` only after manual validation.
 - [ ] Remove already tracked generated artifacts with `git rm --cached` only after explicit approval.
 - [ ] Decide per-user versus per-machine runtime data root for installer deployment.

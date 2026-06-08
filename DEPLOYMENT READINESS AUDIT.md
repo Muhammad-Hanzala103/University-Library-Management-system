@@ -42,7 +42,8 @@ The solution uses six projects:
 - In normal Debug builds this becomes `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/KicsitLibrary.db`.
 - In published output this will become `<publish folder>\KicsitLibrary.db` unless the connection string is changed.
 - This is acceptable for development and portable internal pilots, but needs a release decision before installer deployment because program folders may be read-only.
-- Priority 9C adds `IRuntimePathService` and guarded runtime settings for release-safe paths. With defaults (`UseReleaseDataRoot=False`, `RuntimeStorageMode=Development`), startup behavior is unchanged. Release mode can resolve data under `%LOCALAPPDATA%\Ilm-o-Kutub System`, but startup relocation remains deferred until a verified data-preservation workflow is implemented.
+- Priority 9C adds `IRuntimePathService` and guarded runtime settings for release-safe paths. With defaults (`UseReleaseDataRoot=False`, `RuntimeStorageMode=Development`), startup behavior is unchanged.
+- Priority 9D implements the verified release database relocation workflow. It uses a stable source snapshot, integrity validation, mandatory pre-relocation safety backup, SHA256 checksum comparison, and target rollback/restoration if verification fails. `UseReleaseDataRoot` is only enabled after successful verification.
 
 ## 6. Backup and Restore Behavior
 
@@ -119,7 +120,7 @@ Deployment smoke script:
 ## 14. Known Deployment Blockers
 
 - No EF migration baseline or adoption plan exists.
-- SQLite database path currently resolves to the executable folder by default. Runtime path support exists, but startup database relocation is not enabled yet.
+- SQLite database path currently resolves to the executable folder by default. Runtime path support exists and the Priority 9D relocation workflow is implemented, but startup database relocation is still explicit and not automatic.
 - No final installer, ClickOnce profile, MSIX manifest, signing certificate, or upgrade process exists.
 - `.gitignore` was absent before Priority 9B; many generated artifacts are already tracked.
 - Default seeded credentials must be changed for any real deployment.
@@ -130,7 +131,7 @@ Deployment smoke script:
 ## 15. Required Pre Release Fixes
 
 1. Decide the release database location: executable folder for portable/internal only, or per-user/per-machine app data for installer deployment.
-2. Implement the approved database relocation workflow if release-root storage is selected.
+2. Use the approved Priority 9D release database relocation workflow before enabling release-root startup.
 3. Create an EF migration baseline/adoption plan or formally document continued compatibility-SQL support.
 4. Remove tracked `bin`, `obj`, `.vs`, local database, and generated artifacts from source control in a separate approved cleanup.
 5. Change default seeded passwords during first-run or require operator reset.
@@ -177,7 +178,7 @@ Recommended next packaging direction: a signed Windows Installer for university 
 ## 22. Final Release Checklist
 
 - [ ] Build passes with zero warnings and errors.
-- [ ] Tests pass with at least 228 tests.
+- [ ] Tests pass with at least 243 tests.
 - [ ] Deployment smoke publish completes.
 - [ ] Manual release test plan completed and signed off.
 - [ ] Database location and upgrade behavior approved.

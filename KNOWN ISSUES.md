@@ -44,7 +44,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 ### Runtime Data Location Limitations
 - Priority 9C adds a runtime path service and release data-location strategy, but startup still uses the existing executable-relative SQLite connection by default.
 - `UseReleaseDataRoot=False` and `RuntimeStorageMode=Development` preserve current development behavior. This avoids creating a second empty release database under AppData without an approved migration plan.
-- Database relocation to `%LOCALAPPDATA%\Ilm-o-Kutub System` is prepared through `IRuntimePathService` but not wired into startup until a future explicit relocation workflow creates a verified backup and preserves pending restore metadata.
+- Database relocation to `%LOCALAPPDATA%\Ilm-o-Kutub System` is implemented through `DatabaseRelocationService` and `IRuntimePathService`, but it is still explicit and not wired into automatic startup relocation. The release root is enabled only after explicit successful relocation verification.
 - Document storage and backup default folders now use runtime path resolution only when their explicit settings are empty. Existing configured folders still take precedence.
 - Restore staging uses runtime staging only when the runtime database path matches the active configured SQLite database path; otherwise it stays beside the database so startup can find pending restore metadata.
 - Report exports, clearance certificates, ownership lock files, logs, and temp folder usage are not fully integrated with `IRuntimePathService` yet.

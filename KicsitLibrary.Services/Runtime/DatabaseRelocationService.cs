@@ -124,6 +124,8 @@ public sealed class DatabaseRelocationService(
         var copied = false;
         var targetExistedAtStart = false;
         string? originalTargetSnapshotPath = null;
+        string? sourceSnapshotPath = null;
+        string latestSourceChecksum = string.Empty;
 
         try
         {
@@ -158,6 +160,11 @@ public sealed class DatabaseRelocationService(
                     target,
                     string.Join(" ", preview.BlockingReasons),
                     cancellationToken);
+            }
+
+            if (!File.Exists(source))
+            {
+                return await FailAsync(history, startedAt, source, target, "Source database does not exist.", cancellationToken);
             }
 
             var sourceValidation = await RestoreSqliteUtility.ValidateAsync(source, cancellationToken);
@@ -196,20 +203,87 @@ public sealed class DatabaseRelocationService(
                 return await FailAsync(history, startedAt, source, target, sourceValidation.ErrorMessage ?? sourceValidation.ValidationMessage, cancellationToken);
             }
 
+            latestSourceChecksum = sourceValidation.ChecksumSha256;
+            await EnsureSourceDatabaseIsCheckpointedAsync(source, cancellationToken);
+
+            sourceSnapshotPath = Path.Combine(
+                Path.GetTempPath(),
+                "KicsitLibrary.DatabaseRelocation",
+                $"{Guid.NewGuid():N}.db");
+            Directory.CreateDirectory(Path.GetDirectoryName(sourceSnapshotPath)!);
+            await CopySqliteDatabaseAsync(source, sourceSnapshotPath, cancellationToken);
+            var snapshotValidation = await RestoreSqliteUtility.ValidateAsync(sourceSnapshotPath, cancellationToken);
+            if (!snapshotValidation.Succeeded)
+            {
+                return await FailAsync(history, startedAt, source, target, snapshotValidation.ErrorMessage ?? snapshotValidation.ValidationMessage, cancellationToken, safetyBackupPath);
+            }
+
+            latestSourceChecksum = snapshotValidation.ChecksumSha256;
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             targetExistedAtStart = File.Exists(target);
+
             if (targetExistedAtStart)
             {
-                // Snapshot existing target to enable safe rollback if overwriting fails.
                 originalTargetSnapshotPath = Path.Combine(
                     Path.GetDirectoryName(target)!,
+                    $"{Path.GetFileNameWithoutExtension(target)}.{Guid.NewGuid():N}.snapshot{Path.GetExtension(target)}");
+                File.Copy(target, originalTargetSnapshotPath, overwrite: true);
+                await AddActivityAsync("Database Relocation Target Snapshot Created", $"Snapshot={Safe(originalTargetSnapshotPath)};OriginalTarget={Safe(target)}", cancellationToken);
+            }
+
+            File.Copy(sourceSnapshotPath, target, overwrite: true);
+            copied = true;
+            await AddActivityAsync("Database Relocation Source Latest Checksum Verified", $"Checksum={latestSourceChecksum}", cancellationToken);
+            await AddActivityAsync("Database Relocation Database Copied", $"SourceSnapshot={Safe(sourceSnapshotPath)};Target={Safe(target)}", cancellationToken);
 
             var targetValidation = await RestoreSqliteUtility.ValidateAsync(target, cancellationToken);
+            await AddActivityAsync(
+                targetValidation.Succeeded ? "Database Relocation Target Validation Passed" : "Database Relocation Target Validation Failed",
+                $"IntegrityCheckPassed={targetValidation.IntegrityCheckPassed};Checksum={targetValidation.ChecksumSha256}",
+                cancellationToken);
             if (!targetValidation.Succeeded)
             {
-                TryDelete(target);
-                history.RollbackPerformed = true;
-                return await FailAsync(history, startedAt, source, target, targetValidation.ErrorMessage ?? targetValidation.ValidationMessage, cancellationToken);
+                if (targetExistedAtStart && originalTargetSnapshotPath != null)
+                {
+                    TryDelete(target);
+                    File.Copy(originalTargetSnapshotPath, target, overwrite: true);
+                    history.RollbackPerformed = true;
+                    await AddActivityAsync("Database Relocation Rollback Performed", $"TargetRestoredFromSnapshot={Safe(originalTargetSnapshotPath)}", cancellationToken);
+                }
+                else
+                {
+                    TryDelete(target);
+                    history.RollbackPerformed = true;
+                    await AddActivityAsync("Database Relocation Rollback Performed", $"TargetDeleted={Safe(target)}", cancellationToken);
+                }
+                return await FailAsync(history, startedAt, source, target, targetValidation.ErrorMessage ?? targetValidation.ValidationMessage, cancellationToken, safetyBackupPath);
+            }
+
+            if (!string.Equals(targetValidation.ChecksumSha256, latestSourceChecksum, StringComparison.OrdinalIgnoreCase))
+            {
+                if (targetExistedAtStart && originalTargetSnapshotPath != null)
+                {
+                    TryDelete(target);
+                    File.Copy(originalTargetSnapshotPath, target, overwrite: true);
+                    history.RollbackPerformed = true;
+                    await AddActivityAsync("Database Relocation Rollback Performed", $"TargetRestoredFromSnapshot={Safe(originalTargetSnapshotPath)};ChecksumMismatch", cancellationToken);
+                }
+                else
+                {
+                    TryDelete(target);
+                    history.RollbackPerformed = true;
+                    await AddActivityAsync("Database Relocation Rollback Performed", $"TargetDeleted={Safe(target)};ChecksumMismatch", cancellationToken);
+                }
+                var sourceSize = File.Exists(source) ? new FileInfo(source).Length : -1;
+                var targetSize = File.Exists(target) ? new FileInfo(target).Length : -1;
+                return await FailAsync(
+                    history,
+                    startedAt,
+                    source,
+                    target,
+                    $"Target checksum does not match latest source checksum after copy. Source={latestSourceChecksum};SourceSize={sourceSize};Target={targetValidation.ChecksumSha256};TargetSize={targetSize}",
+                    cancellationToken,
+                    safetyBackupPath);
             }
 
             var settingsUpdated = false;
@@ -225,7 +299,20 @@ public sealed class DatabaseRelocationService(
                 var postSettingsValidation = await RestoreSqliteUtility.ValidateAsync(target, cancellationToken);
                 if (!postSettingsValidation.Succeeded)
                 {
-                    return await FailAsync(history, startedAt, source, target, postSettingsValidation.ErrorMessage ?? postSettingsValidation.ValidationMessage, cancellationToken);
+                    if (targetExistedAtStart && originalTargetSnapshotPath != null)
+                    {
+                        TryDelete(target);
+                        File.Copy(originalTargetSnapshotPath, target, overwrite: true);
+                        history.RollbackPerformed = true;
+                        await AddActivityAsync("Database Relocation Rollback Performed", $"TargetRestoredFromSnapshot={Safe(originalTargetSnapshotPath)};PostSettingsValidationFailed", cancellationToken);
+                    }
+                    else
+                    {
+                        TryDelete(target);
+                        history.RollbackPerformed = true;
+                        await AddActivityAsync("Database Relocation Rollback Performed", $"TargetDeleted={Safe(target)};PostSettingsValidationFailed", cancellationToken);
+                    }
+                    return await FailAsync(history, startedAt, source, target, postSettingsValidation.ErrorMessage ?? postSettingsValidation.ValidationMessage, cancellationToken, safetyBackupPath);
                 }
                 settingsUpdated = true;
             }
@@ -235,7 +322,7 @@ public sealed class DatabaseRelocationService(
             history.MetadataJson = JsonSerializer.Serialize(new
             {
                 ProductName = ProductBrand.Name,
-                SourceChecksumSha256 = sourceValidation.ChecksumSha256,
+                SourceChecksumSha256 = latestSourceChecksum,
                 TargetChecksumSha256 = targetValidation.ChecksumSha256,
                 SafetyBackupPath = safetyBackupPath,
                 CopyOnly = true,
@@ -243,6 +330,15 @@ public sealed class DatabaseRelocationService(
             });
             await AddActivityAsync("Database Relocation Completed", $"SourcePreserved=True;Target={Safe(target)};SettingsUpdated={settingsUpdated}", cancellationToken);
             await SaveAsync(cancellationToken);
+
+            if (originalTargetSnapshotPath != null)
+            {
+                TryDelete(originalTargetSnapshotPath);
+            }
+            if (sourceSnapshotPath != null)
+            {
+                TryDelete(sourceSnapshotPath);
+            }
 
             return new DatabaseRelocationResult
             {
@@ -262,9 +358,23 @@ public sealed class DatabaseRelocationService(
         {
             if (copied && File.Exists(target))
             {
-                TryDelete(target);
-                history.RollbackPerformed = true;
-                await AddActivityAsync("Database Relocation Rollback Performed", $"TargetDeleted={Safe(target)}", CancellationToken.None);
+                if (targetExistedAtStart && originalTargetSnapshotPath != null && File.Exists(originalTargetSnapshotPath))
+                {
+                    TryDelete(target);
+                    File.Copy(originalTargetSnapshotPath, target, overwrite: true);
+                    history.RollbackPerformed = true;
+                    await AddActivityAsync("Database Relocation Rollback Performed", $"TargetRestoredFromSnapshot={Safe(originalTargetSnapshotPath)};Exception", cancellationToken);
+                }
+                else
+                {
+                    TryDelete(target);
+                    history.RollbackPerformed = true;
+                    await AddActivityAsync("Database Relocation Rollback Performed", $"TargetDeleted={Safe(target)};Exception", cancellationToken);
+                }
+            }
+            if (sourceSnapshotPath != null)
+            {
+                TryDelete(sourceSnapshotPath);
             }
             return await FailAsync(history, startedAt, source, target, Sanitize(ex.Message), cancellationToken, safetyBackupPath);
         }
@@ -512,6 +622,62 @@ public sealed class DatabaseRelocationService(
         {
             // Preserve failures in the relocation result and activity log path.
         }
+    }
+
+    private static async Task EnsureSourceDatabaseIsCheckpointedAsync(
+        string sourceDatabasePath,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var builder = new SqliteConnectionStringBuilder
+            {
+                DataSource = sourceDatabasePath,
+                Pooling = false,
+                Mode = SqliteOpenMode.ReadWrite
+            };
+
+            await using var connection = new SqliteConnection(builder.ToString());
+            await connection.OpenAsync(cancellationToken);
+            await using var command = connection.CreateCommand();
+            command.CommandText = "PRAGMA wal_checkpoint(FULL);";
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch
+        {
+            // Best effort checkpoint; do not block relocation on checkpoint failures.
+        }
+    }
+
+    private static async Task CopySqliteDatabaseAsync(
+        string sourceDatabasePath,
+        string targetDatabasePath,
+        CancellationToken cancellationToken)
+    {
+        var sourceBuilder = new SqliteConnectionStringBuilder
+        {
+            DataSource = sourceDatabasePath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false
+        };
+
+        var targetBuilder = new SqliteConnectionStringBuilder
+        {
+            DataSource = targetDatabasePath,
+            Mode = SqliteOpenMode.ReadWriteCreate,
+            Pooling = false
+        };
+
+        await Task.Run(() =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            using var source = new SqliteConnection(sourceBuilder.ToString());
+            using var target = new SqliteConnection(targetBuilder.ToString());
+            source.Open();
+            target.Open();
+            source.BackupDatabase(target);
+            cancellationToken.ThrowIfCancellationRequested();
+        }, cancellationToken);
     }
 
     private static string Sanitize(string value)

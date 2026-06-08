@@ -6253,8 +6253,8 @@
           "framework": "net8.0-windows7.0",
           "targetAlias": "net8.0-windows",
           "projectReferences": {
-            "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
-              "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj"
+            "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
+              "projectPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj"
             },
             "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj": {
               "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj"

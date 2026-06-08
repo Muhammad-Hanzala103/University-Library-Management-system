@@ -1,6 +1,6 @@
 # Runtime Data Location Strategy
 
-Priority 9C status: release data-location planning plus guarded runtime path integration only. No installer, ClickOnce package, MSIX package, EF migration, database rename, or database relocation was performed.
+Priority 9D status: release data-location planning plus guarded runtime path integration and verified database relocation workflow only. No installer, ClickOnce package, MSIX package, EF migration, database rename, or automatic startup relocation was performed.
 
 ## 1. Current Development Behavior
 

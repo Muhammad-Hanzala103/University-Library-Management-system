@@ -91,14 +91,14 @@
         }
       }
     },
-    "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
+    "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj",
+        "projectUniqueName": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj",
         "projectName": "KicsitLibrary.Data",
-        "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj",
+        "projectPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj",
         "packagesPath": "C:\\Users\\hani7\\.nuget\\packages\\",
-        "outputPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\obj\\",
+        "outputPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -202,14 +202,14 @@
         }
       }
     },
-    "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
+    "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj",
+        "projectUniqueName": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj",
         "projectName": "KicsitLibrary.Reports",
-        "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj",
+        "projectPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj",
         "packagesPath": "C:\\Users\\hani7\\.nuget\\packages\\",
-        "outputPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\obj\\",
+        "outputPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -234,8 +234,8 @@
               "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj": {
                 "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj"
               },
-              "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
-                "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
+              "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
+                "projectPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
               }
             }
           }
@@ -325,11 +325,11 @@
             "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
-                "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
+              "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
+                "projectPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
               },
-              "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
-                "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj"
+              "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
+                "projectPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj"
               }
             }
           }
@@ -434,11 +434,11 @@
               "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj": {
                 "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Core\\KicsitLibrary.Core.csproj"
               },
-              "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
-                "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
+              "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj": {
+                "projectPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Data\\KicsitLibrary.Data.csproj"
               },
-              "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
-                "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj"
+              "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj": {
+                "projectPath": "c:\\Project\\University-Library-Management-system\\KicsitLibrary.Reports\\KicsitLibrary.Reports.csproj"
               },
               "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj": {
                 "projectPath": "C:\\Project\\University-Library-Management-system\\KicsitLibrary.Services\\KicsitLibrary.Services.csproj"

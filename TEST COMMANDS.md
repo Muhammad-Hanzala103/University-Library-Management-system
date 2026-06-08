@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite directory and file per test unde
 Current expected result:
 
 ```text
-Passed: 228
+Passed: 243
 Failed: 0
 Skipped: 0
 ```

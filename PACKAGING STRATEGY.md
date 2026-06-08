@@ -95,7 +95,7 @@ Recommended: signed Windows Installer after two pre-release fixes:
 
 1. Decide whether `KicsitLibrary.db` remains beside the executable for a portable pilot or moves to a user/per-machine app data folder for installed deployments.
 2. Define upgrade behavior that creates a verified backup before replacing application files.
-3. If AppData storage is selected, implement and test the Priority 9C runtime-root database relocation workflow before packaging.
+3. If AppData storage is selected, implement and test the Priority 9D verified runtime-root database relocation workflow before packaging.
 
 For immediate smoke testing only, use framework-dependent portable publish.
 
