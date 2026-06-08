@@ -37,7 +37,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Default seeded user accounts and passwords exist for development and first-run access. Any real deployment must require password reset or documented credential change.
 - SMTP passwords are not seeded with real values, but configured SMTP credentials are still stored in local `SystemSettings` without encryption.
 - `LocalBackupFolder` still seeds the legacy value `C:\KicsitLibraryBackup`; current Priority 8A+ backup workflows use `BackupDefaultFolder`/automatic backup settings and default to the user's Documents folder when empty. The legacy setting should be removed or migrated in a future cleanup.
-- The repository previously had no `.gitignore`; many `bin`, `obj`, `.vs`, and local database artifacts are already tracked. Priority 9B added `.gitignore` for future artifacts but did not remove tracked files.
+- The repository previously had no `.gitignore`; many `bin`, `obj`, `.vs`, and local database artifacts were already tracked. Priority 9B added `.gitignore` for future artifacts. Priority 9E successfully untracked 1082 generated artifacts (14 .vs/, 407 bin/, 661 obj/ files) using non-destructive `git rm --cached` commands. All local files remain preserved on disk. Future generated artifacts will not be tracked.
 - Release signing certificate, installer tooling, update strategy, rollback strategy, and support policy remain pending.
 - WPF UI automation is still absent; `RELEASE TEST PLAN.md` must be executed manually before packaging.
 
@@ -48,7 +48,7 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Document storage and backup default folders now use runtime path resolution only when their explicit settings are empty. Existing configured folders still take precedence.
 - Restore staging uses runtime staging only when the runtime database path matches the active configured SQLite database path; otherwise it stays beside the database so startup can find pending restore metadata.
 - Report exports, clearance certificates, ownership lock files, logs, and temp folder usage are not fully integrated with `IRuntimePathService` yet.
-- Source-control cleanup remains pending. Already tracked `bin`, `obj`, `.vs`, local databases, and generated runtime artifacts were not removed in Priority 9C.
+- Source-control cleanup has been completed in Priority 9E. Generated artifacts have been untracked from git using non-destructive commands. All local files remain preserved on disk.
 
 ---
 
