@@ -16,7 +16,8 @@ namespace KicsitLibrary.Services.Backup;
 public sealed class BackupService(
     KicsitLibraryDbContext context,
     IAuthenticationService authenticationService,
-    IDatabaseOwnershipService ownershipService) : IBackupService
+    IDatabaseOwnershipService ownershipService,
+    IRuntimePathService? runtimePathService = null) : IBackupService
 {
     private static readonly SemaphoreSlim BackupLock = new(1, 1);
 
@@ -346,9 +347,15 @@ public sealed class BackupService(
         var values = await context.SystemSettings.AsNoTracking()
             .Where(item => item.Group == "Backup")
             .ToDictionaryAsync(item => item.Key, item => item.Value, cancellationToken);
+        var defaultFolder = Read(values, "BackupDefaultFolder", string.Empty);
+        if (string.IsNullOrWhiteSpace(defaultFolder) && runtimePathService != null)
+        {
+            defaultFolder = await runtimePathService.GetBackupRootAsync(cancellationToken);
+        }
+
         return new BackupSettings
         {
-            DefaultFolder = Read(values, "BackupDefaultFolder", string.Empty),
+            DefaultFolder = defaultFolder,
             CompressionEnabled = ReadBool(values, "BackupCompressionEnabled", false),
             VerifyAfterCreation = ReadBool(values, "BackupVerifyAfterCreation", true),
             RetentionDays = ReadInt(values, "BackupRetentionDays", 30, 1, 3650),

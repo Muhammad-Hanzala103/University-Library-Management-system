@@ -21,6 +21,7 @@ Cons:
 - No shortcuts, uninstall entry, signing trust, upgrade workflow, or data migration.
 - Framework-dependent mode requires .NET 8 Desktop Runtime.
 - The current relative database path will create/use `KicsitLibrary.db` inside the publish folder.
+- Priority 9C prepares a runtime data root service, but portable publish still keeps the default executable-relative database until release-root startup is explicitly approved.
 
 ## 2. Self Contained Publish Option
 
@@ -94,6 +95,7 @@ Recommended: signed Windows Installer after two pre-release fixes:
 
 1. Decide whether `KicsitLibrary.db` remains beside the executable for a portable pilot or moves to a user/per-machine app data folder for installed deployments.
 2. Define upgrade behavior that creates a verified backup before replacing application files.
+3. If AppData storage is selected, implement and test the Priority 9C runtime-root database relocation workflow before packaging.
 
 For immediate smoke testing only, use framework-dependent portable publish.
 
@@ -162,6 +164,19 @@ Before any update:
 - Keep the backup outside the install folder.
 - Block update if backup creation or verification fails.
 
+## 13A. Runtime Data Location Policy
+
+Priority 9C adds `IRuntimePathService` and a release-safe path strategy. For installer packaging, the recommended data root is `%LOCALAPPDATA%\Ilm-o-Kutub System` unless the university approves a managed per-machine data folder.
+
+Do not enable release-root startup until a future task verifies:
+
+- existing executable-relative database detection
+- verified backup before relocation
+- safe copy/restore into the release root
+- pending restore sidecar preservation
+- document and backup folder continuity
+- login and core module verification after relocation
+
 ## 14. Database Compatibility Warning
 
 The current schema strategy uses `EnsureCreatedAsync` and additive SQLite compatibility SQL. This is not a production migration strategy. Installer deployment should not proceed broadly until a migration baseline/adoption policy is approved.
@@ -175,6 +190,7 @@ Document storage defaults to the user's Documents folder. If future releases mov
 - [ ] `dotnet build KicsitLibrary.slnx`
 - [ ] `dotnet test KicsitLibrary.slnx`
 - [ ] `scripts/deployment_smoke_test.ps1`
+- [ ] Runtime path tests pass with `RuntimePathServiceTests`
 - [ ] Fresh install simulation
 - [ ] First-run database creation
 - [ ] Login with seeded admin account, then password-change policy check

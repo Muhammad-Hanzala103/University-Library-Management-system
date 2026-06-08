@@ -42,6 +42,7 @@ The solution uses six projects:
 - In normal Debug builds this becomes `KicsitLibrary.Desktop/bin/Debug/net8.0-windows/KicsitLibrary.db`.
 - In published output this will become `<publish folder>\KicsitLibrary.db` unless the connection string is changed.
 - This is acceptable for development and portable internal pilots, but needs a release decision before installer deployment because program folders may be read-only.
+- Priority 9C adds `IRuntimePathService` and guarded runtime settings for release-safe paths. With defaults (`UseReleaseDataRoot=False`, `RuntimeStorageMode=Development`), startup behavior is unchanged. Release mode can resolve data under `%LOCALAPPDATA%\Ilm-o-Kutub System`, but startup relocation remains deferred until a verified data-preservation workflow is implemented.
 
 ## 6. Backup and Restore Behavior
 
@@ -55,7 +56,7 @@ The solution uses six projects:
 ## 7. Document Storage Behavior
 
 - `DocumentStorageRoot` defaults to empty.
-- Empty root resolves to `%USERPROFILE%\Documents\Ilm-o-Kutub System\Documents`.
+- Empty root resolves through `IRuntimePathService`. In default development mode this preserves `%USERPROFILE%\Documents\Ilm-o-Kutub System\Documents`; in release-root mode it resolves under the runtime data root.
 - Files are stored under document-type and year-month subfolders using generated names.
 - Soft delete affects records only; physical deletion is deferred.
 - Document storage must not be deleted during uninstall or upgrade unless the operator explicitly chooses data removal.
@@ -118,7 +119,7 @@ Deployment smoke script:
 ## 14. Known Deployment Blockers
 
 - No EF migration baseline or adoption plan exists.
-- SQLite database path currently resolves to the executable folder.
+- SQLite database path currently resolves to the executable folder by default. Runtime path support exists, but startup database relocation is not enabled yet.
 - No final installer, ClickOnce profile, MSIX manifest, signing certificate, or upgrade process exists.
 - `.gitignore` was absent before Priority 9B; many generated artifacts are already tracked.
 - Default seeded credentials must be changed for any real deployment.
@@ -129,12 +130,13 @@ Deployment smoke script:
 ## 15. Required Pre Release Fixes
 
 1. Decide the release database location: executable folder for portable/internal only, or per-user/per-machine app data for installer deployment.
-2. Create an EF migration baseline/adoption plan or formally document continued compatibility-SQL support.
-3. Remove tracked `bin`, `obj`, `.vs`, local database, and generated artifacts from source control in a separate approved cleanup.
-4. Change default seeded passwords during first-run or require operator reset.
-5. Add release signing metadata and certificate plan.
-6. Add installer/update rollback policy with mandatory backup before upgrade.
-7. Complete manual release test plan and record results.
+2. Implement the approved database relocation workflow if release-root storage is selected.
+3. Create an EF migration baseline/adoption plan or formally document continued compatibility-SQL support.
+4. Remove tracked `bin`, `obj`, `.vs`, local database, and generated artifacts from source control in a separate approved cleanup.
+5. Change default seeded passwords during first-run or require operator reset.
+6. Add release signing metadata and certificate plan.
+7. Add installer/update rollback policy with mandatory backup before upgrade.
+8. Complete manual release test plan and record results.
 
 ## 16. Recommended Packaging Options
 
@@ -163,6 +165,7 @@ Recommended next packaging direction: a signed Windows Installer for university 
 | Risk | Impact | Likelihood | Mitigation |
 | --- | --- | --- | --- |
 | Database stored in install folder | High | Medium | Move or configure database under AppData for installer deployments. |
+| Runtime path service not fully integrated | Medium | Medium | Complete startup, reports, certificates, locks, logs, and temp integration after database relocation is approved. |
 | No migration baseline | High | High | Create migration adoption plan before production. |
 | Tracked build/runtime artifacts | Medium | High | Use `.gitignore`; remove tracked artifacts only in approved cleanup. |
 | Default seeded passwords | High | Medium | Force password change or document secure first-run reset. |
@@ -174,10 +177,11 @@ Recommended next packaging direction: a signed Windows Installer for university 
 ## 22. Final Release Checklist
 
 - [ ] Build passes with zero warnings and errors.
-- [ ] Tests pass with at least 220 tests.
+- [ ] Tests pass with at least 228 tests.
 - [ ] Deployment smoke publish completes.
 - [ ] Manual release test plan completed and signed off.
 - [ ] Database location and upgrade behavior approved.
+- [ ] Release data root and database relocation workflow approved and tested.
 - [ ] Backup before update policy approved.
 - [ ] Default credentials changed or forced reset implemented.
 - [ ] SMTP secret handling approved.

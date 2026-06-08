@@ -33,7 +33,7 @@ The test project uses a unique temporary SQLite directory and file per test unde
 Current expected result:
 
 ```text
-Passed: 220
+Passed: 228
 Failed: 0
 Skipped: 0
 ```
@@ -163,6 +163,7 @@ Run the Priority 9B deployment smoke script:
 ```
 
 The script runs `dotnet build KicsitLibrary.slnx`, `dotnet test KicsitLibrary.slnx`, and a local framework-dependent `dotnet publish` for `KicsitLibrary.Desktop` into `artifacts/deployment-smoke/publish`. It does not launch the app, does not create an installer, does not publish to production, and does not intentionally modify the real user database.
+It also prints the configured runtime data mode, the release-root guard value, the publish output folder, and a warning that installer elevated permissions and rollback behavior are not covered by the smoke script.
 
 Equivalent publish command used by the script:
 
@@ -320,6 +321,16 @@ Get-Content "RELEASE TEST PLAN.md"
 ```
 
 Packaging remains pending. Do not create ClickOnce, MSIX, MSI, Supabase sync, EF migrations, WhatsApp delivery, or final `README.md` until a separate approved task requests it.
+
+## Runtime Data Location Verification
+
+Run only Priority 9C runtime path tests:
+
+```powershell
+dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualifiedName~RuntimePathServiceTests"
+```
+
+Priority 9C tests use isolated SQLite databases and temporary folders. They verify release-mode LocalApplicationData defaults, configured runtime roots, path-traversal rejection, folder creation, document-storage fallback, backup fallback, and the guarded database path behavior. They never access `KicsitLibrary.db`.
 
 ## 7. Manual Clearance Verification
 

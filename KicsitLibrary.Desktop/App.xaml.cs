@@ -27,6 +27,7 @@ using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Services.Ownership;
 using KicsitLibrary.Services.Preferences;
 using KicsitLibrary.Services.Documents;
+using KicsitLibrary.Services.Runtime;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;
 using KicsitLibrary.Reports.Export;
@@ -135,6 +136,7 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IRestoreService, RestoreService>();
                     services.AddSingleton<IRestoreDialogService, RestoreDialogService>();
                     services.AddSingleton<IDatabaseOwnershipService, DatabaseOwnershipService>();
+                    services.AddScoped<IRuntimePathService, RuntimePathService>();
                     services.AddScoped<IDocumentStorageService, DocumentStorageService>();
                     services.AddScoped<IDocumentService, DocumentService>();
                     services.AddSingleton<IDocumentDialogService, DocumentDialogService>();

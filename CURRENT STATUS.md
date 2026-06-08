@@ -26,6 +26,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 8D (Cross Process Database and Backup Ownership Protection)**: **100% Completed**
 - **Priority 9A (Secure Document Upload Workflow)**: **100% Completed**
 - **Priority 9B (Deployment Preparation Audit & Release Readiness Plan)**: **100% Completed**
+- **Priority 9C (Release Data Location & Source Control Cleanup Plan)**: **100% Completed**
 - **Priority 8E+ (Sync & Deployment)**: **Pending Implementation**
 
 ### Product Branding and UI Refinement
@@ -40,6 +41,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - Four branding/hint regression tests were added during the branding phase. The full isolated suite now passes with 220 tests after Priority 9A.
 - Automatic backup scheduling and retention safety are implemented. Deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README generation were not started.
 - Priority 9B deployment preparation is complete as documentation and smoke-test scripting only. No installer, ClickOnce package, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, final README, repository rename, namespace rename, or database rename was performed.
+- Priority 9C adds a guarded runtime data-location service and source-control cleanup plan only. Default development startup still uses executable-relative `KicsitLibrary.db`; no database relocation, tracked-artifact removal, installer packaging, EF migration, Supabase sync, WhatsApp delivery, or final README was performed.
 
 ### GitHub Repository Rename
 The GitHub repository rename remains a manual owner action. The target repository name is `Ilm-o-Kutub-System`.
@@ -242,6 +244,18 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - Added root `Directory.Build.props` to centralize release metadata: product, company, copyright, and version.
 - Source-control audit found `bin`, `obj`, `.vs`, and local database artifacts are already tracked. No tracked files were removed in Priority 9B; cleanup remains a separate approved task.
 - Packaging remains pending. Final README remains pending. GitHub repository rename remains manual.
+
+### Priority 9C Release Data Location and Source Control Cleanup Plan
+- Added `IRuntimePathService` and `RuntimePathService` to centralize runtime data paths.
+- Added non-destructive runtime `SystemSettings` defaults for data root, storage mode, release-root guard, database file name, and folder names for documents, backups, reports, certificates, restore staging, logs, temp files, and locks.
+- Default development mode preserves the executable-relative SQLite database path and does not move or rename `KicsitLibrary.db`.
+- Release mode can resolve the runtime data root to `%LOCALAPPDATA%\Ilm-o-Kutub System`, or to a configured `RuntimeDataRoot`.
+- Document storage and backup defaults now use the runtime path service only when their explicit settings are empty.
+- Restore staging uses the runtime staging path only when the runtime database path matches the active SQLite database path; otherwise existing beside-database pending restore behavior is preserved for startup compatibility.
+- Added `RUNTIME DATA LOCATION STRATEGY.md` and `SOURCE CONTROL CLEANUP PLAN.md`.
+- Updated the deployment smoke script to report runtime data mode, publish output, and non-destructive limitations.
+- Added eight isolated runtime path tests. The full isolated suite now passes with 228 tests after Priority 9C.
+- Source-control cleanup remains a plan only; tracked generated artifacts were not removed.
 
 ---
 

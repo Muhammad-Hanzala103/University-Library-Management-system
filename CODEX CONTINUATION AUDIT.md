@@ -1,5 +1,38 @@
 # Codex Continuation Audit
 
+## Priority 9C Completion Update
+
+Completion date: 2026-06-08
+
+- Completed Release Data Location and Source Control Cleanup Plan only.
+- Added `RUNTIME DATA LOCATION STRATEGY.md`.
+- Added `SOURCE CONTROL CLEANUP PLAN.md`.
+- Added `IRuntimePathService` and `RuntimePathService`.
+- Seeded runtime path settings non-destructively through `DbSeeder`.
+- Preserved default development SQLite behavior: `KicsitLibrary.db` still resolves from the desktop executable directory while `UseReleaseDataRoot=False`.
+- Prepared release root resolution for `%LOCALAPPDATA%\Ilm-o-Kutub System` or a configured `RuntimeDataRoot`.
+- Wired document storage and backup default folder fallback through runtime paths only when their explicit settings are empty.
+- Kept restore staging startup-compatible by using runtime staging only when the runtime database path matches the active configured SQLite database path.
+- Updated `scripts/deployment_smoke_test.ps1` to print runtime data mode, release-root guard, publish path, and smoke-test limitations.
+- Added eight isolated runtime path tests.
+- Source-control cleanup remains a documented plan only. No tracked `bin`, `obj`, `.vs`, database, backup, document, report, certificate, or generated artifact files were removed.
+- No installer package, ClickOnce publish, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, final README, namespace rename, or database rename was created.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 228 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Decide and implement the approved release database relocation workflow, including verified backup and pending-restore preservation, before installer packaging. Do not remove tracked artifacts, create installers, add EF migrations, Supabase sync, WhatsApp delivery, or final README until separately requested.
+
 ## Priority 9B Completion Update
 
 Completion date: 2026-06-08

@@ -18,11 +18,25 @@ public static class PendingRestoreProcessor
             WorkingDirectoryName,
             PendingFileName);
 
+    public static string GetPendingRequestPath(
+        string databasePath,
+        string? restoreStagingRoot) =>
+        string.IsNullOrWhiteSpace(restoreStagingRoot)
+            ? GetPendingRequestPath(databasePath)
+            : Path.Combine(Path.GetFullPath(restoreStagingRoot), PendingFileName);
+
     public static string GetResultPath(string databasePath) =>
         Path.Combine(
             Path.GetDirectoryName(Path.GetFullPath(databasePath))!,
             WorkingDirectoryName,
             ResultFileName);
+
+    public static string GetResultPath(
+        string databasePath,
+        string? restoreStagingRoot) =>
+        string.IsNullOrWhiteSpace(restoreStagingRoot)
+            ? GetResultPath(databasePath)
+            : Path.Combine(Path.GetFullPath(restoreStagingRoot), ResultFileName);
 
     public static async Task<PendingRestoreResult?> ApplyPendingRestoreAsync(
         string databasePath,

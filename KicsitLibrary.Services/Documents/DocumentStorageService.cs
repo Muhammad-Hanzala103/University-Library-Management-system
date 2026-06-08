@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KicsitLibrary.Services.Documents;
 
-public sealed class DocumentStorageService(KicsitLibraryDbContext context)
+public sealed class DocumentStorageService(
+    KicsitLibraryDbContext context,
+    IRuntimePathService? runtimePathService = null)
     : IDocumentStorageService
 {
     private static readonly StringComparer PathComparer =
@@ -28,9 +30,15 @@ public sealed class DocumentStorageService(KicsitLibraryDbContext context)
                 setting => setting.Value,
                 cancellationToken);
 
+        var storageRoot = Read(values, "DocumentStorageRoot", string.Empty);
+        if (string.IsNullOrWhiteSpace(storageRoot) && runtimePathService != null)
+        {
+            storageRoot = await runtimePathService.GetDocumentStorageRootAsync(cancellationToken);
+        }
+
         return new DocumentStorageSettings
         {
-            StorageRoot = Read(values, "DocumentStorageRoot", string.Empty),
+            StorageRoot = storageRoot,
             MaxFileSizeMb = ReadInt(values, "DocumentMaxFileSizeMb", 25, 1, 250),
             AllowPhysicalDelete = ReadBool(values, "DocumentAllowPhysicalDelete", false),
             AllowedExtensions = Read(values, "DocumentAllowedExtensions",

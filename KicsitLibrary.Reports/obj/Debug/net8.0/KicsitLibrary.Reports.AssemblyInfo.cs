@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCopyrightAttribute(("Copyright (c) Dr A Q Khan Institute of Computer Sciences and Information Technolo" +
     "gy KICSIT"))]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+02faa6503f205b3bbb5afcfe6a8530e20a79551e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5c5f8038fde08c0bf374affbf234ea4da71beca5")]
 [assembly: System.Reflection.AssemblyProductAttribute("Ilm-o-Kutub System")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KicsitLibrary.Reports")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

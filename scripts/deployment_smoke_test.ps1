@@ -25,6 +25,17 @@ try {
 
     $publishPath = Join-Path $repoRoot $PublishDirectory
     New-Item -ItemType Directory -Force -Path $publishPath | Out-Null
+    $appSettingsPath = Join-Path $repoRoot "KicsitLibrary.Desktop/appsettings.json"
+    $appSettings = Get-Content -Raw $appSettingsPath | ConvertFrom-Json
+    $runtimeMode = if ($appSettings.SystemSettings.RuntimeStorageMode) { $appSettings.SystemSettings.RuntimeStorageMode } else { "Development" }
+    $useReleaseDataRoot = if ($null -ne $appSettings.SystemSettings.UseReleaseDataRoot) { $appSettings.SystemSettings.UseReleaseDataRoot } else { $false }
+
+    Write-Host "Runtime data mode: $runtimeMode"
+    Write-Host "Use release data root: $useReleaseDataRoot"
+    Write-Host "Publish output folder: $publishPath"
+    Write-Host "This smoke script is non-destructive, does not launch the app, and does not intentionally modify any real user database."
+    Write-Host "It does not test installer elevated permissions, shortcuts, uninstall behavior, or upgrade rollback."
+    Write-Host ""
 
     Invoke-Step "Build solution" {
         dotnet build KicsitLibrary.slnx
@@ -45,7 +56,7 @@ try {
     Write-Host ""
     Write-Host "Deployment smoke test completed successfully."
     Write-Host "Publish output: $publishPath"
-    Write-Host "The application was not launched and no production installer was created."
+    Write-Host "The application was not launched, no real user database was intentionally modified, and no production installer was created."
 }
 catch {
     Write-Host ""

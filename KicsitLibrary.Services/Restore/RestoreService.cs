@@ -14,7 +14,8 @@ public sealed class RestoreService(
     KicsitLibraryDbContext context,
     IAuthenticationService authenticationService,
     IBackupService backupService,
-    IDatabaseOwnershipService ownershipService) : IRestoreService
+    IDatabaseOwnershipService ownershipService,
+    IRuntimePathService? runtimePathService = null) : IRestoreService
 {
     private static readonly SemaphoreSlim RestoreLock = new(1, 1);
 
@@ -207,7 +208,12 @@ public sealed class RestoreService(
                 $"SafetyBackupFilePath={Safe(safetyBackup.BackupFilePath)}");
             await SaveAsync(cancellationToken);
 
-            var pendingPath = PendingRestoreProcessor.GetPendingRequestPath(targetPath);
+            var restoreStagingRoot = await ResolveRestoreStagingRootAsync(
+                targetPath,
+                cancellationToken);
+            var pendingPath = PendingRestoreProcessor.GetPendingRequestPath(
+                targetPath,
+                restoreStagingRoot);
             if (File.Exists(pendingPath))
             {
                 return await FailAsync(
@@ -448,6 +454,24 @@ public sealed class RestoreService(
             throw new InvalidOperationException("Restore requires a file-based SQLite database.");
         }
         return Path.GetFullPath(builder.DataSource);
+    }
+
+    private async Task<string?> ResolveRestoreStagingRootAsync(
+        string targetPath,
+        CancellationToken cancellationToken)
+    {
+        if (runtimePathService == null)
+        {
+            return null;
+        }
+
+        var runtimeDatabasePath = await runtimePathService.GetDatabasePathAsync(cancellationToken);
+        return string.Equals(
+            Path.GetFullPath(runtimeDatabasePath),
+            Path.GetFullPath(targetPath),
+            StringComparison.OrdinalIgnoreCase)
+            ? await runtimePathService.GetRestoreStagingRootAsync(cancellationToken)
+            : null;
     }
 
     private async Task AddActivityAsync(

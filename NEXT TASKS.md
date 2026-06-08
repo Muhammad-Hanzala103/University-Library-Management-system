@@ -282,6 +282,25 @@ Deferred refinements:
 - [ ] Add signing certificate and installer/update/rollback policy.
 - [ ] Execute the release test plan manually before publishing.
 
+## Priority 9C: Release Data Location and Source Control Cleanup Plan
+- **Goal**: Prepare release-safe runtime data locations and a safe source-control cleanup plan without relocating current databases or removing tracked artifacts.
+- [x] Create `RUNTIME DATA LOCATION STRATEGY.md`.
+- [x] Create `SOURCE CONTROL CLEANUP PLAN.md`.
+- [x] Add `IRuntimePathService` and `RuntimePathService`.
+- [x] Seed runtime path settings non-destructively in `SystemSettings`.
+- [x] Keep default development database behavior executable-relative with `UseReleaseDataRoot=False`.
+- [x] Use runtime path defaults for document storage and backup only when explicit folders are empty.
+- [x] Keep restore pending sidecars startup-compatible; use runtime staging only when the runtime database path matches the active configured database.
+- [x] Update the deployment smoke script to report runtime data mode and non-destructive limitations.
+- [x] Add eight isolated runtime path tests.
+- [x] Do not create installers, ClickOnce, MSIX, EF migrations, Supabase sync, WhatsApp delivery, final README, namespace rename, database rename, or tracked-artifact removal.
+
+Deferred refinements:
+- [ ] Implement an approved database relocation workflow before enabling release-root startup.
+- [ ] Integrate report exports, certificates, ownership locks, logs, and temp folders with `IRuntimePathService` only after manual validation.
+- [ ] Remove already tracked generated artifacts with `git rm --cached` only after explicit approval.
+- [ ] Decide per-user versus per-machine runtime data root for installer deployment.
+
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
