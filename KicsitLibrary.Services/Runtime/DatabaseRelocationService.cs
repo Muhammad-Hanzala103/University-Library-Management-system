@@ -122,6 +122,9 @@ public sealed class DatabaseRelocationService(
 
         string safetyBackupPath = string.Empty;
         var copied = false;
+        var targetExistedAtStart = false;
+        string? originalTargetSnapshotPath = null;
+
         try
         {
             if (!CanCurrentUserManage())
@@ -186,6 +189,7 @@ public sealed class DatabaseRelocationService(
             history.SafetyBackupPath = safetyBackupPath;
             await AddActivityAsync("Database Relocation Safety Backup Created", $"SafetyBackup={Safe(safetyBackupPath)}", cancellationToken);
             await SaveAsync(cancellationToken);
+
             sourceValidation = await RestoreSqliteUtility.ValidateAsync(source, cancellationToken);
             if (!sourceValidation.Succeeded)
             {
@@ -193,22 +197,12 @@ public sealed class DatabaseRelocationService(
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
-            var tempTarget = Path.Combine(
-                Path.GetDirectoryName(target)!,
-                $"relocation-copy-{Guid.NewGuid():N}.db");
-            File.Copy(source, tempTarget, overwrite: false);
-            var tempValidation = await RestoreSqliteUtility.ValidateAsync(tempTarget, cancellationToken);
-            if (!tempValidation.Succeeded ||
-                !string.Equals(tempValidation.ChecksumSha256, sourceValidation.ChecksumSha256, StringComparison.Ordinal))
+            targetExistedAtStart = File.Exists(target);
+            if (targetExistedAtStart)
             {
-                TryDelete(tempTarget);
-                return await FailAsync(history, startedAt, source, target, "Copied database failed integrity or checksum verification.", cancellationToken);
-            }
-
-            File.Copy(tempTarget, target, overwrite: true);
-            TryDelete(tempTarget);
-            copied = true;
-            await AddActivityAsync("Database Relocation Database Copied", $"Target={Safe(target)}", cancellationToken);
+                // Snapshot existing target to enable safe rollback if overwriting fails.
+                originalTargetSnapshotPath = Path.Combine(
+                    Path.GetDirectoryName(target)!,
 
             var targetValidation = await RestoreSqliteUtility.ValidateAsync(target, cancellationToken);
             if (!targetValidation.Succeeded)
