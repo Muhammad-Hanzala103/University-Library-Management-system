@@ -20,7 +20,7 @@ public sealed class RuntimePathService(KicsitLibraryDbContext context) : IRuntim
     {
         var settings = await ReadSettingsAsync(cancellationToken);
         var fileName = ReadFileName(settings.DatabaseFileName, "KicsitLibrary.db");
-        var root = ShouldUseReleaseRoot(settings)
+        var root = ShouldUseReleaseDatabaseRoot(settings)
             ? ResolveDataRoot(settings)
             : AppContext.BaseDirectory;
         return EnsureUnderRoot(root, Path.Combine(root, fileName));
@@ -194,6 +194,10 @@ public sealed class RuntimePathService(KicsitLibraryDbContext context) : IRuntim
         settings.UseReleaseDataRoot ||
         string.Equals(settings.RuntimeStorageMode, ReleaseMode, StringComparison.OrdinalIgnoreCase) ||
         !string.IsNullOrWhiteSpace(settings.RuntimeDataRoot);
+
+    private static bool ShouldUseReleaseDatabaseRoot(RuntimePathSettings settings) =>
+        settings.UseReleaseDataRoot ||
+        string.Equals(settings.RuntimeStorageMode, ReleaseMode, StringComparison.OrdinalIgnoreCase);
 
     private static string NormalizeRoot(string root)
     {

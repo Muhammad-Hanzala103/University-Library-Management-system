@@ -14,6 +14,7 @@ public partial class BackupManagementViewModel(
     IAutomaticBackupSchedulerService automaticBackupSchedulerService,
     IAuthenticationService authenticationService,
     IDatabaseOwnershipService databaseOwnershipService,
+    IDatabaseRelocationService databaseRelocationService,
     IBackupDialogService dialogService,
     IRestoreDialogService restoreDialogService) : ObservableObject
 {
@@ -70,6 +71,19 @@ public partial class BackupManagementViewModel(
     [ObservableProperty] private string _restoreLockMessage = string.Empty;
     [ObservableProperty] private string _schedulerLockMessage = string.Empty;
     [ObservableProperty] private bool _canCleanupOwnershipLocks;
+    [ObservableProperty] private string _relocationCurrentDatabasePath = string.Empty;
+    [ObservableProperty] private string _relocationTargetDatabasePath = string.Empty;
+    [ObservableProperty] private string _relocationRuntimeDataRoot = string.Empty;
+    [ObservableProperty] private string _relocationRuntimeStorageMode = "Development";
+    [ObservableProperty] private bool _relocationUseReleaseDataRoot;
+    [ObservableProperty] private bool _relocationTargetExists;
+    [ObservableProperty] private bool _relocationCanManage;
+    [ObservableProperty] private bool _relocationCanRelocate;
+    [ObservableProperty] private string _relocationReason = string.Empty;
+    [ObservableProperty] private string _relocationConfirmationText = string.Empty;
+    [ObservableProperty] private bool _relocationEnableReleaseDataRootAfterMove = true;
+    [ObservableProperty] private string _relocationMessage = string.Empty;
+    [ObservableProperty] private ObservableCollection<DatabaseRelocationHistoryItem> _relocationHistory = [];
 
     [RelayCommand]
     public async Task RefreshAsync()
@@ -102,6 +116,7 @@ public partial class BackupManagementViewModel(
             Summary = await backupService.GetBackupStatusSummaryAsync();
             await LoadAutomaticBackupAsync();
             await LoadOwnershipStatusAsync();
+            await LoadRelocationStatusAsync();
             StatusMessage = $"{BackupHistory.Count} backup history record(s) loaded.";
         }
         catch (Exception ex)
@@ -445,6 +460,81 @@ public partial class BackupManagementViewModel(
         }
     }
 
+    [RelayCommand]
+    private async Task PreviewDatabaseRelocationAsync()
+    {
+        IsBusy = true;
+        try
+        {
+            var preview = await databaseRelocationService.PreviewRelocationAsync();
+            ApplyRelocationPreview(preview);
+            RelocationMessage = preview.Message +
+                (preview.BlockingReasons.Count == 0
+                    ? string.Empty
+                    : $" {string.Join(" ", preview.BlockingReasons)}");
+            StatusMessage = RelocationMessage;
+        }
+        catch (Exception ex)
+        {
+            RelocationMessage = $"Database relocation preview failed: {ex.Message}";
+            StatusMessage = RelocationMessage;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task RelocateDatabaseAsync()
+    {
+        if (!RelocationCanManage)
+        {
+            StatusMessage = "The current user cannot relocate the database.";
+            return;
+        }
+        if (!RelocationCanRelocate ||
+            !string.Equals(RelocationConfirmationText, "RELOCATE", StringComparison.Ordinal))
+        {
+            StatusMessage = "Preview must pass and confirmation text must be RELOCATE.";
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var user = authenticationService.CurrentUser;
+            var result = await databaseRelocationService.RelocateDatabaseAsync(
+                new DatabaseRelocationRequest
+                {
+                    RequestedByUserId = user?.Id ?? 0,
+                    RequestedByUserName = user?.FullName ?? string.Empty,
+                    Reason = RelocationReason,
+                    SourceDatabasePath = RelocationCurrentDatabasePath,
+                    TargetDatabasePath = RelocationTargetDatabasePath,
+                    CreateSafetyBackup = true,
+                    VerifyBeforeMove = true,
+                    VerifyAfterMove = true,
+                    EnableReleaseDataRootAfterMove = RelocationEnableReleaseDataRootAfterMove,
+                    ConfirmationText = RelocationConfirmationText
+                });
+            RelocationMessage = result.Succeeded
+                ? result.Message
+                : result.ErrorMessage ?? result.Message;
+            StatusMessage = RelocationMessage;
+            await LoadRelocationStatusAsync();
+        }
+        catch (Exception ex)
+        {
+            RelocationMessage = $"Database relocation failed: {ex.Message}";
+            StatusMessage = RelocationMessage;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     private async Task LoadAutomaticBackupAsync()
     {
         var settings =
@@ -483,6 +573,31 @@ public partial class BackupManagementViewModel(
         RestoreLockMessage = health.RestoreLockMessage;
         SchedulerLockMessage = health.SchedulerLockMessage;
         CanCleanupOwnershipLocks = CanCurrentUserCleanupOwnershipLocks();
+    }
+
+    private async Task LoadRelocationStatusAsync()
+    {
+        var status = await databaseRelocationService.GetRelocationStatusAsync();
+        RelocationCurrentDatabasePath = status.CurrentDatabasePath;
+        RelocationTargetDatabasePath = status.TargetDatabasePath;
+        RelocationRuntimeDataRoot = status.RuntimeDataRoot;
+        RelocationRuntimeStorageMode = status.RuntimeStorageMode;
+        RelocationUseReleaseDataRoot = status.UseReleaseDataRoot;
+        RelocationCanManage = status.CanManage;
+        RelocationMessage = status.LastMessage;
+        RelocationHistory = new ObservableCollection<DatabaseRelocationHistoryItem>(
+            await databaseRelocationService.GetRelocationHistoryAsync());
+        var preview = await databaseRelocationService.ValidateRelocationTargetAsync(
+            RelocationTargetDatabasePath);
+        ApplyRelocationPreview(preview);
+    }
+
+    private void ApplyRelocationPreview(DatabaseRelocationPreview preview)
+    {
+        RelocationCurrentDatabasePath = preview.CurrentDatabasePath;
+        RelocationTargetDatabasePath = preview.TargetDatabasePath;
+        RelocationTargetExists = preview.TargetExists;
+        RelocationCanRelocate = preview.CanRelocate;
     }
 
     private bool CanCurrentUserCleanupOwnershipLocks()

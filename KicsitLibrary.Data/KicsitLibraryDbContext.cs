@@ -54,6 +54,7 @@ namespace KicsitLibrary.Data
         public DbSet<StockVerificationEntry> StockVerificationEntries => Set<StockVerificationEntry>();
         public DbSet<BackupHistory> BackupHistories => Set<BackupHistory>();
         public DbSet<RestoreHistory> RestoreHistories => Set<RestoreHistory>();
+        public DbSet<DatabaseRelocationHistory> DatabaseRelocationHistories => Set<DatabaseRelocationHistory>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -118,6 +119,9 @@ namespace KicsitLibrary.Data
             modelBuilder.Entity<RestoreHistory>().HasIndex(item => item.StartedAt);
             modelBuilder.Entity<RestoreHistory>().HasIndex(item => item.Status);
             modelBuilder.Entity<RestoreHistory>().HasIndex(item => item.RequestedByUserName);
+            modelBuilder.Entity<DatabaseRelocationHistory>().HasIndex(item => item.StartedAt);
+            modelBuilder.Entity<DatabaseRelocationHistory>().HasIndex(item => item.Status);
+            modelBuilder.Entity<DatabaseRelocationHistory>().HasIndex(item => item.RequestedByUserName);
             modelBuilder.Entity<DocumentUpload>().HasIndex(item => item.DocumentType);
             modelBuilder.Entity<DocumentUpload>().HasIndex(item => item.UploadDate);
             modelBuilder.Entity<DocumentUpload>().HasIndex(item => item.UploadedBy);

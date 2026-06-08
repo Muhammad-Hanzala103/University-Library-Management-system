@@ -196,6 +196,29 @@ namespace KicsitLibrary.Data
                         "DeletedByUserId" INTEGER NULL
                     );
                     """);
+                await context.Database.ExecuteSqlRawAsync("""
+                    CREATE TABLE IF NOT EXISTS "DatabaseRelocationHistories" (
+                        "Id" INTEGER NOT NULL CONSTRAINT "PK_DatabaseRelocationHistories" PRIMARY KEY AUTOINCREMENT,
+                        "SourceDatabasePath" TEXT NOT NULL,
+                        "TargetDatabasePath" TEXT NOT NULL,
+                        "SafetyBackupPath" TEXT NULL,
+                        "RequestedByUserId" INTEGER NOT NULL,
+                        "RequestedByUserName" TEXT NOT NULL,
+                        "StartedAt" TEXT NOT NULL,
+                        "FinishedAt" TEXT NULL,
+                        "Status" TEXT NOT NULL DEFAULT 'Started',
+                        "Reason" TEXT NULL,
+                        "ErrorMessage" TEXT NULL,
+                        "RollbackPerformed" INTEGER NOT NULL DEFAULT 0,
+                        "MetadataJson" TEXT NULL,
+                        "CreatedAt" TEXT NOT NULL,
+                        "UpdatedAt" TEXT NULL,
+                        "IsDeleted" INTEGER NOT NULL DEFAULT 0,
+                        "DeletedAt" TEXT NULL,
+                        "DeletedReason" TEXT NULL,
+                        "DeletedByUserId" INTEGER NULL
+                    );
+                    """);
 
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_NotificationRecords_IssueRecordId\" " +
@@ -229,6 +252,12 @@ namespace KicsitLibrary.Data
                     "CREATE INDEX IF NOT EXISTS \"IX_RestoreHistories_Status\" ON \"RestoreHistories\" (\"Status\");");
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_RestoreHistories_RequestedByUserName\" ON \"RestoreHistories\" (\"RequestedByUserName\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_DatabaseRelocationHistories_StartedAt\" ON \"DatabaseRelocationHistories\" (\"StartedAt\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_DatabaseRelocationHistories_Status\" ON \"DatabaseRelocationHistories\" (\"Status\");");
+                await context.Database.ExecuteSqlRawAsync(
+                    "CREATE INDEX IF NOT EXISTS \"IX_DatabaseRelocationHistories_RequestedByUserName\" ON \"DatabaseRelocationHistories\" (\"RequestedByUserName\");");
                 await context.Database.ExecuteSqlRawAsync(
                     "CREATE INDEX IF NOT EXISTS \"IX_DocumentUploads_DocumentType\" ON \"DocumentUploads\" (\"DocumentType\");");
                 await context.Database.ExecuteSqlRawAsync(

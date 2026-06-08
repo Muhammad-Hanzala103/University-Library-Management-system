@@ -16,7 +16,7 @@ using System.Reflection;
     "gy KICSIT"))]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Desktop library operations and administration system.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5685ae8888f7c184a82b1f946fcdeacb7c5fddc8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e556695b9f5c51a0c90177d115dea4e318a1f45c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Ilm-o-Kutub System")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KicsitLibrary.Desktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

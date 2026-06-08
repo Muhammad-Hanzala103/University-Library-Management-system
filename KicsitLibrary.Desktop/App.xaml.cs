@@ -137,6 +137,7 @@ namespace KicsitLibrary.Desktop
                     services.AddSingleton<IRestoreDialogService, RestoreDialogService>();
                     services.AddSingleton<IDatabaseOwnershipService, DatabaseOwnershipService>();
                     services.AddScoped<IRuntimePathService, RuntimePathService>();
+                    services.AddScoped<IDatabaseRelocationService, DatabaseRelocationService>();
                     services.AddScoped<IDocumentStorageService, DocumentStorageService>();
                     services.AddScoped<IDocumentService, DocumentService>();
                     services.AddSingleton<IDocumentDialogService, DocumentDialogService>();
@@ -371,32 +372,9 @@ namespace KicsitLibrary.Desktop
         }
 
         private static string ResolveSqliteConnectionString(string? connectionString)
-        {
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                throw new InvalidOperationException("The SQLite connection string is not configured.");
-            }
-
-            var builder = new SqliteConnectionStringBuilder(connectionString);
-            if (string.IsNullOrWhiteSpace(builder.DataSource))
-            {
-                throw new InvalidOperationException("The SQLite data source is not configured.");
-            }
-
-            if (!builder.DataSource.Equals(":memory:", StringComparison.OrdinalIgnoreCase) &&
-                !Path.IsPathRooted(builder.DataSource))
-            {
-                builder.DataSource = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, builder.DataSource));
-            }
-
-            var databaseDirectory = Path.GetDirectoryName(builder.DataSource);
-            if (!string.IsNullOrWhiteSpace(databaseDirectory))
-            {
-                Directory.CreateDirectory(databaseDirectory);
-            }
-
-            return builder.ToString();
-        }
+            => StartupDatabasePathResolver.ResolveSqliteConnectionString(
+                connectionString,
+                AppContext.BaseDirectory);
 
         protected override async void OnExit(ExitEventArgs e)
         {

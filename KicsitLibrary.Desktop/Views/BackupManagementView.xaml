@@ -251,6 +251,94 @@
             </Border>
 
             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10">
+                <StackPanel>
+                    <TextBlock Text="Release Database Relocation"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="Copy-only workflow: creates a verified safety backup, copies the current SQLite database to the release runtime root, verifies the copy, and preserves the source database."
+                               TextWrapping="Wrap"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Margin="0,0,0,8"/>
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Current database" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding RelocationCurrentDatabasePath}" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Release target" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding RelocationTargetDatabasePath}" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Runtime data root" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding RelocationRuntimeDataRoot}" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Current mode" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding RelocationRuntimeStorageMode}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Release root enabled" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding RelocationUseReleaseDataRoot}"/>
+                    </Grid>
+                    <WrapPanel Margin="0,0,0,8">
+                        <TextBlock Text="{Binding RelocationTargetExists, StringFormat=Target exists: {0}}" Margin="0,0,18,0"/>
+                        <TextBlock Text="{Binding RelocationCanRelocate, StringFormat=Preview valid: {0}}" Margin="0,0,18,0"/>
+                        <TextBlock Text="{Binding RelocationCanManage, StringFormat=Can manage: {0}}"/>
+                    </WrapPanel>
+                    <TextBlock Text="Warning: this does not delete the old source database. If release-root startup is enabled, the app will use the copied database on the next launch."
+                               TextWrapping="Wrap"
+                               Foreground="{StaticResource WarningBrush}"
+                               Margin="0,0,0,8"/>
+                    <WrapPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Reason"/>
+                            <TextBox Width="280"
+                                     Text="{Binding RelocationReason, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding RelocationCanManage}"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,10,8">
+                            <TextBlock Text="Type RELOCATE"/>
+                            <TextBox Width="150"
+                                     Text="{Binding RelocationConfirmationText, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding RelocationCanManage}"/>
+                        </StackPanel>
+                        <CheckBox Content="Enable release data root after success"
+                                  IsChecked="{Binding RelocationEnableReleaseDataRootAfterMove}"
+                                  IsEnabled="{Binding RelocationCanManage}"
+                                  VerticalAlignment="Bottom"
+                                  Margin="0,0,10,12"/>
+                        <Button Content="Preview Relocation"
+                                Command="{Binding PreviewDatabaseRelocationCommand}"
+                                ToolTip="Validate the release database target before any copy is attempted."
+                                Style="{StaticResource SecondaryButton}"
+                                Margin="0,0,8,8"/>
+                        <Button Content="Relocate Database"
+                                Command="{Binding RelocateDatabaseCommand}"
+                                IsEnabled="{Binding RelocationCanManage}"
+                                ToolTip="Create a safety backup, copy the database, verify it, and switch release-root settings only after success."
+                                Style="{StaticResource DangerButton}"
+                                Margin="0,0,8,8"/>
+                    </WrapPanel>
+                    <TextBlock Text="{Binding RelocationMessage}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                    <DataGrid ItemsSource="{Binding RelocationHistory}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Height="140">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Started" Binding="{Binding StartedAt, StringFormat={}{0:dd-MMM-yyyy HH:mm}}" Width="125"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="95"/>
+                            <DataGridTextColumn Header="Requested By" Binding="{Binding RequestedByUserName}" Width="130"/>
+                            <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="180"/>
+                            <DataGridTextColumn Header="Safety Backup" Binding="{Binding SafetyBackupPath}" Width="220"/>
+                            <DataGridTextColumn Header="Target" Binding="{Binding TargetDatabasePath}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10">
                 <DataGrid ItemsSource="{Binding BackupHistory}"
                           SelectedItem="{Binding SelectedBackup}"
                           AutoGenerateColumns="False"
