@@ -156,6 +156,20 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 
 Priority 9A tests use isolated temporary SQLite databases, temporary source folders, and temporary document storage folders. They cover valid PDF/PNG upload, executable/disallowed/oversized rejection, generated filenames, path traversal neutralization, SHA-256 storage, configured storage root use, activity logs, document-type filtering, unauthorized open blocking, soft delete, restore, missing-file reporting, SOP document reporting, and copy logging. They never access `KicsitLibrary.db` and never open external applications.
 
+Run the Priority 9B deployment smoke script:
+
+```powershell
+./scripts/deployment_smoke_test.ps1
+```
+
+The script runs `dotnet build KicsitLibrary.slnx`, `dotnet test KicsitLibrary.slnx`, and a local framework-dependent `dotnet publish` for `KicsitLibrary.Desktop` into `artifacts/deployment-smoke/publish`. It does not launch the app, does not create an installer, does not publish to production, and does not intentionally modify the real user database.
+
+Equivalent publish command used by the script:
+
+```powershell
+dotnet publish KicsitLibrary.Desktop/KicsitLibrary.Desktop.csproj -c Release -r win-x64 --self-contained false -o artifacts/deployment-smoke/publish
+```
+
 ## Manual Document Workflow Verification
 
 1. Sign in as Super Admin or Admin and open **Documents**.
@@ -292,6 +306,20 @@ Priority 8C stores automatic backup scheduler and retention configuration in exi
 Priority 8D stores ownership configuration in existing `SystemSettings` rows and adds no EF migrations or destructive schema changes.
 
 Priority 9A adds `DocumentUploads` compatibility table/columns/indexes only through safe SQLite compatibility SQL. It adds no EF migrations, does not delete existing databases, and does not rename `KicsitLibrary.db`.
+
+Priority 9B does not change the database initialization strategy. Deployment planning documents identify the executable-relative SQLite path as a packaging decision that must be settled before installer rollout.
+
+## Deployment Readiness Documents
+
+Review these before packaging:
+
+```powershell
+Get-Content "DEPLOYMENT READINESS AUDIT.md"
+Get-Content "PACKAGING STRATEGY.md"
+Get-Content "RELEASE TEST PLAN.md"
+```
+
+Packaging remains pending. Do not create ClickOnce, MSIX, MSI, Supabase sync, EF migrations, WhatsApp delivery, or final `README.md` until a separate approved task requests it.
 
 ## 7. Manual Clearance Verification
 

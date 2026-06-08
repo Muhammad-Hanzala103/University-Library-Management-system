@@ -29,6 +29,18 @@ This document outlines modules that are currently implemented or stubbed, listin
 ### Navigation View Stubs
 - The `"Settings"` route is registered in the main sidebar but does not yet have a dedicated ViewModel or XAML view.
 
+### Deployment Preparation Limitations
+- Priority 9B is an audit and planning phase only. No installer, ClickOnce package, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, final README, repository rename, namespace rename, or database rename was performed.
+- The default SQLite connection string is still `Data Source=KicsitLibrary.db`, resolved from `AppContext.BaseDirectory`. This is predictable but not installer-ready if the install folder is read-only.
+- A release database location decision is still required before broad installer deployment. Portable/internal pilot deployments may keep the executable-relative database only with explicit data-preservation instructions.
+- EF migrations remain absent. Existing databases rely on `EnsureCreatedAsync` plus additive SQLite compatibility SQL, which is not a full production migration strategy.
+- Default seeded user accounts and passwords exist for development and first-run access. Any real deployment must require password reset or documented credential change.
+- SMTP passwords are not seeded with real values, but configured SMTP credentials are still stored in local `SystemSettings` without encryption.
+- `LocalBackupFolder` still seeds the legacy value `C:\KicsitLibraryBackup`; current Priority 8A+ backup workflows use `BackupDefaultFolder`/automatic backup settings and default to the user's Documents folder when empty. The legacy setting should be removed or migrated in a future cleanup.
+- The repository previously had no `.gitignore`; many `bin`, `obj`, `.vs`, and local database artifacts are already tracked. Priority 9B added `.gitignore` for future artifacts but did not remove tracked files.
+- Release signing certificate, installer tooling, update strategy, rollback strategy, and support policy remain pending.
+- WPF UI automation is still absent; `RELEASE TEST PLAN.md` must be executed manually before packaging.
+
 ---
 
 ## 2. Incomplete Integrations & Gaps

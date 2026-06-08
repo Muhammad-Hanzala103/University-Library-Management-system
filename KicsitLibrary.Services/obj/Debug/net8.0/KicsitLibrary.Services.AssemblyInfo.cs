@@ -10,11 +10,13 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("KicsitLibrary.Services")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("Dr A Q Khan Institute of Computer Sciences and Information Technology KICSIT")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyCopyrightAttribute(("Copyright (c) Dr A Q Khan Institute of Computer Sciences and Information Technolo" +
+    "gy KICSIT"))]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0675c2c927732cbe406d830dedb1e1f0e155e64c")]
-[assembly: System.Reflection.AssemblyProductAttribute("KicsitLibrary.Services")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+02faa6503f205b3bbb5afcfe6a8530e20a79551e")]
+[assembly: System.Reflection.AssemblyProductAttribute("Ilm-o-Kutub System")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KicsitLibrary.Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 

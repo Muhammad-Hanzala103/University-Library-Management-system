@@ -262,6 +262,26 @@ Deferred refinements:
 - [ ] Add a future reviewed physical-file cleanup task. Priority 9A soft-deletes records only.
 - [ ] Add an operator-facing Settings screen for document storage limits and allowed extensions.
 
+## Priority 9B: Deployment Preparation Audit and Release Readiness Plan
+- **Goal**: Complete a deployment preparation audit and release readiness plan before actual packaging.
+- [x] Create `DEPLOYMENT READINESS AUDIT.md`.
+- [x] Audit project structure, target framework, runtime, entry point, database strategy, SQLite location, backup/restore, document storage, report folders, settings, authentication notes, test count, commands, blockers, packaging options, risks, and final checklist.
+- [x] Create `PACKAGING STRATEGY.md`.
+- [x] Compare portable, self-contained, framework-dependent, ClickOnce, MSIX, and Windows Installer options.
+- [x] Document the recommended university internal deployment path and market-ready release path.
+- [x] Create `RELEASE TEST PLAN.md`.
+- [x] Add `scripts/deployment_smoke_test.ps1` for build, test, and local publish smoke verification.
+- [x] Add `.gitignore` for future build outputs, local databases, publish artifacts, backups, documents, reports, certificates, logs, and IDE files.
+- [x] Add centralized release metadata through `Directory.Build.props` without renaming projects, namespaces, assemblies, or `KicsitLibrary.db`.
+- [x] Confirm packaging is still pending, final `README.md` is still pending, and GitHub repository rename remains manual.
+
+Deferred refinements:
+- [ ] Remove already tracked `bin`, `obj`, `.vs`, local database, and generated runtime artifacts from source control only after explicit approval.
+- [ ] Decide release database location before installer packaging.
+- [ ] Create an EF migration baseline/adoption plan before production deployment.
+- [ ] Add signing certificate and installer/update/rollback policy.
+- [ ] Execute the release test plan manually before publishing.
+
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.

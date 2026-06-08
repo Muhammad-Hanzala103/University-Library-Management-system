@@ -1,0 +1,184 @@
+# Packaging Strategy
+
+Priority 9B status: planning only. No installer, ClickOnce package, MSIX package, or production publish was created.
+
+## 1. Portable Publish Option
+
+Portable publish copies the WPF app and dependencies to a folder. It is simple and useful for development, lab review, and internal pilot testing.
+
+Example smoke command:
+
+```powershell
+dotnet publish KicsitLibrary.Desktop/KicsitLibrary.Desktop.csproj -c Release -r win-x64 --self-contained false -o artifacts/deployment-smoke/publish
+```
+
+Pros:
+- Fast to produce.
+- Easy to inspect.
+- No installer technology required.
+
+Cons:
+- No shortcuts, uninstall entry, signing trust, upgrade workflow, or data migration.
+- Framework-dependent mode requires .NET 8 Desktop Runtime.
+- The current relative database path will create/use `KicsitLibrary.db` inside the publish folder.
+
+## 2. Self Contained Publish Option
+
+Self-contained publish bundles the .NET runtime with the application.
+
+Pros:
+- Does not require preinstalled .NET Desktop Runtime.
+- Good for controlled offline machines.
+
+Cons:
+- Larger output.
+- Still not an installer.
+- Runtime servicing requires republishing the app.
+
+## 3. Framework Dependent Publish Option
+
+Framework-dependent publish is smaller and relies on installed .NET 8 Desktop Runtime.
+
+Pros:
+- Smaller package.
+- Runtime can be serviced centrally by Windows/admin updates.
+
+Cons:
+- Runtime prerequisite must be installed and verified.
+- Support team must know which runtime version is required.
+
+## 4. ClickOnce Option
+
+ClickOnce can provide simple user-level deployment and automatic updates.
+
+Suitability:
+- Reasonable for internal university rollout if users install per-user and updates are centrally hosted.
+- Risky until database/document paths are clearly separated from application update folders.
+
+Requirements:
+- ClickOnce profile.
+- Signing certificate.
+- Update location and versioning policy.
+- Backup-before-update policy.
+
+## 5. MSIX Option
+
+MSIX is a modern Windows package model with strong signing and clean install/uninstall behavior.
+
+Suitability:
+- Better for a market-ready release after data paths are finalized.
+- Not ideal yet because the app currently uses a relative SQLite database path beside the executable unless configured otherwise.
+
+Requirements:
+- MSIX manifest.
+- Publisher identity.
+- Signing certificate.
+- App data migration behavior.
+
+## 6. Windows Installer Option
+
+A traditional MSI or installer package is the strongest fit for university-managed desktop machines.
+
+Pros:
+- Admin-controlled installation.
+- Shortcuts, install location, repair/uninstall, and upgrade rules.
+- Can include prerequisites or detect them.
+
+Cons:
+- Requires installer tooling and signing.
+- Upgrade and rollback policies must be designed carefully.
+
+## 7. Recommendation for University Internal Deployment
+
+Recommended: signed Windows Installer after two pre-release fixes:
+
+1. Decide whether `KicsitLibrary.db` remains beside the executable for a portable pilot or moves to a user/per-machine app data folder for installed deployments.
+2. Define upgrade behavior that creates a verified backup before replacing application files.
+
+For immediate smoke testing only, use framework-dependent portable publish.
+
+## 8. Recommendation for Market Ready Commercial Release
+
+Recommended: signed MSIX or signed MSI after:
+
+- EF migration baseline/adoption plan is complete.
+- Database and document storage paths are release-safe.
+- SMTP secret storage is encrypted.
+- WPF UI automation or a signed manual test record exists.
+- Final README, license, support policy, and release notes are complete.
+
+## 9. Update Strategy
+
+- Every update must run build and test verification first.
+- Every update must create a verified backup before installing or replacing binaries.
+- Updates must preserve:
+  - `KicsitLibrary.db`
+  - SQLite `-wal` and `-shm` files when the app is closed cleanly or recovered safely
+  - pending restore metadata
+  - restore safety backups
+  - document storage
+  - backup history files
+  - reports and certificates
+
+## 10. Signing Certificate Requirement
+
+Any installer, ClickOnce package, or MSIX package should be signed. Unsigned packages will trigger avoidable trust warnings and are not suitable for broad deployment.
+
+Certificate decision needed:
+- Internal university certificate for campus-managed devices.
+- Commercial code-signing certificate for public release.
+
+## 11. Versioning Strategy
+
+Priority 9B adds centralized metadata in `Directory.Build.props`:
+
+- `Version`: `1.0.0`
+- `AssemblyVersion`: `1.0.0.0`
+- `FileVersion`: `1.0.0.0`
+- `Product`: `Ilm-o-Kutub System`
+
+Before packaging, define semantic versioning rules:
+- Major: database or compatibility breaking changes.
+- Minor: new module/release feature.
+- Patch: fixes and documentation-only release updates.
+
+## 12. Rollback Strategy
+
+Rollback must preserve user data. Recommended policy:
+
+1. Create a verified backup before update.
+2. Install/update app binaries.
+3. Launch and complete smoke verification.
+4. If startup fails, restore previous app binaries and keep the pre-update database backup.
+5. Never roll back the database automatically without operator confirmation.
+
+## 13. Backup Before Update Policy
+
+Before any update:
+
+- Run manual verified backup.
+- Record backup path and SHA-256.
+- Confirm `PRAGMA integrity_check` passes.
+- Keep the backup outside the install folder.
+- Block update if backup creation or verification fails.
+
+## 14. Database Compatibility Warning
+
+The current schema strategy uses `EnsureCreatedAsync` and additive SQLite compatibility SQL. This is not a production migration strategy. Installer deployment should not proceed broadly until a migration baseline/adoption policy is approved.
+
+## 15. Document Storage Migration Warning
+
+Document storage defaults to the user's Documents folder. If future releases move document storage, a migration plan must preserve stored files and update `DocumentUploads.StoredFilePath` safely. Do not delete physical document files during uninstall or upgrade by default.
+
+## 16. Test Checklist Before Publishing
+
+- [ ] `dotnet build KicsitLibrary.slnx`
+- [ ] `dotnet test KicsitLibrary.slnx`
+- [ ] `scripts/deployment_smoke_test.ps1`
+- [ ] Fresh install simulation
+- [ ] First-run database creation
+- [ ] Login with seeded admin account, then password-change policy check
+- [ ] Catalog, consumer, circulation, reservation, clearance, reports, backup, restore, automatic backup, ownership, documents, and audit logs manual checks
+- [ ] Offline operation check
+- [ ] Upgrade simulation with backup before update
+- [ ] Failure recovery check

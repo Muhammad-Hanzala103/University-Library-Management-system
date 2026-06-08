@@ -1,0 +1,45 @@
+# Build outputs
+bin/
+obj/
+artifacts/
+publish/
+*.publish/
+
+# IDE/user-local files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local runtime databases and SQLite sidecars
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Local backup, restore, document, report, and certificate artifacts
+*.bak
+*.backup
+*.metadata.json
+*.pending-restore.json
+*.staged-restore.db
+*.emergency-restore.db
+*.zip
+Ilm-o-Kutub Backups/
+Ilm-o-Kutub Reports/
+Ilm-o-Kutub Certificates/
+Ilm-o-Kutub System/Documents/
+
+# Generated export artifacts
+*.csv
+*.xlsx
+*.pdf
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp

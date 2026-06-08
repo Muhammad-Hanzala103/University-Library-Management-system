@@ -25,6 +25,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 8C (Automatic Backup Scheduling & Retention Safety Policy)**: **100% Completed**
 - **Priority 8D (Cross Process Database and Backup Ownership Protection)**: **100% Completed**
 - **Priority 9A (Secure Document Upload Workflow)**: **100% Completed**
+- **Priority 9B (Deployment Preparation Audit & Release Readiness Plan)**: **100% Completed**
 - **Priority 8E+ (Sync & Deployment)**: **Pending Implementation**
 
 ### Product Branding and UI Refinement
@@ -38,6 +39,7 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - New backups default to `Documents\Ilm-o-Kutub Backups`; reports to `Documents\Ilm-o-Kutub Reports`; certificates to `Documents\Ilm-o-Kutub Certificates`.
 - Four branding/hint regression tests were added during the branding phase. The full isolated suite now passes with 220 tests after Priority 9A.
 - Automatic backup scheduling and retention safety are implemented. Deployment, Supabase sync, EF migrations, WhatsApp delivery, and final README generation were not started.
+- Priority 9B deployment preparation is complete as documentation and smoke-test scripting only. No installer, ClickOnce package, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, final README, repository rename, namespace rename, or database rename was performed.
 
 ### GitHub Repository Rename
 The GitHub repository rename remains a manual owner action. The target repository name is `Ilm-o-Kutub-System`.
@@ -230,6 +232,16 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - Added SOP Documents and National Library Rates Documents report providers while preserving the existing report foundation.
 - Audit, Visit, and Inventory integration is provided through `RelatedEntityType` and `RelatedEntityId`; full inline module detail embedding is deferred.
 - Two hundred twenty isolated SQLite tests pass, including seventeen Priority 9A document workflow tests.
+
+### Priority 9B Deployment Preparation Audit
+- Added `DEPLOYMENT READINESS AUDIT.md` covering project structure, runtime, entry point, database strategy, SQLite location, backup/restore, document storage, report folders, settings, authentication notes, test count, commands, blockers, packaging options, risk matrix, and release checklist.
+- Added `PACKAGING STRATEGY.md` covering portable, self-contained, framework-dependent, ClickOnce, MSIX, and Windows Installer options.
+- Added `RELEASE TEST PLAN.md` with fresh install, first-run database creation, login, catalog, consumer, circulation, reservation, clearance, reports, backup, restore, automatic backup, ownership, documents, audit logs, settings, uninstall, upgrade, offline, and recovery checks.
+- Added `scripts/deployment_smoke_test.ps1` to run build, tests, and a local desktop publish into `artifacts/deployment-smoke/publish` without launching the app or creating an installer.
+- Added `.gitignore` for future build outputs, local runtime databases, publish artifacts, backups, documents, reports, certificates, logs, and IDE files.
+- Added root `Directory.Build.props` to centralize release metadata: product, company, copyright, and version.
+- Source-control audit found `bin`, `obj`, `.vs`, and local database artifacts are already tracked. No tracked files were removed in Priority 9B; cleanup remains a separate approved task.
+- Packaging remains pending. Final README remains pending. GitHub repository rename remains manual.
 
 ---
 

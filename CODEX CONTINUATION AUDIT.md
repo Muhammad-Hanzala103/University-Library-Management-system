@@ -1,5 +1,38 @@
 # Codex Continuation Audit
 
+## Priority 9B Completion Update
+
+Completion date: 2026-06-08
+
+- Completed Deployment Preparation Audit and Release Readiness Plan only.
+- Added `DEPLOYMENT READINESS AUDIT.md`.
+- Added `PACKAGING STRATEGY.md`.
+- Added `RELEASE TEST PLAN.md`.
+- Added `scripts/deployment_smoke_test.ps1`.
+- Added `.gitignore` to prevent future build outputs, local databases, publish outputs, backups, documents, reports, certificates, logs, and IDE files from being added accidentally.
+- Added `Directory.Build.props` to centralize product, company, copyright, and version metadata without renaming projects, namespaces, assemblies, or `KicsitLibrary.db`.
+- Audited `KicsitLibrary.slnx`, all project files, `App.xaml.cs`, `appsettings.json`, `DbSeeder`, compatibility initialization, backup/restore/scheduler/ownership/document services, report exporters, product branding, assembly metadata, and git tracking state.
+- Confirmed deployment blockers: no EF migration baseline, executable-relative SQLite path, tracked generated artifacts, default seeded credentials, no encrypted SMTP secret storage, incomplete Settings UI, no signing/installer/update policy, and no WPF UI automation.
+- Confirmed no real SMTP password is seeded, no machine-specific private user path is hardcoded in active defaults, and default backup/document/report/certificate folders resolve through user Documents or local app data paths where implemented.
+- Source-control audit found existing tracked `bin`, `obj`, `.vs`, and local database artifacts. No tracked files were removed or history rewritten.
+- Packaging remains pending. Final `README.md` remains pending. GitHub repository rename remains a manual owner action.
+- No installer package, ClickOnce publish, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, final README, namespace rename, or database rename was created.
+
+Verification:
+
+```powershell
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+```
+
+Result: build succeeded with 0 warnings and 0 errors; 220 tests passed, 0 failed, 0 skipped.
+
+Packages added:
+
+- None.
+
+Exact next task: Decide the release database location and data-preservation model, then perform an explicit source-control cleanup to untrack generated artifacts only after approval. Do not start installer packaging, ClickOnce, MSIX, Supabase sync, EF migrations, WhatsApp delivery, or final README generation until that decision is complete.
+
 ## Priority 9A Completion Update
 
 Completion date: 2026-06-08

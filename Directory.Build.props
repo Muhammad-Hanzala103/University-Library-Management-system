@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <Product>Ilm-o-Kutub System</Product>
+    <Company>Dr A Q Khan Institute of Computer Sciences and Information Technology KICSIT</Company>
+    <Copyright>Copyright (c) Dr A Q Khan Institute of Computer Sciences and Information Technology KICSIT</Copyright>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+</Project>
