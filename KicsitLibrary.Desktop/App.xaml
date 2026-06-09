@@ -8,6 +8,11 @@
                 <ResourceDictionary Source="Themes/Colors.xaml" />
                 <ResourceDictionary Source="Themes/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <!-- Converters -->
+            <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <local:StringVisibilityConverter x:Key="StringVisibilityConverter" />
+            <local:BooleanToColorConverter x:Key="BooleanToColorConverter" />
+            <local:InvertedBooleanConverter x:Key="InvertedBooleanConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

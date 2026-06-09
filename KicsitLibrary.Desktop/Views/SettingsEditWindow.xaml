@@ -39,7 +39,7 @@
                 VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="16">
                 <!-- Description -->
-                <Border Visibility="{Binding Description, Converter={local:StringVisibilityConverter}}"
+                <Border Visibility="{Binding Description, Converter={StaticResource StringVisibilityConverter}}"
                         Style="{StaticResource CardStyle}"
                         Margin="0,0,0,12"
                         Padding="12">
@@ -94,7 +94,7 @@
                             <Image Source="/Resources/Icons/lock.png"
                                     Width="12"
                                     Margin="0,0,4,0"
-                                   Visibility="{Binding IsSensitive, Converter={local:BooleanToVisibilityConverter}}"/>
+                                   Visibility="{Binding IsSensitive, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             <TextBlock Text="Sensitive"
                                     FontSize="10"
                                     Foreground="{StaticResource TextMutedBrush}"/>
@@ -108,7 +108,7 @@
                             <Image Source="/Resources/Icons/restart.png"
                                     Width="12"
                                     Margin="0,0,4,0"
-                                   Visibility="{Binding RequiresRestart, Converter={local:BooleanToVisibilityConverter}}"/>
+                                   Visibility="{Binding RequiresRestart, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             <TextBlock Text="Requires Restart"
                                     FontSize="10"
                                     Foreground="{StaticResource TextMutedBrush}"/>
@@ -138,10 +138,10 @@
                             Margin="0,0,0,4"/>
                     <TextBox Text="{Binding NewValue, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource StyledTextBox}"
-                              Visibility="{Binding IsSensitive, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
+                              Visibility="{Binding IsSensitive, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
                     <PasswordBox x:Name="SensitiveInput"
                             Margin="0,0,0,4"
-                                 Visibility="{Binding IsSensitive, Converter={local:BooleanToVisibilityConverter}}"
+                                 Visibility="{Binding IsSensitive, Converter={StaticResource BooleanToVisibilityConverter}}"
                                  Padding="8"
                             BorderThickness="1"
                             BorderBrush="{StaticResource BorderBrush}"
@@ -186,8 +186,8 @@
                 </Border>
 
                 <!-- Validation -->
-                <Border Visibility="{Binding ValidationMessage, Converter={local:StringVisibilityConverter}}"
-                        Background="{Binding IsValidationError, Converter={local:BooleanToColorConverter}, ConverterParameter='#FEE2E2|#FEF3C7'}"
+                <Border Visibility="{Binding ValidationMessage, Converter={StaticResource StringVisibilityConverter}}"
+                        Background="{Binding IsValidationError, Converter={StaticResource BooleanToColorConverter}, ConverterParameter='#FEE2E2|#FEF3C7'}"
                         BorderThickness="1"
                         BorderBrush="{StaticResource BorderBrush}"
                         Padding="12"
@@ -195,11 +195,11 @@
                     <TextBlock Text="{Binding ValidationMessage}"
                             TextWrapping="Wrap"
                             FontSize="10"
-                               Foreground="{Binding IsValidationError, Converter={local:BooleanToColorConverter}, ConverterParameter='#991B1B|#92400E'}"/>
+                               Foreground="{Binding IsValidationError, Converter={StaticResource BooleanToColorConverter}, ConverterParameter='#991B1B|#92400E'}"/>
                 </Border>
 
                 <!-- Status -->
-                <Border Visibility="{Binding StatusMessage, Converter={local:StringVisibilityConverter}}"
+                <Border Visibility="{Binding StatusMessage, Converter={StaticResource StringVisibilityConverter}}"
                         Background="#DBEAFE"
                         BorderThickness="1"
                         BorderBrush="#93C5FD"
@@ -221,7 +221,7 @@
                     Style="{StaticResource SecondaryButton}"
                     Command="{Binding ValidateAsyncCommand}"
                     Margin="0,0,6,0"
-                    IsEnabled="{Binding IsBusy, Converter={local:InvertedBooleanConverter}}"/>
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBooleanConverter}}"/>
         </StackPanel>
 
         <!-- Dialog Buttons -->
@@ -235,13 +235,13 @@
                     Command="{Binding CancelCommand}"
                     Width="80"
                     Margin="6,0,0,0"
-                    IsEnabled="{Binding IsBusy, Converter={local:InvertedBooleanConverter}}"/>
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBooleanConverter}}"/>
             <Button DockPanel.Dock="Right"
                     Content="Save"
                     Style="{StaticResource PrimaryButton}"
                     Command="{Binding SaveAsyncCommand}"
                     Width="80"
-                    IsEnabled="{Binding IsBusy, Converter={local:InvertedBooleanConverter}}"/>
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBooleanConverter}}"/>
         </DockPanel>
     </Grid>
 </Window>
