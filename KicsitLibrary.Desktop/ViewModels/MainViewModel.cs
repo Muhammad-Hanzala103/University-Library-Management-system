@@ -171,6 +171,11 @@ namespace KicsitLibrary.Desktop.ViewModels
                     CurrentView = _currentScope?.ServiceProvider.GetService<DocumentManagementViewModel>();
                     if (CurrentView is DocumentManagementViewModel documents) _ = documents.RefreshAsync();
                     break;
+                case "Settings":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<SettingsManagementViewModel>();
+                    if (CurrentView is SettingsManagementViewModel settings) _ = settings.InitializeAsync();
+                    break;
                 default:
                     CurrentView = null;
                     break;

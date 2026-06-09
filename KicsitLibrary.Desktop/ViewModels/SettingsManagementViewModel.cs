@@ -6,6 +6,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
+using KicsitLibrary.Desktop.Services;
+using MessageBox = System.Windows.MessageBox;
 
 namespace KicsitLibrary.Desktop.ViewModels
 {
@@ -14,6 +16,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         private readonly ISettingsManagementService _settingsService;
         private readonly IAuthenticationService _authService;
         private readonly IActivityLogService _activityLogService;
+        private readonly ISettingsDialogService _dialogService;
 
         [ObservableProperty]
         private ObservableCollection<SettingsCategoryItem> categories = new();
@@ -45,11 +48,13 @@ namespace KicsitLibrary.Desktop.ViewModels
         public SettingsManagementViewModel(
             ISettingsManagementService settingsService,
             IAuthenticationService authService,
-            IActivityLogService activityLogService)
+            IActivityLogService activityLogService,
+            ISettingsDialogService dialogService)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _activityLogService = activityLogService ?? throw new ArgumentNullException(nameof(activityLogService));
+            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
             CheckAuthorization();
         }
@@ -164,13 +169,16 @@ namespace KicsitLibrary.Desktop.ViewModels
         }
 
         [RelayCommand]
-        private void EditSelected()
+        private async Task EditSelectedAsync()
         {
             if (SelectedSetting == null || !CanEditSettings)
                 return;
 
-            // Trigger edit window dialog through event
-            EditSettingRequested?.Invoke(this, SelectedSetting);
+            var result = await _dialogService.ShowEditSettingAsync(SelectedSetting);
+            if (result)
+            {
+                OnSettingUpdated();
+            }
         }
 
         [RelayCommand]
@@ -211,13 +219,12 @@ namespace KicsitLibrary.Desktop.ViewModels
         }
 
         [RelayCommand]
-        private void ViewDetails()
+        private async Task ViewDetailsAsync()
         {
             if (SelectedSetting == null)
                 return;
 
-            // Trigger details window dialog through event
-            DetailsViewRequested?.Invoke(this, SelectedSetting);
+            await _dialogService.ShowSettingDetailsAsync(SelectedSetting);
         }
 
         [RelayCommand]

@@ -118,4 +118,65 @@ namespace KicsitLibrary.Desktop
             return this;
         }
     }
+
+    public class BooleanToColorConverter : MarkupExtension, IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is bool flag && parameter is string paramStr)
+            {
+                var parts = paramStr.Split('|');
+                if (parts.Length == 2)
+                {
+                    string colorHex = flag ? parts[0] : parts[1];
+                    try
+                    {
+                        var converter = new System.Windows.Media.BrushConverter();
+                        return converter.ConvertFromString(colorHex) ?? System.Windows.Media.Brushes.Transparent;
+                    }
+                    catch
+                    {
+                        return System.Windows.Media.Brushes.Transparent;
+                    }
+                }
+            }
+            return System.Windows.Media.Brushes.Transparent;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
+
+    public class InvertedBooleanConverter : MarkupExtension, IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is bool flag)
+            {
+                return !flag;
+            }
+            return true;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool flag)
+            {
+                return !flag;
+            }
+            return false;
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
 }

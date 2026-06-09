@@ -141,6 +141,8 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IDocumentStorageService, DocumentStorageService>();
                     services.AddScoped<IDocumentService, DocumentService>();
                     services.AddSingleton<IDocumentDialogService, DocumentDialogService>();
+                    services.AddScoped<ISettingsManagementService, SettingsManagementService>();
+                    services.AddSingleton<ISettingsDialogService, SettingsDialogService>();
 
                     // Register Shell Window and ViewModels
                     services.AddSingleton<MainViewModel>();
@@ -194,6 +196,9 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<DocumentManagementViewModel>();
                     services.AddTransient<DocumentUploadViewModel>();
                     services.AddTransient<DocumentDetailsViewModel>();
+                    services.AddTransient<SettingsManagementViewModel>();
+                    services.AddTransient<SettingsEditViewModel>();
+                    services.AddTransient<SettingsDetailsViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
                     services.AddTransient<ReportsDashboardView>();
@@ -223,6 +228,9 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<DocumentManagementView>();
                     services.AddTransient<DocumentUploadWindow>();
                     services.AddTransient<DocumentDetailsWindow>();
+                    services.AddTransient<SettingsManagementView>();
+                    services.AddTransient<SettingsEditWindow>();
+                    services.AddTransient<SettingsDetailsWindow>();
                 })
                 .Build();
         }

@@ -71,6 +71,9 @@
         <DataTemplate DataType="{x:Type vm:DocumentManagementViewModel}">
             <views:DocumentManagementView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsManagementViewModel}">
+            <views:SettingsManagementView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>

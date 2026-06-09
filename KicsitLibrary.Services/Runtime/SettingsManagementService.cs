@@ -251,10 +251,15 @@ namespace KicsitLibrary.Services
 
         public async Task<SettingsValidationResult> ValidateSettingAsync(string key, string value, CancellationToken cancellationToken = default)
         {
+            var dataType = DetermineDataType(key);
+            if (dataType == "Boolean")
+            {
+                return ValidateBoolean(value);
+            }
+
             return key switch
             {
                 "SmtpPort" => ValidateInteger(value, 1, 65535, "SMTP port must be between 1 and 65535"),
-                "SmtpUseSsl" => ValidateBoolean(value),
                 "AutomaticBackupIntervalHours" => ValidateInteger(value, 1, int.MaxValue, "Backup interval must be positive"),
                 "AutomaticBackupRetentionDays" => ValidateInteger(value, 1, int.MaxValue, "Retention days must be positive"),
                 "BackupRetentionDays" => ValidateInteger(value, 1, int.MaxValue, "Retention days must be positive"),
@@ -463,12 +468,12 @@ namespace KicsitLibrary.Services
                 return new() { IsValid = false, ErrorMessage = "At least one extension must be allowed" };
 
             var extensions = value.Split(',').Select(e => e.Trim());
+            var dangerousExts = new[] { ".exe", ".bat", ".cmd", ".ps1", ".vbs", ".js", ".msi", ".dll", ".sys", ".scr", ".com", ".jar" };
             foreach (var ext in extensions)
             {
                 if (!ext.StartsWith("."))
                     return new() { IsValid = false, ErrorMessage = "All extensions must start with a dot (.)" };
 
-                var dangerousExts = new[] { ".exe", ".bat", ".cmd", ".com", ".msi", ".dll", ".sys" };
                 if (dangerousExts.Contains(ext.ToLower()))
                     return new() { IsValid = false, ErrorMessage = $"Extension '{ext}' is not allowed for security reasons" };
             }
