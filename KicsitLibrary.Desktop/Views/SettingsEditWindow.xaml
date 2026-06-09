@@ -138,7 +138,7 @@
                             Margin="0,0,0,4"/>
                     <TextBox Text="{Binding NewValue, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource StyledTextBox}"
-                             Visibility="{Binding IsSensitive, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
+                              Visibility="{Binding IsSensitive, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
                     <PasswordBox x:Name="SensitiveInput"
                             Margin="0,0,0,4"
                                  Visibility="{Binding IsSensitive, Converter={local:BooleanToVisibilityConverter}}"

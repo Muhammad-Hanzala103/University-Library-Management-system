@@ -261,8 +261,6 @@ namespace KicsitLibrary.Desktop.ViewModels
         }
 
         // Events for window dialogs
-        public event EventHandler<SettingsItemView>? EditSettingRequested;
-        public event EventHandler<SettingsItemView>? DetailsViewRequested;
         public event EventHandler? SettingUpdated;
 
         public void OnSettingUpdated()

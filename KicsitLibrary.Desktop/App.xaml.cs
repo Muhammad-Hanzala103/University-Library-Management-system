@@ -27,6 +27,7 @@ using KicsitLibrary.Services.Notifications;
 using KicsitLibrary.Services.Ownership;
 using KicsitLibrary.Services.Preferences;
 using KicsitLibrary.Services.Documents;
+using KicsitLibrary.Services;
 using KicsitLibrary.Services.Runtime;
 using KicsitLibrary.Desktop.Views;
 using KicsitLibrary.Reports.Contracts;

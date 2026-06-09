@@ -154,12 +154,12 @@ namespace KicsitLibrary.Services
             }
 
             var hasPermission = await _authService.VerifyUserPermissionAsync(_authService.CurrentUser.Id, "MANAGE_SYSTEM");
-            if (!hasPermission && _authService.CurrentUser.UserRoles.All(ur => ur.Role.Name != "Super Admin"))
+            var isSuperAdmin = _authService.CurrentUser.UserRoles?.Any(ur => ur.Role.Name == "Super Admin") ?? false;
+            if (!hasPermission && !isSuperAdmin)
             {
                 await _activityLogService.LogActivityAsync(
                     "Settings Update Unauthorized",
-                    $"User attempted to update setting '{request.Key}' without permission",
-                    _authService.CurrentUser.Id);
+                    $"User attempted to update setting '{request.Key}' without permission");
                 return new()
                 {
                     Succeeded = false,
@@ -290,13 +290,12 @@ namespace KicsitLibrary.Services
                 {
                     ExportDate = DateTime.UtcNow,
                     ProductName = "Ilm-o-Kutub System",
-                    Settings = settings.Where(s => !SensitiveKeys.Contains(s.Key)).ToList()
+                    Settings = settings.Where(s => !IsSettingSensitive(s.Key)).ToList()
                 };
 
                 var json = JsonSerializer.Serialize(exportData, new JsonSerializerOptions { WriteIndented = true });
 
-                var reportsRoot = await _runtimePathService.GetReportExportRootAsync(cancellationToken);
-                var exportFolder = Path.Combine(reportsRoot, "Settings Exports");
+                var exportFolder = Path.Combine(Path.GetTempPath(), "Settings Exports");
                 Directory.CreateDirectory(exportFolder);
 
                 var fileName = $"Settings_Snapshot_{DateTime.UtcNow:yyyyMMdd_HHmmss}.json";
