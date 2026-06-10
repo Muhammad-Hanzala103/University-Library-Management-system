@@ -42,9 +42,11 @@
             <Grid Grid.Column="0" Margin="0,0,15,0">
                 <DataGrid ItemsSource="{Binding Copies}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Accession #" Binding="{Binding AccessionNumber}" Width="110"/>
-                        <DataGridTextColumn Header="Copy #" Binding="{Binding CopyNumber}" Width="60"/>
-                        <DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="*"/>
+                        <DataGridTextColumn Header="Accession #" Binding="{Binding AccessionNumber}" Width="90"/>
+                        <DataGridTextColumn Header="Copy #" Binding="{Binding CopyNumber}" Width="50"/>
+                        <DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="1.5*"/>
+                        <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="80"/>
+                        <DataGridTextColumn Header="Remarks" Binding="{Binding Remarks}" Width="*"/>
                         <DataGridTextColumn Header="Condition" Binding="{Binding PhysicalCondition}" Width="80"/>
                         <DataGridTextColumn Header="Status" Binding="{Binding AvailabilityStatus}" Width="80"/>
                         <DataGridTemplateColumn Width="60" Header="Action">
@@ -123,6 +125,15 @@
                             <TextBlock Text="Or Enter Custom Location" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                             <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding CustomLocation, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
 
+                            <!-- Source -->
+                            <TextBlock Text="Acquisition Source" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding Source}" SelectedValuePath="Content">
+                                <ComboBoxItem Content="Purchased"/>
+                                <ComboBoxItem Content="Donated"/>
+                                <ComboBoxItem Content="Book Bank"/>
+                                <ComboBoxItem Content="Other"/>
+                            </ComboBox>
+
                             <!-- Condition -->
                             <TextBlock Text="Physical Condition" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                             <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding PhysicalCondition}" SelectedValuePath="Content">
@@ -131,6 +142,10 @@
                                 <ComboBoxItem Content="Damaged (Needs repair)"/>
                                 <ComboBoxItem Content="Worn Out"/>
                             </ComboBox>
+
+                            <!-- Remarks -->
+                            <TextBlock Text="Remarks / Notes" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Remarks, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
 
                             <!-- Error Alert -->
                             <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" TextWrapping="Wrap"

@@ -99,6 +99,27 @@ namespace KicsitLibrary.Desktop.ViewModels
         }
 
         [RelayCommand]
+        public async Task RefreshDropdownsAsync()
+        {
+            try
+            {
+                var authorsList = await _catalogService.GetAllAuthorsAsync();
+                var categoriesList = await _catalogService.GetAllCategoriesAsync();
+                var deptsList = await _catalogService.GetAllDepartmentCategoriesAsync();
+                var publishersList = await _catalogService.GetAllPublishersAsync();
+
+                Authors = new ObservableCollection<Author>(authorsList);
+                Categories = new ObservableCollection<Category>(categoriesList);
+                DepartmentCategories = new ObservableCollection<DepartmentCategory>(deptsList);
+                Publishers = new ObservableCollection<Publisher>(publishersList);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Failed to refresh filters: {ex.Message}";
+            }
+        }
+
+        [RelayCommand]
         public async Task SearchAsync()
         {
             IsBusy = true;

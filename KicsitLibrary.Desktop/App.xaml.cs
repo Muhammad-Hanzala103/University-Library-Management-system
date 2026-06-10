@@ -158,6 +158,7 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<BookFormViewModel>();
                     services.AddTransient<AuthorViewModel>();
                     services.AddTransient<PublisherViewModel>();
+                    services.AddTransient<DepartmentViewModel>();
                     services.AddTransient<CopiesViewModel>();
                     services.AddTransient<StudentsManagementViewModel>();
                     services.AddTransient<StudentFormViewModel>();

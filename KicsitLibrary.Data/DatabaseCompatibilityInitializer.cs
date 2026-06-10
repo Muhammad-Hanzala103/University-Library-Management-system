@@ -52,6 +52,19 @@ namespace KicsitLibrary.Data
                 ["DeletedBy"] = "TEXT NOT NULL DEFAULT ''"
             };
 
+        private static readonly IReadOnlyDictionary<string, string> CategoryColumns =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["ParentCategoryId"] = "INTEGER NULL"
+            };
+
+        private static readonly IReadOnlyDictionary<string, string> BookCopyColumns =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Source"] = "TEXT NULL",
+                ["Remarks"] = "TEXT NULL"
+            };
+
         public static async Task ApplyAsync(KicsitLibraryDbContext context)
         {
             if (!string.Equals(
@@ -71,6 +84,8 @@ namespace KicsitLibrary.Data
 
             try
             {
+                await AddMissingColumnsAsync(connection, "Categories", CategoryColumns);
+                await AddMissingColumnsAsync(connection, "BookCopies", BookCopyColumns);
                 await AddMissingColumnsAsync(connection, "NotificationRecords", NotificationColumns);
                 await AddMissingColumnsAsync(connection, "Students", StudentClearanceColumns);
                 await AddMissingColumnsAsync(connection, "FacultyStaff", FacultyClearanceColumns);

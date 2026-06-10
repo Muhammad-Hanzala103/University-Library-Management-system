@@ -15,6 +15,7 @@ namespace KicsitLibrary.Desktop.ViewModels
     public partial class StudentFormViewModel : ObservableObject
     {
         private readonly IConsumerService _consumerService;
+        private readonly ICatalogService _catalogService;
         private readonly Student? _editingStudent;
 
         [ObservableProperty]
@@ -22,7 +23,7 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         // Lists for combo boxes
         public ObservableCollection<string> Programs { get; } = new() { "BSCS", "BSSE", "BSCE", "BSAI", "BSDS", "MCS", "BBA", "Other" };
-        public ObservableCollection<string> Departments { get; } = new() { "CS", "CE", "SE", "AI", "DS", "General" };
+        public ObservableCollection<string> Departments { get; } = new();
         public ObservableCollection<string> Batches { get; } = new() { "2022", "2023", "2024", "2025", "2026" };
 
         // Form Fields
@@ -89,10 +90,13 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private bool _isBusy;
 
-        public StudentFormViewModel(IConsumerService consumerService, Student? editingStudent)
+        public StudentFormViewModel(IConsumerService consumerService, ICatalogService catalogService, Student? editingStudent)
         {
             _consumerService = consumerService ?? throw new ArgumentNullException(nameof(consumerService));
+            _catalogService = catalogService ?? throw new ArgumentNullException(nameof(catalogService));
             _editingStudent = editingStudent;
+
+            _ = LoadDepartmentsAsync();
 
             if (_editingStudent != null)
             {
@@ -116,6 +120,37 @@ namespace KicsitLibrary.Desktop.ViewModels
                 RegisterNumber = _editingStudent.RegisterNumber;
                 ActiveStatus = _editingStudent.ActiveStatus;
                 ClearanceStatus = _editingStudent.ClearanceStatus;
+            }
+        }
+
+        private async Task LoadDepartmentsAsync()
+        {
+            try
+            {
+                var list = await _catalogService.GetAllDepartmentCategoriesAsync();
+                Departments.Clear();
+                foreach (var dept in list)
+                {
+                    Departments.Add(dept.Name);
+                }
+
+                if (_editingStudent != null)
+                {
+                    SelectedDepartment = _editingStudent.Department;
+                }
+                else if (Departments.Count > 0)
+                {
+                    SelectedDepartment = Departments[0];
+                }
+            }
+            catch (Exception)
+            {
+                Departments.Clear();
+                foreach (var d in new[] { "CS", "CE", "SE", "AI", "DS", "General" })
+                {
+                    Departments.Add(d);
+                }
+                SelectedDepartment = "CS";
             }
         }
 

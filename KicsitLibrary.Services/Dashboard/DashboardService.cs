@@ -99,6 +99,9 @@ namespace KicsitLibrary.Services.Dashboard
 
                 stats.PendingNotifications = await _context.NotificationRecords
                     .CountAsync(nr => !nr.IsDeleted && nr.Status == NotificationStatus.Pending);
+
+                stats.TodayActivityCount = await _context.ActivityLogs
+                    .CountAsync(l => !l.IsDeleted && l.CreatedAt >= today);
             }
             catch (Exception)
             {

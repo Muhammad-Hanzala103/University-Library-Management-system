@@ -12,7 +12,7 @@ namespace KicsitLibrary.Desktop.Views
             InitializeComponent();
         }
 
-        private void ManageAuthors_Click(object sender, RoutedEventArgs e)
+        private async void ManageAuthors_Click(object sender, RoutedEventArgs e)
         {
             var viewModel = App.AppHost?.Services.GetRequiredService<AuthorViewModel>();
             if (viewModel != null)
@@ -22,10 +22,14 @@ namespace KicsitLibrary.Desktop.Views
                     Owner = Window.GetWindow(this)
                 };
                 window.ShowDialog();
+                if (DataContext is BookCatalogViewModel catalogVm)
+                {
+                    await catalogVm.RefreshDropdownsAsync();
+                }
             }
         }
 
-        private void ManagePublishers_Click(object sender, RoutedEventArgs e)
+        private async void ManagePublishers_Click(object sender, RoutedEventArgs e)
         {
             var viewModel = App.AppHost?.Services.GetRequiredService<PublisherViewModel>();
             if (viewModel != null)
@@ -35,6 +39,27 @@ namespace KicsitLibrary.Desktop.Views
                     Owner = Window.GetWindow(this)
                 };
                 window.ShowDialog();
+                if (DataContext is BookCatalogViewModel catalogVm)
+                {
+                    await catalogVm.RefreshDropdownsAsync();
+                }
+            }
+        }
+
+        private async void ManageDepartments_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = App.AppHost?.Services.GetRequiredService<DepartmentViewModel>();
+            if (viewModel != null)
+            {
+                var window = new DepartmentWindow(viewModel)
+                {
+                    Owner = Window.GetWindow(this)
+                };
+                window.ShowDialog();
+                if (DataContext is BookCatalogViewModel catalogVm)
+                {
+                    await catalogVm.RefreshDropdownsAsync();
+                }
             }
         }
     }

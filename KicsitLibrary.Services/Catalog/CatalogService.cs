@@ -39,12 +39,20 @@ namespace KicsitLibrary.Services.Catalog
 
         public async Task AddAuthorAsync(Author author)
         {
+            if (await _context.Authors.AnyAsync(a => !a.IsDeleted && a.Name.ToLower() == author.Name.Trim().ToLower()))
+            {
+                throw new InvalidOperationException($"An author with the name '{author.Name}' already exists.");
+            }
             await _context.Authors.AddAsync(author);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAuthorAsync(Author author)
         {
+            if (await _context.Authors.AnyAsync(a => !a.IsDeleted && a.Id != author.Id && a.Name.ToLower() == author.Name.Trim().ToLower()))
+            {
+                throw new InvalidOperationException($"An author with the name '{author.Name}' already exists.");
+            }
             _context.Authors.Update(author);
             await _context.SaveChangesAsync();
         }
@@ -54,6 +62,12 @@ namespace KicsitLibrary.Services.Catalog
             var author = await _context.Authors.FindAsync(id);
             if (author != null)
             {
+                var isLinked = await _context.BookAuthors.AnyAsync(ba => ba.AuthorId == id);
+                if (isLinked)
+                {
+                    throw new InvalidOperationException("Cannot delete this author because they are linked to one or more books in the catalog.");
+                }
+
                 author.IsDeleted = true;
                 author.DeletedAt = DateTime.UtcNow;
                 author.DeletedReason = reason;
@@ -96,12 +110,20 @@ namespace KicsitLibrary.Services.Catalog
 
         public async Task AddPublisherAsync(Publisher publisher)
         {
+            if (await _context.Publishers.AnyAsync(p => !p.IsDeleted && p.Name.ToLower() == publisher.Name.Trim().ToLower()))
+            {
+                throw new InvalidOperationException($"A publisher with the name '{publisher.Name}' already exists.");
+            }
             await _context.Publishers.AddAsync(publisher);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdatePublisherAsync(Publisher publisher)
         {
+            if (await _context.Publishers.AnyAsync(p => !p.IsDeleted && p.Id != publisher.Id && p.Name.ToLower() == publisher.Name.Trim().ToLower()))
+            {
+                throw new InvalidOperationException($"A publisher with the name '{publisher.Name}' already exists.");
+            }
             _context.Publishers.Update(publisher);
             await _context.SaveChangesAsync();
         }
@@ -111,6 +133,12 @@ namespace KicsitLibrary.Services.Catalog
             var publisher = await _context.Publishers.FindAsync(id);
             if (publisher != null)
             {
+                var isLinked = await _context.BookMasters.AnyAsync(bm => !bm.IsDeleted && bm.PublisherId == id);
+                if (isLinked)
+                {
+                    throw new InvalidOperationException("Cannot delete this publisher because they are linked to one or more books in the catalog.");
+                }
+
                 publisher.IsDeleted = true;
                 publisher.DeletedAt = DateTime.UtcNow;
                 publisher.DeletedReason = reason;
@@ -143,9 +171,155 @@ namespace KicsitLibrary.Services.Catalog
             return await _context.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.Name).ToListAsync();
         }
 
+        public async Task<Category?> GetCategoryByIdAsync(int id)
+        {
+            return await _context.Categories.FindAsync(id);
+        }
+
+        public async Task AddCategoryAsync(Category category)
+        {
+            if (await IsCategoryDuplicateAsync(category.Name))
+            {
+                throw new InvalidOperationException($"A category with the name '{category.Name}' already exists.");
+            }
+            await _context.Categories.AddAsync(category);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateCategoryAsync(Category category)
+        {
+            if (await IsCategoryDuplicateAsync(category.Name, category.Id))
+            {
+                throw new InvalidOperationException($"A category with the name '{category.Name}' already exists.");
+            }
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteCategoryAsync(int id, string reason, int userId)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category != null)
+            {
+                var isLinked = await _context.BookMasters.AnyAsync(bm => !bm.IsDeleted && bm.CategoryId == id);
+                if (isLinked)
+                {
+                    throw new InvalidOperationException("Cannot delete this category because it is linked to one or more books in the catalog.");
+                }
+
+                var hasSubcategories = await _context.Categories.AnyAsync(c => !c.IsDeleted && c.ParentCategoryId == id);
+                if (hasSubcategories)
+                {
+                    throw new InvalidOperationException("Cannot delete this category because it has subcategories linked to it.");
+                }
+
+                category.IsDeleted = true;
+                category.DeletedAt = DateTime.UtcNow;
+                category.DeletedReason = reason;
+                category.DeletedByUserId = userId;
+
+                var serialized = JsonSerializer.Serialize(category, new JsonSerializerOptions 
+                { 
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles 
+                });
+                
+                await _context.DeletedRecordArchives.AddAsync(new DeletedRecordArchive
+                {
+                    TableName = "Categories",
+                    RecordId = category.Id,
+                    SerializedData = serialized,
+                    DeletedByUserId = userId,
+                    DeletedAt = DateTime.UtcNow,
+                    DeletedReason = reason
+                });
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> IsCategoryDuplicateAsync(string name, int? excludeId = null)
+        {
+            var query = _context.Categories.Where(c => !c.IsDeleted && c.Name.ToLower() == name.Trim().ToLower());
+            if (excludeId.HasValue)
+            {
+                query = query.Where(c => c.Id != excludeId.Value);
+            }
+            return await query.AnyAsync();
+        }
+
         public async Task<IEnumerable<DepartmentCategory>> GetAllDepartmentCategoriesAsync()
         {
             return await _context.DepartmentCategories.Where(d => !d.IsDeleted).OrderBy(d => d.Name).ToListAsync();
+        }
+
+        public async Task<DepartmentCategory?> GetDepartmentCategoryByIdAsync(int id)
+        {
+            return await _context.DepartmentCategories.FindAsync(id);
+        }
+
+        public async Task AddDepartmentCategoryAsync(DepartmentCategory dept)
+        {
+            if (await IsDepartmentCategoryDuplicateAsync(dept.Name))
+            {
+                throw new InvalidOperationException($"A department category with the name '{dept.Name}' already exists.");
+            }
+            await _context.DepartmentCategories.AddAsync(dept);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateDepartmentCategoryAsync(DepartmentCategory dept)
+        {
+            if (await IsDepartmentCategoryDuplicateAsync(dept.Name, dept.Id))
+            {
+                throw new InvalidOperationException($"A department category with the name '{dept.Name}' already exists.");
+            }
+            _context.DepartmentCategories.Update(dept);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteDepartmentCategoryAsync(int id, string reason, int userId)
+        {
+            var dept = await _context.DepartmentCategories.FindAsync(id);
+            if (dept != null)
+            {
+                var isLinked = await _context.BookMasters.AnyAsync(bm => !bm.IsDeleted && bm.DepartmentCategoryId == id);
+                if (isLinked)
+                {
+                    throw new InvalidOperationException("Cannot delete this department category because it is linked to one or more books in the catalog.");
+                }
+
+                dept.IsDeleted = true;
+                dept.DeletedAt = DateTime.UtcNow;
+                dept.DeletedReason = reason;
+                dept.DeletedByUserId = userId;
+
+                var serialized = JsonSerializer.Serialize(dept, new JsonSerializerOptions 
+                { 
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles 
+                });
+                
+                await _context.DeletedRecordArchives.AddAsync(new DeletedRecordArchive
+                {
+                    TableName = "DepartmentCategories",
+                    RecordId = dept.Id,
+                    SerializedData = serialized,
+                    DeletedByUserId = userId,
+                    DeletedAt = DateTime.UtcNow,
+                    DeletedReason = reason
+                });
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> IsDepartmentCategoryDuplicateAsync(string name, int? excludeId = null)
+        {
+            var query = _context.DepartmentCategories.Where(d => !d.IsDeleted && d.Name.ToLower() == name.Trim().ToLower());
+            if (excludeId.HasValue)
+            {
+                query = query.Where(d => d.Id != excludeId.Value);
+            }
+            return await query.AnyAsync();
         }
 
         public async Task<IEnumerable<LiteratureCategory>> GetAllLiteratureCategoriesAsync()
@@ -158,9 +332,139 @@ namespace KicsitLibrary.Services.Catalog
             return await _context.Racks.Where(r => !r.IsDeleted).OrderBy(r => r.Name).ToListAsync();
         }
 
+        public async Task AddRackAsync(Rack rack)
+        {
+            if (await IsRackDuplicateAsync(rack.Name))
+            {
+                throw new InvalidOperationException($"A rack with the name '{rack.Name}' already exists.");
+            }
+            await _context.Racks.AddAsync(rack);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateRackAsync(Rack rack)
+        {
+            if (await IsRackDuplicateAsync(rack.Name, rack.Id))
+            {
+                throw new InvalidOperationException($"A rack with the name '{rack.Name}' already exists.");
+            }
+            _context.Racks.Update(rack);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteRackAsync(int id, string reason, int userId)
+        {
+            var rack = await _context.Racks.Include(r => r.Shelves).FirstOrDefaultAsync(r => r.Id == id);
+            if (rack != null)
+            {
+                var isLinked = await _context.BookCopies.AnyAsync(bc => !bc.IsDeleted && bc.RackNumber == rack.Name);
+                if (isLinked)
+                {
+                    throw new InvalidOperationException("Cannot delete this rack because it is linked to one or more physical book copies.");
+                }
+
+                rack.IsDeleted = true;
+                rack.DeletedAt = DateTime.UtcNow;
+                rack.DeletedReason = reason;
+                rack.DeletedByUserId = userId;
+
+                var serialized = JsonSerializer.Serialize(rack, new JsonSerializerOptions 
+                { 
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles 
+                });
+                
+                await _context.DeletedRecordArchives.AddAsync(new DeletedRecordArchive
+                {
+                    TableName = "Racks",
+                    RecordId = rack.Id,
+                    SerializedData = serialized,
+                    DeletedByUserId = userId,
+                    DeletedAt = DateTime.UtcNow,
+                    DeletedReason = reason
+                });
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> IsRackDuplicateAsync(string name, int? excludeId = null)
+        {
+            var query = _context.Racks.Where(r => !r.IsDeleted && r.Name.ToLower() == name.Trim().ToLower());
+            if (excludeId.HasValue)
+            {
+                query = query.Where(r => r.Id != excludeId.Value);
+            }
+            return await query.AnyAsync();
+        }
+
         public async Task<IEnumerable<Shelf>> GetShelvesByRackIdAsync(int rackId)
         {
             return await _context.Shelves.Where(s => !s.IsDeleted && s.RackId == rackId).OrderBy(s => s.Name).ToListAsync();
+        }
+
+        public async Task AddShelfAsync(Shelf shelf)
+        {
+            if (await IsShelfDuplicateAsync(shelf.Name, shelf.RackId))
+            {
+                throw new InvalidOperationException($"A shelf with the name '{shelf.Name}' already exists in this rack.");
+            }
+            await _context.Shelves.AddAsync(shelf);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateShelfAsync(Shelf shelf)
+        {
+            if (await IsShelfDuplicateAsync(shelf.Name, shelf.RackId, shelf.Id))
+            {
+                throw new InvalidOperationException($"A shelf with the name '{shelf.Name}' already exists in this rack.");
+            }
+            _context.Shelves.Update(shelf);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteShelfAsync(int id, string reason, int userId)
+        {
+            var shelf = await _context.Shelves.Include(s => s.Rack).FirstOrDefaultAsync(s => s.Id == id);
+            if (shelf != null)
+            {
+                var isLinked = await _context.BookCopies.AnyAsync(bc => !bc.IsDeleted && bc.RackNumber == shelf.Rack.Name && bc.ShelfNumber == shelf.Name);
+                if (isLinked)
+                {
+                    throw new InvalidOperationException("Cannot delete this shelf because it is linked to one or more physical book copies.");
+                }
+
+                shelf.IsDeleted = true;
+                shelf.DeletedAt = DateTime.UtcNow;
+                shelf.DeletedReason = reason;
+                shelf.DeletedByUserId = userId;
+
+                var serialized = JsonSerializer.Serialize(shelf, new JsonSerializerOptions 
+                { 
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles 
+                });
+                
+                await _context.DeletedRecordArchives.AddAsync(new DeletedRecordArchive
+                {
+                    TableName = "Shelves",
+                    RecordId = shelf.Id,
+                    SerializedData = serialized,
+                    DeletedByUserId = userId,
+                    DeletedAt = DateTime.UtcNow,
+                    DeletedReason = reason
+                });
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> IsShelfDuplicateAsync(string name, int rackId, int? excludeId = null)
+        {
+            var query = _context.Shelves.Where(s => !s.IsDeleted && s.RackId == rackId && s.Name.ToLower() == name.Trim().ToLower());
+            if (excludeId.HasValue)
+            {
+                query = query.Where(s => s.Id != excludeId.Value);
+            }
+            return await query.AnyAsync();
         }
 
         // ==========================================

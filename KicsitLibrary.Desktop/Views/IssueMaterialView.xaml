@@ -90,6 +90,7 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         
                                         <StackPanel Grid.Column="0">
@@ -98,6 +99,11 @@
                                         </StackPanel>
                                         
                                         <StackPanel Grid.Column="1">
+                                            <TextBlock Text="Book Location" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                                            <TextBlock Text="{Binding LoadedCopy.Location}" FontSize="13" FontWeight="SemiBold"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2">
                                             <TextBlock Text="Availability Status" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
                                             <TextBlock Text="{Binding BookStatusDisplay}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource AccentBrush}"/>
                                         </StackPanel>

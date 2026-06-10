@@ -31,5 +31,6 @@ namespace KicsitLibrary.Core.Models
         public int VisitRecords { get; set; }
         public int FurnitureEquipmentTotal { get; set; }
         public int PendingNotifications { get; set; }
+        public int TodayActivityCount { get; set; }
     }
 }

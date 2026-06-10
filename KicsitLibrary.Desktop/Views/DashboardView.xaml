@@ -131,8 +131,17 @@
                         </Grid>
                     </Border>
                     
-                    <!-- Placeholder -->
-                    <Border Style="{StaticResource CardStyle}" Visibility="Hidden"/>
+                    <!-- Today's Activity -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,0">
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock Text="Today's Activity" Style="{StaticResource SubtitleTextStyle}"/>
+                                <TextBlock Text="{Binding Stats.TodayActivityCount}" Foreground="{StaticResource PrimaryBrush}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0"/>
+                                <TextBlock Text="System operations logged today" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="0,2,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="⚡" FontSize="28" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.2"/>
+                        </Grid>
+                    </Border>
                 </UniformGrid>
 
                 <!-- Section 2: Library Users -->

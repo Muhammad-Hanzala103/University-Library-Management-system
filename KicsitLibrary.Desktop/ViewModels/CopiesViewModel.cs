@@ -49,6 +49,12 @@ namespace KicsitLibrary.Desktop.ViewModels
         private string _customLocation = string.Empty;
 
         [ObservableProperty]
+        private string _source = "Purchased";
+
+        [ObservableProperty]
+        private string _remarks = string.Empty;
+
+        [ObservableProperty]
         private string _physicalCondition = "Normal";
 
         [ObservableProperty]
@@ -189,6 +195,8 @@ namespace KicsitLibrary.Desktop.ViewModels
                     ShelfNumber = SelectedShelf?.Name,
                     RowNumber = string.IsNullOrWhiteSpace(RowNumber) ? null : RowNumber.Trim(),
                     Location = locationText,
+                    Source = string.IsNullOrWhiteSpace(Source) ? null : Source.Trim(),
+                    Remarks = string.IsNullOrWhiteSpace(Remarks) ? null : Remarks.Trim(),
                     PhysicalCondition = PhysicalCondition,
                     AvailabilityStatus = BookStatus.Available
                 };
@@ -200,6 +208,8 @@ namespace KicsitLibrary.Desktop.ViewModels
                 QrCode = string.Empty;
                 RowNumber = string.Empty;
                 CustomLocation = string.Empty;
+                Source = "Purchased";
+                Remarks = string.Empty;
 
                 await LoadCopiesAsync();
                 await AutoGenerateAccessionAsync();

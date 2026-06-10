@@ -23,10 +23,31 @@ namespace KicsitLibrary.Core.Interfaces
 
         // Metadata & Locations Lookups
         Task<IEnumerable<Category>> GetAllCategoriesAsync();
+        Task<Category?> GetCategoryByIdAsync(int id);
+        Task AddCategoryAsync(Category category);
+        Task UpdateCategoryAsync(Category category);
+        Task DeleteCategoryAsync(int id, string reason, int userId);
+        Task<bool> IsCategoryDuplicateAsync(string name, int? excludeId = null);
+
         Task<IEnumerable<DepartmentCategory>> GetAllDepartmentCategoriesAsync();
+        Task<DepartmentCategory?> GetDepartmentCategoryByIdAsync(int id);
+        Task AddDepartmentCategoryAsync(DepartmentCategory dept);
+        Task UpdateDepartmentCategoryAsync(DepartmentCategory dept);
+        Task DeleteDepartmentCategoryAsync(int id, string reason, int userId);
+        Task<bool> IsDepartmentCategoryDuplicateAsync(string name, int? excludeId = null);
+
         Task<IEnumerable<LiteratureCategory>> GetAllLiteratureCategoriesAsync();
         Task<IEnumerable<Rack>> GetAllRacksAsync();
+        Task AddRackAsync(Rack rack);
+        Task UpdateRackAsync(Rack rack);
+        Task DeleteRackAsync(int id, string reason, int userId);
+        Task<bool> IsRackDuplicateAsync(string name, int? excludeId = null);
+
         Task<IEnumerable<Shelf>> GetShelvesByRackIdAsync(int rackId);
+        Task AddShelfAsync(Shelf shelf);
+        Task UpdateShelfAsync(Shelf shelf);
+        Task DeleteShelfAsync(int id, string reason, int userId);
+        Task<bool> IsShelfDuplicateAsync(string name, int rackId, int? excludeId = null);
 
         // Book Masters Management
         Task<IEnumerable<BookMaster>> SearchBooksAsync(

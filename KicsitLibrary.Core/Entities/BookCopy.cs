@@ -20,6 +20,9 @@ namespace KicsitLibrary.Core.Entities
         public string? RowNumber { get; set; }
         public string? Location { get; set; }
         
+        public string? Source { get; set; }
+        public string? Remarks { get; set; }
+        
         public string PhysicalCondition { get; set; } = "Normal";
         public BookStatus AvailabilityStatus { get; set; } = BookStatus.Available;
         

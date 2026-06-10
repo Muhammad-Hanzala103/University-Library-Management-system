@@ -36,7 +36,12 @@
 
             <!-- Left: List -->
             <Grid Grid.Column="0" Margin="0,0,15,0">
-                <DataGrid ItemsSource="{Binding Authors}" SelectedItem="{Binding SelectedAuthor, Mode=TwoWay}"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Margin="0,0,0,10" Style="{StaticResource StyledTextBox}" Tag="Search authors..." Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGrid Grid.Row="1" ItemsSource="{Binding Authors}" SelectedItem="{Binding SelectedAuthor, Mode=TwoWay}"
                           AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>

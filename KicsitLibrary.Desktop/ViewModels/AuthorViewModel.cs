@@ -16,6 +16,11 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private ObservableCollection<Author> _authors = new();
 
+        private readonly System.Collections.Generic.List<Author> _allAuthors = new();
+
+        [ObservableProperty]
+        private string _searchText = string.Empty;
+
         [ObservableProperty]
         private Author? _selectedAuthor;
 
@@ -53,11 +58,9 @@ namespace KicsitLibrary.Desktop.ViewModels
             try
             {
                 var authorsList = await _catalogService.GetAllAuthorsAsync();
-                Authors.Clear();
-                foreach (var author in authorsList)
-                {
-                    Authors.Add(author);
-                }
+                _allAuthors.Clear();
+                _allAuthors.AddRange(authorsList);
+                ApplyFilter();
             }
             catch (Exception ex)
             {
@@ -66,6 +69,27 @@ namespace KicsitLibrary.Desktop.ViewModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        partial void OnSearchTextChanged(string value)
+        {
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
+        {
+            Authors.Clear();
+            var query = SearchText?.Trim() ?? string.Empty;
+            foreach (var author in _allAuthors)
+            {
+                if (string.IsNullOrEmpty(query) ||
+                    author.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    (author.AlternateName != null && author.AlternateName.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (author.Language != null && author.Language.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                {
+                    Authors.Add(author);
+                }
             }
         }
 

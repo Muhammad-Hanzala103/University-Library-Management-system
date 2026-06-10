@@ -16,6 +16,11 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private ObservableCollection<Publisher> _publishers = new();
 
+        private readonly System.Collections.Generic.List<Publisher> _allPublishers = new();
+
+        [ObservableProperty]
+        private string _searchText = string.Empty;
+
         [ObservableProperty]
         private Publisher? _selectedPublisher;
 
@@ -59,11 +64,9 @@ namespace KicsitLibrary.Desktop.ViewModels
             try
             {
                 var publishersList = await _catalogService.GetAllPublishersAsync();
-                Publishers.Clear();
-                foreach (var publisher in publishersList)
-                {
-                    Publishers.Add(publisher);
-                }
+                _allPublishers.Clear();
+                _allPublishers.AddRange(publishersList);
+                ApplyFilter();
             }
             catch (Exception ex)
             {
@@ -72,6 +75,27 @@ namespace KicsitLibrary.Desktop.ViewModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        partial void OnSearchTextChanged(string value)
+        {
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
+        {
+            Publishers.Clear();
+            var query = SearchText?.Trim() ?? string.Empty;
+            foreach (var publisher in _allPublishers)
+            {
+                if (string.IsNullOrEmpty(query) ||
+                    publisher.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    (publisher.City != null && publisher.City.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (publisher.Country != null && publisher.Country.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                {
+                    Publishers.Add(publisher);
+                }
             }
         }
 

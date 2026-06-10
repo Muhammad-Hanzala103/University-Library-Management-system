@@ -50,9 +50,12 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private bool _isBusy;
 
-        public StudentsManagementViewModel(IConsumerService consumerService, IAuthenticationService authService)
+        private readonly ICatalogService _catalogService;
+
+        public StudentsManagementViewModel(IConsumerService consumerService, ICatalogService catalogService, IAuthenticationService authService)
         {
             _consumerService = consumerService ?? throw new ArgumentNullException(nameof(consumerService));
+            _catalogService = catalogService ?? throw new ArgumentNullException(nameof(catalogService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
 
             _ = SearchAsync();
@@ -106,7 +109,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         [RelayCommand]
         private void AddStudent()
         {
-            var vm = new StudentFormViewModel(_consumerService, null);
+            var vm = new StudentFormViewModel(_consumerService, _catalogService, null);
             var window = new Views.StudentFormWindow(vm);
             if (window.ShowDialog() == true)
             {
@@ -119,7 +122,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         {
             if (student == null) return;
 
-            var vm = new StudentFormViewModel(_consumerService, student);
+            var vm = new StudentFormViewModel(_consumerService, _catalogService, student);
             var window = new Views.StudentFormWindow(vm);
             if (window.ShowDialog() == true)
             {
