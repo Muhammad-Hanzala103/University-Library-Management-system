@@ -113,30 +113,47 @@
                     <ComboBox ItemsSource="{Binding MemberTypeOptions}"
                               SelectedItem="{Binding SelectedMemberType}" Padding="8"/>
                 </StackPanel>
-                <StackPanel Width="95" Margin="0,0,10,8">
+                <StackPanel Width="130" Margin="0,0,10,8">
+                    <TextBlock Text="Department" FontSize="11" FontWeight="SemiBold"/>
+                    <ComboBox ItemsSource="{Binding Departments}"
+                              SelectedItem="{Binding SelectedDepartment}" Padding="8"/>
+                </StackPanel>
+                <StackPanel Width="110" Margin="0,0,10,8">
+                    <TextBlock Text="Start Date" FontSize="11" FontWeight="SemiBold"/>
+                    <DatePicker SelectedDate="{Binding StartDateFilter}"/>
+                </StackPanel>
+                <StackPanel Width="110" Margin="0,0,10,8">
+                    <TextBlock Text="End Date" FontSize="11" FontWeight="SemiBold"/>
+                    <DatePicker SelectedDate="{Binding EndDateFilter}"/>
+                </StackPanel>
+                <StackPanel Width="80" Margin="0,0,10,8">
                     <TextBlock Text="Min Days" FontSize="11" FontWeight="SemiBold"/>
                     <TextBox Style="{StaticResource StyledTextBox}"
                              Text="{Binding MinimumDaysOverdue, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel Width="95" Margin="0,0,10,8">
+                <StackPanel Width="80" Margin="0,0,10,8">
                     <TextBlock Text="Max Days" FontSize="11" FontWeight="SemiBold"/>
                     <TextBox Style="{StaticResource StyledTextBox}"
                              Text="{Binding MaximumDaysOverdue, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel Width="100" Margin="0,0,10,8">
+                <StackPanel Width="90" Margin="0,0,10,8">
                     <TextBlock Text="Min Fine" FontSize="11" FontWeight="SemiBold"/>
                     <TextBox Style="{StaticResource StyledTextBox}"
                              Text="{Binding MinimumFine, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel Width="100" Margin="0,0,10,8">
+                <StackPanel Width="90" Margin="0,0,10,8">
                     <TextBlock Text="Max Fine" FontSize="11" FontWeight="SemiBold"/>
                     <TextBox Style="{StaticResource StyledTextBox}"
                              Text="{Binding MaximumFine, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel Width="140" Margin="0,0,0,8">
+                <StackPanel Width="130" Margin="0,0,10,8">
                     <TextBlock Text="Notification Status" FontSize="11" FontWeight="SemiBold"/>
                     <ComboBox ItemsSource="{Binding NotificationStatusOptions}"
                               SelectedItem="{Binding SelectedNotificationStatus}" Padding="8"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                    <CheckBox Content="Exclude Returned" IsChecked="{Binding ExcludeReturned}" Margin="10,0,15,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <CheckBox Content="Exclude Resolved" IsChecked="{Binding ExcludeResolved}" Margin="0,0,10,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
                 </StackPanel>
             </WrapPanel>
         </Border>
@@ -148,20 +165,18 @@
                       AutoGenerateColumns="False"
                       HorizontalScrollBarVisibility="Auto">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Accession Number" Binding="{Binding AccessionNumber}" Width="120"/>
+                    <DataGridTextColumn Header="Student Name" Binding="{Binding MemberName}" Width="140"/>
+                    <DataGridTextColumn Header="Registration Number" Binding="{Binding MemberCode}" Width="130"/>
+                    <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="100"/>
                     <DataGridTextColumn Header="Book Title" Binding="{Binding BookTitle}" Width="190"/>
-                    <DataGridTextColumn Header="Member Type" Binding="{Binding MemberType}" Width="105"/>
-                    <DataGridTextColumn Header="Member Name" Binding="{Binding MemberName}" Width="150"/>
-                    <DataGridTextColumn Header="Member Code" Binding="{Binding MemberCode}" Width="120"/>
-                    <DataGridTextColumn Header="Member Email" Binding="{Binding MemberEmail}" Width="180"/>
+                    <DataGridTextColumn Header="Accession Number" Binding="{Binding AccessionNumber}" Width="120"/>
                     <DataGridTextColumn Header="Issue Date" Binding="{Binding IssueDate, StringFormat='dd-MMM-yyyy'}" Width="105"/>
-                    <DataGridTextColumn Header="Expected Return Date" Binding="{Binding ExpectedReturnDate, StringFormat='dd-MMM-yyyy'}" Width="140"/>
-                    <DataGridTextColumn Header="Days Overdue" Binding="{Binding DaysOverdue}" Width="100"/>
-                    <DataGridTextColumn Header="Fine Per Day" Binding="{Binding FinePerDay, StringFormat='{}{0:N0}'}" Width="100"/>
-                    <DataGridTextColumn Header="Current Fine" Binding="{Binding CurrentFineAmount, StringFormat='{}{0:N0}'}" Width="105"/>
-                    <DataGridTextColumn Header="Last Notification Date" Binding="{Binding LastNotificationDate, StringFormat='dd-MMM-yyyy HH:mm'}" Width="150"/>
+                    <DataGridTextColumn Header="Due Date" Binding="{Binding ExpectedReturnDate, StringFormat='dd-MMM-yyyy'}" Width="110"/>
+                    <DataGridTextColumn Header="Overdue Days" Binding="{Binding DaysOverdue}" Width="95"/>
+                    <DataGridTextColumn Header="Fine Amount" Binding="{Binding CurrentFineAmount, StringFormat='{}{0:N0}'}" Width="100"/>
+                    <DataGridTextColumn Header="Resolved Status" Binding="{Binding ResolvedStatus}" Width="110"/>
                     <DataGridTextColumn Header="Notification Status" Binding="{Binding NotificationStatus}" Width="125"/>
-                    <DataGridCheckBoxColumn Header="Can Send Reminder" Binding="{Binding CanSendReminder}" Width="120"/>
+                    <DataGridCheckBoxColumn Header="Can Send" Binding="{Binding CanSendReminder}" Width="85"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

@@ -35,6 +35,17 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty] private decimal _paidAmount;
         [ObservableProperty] private string _waiverReason = string.Empty;
         [ObservableProperty] private string _remarks = string.Empty;
+        [ObservableProperty] private string _paymentMode = "Pay Now";
+        public ObservableCollection<string> PaymentModes { get; } = new() { "Pay Now", "Pay Later", "Waive" };
+
+        public bool IsPayNowVisible => PaymentMode == "Pay Now";
+        public bool IsWaiverVisible => PaymentMode == "Waive";
+
+        partial void OnPaymentModeChanged(string value)
+        {
+            OnPropertyChanged(nameof(IsPayNowVisible));
+            OnPropertyChanged(nameof(IsWaiverVisible));
+        }
 
         [ObservableProperty] private string _statusMessage = string.Empty;
         [ObservableProperty] private bool _isBusy;
@@ -160,6 +171,38 @@ namespace KicsitLibrary.Desktop.ViewModels
                 return;
             }
 
+            decimal finalPaidAmount = 0;
+            string? finalWaiverReason = null;
+
+            if (PaymentMode == "Pay Now")
+            {
+                finalPaidAmount = CalculatedFine;
+            }
+            else if (PaymentMode == "Pay Later")
+            {
+                finalPaidAmount = 0;
+            }
+            else if (PaymentMode == "Waive")
+            {
+                if (CalculatedFine > 0)
+                {
+                    if (string.IsNullOrWhiteSpace(WaiverReason))
+                    {
+                        StatusMessage = "Waiver Reason is required when waiving fine.";
+                        return;
+                    }
+                    var currentUserId = _authService.CurrentUser?.Id ?? 1;
+                    var isAuthorized = await _authService.VerifyUserPermissionAsync(currentUserId, "MANAGE_FINES");
+                    if (!isAuthorized)
+                    {
+                        StatusMessage = "Authorization failed. Only users with MANAGE_FINES permission can waive fines.";
+                        return;
+                    }
+                    finalPaidAmount = 0;
+                    finalWaiverReason = WaiverReason.Trim();
+                }
+            }
+
             IsBusy = true;
             try
             {
@@ -168,17 +211,19 @@ namespace KicsitLibrary.Desktop.ViewModels
                 var record = await _circulationService.ReceiveBookAsync(
                     AccessionNumber.Trim(),
                     SelectedCondition,
-                    PaidAmount,
-                    string.IsNullOrWhiteSpace(WaiverReason) ? null : WaiverReason.Trim(),
+                    finalPaidAmount,
+                    finalWaiverReason,
                     Remarks.Trim(),
                     userId
                 );
 
                 var availability = await _reservationService.MarkReservationAvailableAsync(bookMasterId);
-                StatusMessage = availability.Succeeded
-                    ? $"Material check-in successful. Reservation queue updated. Transaction ID {record.Id}."
-                    : $"Material check-in successful. Transaction ID {record.Id}. {availability.ErrorMessage}";
+                StatusMessage = "Book returned successfully";
+                
+                // Keep the success status message visible, clear other fields
+                var savedMsg = StatusMessage;
                 ClearAll();
+                StatusMessage = savedMsg;
             }
             catch (Exception ex)
             {
@@ -208,6 +253,7 @@ namespace KicsitLibrary.Desktop.ViewModels
             PaidAmount = 0;
             WaiverReason = string.Empty;
             Remarks = string.Empty;
+            PaymentMode = "Pay Now";
         }
     }
 }

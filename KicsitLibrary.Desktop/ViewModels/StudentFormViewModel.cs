@@ -225,11 +225,52 @@ namespace KicsitLibrary.Desktop.ViewModels
                 // Validate duplicate CNIC if filled
                 if (!string.IsNullOrWhiteSpace(Cnic))
                 {
+                    var cnicRegex = new System.Text.RegularExpressions.Regex(@"^\d{5}-\d{7}-\d{1}$");
+                    if (!cnicRegex.IsMatch(Cnic.Trim()))
+                    {
+                        ErrorMessage = "CNIC format must be #####-#######-#.";
+                        IsBusy = false;
+                        return;
+                    }
+
                     var isCnicDuplicate = await _consumerService.IsStudentCNICDuplicateAsync(
                         Cnic.Trim(), _editingStudent?.Id);
                     if (isCnicDuplicate)
                     {
                         ErrorMessage = $"CNIC '{Cnic}' is already registered to another member.";
+                        IsBusy = false;
+                        return;
+                    }
+                }
+
+                // Validate email format and duplicates if filled
+                if (!string.IsNullOrWhiteSpace(Email))
+                {
+                    var emailRegex = new System.Text.RegularExpressions.Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                    if (!emailRegex.IsMatch(Email.Trim()))
+                    {
+                        ErrorMessage = "Email format is invalid.";
+                        IsBusy = false;
+                        return;
+                    }
+
+                    var isEmailDuplicate = await _consumerService.IsStudentEmailDuplicateAsync(
+                        Email.Trim(), _editingStudent?.Id);
+                    if (isEmailDuplicate)
+                    {
+                        ErrorMessage = $"Email '{Email}' is already registered to another student.";
+                        IsBusy = false;
+                        return;
+                    }
+                }
+
+                // Validate phone format if filled
+                if (!string.IsNullOrWhiteSpace(Phone))
+                {
+                    var phoneRegex = new System.Text.RegularExpressions.Regex(@"^\+?[0-9\s\-]{7,15}$");
+                    if (!phoneRegex.IsMatch(Phone.Trim()))
+                    {
+                        ErrorMessage = "Phone number is invalid. Must be 7-15 digits.";
                         IsBusy = false;
                         return;
                     }

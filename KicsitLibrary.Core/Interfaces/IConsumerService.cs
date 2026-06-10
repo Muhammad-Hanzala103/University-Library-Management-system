@@ -26,6 +26,7 @@ namespace KicsitLibrary.Core.Interfaces
         Task DeleteStudentAsync(int id, string reason, int userId);
         Task<bool> IsStudentRegistrationNumberDuplicateAsync(string regNum, int? excludeId = null);
         Task<bool> IsStudentCNICDuplicateAsync(string cnic, int? excludeId = null);
+        Task<bool> IsStudentEmailDuplicateAsync(string email, int? excludeId = null);
 
         // ==========================================
         // FACULTY & STAFF MANAGEMENT

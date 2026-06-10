@@ -43,13 +43,14 @@ namespace KicsitLibrary.Services.Notifications
             var issues = await _context.IssueRecords
                 .AsNoTracking()
                 .Include(ir => ir.ReceiveRecord)
+                .Include(ir => ir.Fine)
                 .Include(ir => ir.BookCopy)
                     .ThenInclude(bc => bc.BookMaster)
                 .Include(ir => ir.Student)
                 .Include(ir => ir.FacultyStaff)
                 .Where(ir =>
-                    ir.ReceiveRecord == null &&
-                    ir.ExpectedReturnDate < overdueCutoffUtc)
+                    ir.ExpectedReturnDate < overdueCutoffUtc &&
+                    (ir.ReceiveRecord == null || ir.ReceiveRecord.ReceiveDate > ir.ExpectedReturnDate))
                 .OrderBy(ir => ir.ExpectedReturnDate)
                 .ToListAsync(cancellationToken);
 
@@ -84,6 +85,16 @@ namespace KicsitLibrary.Services.Notifications
                 var memberEmail = issue.MemberType == MemberType.Student
                     ? issue.Student?.Email ?? string.Empty
                     : issue.FacultyStaff?.Email ?? string.Empty;
+                var department = issue.MemberType == MemberType.Student
+                    ? issue.Student?.Department ?? string.Empty
+                    : issue.FacultyStaff?.Department ?? string.Empty;
+
+                var isResolved = issue.ReceiveRecord != null;
+                if (issue.Fine != null)
+                {
+                    isResolved = issue.Fine.PaymentStatus == FineStatus.Paid || issue.Fine.PaymentStatus == FineStatus.Waived;
+                }
+                var resolvedStatus = isResolved ? "Resolved" : "Pending";
 
                 var issueNotifications = notifications
                     .Where(nr => nr.IssueRecordId == issue.Id)
@@ -95,10 +106,13 @@ namespace KicsitLibrary.Services.Notifications
                         cooldownHours,
                         DateTime.UtcNow))
                     .ToList();
-                var canCreate = memberId > 0 && channelEligibility.Any(result => result.CanCreate);
+                
+                var canCreate = memberId > 0 && issue.ReceiveRecord == null && channelEligibility.Any(result => result.CanCreate);
 
+                var endDate = issue.ReceiveRecord != null ? ToLocalDate(issue.ReceiveRecord.ReceiveDate) : localToday;
                 var expectedLocalDate = ToLocalDate(issue.ExpectedReturnDate);
-                var daysOverdue = OverdueCalculator.CalculateOverdueDays(expectedLocalDate, localToday);
+                var daysOverdue = OverdueCalculator.CalculateOverdueDays(expectedLocalDate, endDate);
+                var currentFineAmount = issue.Fine != null ? issue.Fine.FineAmount : OverdueCalculator.CalculateFine(daysOverdue, issue.FinePerDay);
 
                 results.Add(new OverdueItem
                 {
@@ -112,19 +126,24 @@ namespace KicsitLibrary.Services.Notifications
                     MemberName = memberName,
                     MemberCode = memberCode,
                     MemberEmail = memberEmail,
+                    Department = department,
+                    ResolvedStatus = resolvedStatus,
+                    IsReturned = issue.ReceiveRecord != null,
                     IssueDate = issue.IssueDate,
                     ExpectedReturnDate = issue.ExpectedReturnDate,
                     DaysOverdue = daysOverdue,
                     FinePerDay = Math.Max(0, issue.FinePerDay),
-                    CurrentFineAmount = OverdueCalculator.CalculateFine(daysOverdue, issue.FinePerDay),
+                    CurrentFineAmount = currentFineAmount,
                     LastNotificationDate = lastNotification?.CreatedAt,
                     NotificationStatus = lastNotification?.Status,
                     CanSendReminder = canCreate,
                     ReasonIfCannotSend = memberId == 0
                         ? "Borrower record is missing."
-                        : canCreate
-                            ? string.Empty
-                            : channelEligibility.First(result => !result.CanCreate).Reason
+                        : issue.ReceiveRecord != null
+                            ? "Material has already been checked in."
+                            : canCreate
+                                ? string.Empty
+                                : channelEligibility.First(result => !result.CanCreate).Reason
                 });
             }
 

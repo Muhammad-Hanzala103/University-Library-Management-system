@@ -28,7 +28,7 @@ namespace KicsitLibrary.Services.Consumer
         {
             return await _context.Students
                 .Where(s => !s.IsDeleted)
-                .OrderBy(s => s.Name)
+                .OrderBy(s => s.RegistrationNumber)
                 .ToListAsync();
         }
 
@@ -78,7 +78,7 @@ namespace KicsitLibrary.Services.Consumer
                 studentQuery = studentQuery.Where(s => s.ActiveStatus == activeStatus.Value);
             }
 
-            return await studentQuery.OrderBy(s => s.Name).ToListAsync();
+            return await studentQuery.OrderBy(s => s.RegistrationNumber).ToListAsync();
         }
 
         public async Task<Student?> GetStudentByIdAsync(int id)
@@ -105,6 +105,11 @@ namespace KicsitLibrary.Services.Consumer
                 throw new InvalidOperationException($"Duplicate CNIC detected: {student.CNIC}");
             }
 
+            if (!string.IsNullOrWhiteSpace(student.Email) && await IsStudentEmailDuplicateAsync(student.Email))
+            {
+                throw new InvalidOperationException($"Duplicate Email detected: {student.Email}");
+            }
+
             await _context.Students.AddAsync(student);
             await _context.SaveChangesAsync();
         }
@@ -119,6 +124,11 @@ namespace KicsitLibrary.Services.Consumer
             if (!string.IsNullOrWhiteSpace(student.CNIC) && await IsStudentCNICDuplicateAsync(student.CNIC, student.Id))
             {
                 throw new InvalidOperationException($"Duplicate CNIC detected: {student.CNIC}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(student.Email) && await IsStudentEmailDuplicateAsync(student.Email, student.Id))
+            {
+                throw new InvalidOperationException($"Duplicate Email detected: {student.Email}");
             }
 
             _context.Students.Update(student);
@@ -167,6 +177,17 @@ namespace KicsitLibrary.Services.Consumer
         public async Task<bool> IsStudentCNICDuplicateAsync(string cnic, int? excludeId = null)
         {
             var query = _context.Students.Where(s => s.CNIC == cnic && !s.IsDeleted);
+            if (excludeId.HasValue)
+            {
+                query = query.Where(s => s.Id != excludeId.Value);
+            }
+            return await query.AnyAsync();
+        }
+
+        public async Task<bool> IsStudentEmailDuplicateAsync(string email, int? excludeId = null)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return false;
+            var query = _context.Students.Where(s => s.Email == email && !s.IsDeleted);
             if (excludeId.HasValue)
             {
                 query = query.Where(s => s.Id != excludeId.Value);

@@ -33,6 +33,14 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty] private string _minimumFine = string.Empty;
         [ObservableProperty] private string _maximumFine = string.Empty;
         [ObservableProperty] private string _selectedNotificationStatus = "All";
+        
+        [ObservableProperty] private string _selectedDepartment = "All";
+        [ObservableProperty] private ObservableCollection<string> _departments = new() { "All" };
+        [ObservableProperty] private DateTime? _startDateFilter;
+        [ObservableProperty] private DateTime? _endDateFilter;
+        [ObservableProperty] private bool _excludeReturned = true;
+        [ObservableProperty] private bool _excludeResolved = true;
+
         [ObservableProperty] private string _statusMessage = string.Empty;
         [ObservableProperty] private string _errorMessage = string.Empty;
         [ObservableProperty] private bool _isBusy;
@@ -70,6 +78,11 @@ namespace KicsitLibrary.Desktop.ViewModels
         partial void OnMinimumFineChanged(string value) => ApplyFilters();
         partial void OnMaximumFineChanged(string value) => ApplyFilters();
         partial void OnSelectedNotificationStatusChanged(string value) => ApplyFilters();
+        partial void OnSelectedDepartmentChanged(string value) => ApplyFilters();
+        partial void OnStartDateFilterChanged(DateTime? value) => ApplyFilters();
+        partial void OnEndDateFilterChanged(DateTime? value) => ApplyFilters();
+        partial void OnExcludeReturnedChanged(bool value) => ApplyFilters();
+        partial void OnExcludeResolvedChanged(bool value) => ApplyFilters();
 
         [RelayCommand]
         public async Task RefreshAsync()
@@ -79,9 +92,34 @@ namespace KicsitLibrary.Desktop.ViewModels
             try
             {
                 _allItems = (await _overdueService.GetOverdueItemsAsync()).ToList();
+
+                var currentSelection = SelectedDepartment;
+                Departments.Clear();
+                Departments.Add("All");
+                var uniqueDepts = _allItems
+                    .Select(item => item.Department)
+                    .Where(d => !string.IsNullOrWhiteSpace(d))
+                    .Distinct()
+                    .OrderBy(d => d);
+                foreach (var dept in uniqueDepts)
+                {
+                    Departments.Add(dept);
+                }
+
+                if (Departments.Contains(currentSelection))
+                {
+                    _selectedDepartment = currentSelection;
+                    OnPropertyChanged(nameof(SelectedDepartment));
+                }
+                else
+                {
+                    _selectedDepartment = "All";
+                    OnPropertyChanged(nameof(SelectedDepartment));
+                }
+
                 ApplyFilters();
                 await LoadSchedulerStatusAsync();
-                StatusMessage = $"Loaded {_allItems.Count} active overdue item(s).";
+                StatusMessage = $"Loaded {_allItems.Count} overdue item(s).";
                 await _logService.LogActivityAsync(
                     "Overdue View Refreshed",
                     StatusMessage,
@@ -174,6 +212,11 @@ namespace KicsitLibrary.Desktop.ViewModels
             MinimumFine = string.Empty;
             MaximumFine = string.Empty;
             SelectedNotificationStatus = "All";
+            SelectedDepartment = "All";
+            StartDateFilter = null;
+            EndDateFilter = null;
+            ExcludeReturned = true;
+            ExcludeResolved = true;
             ApplyFilters();
             await _logService.LogActivityAsync(
                 "Overdue Filters Cleared",
@@ -274,6 +317,31 @@ namespace KicsitLibrary.Desktop.ViewModels
             if (SelectedMemberType != "All")
             {
                 query = query.Where(item => item.MemberType.ToString() == SelectedMemberType);
+            }
+
+            if (SelectedDepartment != "All")
+            {
+                query = query.Where(item => item.Department.Equals(SelectedDepartment, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (StartDateFilter.HasValue)
+            {
+                query = query.Where(item => item.ExpectedReturnDate.Date >= StartDateFilter.Value.Date);
+            }
+
+            if (EndDateFilter.HasValue)
+            {
+                query = query.Where(item => item.ExpectedReturnDate.Date <= EndDateFilter.Value.Date);
+            }
+
+            if (ExcludeReturned)
+            {
+                query = query.Where(item => !item.IsReturned);
+            }
+
+            if (ExcludeResolved)
+            {
+                query = query.Where(item => item.ResolvedStatus != "Resolved");
             }
 
             if (int.TryParse(MinimumDaysOverdue, out var minimumDays))

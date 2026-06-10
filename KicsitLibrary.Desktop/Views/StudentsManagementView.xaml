@@ -113,6 +113,7 @@
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*"/>
                     <DataGridTextColumn Header="Program" Binding="{Binding Program}" Width="90"/>
                     <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="100"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="150"/>
                     <DataGridTextColumn Header="Clearance" Binding="{Binding ClearanceStatus}" Width="110"/>
                     <DataGridTemplateColumn Width="180" Header="Actions">
                         <DataGridTemplateColumn.CellTemplate>

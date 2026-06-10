@@ -54,13 +54,21 @@
                             <ComboBoxItem Content="Lost"/>
                         </ComboBox>
 
+                        <!-- Payment Mode Selection -->
+                        <TextBlock Text="Payment Mode *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                        <ComboBox Height="36" ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding PaymentMode}" Margin="0,0,0,12"/>
+
                         <!-- Collected fine amount -->
-                        <TextBlock Text="Fine Collected Amount (Rs.)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding PaidAmount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                        <StackPanel Visibility="{Binding IsPayNowVisible, Converter={local:BooleanToVisibilityConverter}}">
+                            <TextBlock Text="Fine Collected Amount (Rs.)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding PaidAmount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                        </StackPanel>
 
                         <!-- Waiver Reason -->
-                        <TextBlock Text="Waiver / Discount Reason (If any)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding WaiverReason, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                        <StackPanel Visibility="{Binding IsWaiverVisible, Converter={local:BooleanToVisibilityConverter}}">
+                            <TextBlock Text="Waiver / Discount Reason (Required) *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding WaiverReason, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                        </StackPanel>
 
                         <!-- Remarks -->
                         <TextBlock Text="Staff Remarks" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,20"/>
