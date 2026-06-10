@@ -391,6 +391,14 @@ Deferred refinements:
 - [x] Prepare commit message (`Finalize Ilm o Kutub System release documentation and security hardening`) and safe push command.
 - [x] Keep push execution pending user approval.
 
+## Phase 12G: Release Version Tagging
+- **Goal**: Create and push an annotated Git tag for the current stable university demo build without creating a public binary release yet.
+- [x] Execute clean, restore, build, tests (302 passed), smoke test, and security scan.
+- [x] Verify target commit hash (d2022b4).
+- [x] Verify no existing tags conflict.
+- [x] Create annotated tag `v1.0.0-demo` locally.
+- [x] Push `v1.0.0-demo` to remote origin.
+
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.

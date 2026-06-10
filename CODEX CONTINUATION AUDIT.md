@@ -1,5 +1,18 @@
 # Codex Continuation Audit
 
+## Phase 12G Completion Update
+
+Completion date: 2026-06-11
+
+- Completed Phase 12G Release Version Tagging.
+- Executed clean verification checks: `dotnet clean`, `dotnet restore`, `dotnet build` (0 warnings, 0 errors), and `dotnet test` (all 302 tests passed successfully).
+- Verified target commit hash `d2022b4`.
+- Created annotated tag `v1.0.0-demo` locally with message "First-run university lab demo release".
+- Pushed tag `v1.0.0-demo` to remote origin.
+- No public binary release was created. Installer remains pending.
+- Cloud sync remains pending.
+- Repository rename remains manual.
+
 ## Phase 12E Completion Update
 
 Completion date: 2026-06-11

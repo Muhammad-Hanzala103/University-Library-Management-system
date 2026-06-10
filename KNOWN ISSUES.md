@@ -198,6 +198,11 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Verification checks (dotnet clean/restore/build/test, deployment smoke test, and security scan) passed successfully.
 - No database file, build folder, cert key, or local configuration is committed or tracked by Git.
 - Git origin remote is confirmed pointing to `https://github.com/Muhammad-Hanzala103/University-Library-Management-system.git` (main branch).
-- Git push execution remains pending user approval.
-- Repository rename and version tagging will be performed manually post-push.
+- Repository rename will be performed manually post-push.
+
+### Phase 12G Release Version Tagging
+- Annotated Git tag `v1.0.0-demo` was created and pushed to origin.
+- Verification checks passed successfully (302 tests).
+- No public binary release was created. Installer remains pending.
+- Cloud sync (Supabase) remains pending.
 
