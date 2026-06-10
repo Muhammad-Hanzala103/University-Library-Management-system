@@ -418,3 +418,25 @@ The default SQLite database is named `KicsitLibrary.db`. Relative paths are reso
   ```sql
   SELECT FineRecordNumber, RemainingAmount, PaymentStatus FROM Fines WHERE PaymentStatus = 'Unpaid';
   ```
+
+---
+
+## 13. Pre-Release Security Scan
+Before any push to a public repository, run the release security scan:
+```powershell
+powershell -ExecutionPolicy Bypass -File ./scripts/security_scan.ps1
+```
+This runs 10 checks:
+1. Seeded Demo Password Check (All files except DbSeeder.cs)
+2. Public Docs Password Check
+3. Generated Repo Logs Check
+4. SMTP Password in Non-Service Files
+5. SMTP Password in Exports or Docs
+6. Private Local Paths in Public Docs
+7. Database Files in Repository
+8. SQLite Journal Files
+9. Private Credentials Template Check
+10. Security Documentation Check
+
+Output is fully redacted and findings do not expose plaintext password values.
+

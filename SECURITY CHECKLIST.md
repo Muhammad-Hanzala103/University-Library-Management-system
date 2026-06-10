@@ -86,7 +86,7 @@ This checklist must be reviewed and completed **before** any public GitHub push,
 - [ ] All integration tests pass.
 - [ ] `scripts/deployment_smoke_test.ps1` passes.
 - [ ] `scripts/security_scan.ps1` passes (or only documented false positives remain).
-- [ ] No plaintext passwords in any `.md` file except `DEMO CREDENTIALS PRIVATE TEMPLATE.md` (which is `.gitignore`-excluded).
+- [ ] No plaintext passwords in any `.md` file (including `DEMO CREDENTIALS PRIVATE TEMPLATE.md` which has placeholder templates only).
 - [ ] No private local machine paths in public documentation.
 - [ ] No personal contact information exposed.
 - [ ] SMTP settings are blank in the seeded database.

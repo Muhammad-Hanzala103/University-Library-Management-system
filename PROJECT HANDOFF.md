@@ -38,7 +38,7 @@ graph TD
 ---
 
 ## 2. Implemented Modules
-- **Authentication**: Fully functional login panel with robust hashed passwords. Uses a secure fallback seeder for default accounts (`admin` / `admin123`).
+- **Authentication**: Fully functional login panel with robust hashed passwords. Uses a secure fallback seeder for default accounts (`admin` / Provided privately during supervised demo).
 - **Library Catalog**: Comprehensive book catalog, details forms, physical copy management, shelf mapping, and sequence-based auto-accession.
 - **Consumer Management**: Complete registration screens for Students, Faculty/Staff, and Visiting inspectors. Supports vector Code-39 barcodes and QR codes for Digital Library Cards.
 - **Circulation Management**: Material check-out validations, returned book physical condition processing, automated fine calculations, payment collections, and waivers.

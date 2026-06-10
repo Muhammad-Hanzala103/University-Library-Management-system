@@ -27,7 +27,7 @@ The following must **never** be pushed to a public repository:
 |------|--------|
 | `KicsitLibrary.db` | Contains hashed passwords and potentially configured SMTP credentials |
 | `KicsitLibrary.db-wal` / `KicsitLibrary.db-shm` | SQLite transaction logs |
-| `DEMO CREDENTIALS PRIVATE TEMPLATE.md` | Contains plaintext demo passwords for instructor handout |
+| `DEMO CREDENTIALS PRIVATE TEMPLATE.md` | Contains template placeholders for demo passwords |
 | Any `.pfx` or `.cer` certificate files | Code-signing private keys |
 | `Backups/` folder contents | May contain full database snapshots |
 | `Locks/` folder contents | Runtime mutex artifacts |

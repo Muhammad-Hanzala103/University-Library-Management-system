@@ -367,20 +367,29 @@ Deferred refinements:
 ## Phase 12C: Final Release Documentation and GitHub README Preparation
 - [x] Create final `README.md` in repository root.
 - [x] Create `RELEASE NOTES.md` detailing internal build statuses.
-## Phase 12D: Release Security Hardening & Credential Sanitization
-- **Goal**: Make the project safe for GitHub upload, university demo, and internal deployment.
-- [x] Credential exposure audit across all documentation and source files.
-- [x] Remove plaintext passwords from `README.md`, `DEMO CHECKLIST.md`, and all public documentation.
-- [x] Create `SECURITY CHECKLIST.md` with pre-deployment verification steps.
-- [x] Create `RELEASE SECURITY NOTES.md` documenting what is safe for GitHub and what must remain private.
-- [x] Create `DEMO CREDENTIALS PRIVATE TEMPLATE.md` for instructor-only distribution.
-- [x] Add `DEMO CREDENTIALS PRIVATE TEMPLATE.md` to `.gitignore`.
-- [x] Create `scripts/security_scan.ps1` for automated pre-push secret scanning.
-- [x] Add security hardening integration tests (password exposure, SMTP masking, doc existence, gitignore coverage).
-- [x] Verify SMTP password masking in settings exports, activity logs, and backup metadata.
-- [x] Document default account password-change policy without implementing forced reset (User entity limitation).
-- [x] Update `CURRENT STATUS.md`, `NEXT TASKS.md`, `KNOWN ISSUES.md`.
-- [x] Build passes with 0 errors. All tests pass. Security scan passes.
+## Phase 12D: Release Security Hardening & Credential Sanitization (Patch)
+- **Goal**: Make the project completely safe for GitHub upload, university demo, and internal deployment.
+- [x] Run full repository secret scan.
+- [x] Sanitize all documentation, reports, and templates to remove plaintext passwords (README, Handover, Demo Checklist, Handoff, private credentials template).
+- [x] Update and harden `scripts/security_scan.ps1` to run 10 checks recursively.
+- [x] Implement redaction inside the security scan script so it never prints actual secret values.
+- [x] Resolve gotchas in `security_scan.ps1` regarding single-line file parsing and root file scanning.
+- [x] Expand integration tests to verify all markdown files do not expose passwords, settings exports mask SMTP passwords, activity logs mask SMTP passwords, and security scan script exists and output is redacted.
+- [x] Verify build compiles with 0 errors and all 302 tests pass successfully.
+- [x] Verify deployment smoke test passes.
+- [x] Verify security scan script passes.
+
+## Phase 12E: GitHub Push and Final Repository Preparation
+- **Goal**: Safely package, audit, and push repository to remote origin.
+- [x] Read all release checklists and documentation files.
+- [x] Execute clean, restore, build, tests (302 passed), smoke test, and security scan.
+- [x] Perform forensic audit on git tracked files (`git status` and `git ls-files`).
+- [x] Verify `.gitignore` ignores all build, database, cert, and local user settings files.
+- [x] Create `GITHUB PUSH CHECKLIST.md` for pre-push and rename guidelines.
+- [x] Create `PHASE 12E GITHUB PUSH PREPARATION REPORT.md` listing validation results.
+- [x] Confirm Git origin remote is configured (`main` branch).
+- [x] Prepare commit message (`Finalize Ilm o Kutub System release documentation and security hardening`) and safe push command.
+- [x] Keep push execution pending user approval.
 
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.

@@ -183,12 +183,21 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Ownership settings are stored in `SystemSettings`; there is no dedicated Settings screen yet to edit timeout, retention, read-only second instance, or startup cleanup policies.
 - Cross-process tests simulate competing ownership services against isolated local SQLite files. Full installer/runtime multi-instance stress testing remains a manual/deployment task.
 
-### Phase 12D Security Hardening
-- Public documentation (`README.md`, `DEMO CHECKLIST.md`, `INSTALLATION GUIDE.md`, `RELEASE NOTES.md`, `SCREENSHOTS GUIDE.md`) no longer exposes any default seeded passwords.
-- Demo credentials are available only in `DbSeeder.cs` (source code) and `DEMO CREDENTIALS PRIVATE TEMPLATE.md` (gitignore-excluded private file).
+### Phase 12D Security Hardening (Patch)
+- Public documentation (`README.md`, `DEMO CHECKLIST.md`, `INSTALLATION GUIDE.md`, `RELEASE NOTES.md`, `SCREENSHOTS GUIDE.md`, `SECURITY CHECKLIST.md`, `RELEASE SECURITY NOTES.md`, `DEMO CREDENTIALS PRIVATE TEMPLATE.md`, and `PROJECT HANDOFF.md`) contains no plaintext seeded passwords.
+- Demo credentials template (`DEMO CREDENTIALS PRIVATE TEMPLATE.md`) contains only placeholders. Actual passwords are provided privately during supervised demo.
 - SMTP password is masked in all activity logs, settings exports, backup sidecar metadata, restore metadata, and lease metadata.
 - SMTP password is stored as plaintext in the local SQLite `SystemSettings` table. Encrypted at-rest storage via Windows DPAPI is planned but deferred.
 - The `User` entity does not have a `MustChangePassword` flag. Forced password change on first login for seeded accounts is not implemented. This is documented as a future hardening item.
-- `scripts/security_scan.ps1` checks for exposed passwords, SMTP secrets, private paths, database files, and missing security documentation before every push.
-- Nine security hardening integration tests verify documentation sanitization, SMTP masking, security document existence, and gitignore coverage.
-- Total automated test count: 293 (284 existing + 9 security hardening).
+- `scripts/security_scan.ps1` runs 10 checks recursively across all repository files for passwords, SMTP secrets, private paths, database files, and missing security docs.
+- The scan script uses dynamic pattern definitions to avoid self-exposure, handles single-line files accurately, and outputs redacted findings only (never printing plaintext secrets).
+- Automated tests verify documentation sanitization, SMTP masking in exports, SMTP masking in activity logs, security doc existence, gitignore coverage, and redacted scan script output.
+- Total automated test count: 302 (284 baseline + 18 security and packaging validation tests). All 302 tests pass successfully.
+
+### Phase 12E GitHub Push and Final Repository Preparation
+- Verification checks (dotnet clean/restore/build/test, deployment smoke test, and security scan) passed successfully.
+- No database file, build folder, cert key, or local configuration is committed or tracked by Git.
+- Git origin remote is confirmed pointing to `https://github.com/Muhammad-Hanzala103/University-Library-Management-system.git` (main branch).
+- Git push execution remains pending user approval.
+- Repository rename and version tagging will be performed manually post-push.
+
