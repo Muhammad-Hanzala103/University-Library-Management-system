@@ -759,5 +759,44 @@ namespace KicsitLibrary.Services.Catalog
 
             return $"{prefix}{(maxSequence + 1):D5}";
         }
+
+        public async Task<IEnumerable<Author>> SearchAuthorsAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return await GetAllAuthorsAsync();
+            }
+            var normalized = query.Trim().ToLower();
+            return await _context.Authors
+                .Where(a => !a.IsDeleted && a.Name.ToLower().Contains(normalized))
+                .OrderBy(a => a.Name)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Publisher>> SearchPublishersAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return await GetAllPublishersAsync();
+            }
+            var normalized = query.Trim().ToLower();
+            return await _context.Publishers
+                .Where(p => !p.IsDeleted && p.Name.ToLower().Contains(normalized))
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<DepartmentCategory>> SearchDepartmentCategoriesAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return await GetAllDepartmentCategoriesAsync();
+            }
+            var normalized = query.Trim().ToLower();
+            return await _context.DepartmentCategories
+                .Where(d => !d.IsDeleted && d.Name.ToLower().Contains(normalized))
+                .OrderBy(d => d.Name)
+                .ToListAsync();
+        }
     }
 }

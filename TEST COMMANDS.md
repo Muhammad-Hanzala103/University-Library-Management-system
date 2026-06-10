@@ -30,16 +30,16 @@ dotnet test KicsitLibrary.slnx --logger "console;verbosity=detailed"
 
 The test project uses a unique temporary SQLite directory and file per test under `%TEMP%\KicsitLibrary.Tests`. It never opens `KicsitLibrary.db`.
 
-Current expected result (post-Priority 9E cleanup verification):
+Current expected result (post-Phase 11 stabilization):
 
 ```text
-Passed: 243
+Passed: 283
 Failed: 0
 Skipped: 0
-Duration: ~39-52s
+Duration: ~40-60s
 ```
 
-Post-Priority 9E note: All 243 tests continue to pass after artifact cleanup. Local test files remain intact; no database changes were made during cleanup.
+Post-Phase 11 note: All 283 tests pass successfully after Catalog and Circulation QA implementation.
 
 Run only branding and helpful-hint tests:
 

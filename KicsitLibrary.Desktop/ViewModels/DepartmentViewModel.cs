@@ -135,8 +135,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                     var newDept = new DepartmentCategory
                     {
                         Name = Name.Trim(),
-                        Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
-                        ActiveStatus = true
+                        Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim()
                     };
 
                     await _catalogService.AddDepartmentCategoryAsync(newDept);

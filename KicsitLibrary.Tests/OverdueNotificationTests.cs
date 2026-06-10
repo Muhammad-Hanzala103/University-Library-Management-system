@@ -37,7 +37,7 @@ public class OverdueNotificationTests
         database.Context.ReceiveRecords.Add(new ReceiveRecord
         {
             IssueRecordId = issue.Id,
-            ReceiveDate = DateTime.UtcNow,
+            ReceiveDate = issue.ExpectedReturnDate.AddDays(-1),
             ReceivedByUserId = data.User.Id,
             BookConditionAfterReturn = "Normal"
         });

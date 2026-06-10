@@ -29,6 +29,8 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 9C (Release Data Location & Source Control Cleanup Plan)**: **100% Completed**
 - **Priority 9D (Release Database Relocation Workflow)**: **100% Completed**
 - **Priority 9E (Source Control Cleanup Execution)**: **100% Completed**
+- **Priority 10A (Settings Management UI)**: **100% Completed**
+- **Phase 11 (Catalog and Circulation QA Implementation)**: **100% Completed**
 - **Priority 8E+ (Sync & Deployment)**: **Pending Implementation**
 
 ### Product Branding and UI Refinement
@@ -269,6 +271,23 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - Kept `DatabaseFileName` as `KicsitLibrary.db`, preserved the source database by default, and preserved current development startup behavior unless relocation is explicitly performed.
 - Two hundred forty-three isolated SQLite tests pass, including the completion of the release database relocation workflow.
 
+### Priority 10A Settings Management UI
+- Implemented a complete settings management interface allowing authorized administrators to configure application preferences, overdue policies, notifications, reports, directories, and database properties.
+- All configurations are read and written directly to the database via standard EF Core SQLite bindings.
+
+### Phase 11 Catalog and Circulation QA Implementation
+- Stabilized and rescued the catalog and circulation QA fixes.
+- **Dashboard Real Statistics**: Connected dashboard view to real database queries (Total catalog titles, Total book copies, Available copies, Issued copies, Overdue active issues, Lost books, Damaged books, Total students, Today activity count) through the existing `DashboardService`.
+- **Author & Publisher QA**: Implemented case-insensitive searching, case-insensitive duplicate blocking, safe edit, and blocked deletion of linked entities with friendly error messages. Droppdowns automatically refresh on changes.
+- **Category & Literature QA**: Implemented case-insensitive category search, proper category sorting, subcategory relationships, and blocked deletion of categories linked to books.
+- **Departments**: Implemented department CRUD operations, case-insensitive duplicate blocking, and student form integration.
+- **Book Copies & Location**: Implemented duplicate accession blocking, preserved clean accession generation, and expanded copy details to show source, remarks, and location (racks/shelves).
+- **Overdue Fixes**: Stabilized filters in the overdue screen including department filter, date range filter, active/returned filter, and resolved/pending filter. The grid is cleaned to hide internal database IDs and shows clear user-friendly columns.
+- **Receive & Return Workflow**: Extended the return screen to support Pay Now, Pay Later, and Waive modes. Normal returns set copy status to Available, damaged returns to Damaged, and lost returns to Lost. The success message is precisely set to: "Book returned successfully."
+- **Student Validation**: Implemented duplicate email blocking, registration number ordering, and format validations (CNIC, email, and phone) at both VM and Service layer.
+- **Unit Tests**: Added 25 real SQLite integration tests covering all QA constraints.
+- **Final Test Target**: **283 total tests** pass successfully (0 failed, 0 skipped) under `dotnet test KicsitLibrary.slnx`.
+
 ---
 
 ## 2. Completed Components
@@ -369,7 +388,7 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 ## 3. Pending Components
 
 - **Views & ViewModels**:
-  - `SystemSettingsView.xaml` & `SystemSettingsViewModel.cs` (the Settings route exists, but the screen is not implemented)
+  - None. Settings management UI (Priority 10A) is completed.
 - **Services**:
   - Supabase sync and deployment remain pending.
 - **Final Release Documentation**:

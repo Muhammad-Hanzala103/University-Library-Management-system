@@ -108,13 +108,11 @@ namespace KicsitLibrary.Desktop.ViewModels
 
                 if (Departments.Contains(currentSelection))
                 {
-                    _selectedDepartment = currentSelection;
-                    OnPropertyChanged(nameof(SelectedDepartment));
+                    SelectedDepartment = currentSelection;
                 }
                 else
                 {
-                    _selectedDepartment = "All";
-                    OnPropertyChanged(nameof(SelectedDepartment));
+                    SelectedDepartment = "All";
                 }
 
                 ApplyFilters();

@@ -13,6 +13,7 @@ namespace KicsitLibrary.Core.Interfaces
         Task AddAuthorAsync(Author author);
         Task UpdateAuthorAsync(Author author);
         Task DeleteAuthorAsync(int id, string reason, int userId);
+        Task<IEnumerable<Author>> SearchAuthorsAsync(string query);
 
         // Publishers Management
         Task<IEnumerable<Publisher>> GetAllPublishersAsync();
@@ -20,6 +21,7 @@ namespace KicsitLibrary.Core.Interfaces
         Task AddPublisherAsync(Publisher publisher);
         Task UpdatePublisherAsync(Publisher publisher);
         Task DeletePublisherAsync(int id, string reason, int userId);
+        Task<IEnumerable<Publisher>> SearchPublishersAsync(string query);
 
         // Metadata & Locations Lookups
         Task<IEnumerable<Category>> GetAllCategoriesAsync();
@@ -35,6 +37,7 @@ namespace KicsitLibrary.Core.Interfaces
         Task UpdateDepartmentCategoryAsync(DepartmentCategory dept);
         Task DeleteDepartmentCategoryAsync(int id, string reason, int userId);
         Task<bool> IsDepartmentCategoryDuplicateAsync(string name, int? excludeId = null);
+        Task<IEnumerable<DepartmentCategory>> SearchDepartmentCategoriesAsync(string query);
 
         Task<IEnumerable<LiteratureCategory>> GetAllLiteratureCategoriesAsync();
         Task<IEnumerable<Rack>> GetAllRacksAsync();

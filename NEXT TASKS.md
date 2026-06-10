@@ -328,6 +328,26 @@ Deferred refinements:
 - [ ] Remove already tracked generated artifacts with `git rm --cached` only after explicit approval.
 - [ ] Decide per-user versus per-machine runtime data root for installer deployment.
 
+## Priority 10A: Settings Management UI
+- **Goal**: Implement a settings screen in the admin portal for database, overdue, and email settings.
+- [x] Create Settings screen UI and view models.
+- [x] Bind configuration properties directly to sqlite settings.
+
+## Phase 11: Catalog and Circulation QA Implementation
+- **Goal**: Resuce and stabilize catalog and circulation fixes based on librarian QA feedback.
+- [x] Connect Dashboard to real sqlite database statistics.
+- [x] Implement case-insensitive search and duplicate blocking for Authors and Publishers.
+- [x] Block deletion of linked Authors and Publishers with friendly warning messages.
+- [x] Implement parent-child category relations and sorting.
+- [x] Implement Department management CRUD and case-insensitive duplicate blocking.
+- [x] Expand Book Copies to support Rack, Shelf, Source, Remarks, and duplicate accession blocking.
+- [x] Add filters to Overdue reminders (Department, Date Range, Active only, Unresolved only).
+- [x] Expose user-friendly columns in Overdue grid and hide internal ID.
+- [x] Extend Receive and Return workflow to support Pay Now, Pay Later, and Waive modes.
+- [x] Block student duplicate email registration at VM and Service layer.
+- [x] Add CNIC, email, and phone validation to Student form.
+- [x] Add 25 new tests; all 283 tests pass successfully.
+
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.

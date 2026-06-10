@@ -26,8 +26,6 @@ This document outlines modules that are currently implemented or stubbed, listin
 - **Priority 6A compatibility**: Startup adds nullable/defaulted clearance columns to `Students` and `FacultyStaff` and creates clearance-status indexes. Existing rows default to `NotCleared`; no table rebuild or data deletion occurs.
 - **Remaining limitation**: SQLite cannot add the new `IssueRecordId` foreign-key constraint to an existing table without a table rebuild. Fresh databases receive the EF-configured constraint; upgraded development databases rely on service validation until migrations are adopted.
 
-### Navigation View Stubs
-- The `"Settings"` route is registered in the main sidebar but does not yet have a dedicated ViewModel or XAML view.
 
 ### Deployment Preparation Limitations
 - Priority 9B is an audit and planning phase only. No installer, ClickOnce package, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, final README, repository rename, namespace rename, or database rename was performed.

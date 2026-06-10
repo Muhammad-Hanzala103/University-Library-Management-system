@@ -343,10 +343,11 @@ namespace KicsitLibrary.Tests
         {
             await using var database = await SqliteTestDatabase.CreateAsync();
             var data = await database.AddCirculationDataAsync();
+            var log = new ActivityLogService(new Repository<ActivityLog>(database.Context));
             var overdueService = new OverdueService(
                 database.Context,
-                new NotificationService(database.Context, new ActivityLogService(new Repository<ActivityLog>(database.Context))),
-                new ActivityLogService(new Repository<ActivityLog>(database.Context))
+                new NotificationService(database.Context, log, new KicsitLibrary.Tests.Infrastructure.FakeEmailTransport(), new EmailSettingsService(database.Context)),
+                log
             );
 
             await database.AddIssueAsync(data, DateTime.UtcNow.AddDays(-5));
@@ -361,10 +362,11 @@ namespace KicsitLibrary.Tests
         {
             await using var database = await SqliteTestDatabase.CreateAsync();
             var data = await database.AddCirculationDataAsync();
+            var log = new ActivityLogService(new Repository<ActivityLog>(database.Context));
             var overdueService = new OverdueService(
                 database.Context,
-                new NotificationService(database.Context, new ActivityLogService(new Repository<ActivityLog>(database.Context))),
-                new ActivityLogService(new Repository<ActivityLog>(database.Context))
+                new NotificationService(database.Context, log, new KicsitLibrary.Tests.Infrastructure.FakeEmailTransport(), new EmailSettingsService(database.Context)),
+                log
             );
 
             await database.AddIssueAsync(data, DateTime.UtcNow.AddDays(-10));
@@ -378,10 +380,11 @@ namespace KicsitLibrary.Tests
         {
             await using var database = await SqliteTestDatabase.CreateAsync();
             var data = await database.AddCirculationDataAsync();
+            var log = new ActivityLogService(new Repository<ActivityLog>(database.Context));
             var overdueService = new OverdueService(
                 database.Context,
-                new NotificationService(database.Context, new ActivityLogService(new Repository<ActivityLog>(database.Context))),
-                new ActivityLogService(new Repository<ActivityLog>(database.Context))
+                new NotificationService(database.Context, log, new KicsitLibrary.Tests.Infrastructure.FakeEmailTransport(), new EmailSettingsService(database.Context)),
+                log
             );
 
             var issue = await database.AddIssueAsync(data, DateTime.UtcNow.AddDays(-5));
@@ -451,8 +454,8 @@ namespace KicsitLibrary.Tests
             var service = new DashboardService(database.Context);
 
             var stats = await service.GetDashboardStatsAsync();
-            Assert.Equal(1, stats.TotalCatalogTitles);
-            Assert.Equal(1, stats.TotalBookCopies);
+            Assert.Equal(1, stats.TotalUniqueTitles);
+            Assert.Equal(1, stats.TotalAccessionCopies);
         }
     }
 }
