@@ -20,8 +20,10 @@ This release marks the baseline completion of the **Ilm o Kutub System** desktop
 
 ## 2. Build & Test Status
 * **Compilation**: Succeeded with **0 warnings** and **0 errors** on clean build.
-* **Automated Tests**: **284 integration tests** executed and passed successfully.
+* **Automated Tests**: **302 integration tests** executed and passed successfully.
 * **Smoke Testing**: Validated executable, appsettings.json, required core assemblies, and database isolation.
+* **Security Scanning**: Passed all 11 security scans.
+* **Release Tag**: Annotated tag `v1.0.0-demo` pushed for baseline (Phase 12G).
 
 ---
 

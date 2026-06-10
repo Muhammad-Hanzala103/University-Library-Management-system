@@ -39,7 +39,8 @@ Skipped: 0
 Duration: ~40-60s
 ```
 
-Post-Phase 12B note: All 284 tests pass successfully after Catalog and Circulation QA rescue and Splash screen integration.
+Post-Phase 12G note: All 302 tests pass successfully.
+Phase 12G Release Version Tagging is complete. Annotated tag v1.0.0-demo was created and pushed. Build passed. Tests passed with exact count of 302. Security scan passed. No public binary release was created. Installer remains pending. Repository rename remains manual. Cloud sync remains pending.
 
 Run only branding and helpful-hint tests:
 
