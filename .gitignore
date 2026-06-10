@@ -56,3 +56,11 @@ TestResults/
 # Temporary runtime folders
 Temp/
 Locks/
+
+# Private credentials (never commit)
+DEMO CREDENTIALS PRIVATE TEMPLATE.md
+
+# Code-signing certificates
+*.pfx
+*.cer
+*.p12

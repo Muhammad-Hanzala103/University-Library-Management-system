@@ -182,3 +182,13 @@ This document outlines modules that are currently implemented or stubbed, listin
 - Lease files contain non-sensitive operational metadata only. They intentionally exclude `SystemSettings`, SMTP passwords, database passwords, and connection strings.
 - Ownership settings are stored in `SystemSettings`; there is no dedicated Settings screen yet to edit timeout, retention, read-only second instance, or startup cleanup policies.
 - Cross-process tests simulate competing ownership services against isolated local SQLite files. Full installer/runtime multi-instance stress testing remains a manual/deployment task.
+
+### Phase 12D Security Hardening
+- Public documentation (`README.md`, `DEMO CHECKLIST.md`, `INSTALLATION GUIDE.md`, `RELEASE NOTES.md`, `SCREENSHOTS GUIDE.md`) no longer exposes any default seeded passwords.
+- Demo credentials are available only in `DbSeeder.cs` (source code) and `DEMO CREDENTIALS PRIVATE TEMPLATE.md` (gitignore-excluded private file).
+- SMTP password is masked in all activity logs, settings exports, backup sidecar metadata, restore metadata, and lease metadata.
+- SMTP password is stored as plaintext in the local SQLite `SystemSettings` table. Encrypted at-rest storage via Windows DPAPI is planned but deferred.
+- The `User` entity does not have a `MustChangePassword` flag. Forced password change on first login for seeded accounts is not implemented. This is documented as a future hardening item.
+- `scripts/security_scan.ps1` checks for exposed passwords, SMTP secrets, private paths, database files, and missing security documentation before every push.
+- Nine security hardening integration tests verify documentation sanitization, SMTP masking, security document existence, and gitignore coverage.
+- Total automated test count: 293 (284 existing + 9 security hardening).

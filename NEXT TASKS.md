@@ -367,22 +367,39 @@ Deferred refinements:
 ## Phase 12C: Final Release Documentation and GitHub README Preparation
 - [x] Create final `README.md` in repository root.
 - [x] Create `RELEASE NOTES.md` detailing internal build statuses.
-- [x] Create `DEMO CHECKLIST.md` for manual evaluation walkthroughs.
-- [x] Create `INSTALLATION GUIDE.md` with prerequisite notes and data locations.
-- [x] Create `SCREENSHOTS GUIDE.md` detailing target interface layouts.
-- [x] Update existing project documentation files (Status, Tasks, Issues, Audit, Test commands, Readiness, Packaging).
+## Phase 12D: Release Security Hardening & Credential Sanitization
+- **Goal**: Make the project safe for GitHub upload, university demo, and internal deployment.
+- [x] Credential exposure audit across all documentation and source files.
+- [x] Remove plaintext passwords from `README.md`, `DEMO CHECKLIST.md`, and all public documentation.
+- [x] Create `SECURITY CHECKLIST.md` with pre-deployment verification steps.
+- [x] Create `RELEASE SECURITY NOTES.md` documenting what is safe for GitHub and what must remain private.
+- [x] Create `DEMO CREDENTIALS PRIVATE TEMPLATE.md` for instructor-only distribution.
+- [x] Add `DEMO CREDENTIALS PRIVATE TEMPLATE.md` to `.gitignore`.
+- [x] Create `scripts/security_scan.ps1` for automated pre-push secret scanning.
+- [x] Add security hardening integration tests (password exposure, SMTP masking, doc existence, gitignore coverage).
+- [x] Verify SMTP password masking in settings exports, activity logs, and backup metadata.
+- [x] Document default account password-change policy without implementing forced reset (User entity limitation).
+- [x] Update `CURRENT STATUS.md`, `NEXT TASKS.md`, `KNOWN ISSUES.md`.
+- [x] Build passes with 0 errors. All tests pass. Security scan passes.
 
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
 - [ ] Configure `appsettings.json` encryption routines for sensitive credentials.
+- [ ] Implement DPAPI encryption for SMTP password at rest.
+- [ ] Add `MustChangePassword` flag to User entity and enforce change on first login for seeded accounts.
 - [ ] Implement final production installer or ClickOnce publish to the university server using the manual steps.
 
 
 ---
 
 ## Final Release Documentation
-- [ ] At final release, generate a complete professional `README.md` in the repository root so GitHub displays the project overview on the repository front page.
-- [ ] Include the project title, project overview, key features, technology stack, architecture, screenshots section placeholder, installation guide, database setup, default login accounts, build commands, test commands, release notes, known limitations, future improvements, contributors, and license placeholder.
-
-The project is still under active development. The final `README.md` will be generated after all main modules, testing, deployment, and release packaging are complete.
+- [x] `README.md` generated and sanitized.
+- [x] `RELEASE NOTES.md` generated.
+- [x] `DEMO CHECKLIST.md` generated and sanitized.
+- [x] `INSTALLATION GUIDE.md` generated.
+- [x] `SCREENSHOTS GUIDE.md` generated.
+- [x] `SECURITY CHECKLIST.md` generated.
+- [x] `RELEASE SECURITY NOTES.md` generated.
+- [ ] At final release, apply university code-signing certificate for ClickOnce deployment.
+- [ ] GitHub repository rename to `Ilm-o-Kutub-System` (manual owner action).

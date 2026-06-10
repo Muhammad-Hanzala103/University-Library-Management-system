@@ -76,6 +76,8 @@ The database remains a local SQLite file (`KicsitLibrary.db`).
 * **Password Hashing**: PBKDF2 hashing via `IPasswordHasher` prevents plain-text exposure in the database.
 * **Role-Based Access Control**: Standardized permissions for Super Admin, Admin, Librarian, Assistant, Auditor, and Viewer roles.
 * **Credential Protection**: Dynamic SMTP configurations are backing database rows; no credentials or passwords are committed in source control.
+* **Default Account Policy**: Seeded demo accounts are created during first-run database initialization. Passwords must be changed before any production or campus-wide deployment.
+* **SMTP Masking**: Sensitive settings (SMTP password, credentials) are masked in all activity logs, settings exports, and UI displays.
 
 ## 11. Backup and Restore
 * **Online Backups**: Uses the SQLite native backup API, capturing active transaction snapshots safely.
@@ -127,7 +129,7 @@ Place local screenshots in this directory with the following naming:
 
 ## 18. Demo Checklist
 * [ ] **Splash Window**: Confirm loading statuses update smoothly before login.
-* [ ] **Login Screen**: Sign in as Admin (`admin` / default password).
+* [ ] **Login Screen**: Sign in using demo credentials (provided privately — see `DbSeeder.cs`).
 * [ ] **Dashboard**: Verify totals match active DB rows.
 * [ ] **Circulation Test**: Issue a catalog copy, verify overdue reminder tracking.
 * [ ] **Clearance Check**: Verify clearance check blocks members with unresolved checkouts or outstanding fines.

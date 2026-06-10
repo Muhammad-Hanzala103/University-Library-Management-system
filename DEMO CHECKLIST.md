@@ -21,7 +21,7 @@ Follow these steps to demonstrate the primary features of the **Ilm o Kutub Syst
 ## 2. Authentication & Navigation
 * [ ] **Secure Login**: Sign in using the default administrator credentials:
   * **Username**: `admin`
-  * **Password**: `Admin123!` (or the seeded credentials documented in the source code).
+  * **Password**: *(provided privately by instructor — see `DbSeeder.cs` for seeded demo accounts)*
 * [ ] ** conciseness check**: Verify that the sidebar navigation labels are clean and concise (Dashboard, Book Catalog, Issue Material, Receive Material, etc.).
 * [ ] **Helpful Hints**: Toggle the **Show Helpful Hints** setting in the top bar. Hover over buttons and verify that tooltips toggle on and off.
 
