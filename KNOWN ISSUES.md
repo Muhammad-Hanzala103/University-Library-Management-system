@@ -28,7 +28,9 @@ This document outlines modules that are currently implemented or stubbed, listin
 
 
 ### Deployment Preparation Limitations
-- Priority 9B is an audit and planning phase only. No installer, ClickOnce package, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, final README, repository rename, namespace rename, or database rename was performed.
+- Priority 9B, Phase 12A, Phase 12B, and Phase 12C are audit, planning, dry-run packaging/installer configuration, and documentation phases. A professional WPF SplashWindow is implemented for startup polish, and a detailed ClickOnce installer and automatic update plan was created, alongside complete academic submission documentation (README, Release Notes, Demo Checklist, Installation Guide, Screenshot Guide). However, a final public installer, ClickOnce package, MSIX package, production publish, Supabase sync, EF migrations, WhatsApp delivery, or database rename was not executed.
+
+- Executing powershell scripts locally may require `-ExecutionPolicy Bypass` due to system-wide script execution restrictions.
 - The default SQLite connection string is still `Data Source=KicsitLibrary.db`, resolved from `AppContext.BaseDirectory`. This is predictable but not installer-ready if the install folder is read-only.
 - A release database location decision is still required before broad installer deployment. Portable/internal pilot deployments may keep the executable-relative database only with explicit data-preservation instructions.
 - EF migrations remain absent. Existing databases rely on `EnsureCreatedAsync` plus additive SQLite compatibility SQL, which is not a full production migration strategy.
@@ -36,8 +38,10 @@ This document outlines modules that are currently implemented or stubbed, listin
 - SMTP passwords are not seeded with real values, but configured SMTP credentials are still stored in local `SystemSettings` without encryption.
 - `LocalBackupFolder` still seeds the legacy value `C:\KicsitLibraryBackup`; current Priority 8A+ backup workflows use `BackupDefaultFolder`/automatic backup settings and default to the user's Documents folder when empty. The legacy setting should be removed or migrated in a future cleanup.
 - The repository previously had no `.gitignore`; many `bin`, `obj`, `.vs`, and local database artifacts were already tracked. Priority 9B added `.gitignore` for future artifacts. Priority 9E successfully untracked 1082 generated artifacts (14 .vs/, 407 bin/, 661 obj/ files) using non-destructive `git rm --cached` commands. All local files remain preserved on disk. Future generated artifacts will not be tracked.
-- Release signing certificate, installer tooling, update strategy, rollback strategy, and support policy remain pending.
+- Release signing certificate, installer tooling, update strategy, rollback strategy, and support policy remain pending. A detailed ClickOnce installer and automatic update plan was created in Phase 12B, but a production ClickOnce deploy was not executed.
 - WPF UI automation is still absent; `RELEASE TEST PLAN.md` must be executed manually before packaging.
+
+
 
 ### Runtime Data Location Limitations
 - Priority 9C adds a runtime path service and release data-location strategy, but startup still uses the existing executable-relative SQLite connection by default.

@@ -239,10 +239,15 @@ namespace KicsitLibrary.Desktop
 
         protected override async void OnStartup(StartupEventArgs e)
         {
+            var splash = new SplashWindow();
+            splash.Show();
+
             try
             {
+                splash.UpdateStatus("Starting application...");
                 await AppHost!.StartAsync();
                 
+                splash.UpdateStatus("Loading configuration...");
                 var configuration = AppHost!.Services.GetRequiredService<IConfiguration>();
                 var provider =
                     configuration.GetValue<string>("SystemSettings:DatabaseProvider") ?? "SqlServer";
@@ -252,6 +257,7 @@ namespace KicsitLibrary.Desktop
                 
                 if (provider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
                 {
+                    splash.UpdateStatus("Checking database locks...");
                     var resolvedConnectionString = ResolveSqliteConnectionString(
                         configuration.GetConnectionString("DefaultConnection"));
                     sqliteDatabasePath =
@@ -288,6 +294,7 @@ namespace KicsitLibrary.Desktop
 
                     if (!instanceLock.Succeeded && singleInstanceMode && !allowReadOnly)
                     {
+                        splash.Close();
                         MessageBox.Show(
                             "Another instance of Ilm-o-Kutub System is already running.\n\nThe application will now exit.",
                             "Application Already Running",
@@ -304,6 +311,7 @@ namespace KicsitLibrary.Desktop
 
                     if (instanceLock.Succeeded)
                     {
+                        splash.UpdateStatus("Preparing database...");
                         await ownershipService.RunWithCriticalOperationLockAsync("Apply Pending Restore", sqliteDatabasePath, async (ct) =>
                         {
                             var pendingRestore = await PendingRestoreProcessor.ApplyPendingRestoreAsync(sqliteDatabasePath);
@@ -316,12 +324,14 @@ namespace KicsitLibrary.Desktop
                     }
                 }
 
+                splash.UpdateStatus("Initializing services...");
                 using var scope = AppHost.Services.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<KicsitLibraryDbContext>();
                 var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
 
                 // Current development databases were created with EnsureCreated.
                 // Do not mix this path with migrations until a safe baseline strategy is implemented.
+                splash.UpdateStatus("Checking runtime folders...");
                 if (!await dbContext.Database.EnsureCreatedAsync())
                 {
                     if (!await dbContext.Database.CanConnectAsync())
@@ -340,6 +350,8 @@ namespace KicsitLibrary.Desktop
                 {
                     await DatabaseCompatibilityInitializer.ApplyAsync(dbContext);
                 }
+                
+                splash.UpdateStatus("Loading configuration...");
                 await DbSeeder.SeedAsync(dbContext, passwordHasher);
                 if (!string.IsNullOrWhiteSpace(sqliteDatabasePath))
                 {
@@ -353,6 +365,7 @@ namespace KicsitLibrary.Desktop
             }
             catch (Exception ex)
             {
+                splash.Close();
                 MessageBox.Show(
                     $"Database initialization failed. The application cannot continue.\n\n{ex.Message}",
                     "Fatal Database Error",
@@ -362,7 +375,9 @@ namespace KicsitLibrary.Desktop
                 return;
             }
 
+            splash.UpdateStatus("Opening secure login...");
             var loginWindow = AppHost.Services.GetRequiredService<LoginWindow>();
+            splash.Close();
             var loginResult = loginWindow.ShowDialog();
 
             if (loginResult == true)

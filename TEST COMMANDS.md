@@ -30,16 +30,16 @@ dotnet test KicsitLibrary.slnx --logger "console;verbosity=detailed"
 
 The test project uses a unique temporary SQLite directory and file per test under `%TEMP%\KicsitLibrary.Tests`. It never opens `KicsitLibrary.db`.
 
-Current expected result (post-Phase 11 stabilization):
+Current expected result (post-Phase 12B Splash screen addition):
 
 ```text
-Passed: 283
+Passed: 284
 Failed: 0
 Skipped: 0
 Duration: ~40-60s
 ```
 
-Post-Phase 11 note: All 283 tests pass successfully after Catalog and Circulation QA implementation.
+Post-Phase 12B note: All 284 tests pass successfully after Catalog and Circulation QA rescue and Splash screen integration.
 
 Run only branding and helpful-hint tests:
 
@@ -159,10 +159,10 @@ dotnet test KicsitLibrary.Tests/KicsitLibrary.Tests.csproj --filter "FullyQualif
 
 Priority 9A tests use isolated temporary SQLite databases, temporary source folders, and temporary document storage folders. They cover valid PDF/PNG upload, executable/disallowed/oversized rejection, generated filenames, path traversal neutralization, SHA-256 storage, configured storage root use, activity logs, document-type filtering, unauthorized open blocking, soft delete, restore, missing-file reporting, SOP document reporting, and copy logging. They never access `KicsitLibrary.db` and never open external applications.
 
-Run the Priority 9B deployment smoke script:
+Run the Phase 12A/12B deployment smoke script (bypassing execution policy constraints if needed):
 
 ```powershell
-./scripts/deployment_smoke_test.ps1
+powershell -ExecutionPolicy Bypass ./scripts/deployment_smoke_test.ps1
 ```
 
 The script runs `dotnet build KicsitLibrary.slnx`, `dotnet test KicsitLibrary.slnx`, and a local framework-dependent `dotnet publish` for `KicsitLibrary.Desktop` into `artifacts/deployment-smoke/publish`. It does not launch the app, does not create an installer, does not publish to production, and does not intentionally modify the real user database.
@@ -173,6 +173,7 @@ Equivalent publish command used by the script:
 ```powershell
 dotnet publish KicsitLibrary.Desktop/KicsitLibrary.Desktop.csproj -c Release -r win-x64 --self-contained false -o artifacts/deployment-smoke/publish
 ```
+
 
 ## Manual Document Workflow Verification
 

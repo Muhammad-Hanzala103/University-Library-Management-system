@@ -31,7 +31,12 @@ This document catalogs all implemented and pending files, services, entities, Vi
 - **Priority 9E (Source Control Cleanup Execution)**: **100% Completed**
 - **Priority 10A (Settings Management UI)**: **100% Completed**
 - **Phase 11 (Catalog and Circulation QA Implementation)**: **100% Completed**
+- **Phase 12A (Release Packaging and Deployment Dry Run)**: **100% Completed**
+- **Phase 12B (Release Installer and Automatic Update Configuration)**: **100% Completed**
+- **Phase 12C (Final Release Documentation & README Preparation)**: **100% Completed**
 - **Priority 8E+ (Sync & Deployment)**: **Pending Implementation**
+
+
 
 ### Product Branding and UI Refinement
 - The visible product name is now **Ilm-o-Kutub System** across the shell, login, dashboard welcome state, library card, report/PDF/Excel output, certificate output, backup metadata, restore metadata, application settings defaults, and assembly product metadata.
@@ -286,9 +291,33 @@ gh repo rename Ilm-o-Kutub-System --repo OWNER/CURRENT_REPOSITORY
 - **Receive & Return Workflow**: Extended the return screen to support Pay Now, Pay Later, and Waive modes. Normal returns set copy status to Available, damaged returns to Damaged, and lost returns to Lost. The success message is precisely set to: "Book returned successfully."
 - **Student Validation**: Implemented duplicate email blocking, registration number ordering, and format validations (CNIC, email, and phone) at both VM and Service layer.
 - **Unit Tests**: Added 25 real SQLite integration tests covering all QA constraints.
-- **Final Test Target**: **283 total tests** pass successfully (0 failed, 0 skipped) under `dotnet test KicsitLibrary.slnx`.
+- **Final Test Target**: **284 total tests** pass successfully (0 failed, 0 skipped) under `dotnet test KicsitLibrary.slnx`.
 
----
+### Phase 12A Release Packaging and Deployment Dry Run
+- **Goal**: Validate release-ready settings, compilation, and file distribution.
+- **Publish Dry Run**: Executed framework-dependent publish successfully via dotnet CLI.
+- **Verifications**: Automated validation checks executed through the enhanced `deployment_smoke_test.ps1` script:
+  - Ensured publish output directory contains `KicsitLibrary.Desktop.exe`.
+  - Confirmed `appsettings.json` configuration is placed correctly.
+  - Verified presence of all core dependency assemblies (`Core`, `Data`, `Services`, `Reports` DLLs).
+  - Confirmed no stray development database `KicsitLibrary.db` was copied to the published output.
+- **Deploy Readiness**: Confirmed that when release mode is enabled, database, lock files, backups, documents, and reports map to standard runtime folders (`%LOCALAPPDATA%`, user `Documents`) instead of the read-only install directory.
+- **Packaging Decision**: Created `PHASE 12A DEPLOYMENT DRY RUN REPORT.md` comparing Portable, ClickOnce, MSIX, and MSI formats. Recommended Portable publish for university demo, and ClickOnce for internal university deployment.
+
+### Phase 12B Release Installer and Automatic Update Configuration
+- **Goal**: Configure and validate the ClickOnce installer planning and deployment path without executing a final release.
+- **Implementation**: Created `PHASE 12B CLICKONCE INSTALLER PLAN.md` outlining internal university deployment paths (UNC or Intranet URL), versioning (`1.0.0.x`), update polling rules, prerequisite handling, certificate signing, rollback behavior, and data preservation policy.
+- **Readiness Verification**: Validated runtime data isolation safety parameters, verifying that `UseReleaseDataRoot=True` is properly pointed to %LOCALAPPDATA% to avoid installer overwrites.
+- **Visual Studio Steps**: Documented detailed steps for manual profile configuration to prevent path issues during local packaging.
+
+### Phase 12C Final Release Documentation and GitHub README Preparation
+- **Goal**: Create complete release, demo, and installation documentation for academic submission and version tracking.
+- **Implementation**: Created the repository root `README.md` containing academic headers, key features, technology stack, project modules, database relocation info, build/run commands, and developer names.
+- **Release Notes**: Created `RELEASE NOTES.md` for Version 1.0.0 detailing internal build statuses and safety guidelines.
+- **Walkthrough Aids**: Created `DEMO CHECKLIST.md` for manual validation, `INSTALLATION GUIDE.md` for deployment setups, and `SCREENSHOTS GUIDE.md` specifying target interface shots.
+- **Status Verification**: Build compilation and all 284 integration tests verified green (0 failed, 0 skipped) under deployment smoke publishing checks.
+- **Pending/Deferred Tasks**: Supabase cloud synchronization and production code-signing certificate configuration remain deferred.
+
 
 ## 2. Completed Components
 

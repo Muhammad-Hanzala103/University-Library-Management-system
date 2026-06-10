@@ -1,8 +1,11 @@
 # Deployment Readiness Audit
 
 Priority 9B audit date: 2026-06-08  
+Phase 12B audit date: 2026-06-10  
 Product: Ilm-o-Kutub System  
-Scope: deployment preparation only. No installer, ClickOnce publish, MSIX package, Supabase sync, EF migrations, WhatsApp delivery, final README, namespace rename, or database rename was created.
+Scope: deployment preparation, Phase 12A release packaging dry run, and Phase 12B ClickOnce installer, automatic update planning, and Splash Screen startup integration. No public installer, MSIX package, Supabase sync, EF migrations, WhatsApp delivery, final README, namespace rename, or database rename was created.
+
+
 
 ## 1. Current Project Structure
 
@@ -73,7 +76,7 @@ The solution uses six projects:
 - Build-time settings live in `KicsitLibrary.Desktop/appsettings.json`.
 - Operational settings are seeded into and read from `SystemSettings`.
 - SMTP, scheduler, backup, restore, ownership, and document settings are database-backed.
-- There is no operator-facing Settings screen yet for many settings.
+- Settings screen (Priority 10A) is completed for main administrative configurations.
 
 ## 10. Authentication and Default Admin Notes
 
@@ -86,7 +89,7 @@ The solution uses six projects:
 Current expected automated result:
 
 ```text
-Passed: 220
+Passed: 284
 Failed: 0
 Skipped: 0
 ```
@@ -114,7 +117,7 @@ dotnet test KicsitLibrary.slnx
 Deployment smoke script:
 
 ```powershell
-./scripts/deployment_smoke_test.ps1
+powershell -ExecutionPolicy Bypass ./scripts/deployment_smoke_test.ps1
 ```
 
 ## 14. Known Deployment Blockers
@@ -125,7 +128,6 @@ Deployment smoke script:
 - `.gitignore` was absent before Priority 9B; many generated artifacts are already tracked.
 - Default seeded credentials must be changed for any real deployment.
 - SMTP credentials are stored in local `SystemSettings` when configured; encrypted secret storage is not implemented.
-- Settings UI is incomplete.
 - WPF UI automation is not implemented.
 
 ## 15. Required Pre Release Fixes
@@ -178,8 +180,8 @@ Recommended next packaging direction: a signed Windows Installer for university 
 ## 22. Final Release Checklist
 
 - [ ] Build passes with zero warnings and errors.
-- [ ] Tests pass with at least 243 tests.
-- [ ] Deployment smoke publish completes.
+- [ ] Tests pass with at least 284 tests.
+- [x] Deployment smoke publish completes.
 - [ ] Manual release test plan completed and signed off.
 - [ ] Database location and upgrade behavior approved.
 - [ ] Release data root and database relocation workflow approved and tested.

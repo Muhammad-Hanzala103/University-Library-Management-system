@@ -1,6 +1,17 @@
 # Packaging Strategy
 
-Priority 9B status: planning only. No installer, ClickOnce package, MSIX package, or production publish was created.
+Priority 9B status: planning only. Phase 12A status: release packaging dry run completed. Phase 12B status: ClickOnce deployment, automatic update strategy planned, and professional Splash Screen startup polish integrated. Portable publish dry run is verified. No public installer, MSIX package, or production public publish was created.
+
+## 0. Current Packaging & Deploy Status
+- **Portable Publish**: Completed and verified via dry run in Phase 12A. Output is located in `artifacts/deployment-smoke/publish`. Recommended primary choice for immediate university demo.
+- **ClickOnce Package**: Planned and configured in Phase 12B. Recommended primary choice for internal university deployment due to seamless automatic update support.
+- **Splash Screen**: Real WPF borderless SplashWindow added, displaying dynamic loading statuses and dynamic assembly version info during startup.
+- **MSIX Package**: Suited for general market release; requires code-signing certificates and sideloading enablement. Currently deferred.
+- **MSI Installer (WiX)**: Suitable for highly controlled offline university environments where IT administrators manage deployments. Currently deferred.
+- **Supabase Cloud Sync**: Deferred because offline local operations are prioritized, and synchronization is out-of-scope for the current phase.
+- **Final README**: Deferred to the final release phase to prevent stale documentation while internal modules undergo minor modifications.
+
+
 
 ## 1. Portable Publish Option
 
@@ -9,7 +20,7 @@ Portable publish copies the WPF app and dependencies to a folder. It is simple a
 Example smoke command:
 
 ```powershell
-dotnet publish KicsitLibrary.Desktop/KicsitLibrary.Desktop.csproj -c Release -r win-x64 --self-contained false -o artifacts/deployment-smoke/publish
+powershell -ExecutionPolicy Bypass ./scripts/deployment_smoke_test.ps1
 ```
 
 Pros:
@@ -189,7 +200,7 @@ Document storage defaults to the user's Documents folder. If future releases mov
 
 - [ ] `dotnet build KicsitLibrary.slnx`
 - [ ] `dotnet test KicsitLibrary.slnx`
-- [ ] `scripts/deployment_smoke_test.ps1`
+- [ ] `powershell -ExecutionPolicy Bypass ./scripts/deployment_smoke_test.ps1`
 - [ ] Runtime path tests pass with `RuntimePathServiceTests`
 - [ ] Fresh install simulation
 - [ ] First-run database creation

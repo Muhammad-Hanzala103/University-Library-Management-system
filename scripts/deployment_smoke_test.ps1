@@ -24,7 +24,13 @@ try {
     Set-Location $repoRoot
 
     $publishPath = Join-Path $repoRoot $PublishDirectory
+    
+    # Clean previous publish artifacts
+    if (Test-Path $publishPath) {
+        Remove-Item -Recurse -Force $publishPath
+    }
     New-Item -ItemType Directory -Force -Path $publishPath | Out-Null
+    
     $appSettingsPath = Join-Path $repoRoot "KicsitLibrary.Desktop/appsettings.json"
     $appSettings = Get-Content -Raw $appSettingsPath | ConvertFrom-Json
     $runtimeMode = if ($appSettings.SystemSettings.RuntimeStorageMode) { $appSettings.SystemSettings.RuntimeStorageMode } else { "Development" }
@@ -36,6 +42,14 @@ try {
     Write-Host "This smoke script is non-destructive, does not launch the app, and does not intentionally modify any real user database."
     Write-Host "It does not test installer elevated permissions, shortcuts, uninstall behavior, or upgrade rollback."
     Write-Host ""
+
+    Invoke-Step "Clean solution" {
+        dotnet clean KicsitLibrary.slnx
+    }
+
+    Invoke-Step "Restore solution" {
+        dotnet restore KicsitLibrary.slnx
+    }
 
     Invoke-Step "Build solution" {
         dotnet build KicsitLibrary.slnx
@@ -52,6 +66,44 @@ try {
             --self-contained false `
             -o $publishPath
     }
+
+    Write-Host "==> Verifying publish folder content..."
+    
+    # 1. Verify folder exists
+    if (-not (Test-Path $publishPath)) {
+        throw "Publish folder does not exist at: $publishPath"
+    }
+
+    # 2. Verify main executable exists
+    $exePath = Join-Path $publishPath "KicsitLibrary.Desktop.exe"
+    if (-not (Test-Path $exePath)) {
+        throw "Main executable not found in publish folder: $exePath"
+    }
+    Write-Host "  [PASS] Main executable exists: $exePath"
+
+    # 3. Verify appsettings exists
+    $configPath = Join-Path $publishPath "appsettings.json"
+    if (-not (Test-Path $configPath)) {
+        throw "Configuration file not found in publish folder: $configPath"
+    }
+    Write-Host "  [PASS] Configuration file exists: $configPath"
+
+    # 4. Verify required DLL files exist
+    $requiredDlls = @("KicsitLibrary.Core.dll", "KicsitLibrary.Data.dll", "KicsitLibrary.Services.dll", "KicsitLibrary.Reports.dll")
+    foreach ($dll in $requiredDlls) {
+        $dllPath = Join-Path $publishPath $dll
+        if (-not (Test-Path $dllPath)) {
+            throw "Required DLL not found in publish folder: $dll"
+        }
+    }
+    Write-Host "  [PASS] All required KicsitLibrary DLLs exist in publish folder."
+
+    # 5. Verify no development database is accidentally copied
+    $dbPath = Join-Path $publishPath "KicsitLibrary.db"
+    if (Test-Path $dbPath) {
+        throw "Stray development database KicsitLibrary.db was accidentally copied to publish folder!"
+    }
+    Write-Host "  [PASS] No stray development database found in publish folder."
 
     Write-Host ""
     Write-Host "Deployment smoke test completed successfully."

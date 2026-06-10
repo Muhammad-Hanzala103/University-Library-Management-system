@@ -57,6 +57,23 @@ public class BrandingAndHintsTests
         }
     }
 
+    [Fact]
+    public void SplashWindow_ExistsAndIsIntegrated()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var xamlPath = Path.Combine(repositoryRoot, "KicsitLibrary.Desktop", "Views", "SplashWindow.xaml");
+        var csPath = Path.Combine(repositoryRoot, "KicsitLibrary.Desktop", "Views", "SplashWindow.xaml.cs");
+        var appCsPath = Path.Combine(repositoryRoot, "KicsitLibrary.Desktop", "App.xaml.cs");
+
+        Assert.True(File.Exists(xamlPath), "SplashWindow.xaml should exist.");
+        Assert.True(File.Exists(csPath), "SplashWindow.xaml.cs should exist.");
+
+        var appCsContent = File.ReadAllText(appCsPath);
+        Assert.Contains("new SplashWindow()", appCsContent);
+        Assert.Contains("splash.Show()", appCsContent);
+        Assert.Contains("splash.Close()", appCsContent);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

@@ -1,5 +1,64 @@
 # Codex Continuation Audit
 
+## Phase 12B Completion Update
+
+Completion date: 2026-06-10
+
+- Completed Phase 12B Release Installer and Automatic Update Configuration planning, readiness, and professional Splash Screen startup polish.
+- Created `KicsitLibrary.Desktop/Views/SplashWindow.xaml` and `SplashWindow.xaml.cs` for a professional, centered borderless launch screen with indeterminate progress and dynamic assembly version info.
+- Integrated `SplashWindow` into `App.xaml.cs` to show on startup, update loading messages through core startup stages, handle database relocation/integrity checks, and close cleanly before `LoginWindow` appears.
+- Created `PHASE 12B CLICKONCE INSTALLER PLAN.md` detailing ClickOnce installation, versioning, updates, prerequisites, signing, rollback, data safety, and Visual Studio setup instructions.
+- Created `PHASE 12B SPLASH SCREEN STARTUP NOTES.md` describing splash screen visual layout and lifecycle flow.
+- Updated `PACKAGING STRATEGY.md`, `DEPLOYMENT READINESS AUDIT.md`, `KNOWN ISSUES.md`, `CURRENT STATUS.md`, `NEXT TASKS.md`, `TEST COMMANDS.md`, and `CODEX CONTINUATION AUDIT.md`.
+- Verified runtime data location safety policies: UseReleaseDataRoot=True points database/locks/backups/documents to local AppData and user Documents folders while UseReleaseDataRoot=False retains development relative paths.
+- Added lightweight test to verify SplashWindow compilation and integration.
+- Ran baseline check and verified all 284 tests pass successfully with 0 errors and 0 warnings.
+- Ran deployment smoke test script via PowerShell ExecutionPolicy Bypass and verified publish verification passes with executable, appsettings, core DLLs, and no stray database files.
+
+
+Verification:
+
+```powershell
+dotnet clean KicsitLibrary.slnx
+dotnet restore KicsitLibrary.slnx
+dotnet build KicsitLibrary.slnx
+dotnet test KicsitLibrary.slnx
+powershell -ExecutionPolicy Bypass ./scripts/deployment_smoke_test.ps1
+```
+
+Result: Build succeeded; 284 tests passed; smoke script published to `artifacts/deployment-smoke/publish` successfully.
+
+Packages added:
+
+- None.
+
+Exact next task: Create final installer package or configure ClickOnce deployment using the manual publish steps once production certificates are available. Do not implement cloud sync or public release.
+
+## Phase 12A Completion Update
+
+Completion date: 2026-06-10
+
+- Completed Phase 12A Release Packaging and Deployment Dry Run.
+- Enhanced `deployment_smoke_test.ps1` to clean, restore, build, test, and publish the solution, followed by folder verification.
+- Verified that publish folder contains `KicsitLibrary.Desktop.exe`, `appsettings.json`, and all core DLL dependencies, and contains no stray development database.
+- Created `PHASE 12A DEPLOYMENT DRY RUN REPORT.md` comparing Portable publish, ClickOnce, MSIX, and MSI formats.
+- Recommended Portable publish for university demo, and ClickOnce for internal university deployment.
+- All 283 tests pass successfully with 0 warnings and 0 errors.
+
+Verification:
+
+```powershell
+powershell -ExecutionPolicy Bypass ./scripts/deployment_smoke_test.ps1
+```
+
+Result: Build succeeded with 0 warnings and 0 errors; 283 tests passed, 0 failed, 0 skipped. Publish verification passed.
+
+Packages added:
+
+- None.
+
+Exact next task: Proceed to final release packaging (e.g., configuring ClickOnce or MSI installer) once approved. Do not implement cloud sync or public release yet.
+
 ## Phase 11 Completion Update
 
 Completion date: 2026-06-10

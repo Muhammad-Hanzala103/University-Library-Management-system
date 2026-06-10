@@ -346,13 +346,38 @@ Deferred refinements:
 - [x] Extend Receive and Return workflow to support Pay Now, Pay Later, and Waive modes.
 - [x] Block student duplicate email registration at VM and Service layer.
 - [x] Add CNIC, email, and phone validation to Student form.
-- [x] Add 25 new tests; all 283 tests pass successfully.
+- [x] Add 25 new tests; all 284 tests pass successfully.
+
+## Phase 12A: Release Packaging and Deployment Dry Run
+- **Goal**: Validate release-ready settings, compilation, and file distribution.
+- [x] Enhance `deployment_smoke_test.ps1` to run clean, restore, build, test, publish, and check files.
+- [x] Execute clean and restore solution.
+- [x] Build solution and run 284 unit tests.
+- [x] Execute framework-dependent `dotnet publish` to smoke publish target.
+- [x] Verify published folder contains executable, config, DLLs, and no development database.
+- [x] Create `PHASE 12A DEPLOYMENT DRY RUN REPORT.md` comparing packaging formats (Portable, ClickOnce, MSIX, MSI) and make recommendations.
+- [x] Update project documentation (Status, Tasks, Issues, Audit, Test commands, Readiness, Packaging).
+
+## Phase 12B: Release Installer and Automatic Update Configuration
+- [x] Run baseline compilation and automated verification tests (all 284 tests pass).
+- [x] Verify product name (Ilm-o-Kutub System), company, copyright, version metadata, and runtime paths.
+- [x] Create `PHASE 12B CLICKONCE INSTALLER PLAN.md` with versioning, update polling, prerequisites, signing, rollback, data safety, and VS publishing instructions.
+- [x] Update project documentation (Status, Tasks, Issues, Audit, Test commands, Readiness, Packaging).
+
+## Phase 12C: Final Release Documentation and GitHub README Preparation
+- [x] Create final `README.md` in repository root.
+- [x] Create `RELEASE NOTES.md` detailing internal build statuses.
+- [x] Create `DEMO CHECKLIST.md` for manual evaluation walkthroughs.
+- [x] Create `INSTALLATION GUIDE.md` with prerequisite notes and data locations.
+- [x] Create `SCREENSHOTS GUIDE.md` detailing target interface layouts.
+- [x] Update existing project documentation files (Status, Tasks, Issues, Audit, Test commands, Readiness, Packaging).
 
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
 - [ ] Configure `appsettings.json` encryption routines for sensitive credentials.
-- [ ] Package the solution: configure ClickOnce deployment or an MSI installer package.
+- [ ] Implement final production installer or ClickOnce publish to the university server using the manual steps.
+
 
 ---
 
