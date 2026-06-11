@@ -1,5 +1,17 @@
 # Codex Continuation Audit
 
+## Phase 13A Completion Update
+
+Completion date: 2026-06-11
+
+- Completed Phase 13A Runtime Login Crash Rescue, README Visibility Check, and UI Polish Audit.
+- Restored `ShutdownMode="OnExplicitShutdown"` to `App.xaml` fixing the critical crash where the application closed automatically after the splash screen due to no windows remaining open.
+- Generated `PHASE 13A UI POLISH AUDIT.md` which lists missing icons, bad margin alignment, DataGrid styles, and missing tooltips as the primary candidates for UI polishing.
+- Executed `git status` and `git ls-tree` checks verifying that `README.md` is visible at the repository root and pushed to the `main` branch.
+- Added test coverage in `AuthenticationServiceCrashTests.cs` for login exceptions and boundary conditions.
+- Executed clean verification checks: `dotnet test` passed perfectly with 305 tests passing, 0 failed, 0 skipped.
+- Manual verification of login screen shows that incorrect passwords show friendly UI warnings and do not crash the app, and successful login opens the main window correctly.
+
 ## Phase 12G Completion Update
 
 Completion date: 2026-06-11

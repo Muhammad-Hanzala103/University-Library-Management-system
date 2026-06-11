@@ -30,17 +30,17 @@ dotnet test KicsitLibrary.slnx --logger "console;verbosity=detailed"
 
 The test project uses a unique temporary SQLite directory and file per test under `%TEMP%\KicsitLibrary.Tests`. It never opens `KicsitLibrary.db`.
 
-Current expected result (post-Phase 12B Splash screen addition):
+Current expected result (post-Phase 13A login crash fix):
 
 ```text
-Passed: 284
+Passed: 305
 Failed: 0
 Skipped: 0
 Duration: ~40-60s
 ```
 
-Post-Phase 12G note: All 302 tests pass successfully.
-Phase 12G Release Version Tagging is complete. Annotated tag v1.0.0-demo was created and pushed. Build passed. Tests passed with exact count of 302. Security scan passed. No public binary release was created. Installer remains pending. Repository rename remains manual. Cloud sync remains pending.
+Post-Phase 13A note: All 305 tests pass successfully.
+Phase 13A Runtime Login Crash Rescue is complete. `ShutdownMode` fixed. Build passed. Tests passed with exact count of 305. Security scan passed. No public binary release was created. Installer remains pending. Repository rename remains manual. Cloud sync remains pending.
 
 Run only branding and helpful-hint tests:
 
