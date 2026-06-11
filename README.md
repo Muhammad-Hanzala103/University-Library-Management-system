@@ -95,9 +95,9 @@ Generates 16 distinct administrative reports:
 * Displays explicit status updates during runtime data root resolved checks, restore processing, and database seeding.
 
 ## 14. Testing Summary
-* **Total Automated Tests**: 302 integration tests.
+* **Total Automated Tests**: 305 integration tests.
 * **Execution**: Run in isolated temporary environments using `%TEMP%` directories.
-* **Verification Status**: All 302 tests pass successfully with 0 errors and 0 warnings.
+* **Verification Status**: All 305 tests pass successfully with 0 errors and 0 warnings.
 
 ## 15. Build and Run Instructions
 To restore, compile, and run the project locally:
