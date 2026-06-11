@@ -39,6 +39,25 @@
         <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
     </Style>
 
+    <Style x:Key="SectionHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="Margin" Value="0,0,0,10" />
+    </Style>
+
+    <Style x:Key="EmptyStateTextStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextStyle}">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="20" />
+    </Style>
+
+    <Style x:Key="ValidationMessageStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Margin" Value="0,4,0,0" />
+    </Style>
+
     <!-- Reusable Card Style -->
     <Style x:Key="CardStyle" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource CardBgBrush}" />
@@ -49,6 +68,14 @@
         <Setter Property="Effect">
             <Setter.Value>
                 <DropShadowEffect Color="#000000" Opacity="0.05" BlurRadius="8" ShadowDepth="1" Direction="270" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ElevatedCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="#000000" Opacity="0.1" BlurRadius="12" ShadowDepth="2" Direction="270" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -160,6 +187,30 @@
         <Setter Property="ToolTip" Value="Requires confirmation and records an audit log." />
     </Style>
 
+    <Style x:Key="IconButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource BgBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{StaticResource BorderBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Sidebar Navigation Button Style -->
     <Style x:Key="SidebarButton" TargetType="Button"
            BasedOn="{StaticResource {x:Type Button}}">
@@ -269,6 +320,16 @@
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="#E5E7EB" />
                 <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="DataGridRow">
+        <Setter Property="Background" Value="#FFFFFF" />
+        <Setter Property="Margin" Value="0,0,0,2" />
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="#E5E7EB" />
             </Trigger>
         </Style.Triggers>
     </Style>

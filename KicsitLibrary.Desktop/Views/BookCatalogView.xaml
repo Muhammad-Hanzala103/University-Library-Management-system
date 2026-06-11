@@ -129,10 +129,10 @@
                                     <Button Content="📚 Copies" Style="{StaticResource SecondaryButton}" Padding="8,4" FontSize="11" Height="26"
                                             Command="{Binding DataContext.ManageCopiesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"/>
-                                    <Button Content="✏️" ToolTip="Edit Book Details" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="8,0,0,0"
+                                    <Button Content="✏️" ToolTip="Edit Book Details" Style="{StaticResource IconButton}" Margin="8,0,0,0"
                                             Command="{Binding DataContext.EditBookCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"/>
-                                    <Button Content="🗑️" ToolTip="Delete Book Title" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="8,0,0,0"
+                                    <Button Content="🗑️" ToolTip="Delete Book Title" Style="{StaticResource IconButton}" Margin="8,0,0,0"
                                             Command="{Binding DataContext.DeleteBookCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"/>
                                 </StackPanel>

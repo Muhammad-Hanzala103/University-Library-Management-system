@@ -32,14 +32,14 @@
                     <TextBlock Text="RECEIVE MATERIAL" FontSize="14" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,15"/>
 
                     <!-- Accession Number Input -->
-                    <TextBlock Text="Scan / Enter Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBlock Text="Scan / Enter Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,4"/>
                     <Grid Margin="0,0,0,15">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}"/>
-                        <Button Grid.Column="1" Content="🔍 Load" Style="{StaticResource PrimaryButton}" Command="{Binding LoadDetailsCommand}" ToolTip="Load the active issue and calculate the return details." Width="70" Margin="8,0,0,0"/>
+                        <TextBox Grid.Column="0" Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Padding="12" Background="#F0F9FF" BorderBrush="{StaticResource AccentBrush}" BorderThickness="2" />
+                        <Button Grid.Column="1" Content="🔍 Load" Style="{StaticResource PrimaryButton}" Command="{Binding LoadDetailsCommand}" ToolTip="Load the active issue and calculate the return details." Width="80" Margin="8,0,0,0" FontSize="14"/>
                     </Grid>
 
                     <!-- Fields shown only when issue details are loaded -->

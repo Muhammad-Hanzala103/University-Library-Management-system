@@ -44,8 +44,8 @@
                     <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding MemberIdentifier, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
 
                     <!-- Book Accession Number -->
-                    <TextBlock Text="Book Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,20"/>
+                    <TextBlock Text="Book Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,20" FontSize="18" Padding="12" Background="#F0F9FF" BorderBrush="{StaticResource AccentBrush}" BorderThickness="2"/>
 
                     <!-- Action Buttons -->
                     <Button Content="🔍 Validate Eligibility" Style="{StaticResource PrimaryButton}" Command="{Binding ValidateDetailsCommand}" ToolTip="Check member eligibility, limits, and copy availability before issuing." Margin="0,0,0,10" Height="40"/>

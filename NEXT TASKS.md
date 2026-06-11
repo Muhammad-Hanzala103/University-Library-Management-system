@@ -399,7 +399,7 @@ Deferred refinements:
 
 ## Priority 8E+: Sync & Deployment
 - **Goal**: Add each remaining system utility as a separate, safety-reviewed task.
-- [ ] Implement Phase 13B UI Polish based on the UI audit.
+- [x] Implement Phase 13B UI Polish based on the UI audit.
 - [ ] Integrate Supabase Sync: push local updates to Supabase cloud database to support remote sync backups.
 - [ ] Configure `appsettings.json` encryption routines for sensitive credentials.
 - [ ] Implement DPAPI encryption for SMTP password at rest.
