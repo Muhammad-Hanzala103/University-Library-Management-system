@@ -268,8 +268,24 @@
                         <TextBlock Text="Dr A Q Khan Institute of Computer Sciences &amp; IT" Style="{StaticResource SubtitleTextStyle}" FontSize="11"/>
                     </StackPanel>
                     
-                    <!-- Session UI preferences -->
+                    <!-- Session UI preferences & Financial Year Selector -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0" Margin="0,0,15,0" Padding="0,0,15,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="Financial Year:" Foreground="{StaticResource TextDarkBrush}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <RadioButton Content="Current" IsChecked="{Binding IsCurrentFinancialYear, Mode=TwoWay}" 
+                                             ToolTip="Use current system financial year calculated automatically"
+                                             Foreground="{StaticResource TextDarkBrush}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <RadioButton Content="Custom" IsChecked="{Binding IsCustomFinancialYear, Mode=TwoWay}" 
+                                             ToolTip="Select a custom financial year from the list"
+                                             Foreground="{StaticResource TextDarkBrush}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <ComboBox Width="110" Height="28" VerticalAlignment="Center" Margin="5,0,0,0"
+                                          ItemsSource="{Binding AvailableFinancialYears}"
+                                          SelectedValue="{Binding ActiveFinancialYear, Mode=TwoWay}"
+                                          IsEnabled="{Binding IsCustomFinancialYear}"/>
+                            </StackPanel>
+                        </Border>
+
                         <CheckBox Content="Show Helpful Hints"
                                   IsChecked="{Binding ShowHelpfulHints, Mode=TwoWay}"
                                   ToolTip="Turn practical hover guidance on or off."

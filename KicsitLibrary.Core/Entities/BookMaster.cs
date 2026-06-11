@@ -55,6 +55,7 @@ namespace KicsitLibrary.Core.Entities
         public string? InvoiceFile { get; set; }
         
         public BookStatus Status { get; set; } = BookStatus.Available;
+        public MaterialType MaterialType { get; set; } = MaterialType.Book;
         
         public int? CreatedByUserId { get; set; }
         public int? UpdatedByUserId { get; set; }

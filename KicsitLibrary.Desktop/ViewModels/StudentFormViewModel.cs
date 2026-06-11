@@ -22,7 +22,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         private string _windowTitle = "Register New Student";
 
         // Lists for combo boxes
-        public ObservableCollection<string> Programs { get; } = new() { "BSCS", "BSSE", "BSCE", "BSAI", "BSDS", "MCS", "BBA", "Other" };
+        public ObservableCollection<string> Programs { get; } = new(KicsitLibrary.Core.Helpers.LibraryValidator.Programs);
         public ObservableCollection<string> Departments { get; } = new();
         public ObservableCollection<string> Batches { get; } = new() { "2022", "2023", "2024", "2025", "2026" };
 
@@ -46,7 +46,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         private string _selectedProgram = "BSCS";
 
         [ObservableProperty]
-        private string _selectedDepartment = "CS";
+        private string _selectedDepartment = "Computer Science";
 
         [ObservableProperty]
         private string _selectedBatch = "2024";
@@ -90,13 +90,33 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private bool _isBusy;
 
+        private bool _isFormattingCnic;
+
+        partial void OnCnicChanged(string value)
+        {
+            if (_isFormattingCnic) return;
+            _isFormattingCnic = true;
+            try
+            {
+                var formatted = KicsitLibrary.Core.Helpers.LibraryValidator.FormatCnic(value);
+                if (Cnic != formatted)
+                {
+                    Cnic = formatted;
+                }
+            }
+            finally
+            {
+                _isFormattingCnic = false;
+            }
+        }
+
         public StudentFormViewModel(IConsumerService consumerService, ICatalogService catalogService, Student? editingStudent)
         {
             _consumerService = consumerService ?? throw new ArgumentNullException(nameof(consumerService));
             _catalogService = catalogService ?? throw new ArgumentNullException(nameof(catalogService));
             _editingStudent = editingStudent;
 
-            _ = LoadDepartmentsAsync();
+            LoadDepartments();
 
             if (_editingStudent != null)
             {
@@ -113,7 +133,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                 Session = _editingStudent.Session;
                 Email = _editingStudent.Email;
                 Phone = _editingStudent.Phone;
-                Cnic = _editingStudent.CNIC ?? string.Empty;
+                Cnic = KicsitLibrary.Core.Helpers.LibraryValidator.FormatCnic(_editingStudent.CNIC);
                 Address = _editingStudent.Address;
                 PhotoPath = _editingStudent.PhotoPath ?? string.Empty;
                 PageNumber = _editingStudent.PageNumber;
@@ -123,34 +143,21 @@ namespace KicsitLibrary.Desktop.ViewModels
             }
         }
 
-        private async Task LoadDepartmentsAsync()
+        private void LoadDepartments()
         {
-            try
+            Departments.Clear();
+            foreach (var d in KicsitLibrary.Core.Helpers.LibraryValidator.Departments)
             {
-                var list = await _catalogService.GetAllDepartmentCategoriesAsync();
-                Departments.Clear();
-                foreach (var dept in list)
-                {
-                    Departments.Add(dept.Name);
-                }
-
-                if (_editingStudent != null)
-                {
-                    SelectedDepartment = _editingStudent.Department;
-                }
-                else if (Departments.Count > 0)
-                {
-                    SelectedDepartment = Departments[0];
-                }
+                Departments.Add(d);
             }
-            catch (Exception)
+
+            if (_editingStudent != null)
             {
-                Departments.Clear();
-                foreach (var d in new[] { "CS", "CE", "SE", "AI", "DS", "General" })
-                {
-                    Departments.Add(d);
-                }
-                SelectedDepartment = "CS";
+                SelectedDepartment = _editingStudent.Department;
+            }
+            else if (Departments.Count > 0)
+            {
+                SelectedDepartment = Departments[0];
             }
         }
 
@@ -194,6 +201,21 @@ namespace KicsitLibrary.Desktop.ViewModels
             if (string.IsNullOrWhiteSpace(RegistrationNumber))
             {
                 ErrorMessage = "Registration Number is required.";
+                return;
+            }
+            if (!KicsitLibrary.Core.Helpers.LibraryValidator.IsRegistrationNumberValid(RegistrationNumber))
+            {
+                ErrorMessage = "Registration Number must contain numbers only.";
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(SelectedProgram) || !KicsitLibrary.Core.Helpers.LibraryValidator.Programs.Contains(SelectedProgram))
+            {
+                ErrorMessage = "Invalid Program selection.";
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(SelectedDepartment) || !KicsitLibrary.Core.Helpers.LibraryValidator.Departments.Contains(SelectedDepartment))
+            {
+                ErrorMessage = "Invalid Department selection.";
                 return;
             }
             if (string.IsNullOrWhiteSpace(Name))

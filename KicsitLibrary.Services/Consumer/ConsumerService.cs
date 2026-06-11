@@ -95,6 +95,26 @@ namespace KicsitLibrary.Services.Consumer
 
         public async Task AddStudentAsync(Student student)
         {
+            if (!KicsitLibrary.Core.Helpers.LibraryValidator.IsRegistrationNumberValid(student.RegistrationNumber))
+            {
+                throw new ArgumentException("Registration Number must contain numbers only.");
+            }
+
+            if (string.IsNullOrWhiteSpace(student.Program) || !KicsitLibrary.Core.Helpers.LibraryValidator.Programs.Contains(student.Program))
+            {
+                throw new ArgumentException("Invalid student Program.");
+            }
+
+            if (string.IsNullOrWhiteSpace(student.Department) || !KicsitLibrary.Core.Helpers.LibraryValidator.Departments.Contains(student.Department))
+            {
+                throw new ArgumentException("Invalid student Department.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(student.CNIC) && !KicsitLibrary.Core.Helpers.LibraryValidator.IsCnicValid(student.CNIC))
+            {
+                throw new ArgumentException("Invalid CNIC format.");
+            }
+
             if (await IsStudentRegistrationNumberDuplicateAsync(student.RegistrationNumber))
             {
                 throw new InvalidOperationException($"Duplicate Student Registration Number detected: {student.RegistrationNumber}");
@@ -116,6 +136,26 @@ namespace KicsitLibrary.Services.Consumer
 
         public async Task UpdateStudentAsync(Student student)
         {
+            if (!KicsitLibrary.Core.Helpers.LibraryValidator.IsRegistrationNumberValid(student.RegistrationNumber))
+            {
+                throw new ArgumentException("Registration Number must contain numbers only.");
+            }
+
+            if (string.IsNullOrWhiteSpace(student.Program) || !KicsitLibrary.Core.Helpers.LibraryValidator.Programs.Contains(student.Program))
+            {
+                throw new ArgumentException("Invalid student Program.");
+            }
+
+            if (string.IsNullOrWhiteSpace(student.Department) || !KicsitLibrary.Core.Helpers.LibraryValidator.Departments.Contains(student.Department))
+            {
+                throw new ArgumentException("Invalid student Department.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(student.CNIC) && !KicsitLibrary.Core.Helpers.LibraryValidator.IsCnicValid(student.CNIC))
+            {
+                throw new ArgumentException("Invalid CNIC format.");
+            }
+
             if (await IsStudentRegistrationNumberDuplicateAsync(student.RegistrationNumber, student.Id))
             {
                 throw new InvalidOperationException($"Duplicate Student Registration Number detected: {student.RegistrationNumber}");
@@ -256,6 +296,16 @@ namespace KicsitLibrary.Services.Consumer
 
         public async Task AddFacultyStaffAsync(FacultyStaff facultyStaff)
         {
+            if (string.IsNullOrWhiteSpace(facultyStaff.Department) || !KicsitLibrary.Core.Helpers.LibraryValidator.Departments.Contains(facultyStaff.Department))
+            {
+                throw new ArgumentException("Invalid Department.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(facultyStaff.CNIC) && !KicsitLibrary.Core.Helpers.LibraryValidator.IsCnicValid(facultyStaff.CNIC))
+            {
+                throw new ArgumentException("Invalid CNIC format.");
+            }
+
             if (await IsFacultyPersonnelNumberDuplicateAsync(facultyStaff.PersonnelNumber))
             {
                 throw new InvalidOperationException($"Duplicate Personnel Number detected: {facultyStaff.PersonnelNumber}");
@@ -272,6 +322,16 @@ namespace KicsitLibrary.Services.Consumer
 
         public async Task UpdateFacultyStaffAsync(FacultyStaff facultyStaff)
         {
+            if (string.IsNullOrWhiteSpace(facultyStaff.Department) || !KicsitLibrary.Core.Helpers.LibraryValidator.Departments.Contains(facultyStaff.Department))
+            {
+                throw new ArgumentException("Invalid Department.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(facultyStaff.CNIC) && !KicsitLibrary.Core.Helpers.LibraryValidator.IsCnicValid(facultyStaff.CNIC))
+            {
+                throw new ArgumentException("Invalid CNIC format.");
+            }
+
             if (await IsFacultyPersonnelNumberDuplicateAsync(facultyStaff.PersonnelNumber, facultyStaff.Id))
             {
                 throw new InvalidOperationException($"Duplicate Personnel Number detected: {facultyStaff.PersonnelNumber}");
@@ -510,6 +570,29 @@ namespace KicsitLibrary.Services.Consumer
             }
 
             return await query.OrderByDescending(r => r.ReservationDate).ToListAsync();
+        }
+
+        // ==========================================
+        // VISITOR FEEDBACK MANAGEMENT
+        // ==========================================
+        public async Task<IEnumerable<VisitorFeedback>> GetAllVisitorFeedbacksAsync()
+        {
+            return await _context.VisitorFeedbacks
+                .Where(vf => !vf.IsDeleted)
+                .OrderByDescending(vf => vf.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task AddVisitorFeedbackAsync(VisitorFeedback feedback)
+        {
+            await _context.VisitorFeedbacks.AddAsync(feedback);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateVisitorFeedbackAsync(VisitorFeedback feedback)
+        {
+            _context.VisitorFeedbacks.Update(feedback);
+            await _context.SaveChangesAsync();
         }
     }
 }

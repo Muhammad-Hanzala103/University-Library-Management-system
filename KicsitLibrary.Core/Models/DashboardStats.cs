@@ -10,6 +10,10 @@ namespace KicsitLibrary.Core.Models
         public int AvailableBooks { get; set; }
         public int IssuedBooks { get; set; }
         public int ReservedBooks { get; set; }
+        public int TotalReservations { get; set; }
+        public int ActiveReservations { get; set; }
+        public int ReadyForPickupReservations { get; set; }
+        public int ExpiredReservations { get; set; }
         public int OverdueBooks { get; set; }
         public int LostBooks { get; set; }
         public int DamagedBooks { get; set; }

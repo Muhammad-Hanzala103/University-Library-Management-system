@@ -54,6 +54,11 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private ObservableCollection<AuthorSelection> _authors = new();
 
+        public IReadOnlyList<MaterialType> MaterialTypes { get; } = Enum.GetValues<MaterialType>();
+
+        [ObservableProperty]
+        private MaterialType _selectedMaterialType = MaterialType.Book;
+
         // Form Fields
         [ObservableProperty]
         private string _title = string.Empty;
@@ -237,6 +242,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                     PurchasePrice = _editingBook.PurchasePrice;
                     Supplier = _editingBook.Supplier ?? string.Empty;
                     InvoiceFilePath = _editingBook.InvoiceFile ?? string.Empty;
+                    SelectedMaterialType = _editingBook.MaterialType;
                 }
                 else
                 {
@@ -415,6 +421,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                 book.Supplier = string.IsNullOrWhiteSpace(Supplier) ? null : Supplier.Trim();
                 book.InvoiceFile = string.IsNullOrWhiteSpace(InvoiceFilePath) ? null : InvoiceFilePath;
                 book.Status = BookStatus.Available;
+                book.MaterialType = SelectedMaterialType;
 
                 if (_editingBook != null)
                 {

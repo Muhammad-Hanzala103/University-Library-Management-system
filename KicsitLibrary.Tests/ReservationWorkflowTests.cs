@@ -364,18 +364,117 @@ public class ReservationWorkflowTests
         Assert.Equal("Course reading", history[0].Remarks);
     }
 
+    [Fact]
+    public async Task BookReturned_WithActiveReservation_SendsOrQueuesNotification()
+    {
+        await using var database = await SqliteTestDatabase.CreateAsync();
+        var data = await database.AddCirculationDataAsync();
+        await database.ConfigureValidEmailSettingsAsync(enabled: true);
+
+        var nextStudent = await AddStudentAsync(database, "Next Queue Member");
+        var services = CreateServices(database, data.User);
+
+        // 1. Create a reservation for next student
+        await services.Reservation.CreateReservationAsync(data.Book.Id, nextStudent.Id, MemberType.Student);
+
+        // 2. Issue book to current student
+        await services.Circulation.IssueBookAsync(data.Copy.AccessionNumber, data.Student.Id, MemberType.Student, data.User.Id);
+
+        // 3. Return the book, which should trigger marking reservation available and sending notification
+        await services.Circulation.ReceiveBookAsync(data.Copy.AccessionNumber, "Normal", 0, null, null, data.User.Id);
+
+        var dbReservation = await database.Context.Reservations.SingleAsync(r => r.StudentId == nextStudent.Id);
+        Assert.Equal(ReservationStatus.Available, dbReservation.Status);
+
+        var notifications = await database.Context.NotificationRecords.Where(n => n.StudentId == nextStudent.Id).ToListAsync();
+        Assert.Contains(notifications, n => n.Channel == "InApp");
+        var emailNotification = notifications.Single(n => n.Channel == "Email");
+        Assert.Equal(NotificationStatus.Sent, emailNotification.Status);
+        Assert.Equal(1, services.Transport.SendCount);
+    }
+
+    [Fact]
+    public async Task BookReturned_WithActiveReservation_MissingEmail_Handled()
+    {
+        await using var database = await SqliteTestDatabase.CreateAsync();
+        var data = await database.AddCirculationDataAsync();
+        await database.ConfigureValidEmailSettingsAsync(enabled: true);
+
+        var nextStudent = await AddStudentAsync(database, "Next Queue Member");
+        nextStudent.Email = ""; // Missing email
+        await database.Context.SaveChangesAsync();
+
+        var services = CreateServices(database, data.User);
+
+        await services.Reservation.CreateReservationAsync(data.Book.Id, nextStudent.Id, MemberType.Student);
+        await services.Circulation.IssueBookAsync(data.Copy.AccessionNumber, data.Student.Id, MemberType.Student, data.User.Id);
+        await services.Circulation.ReceiveBookAsync(data.Copy.AccessionNumber, "Normal", 0, null, null, data.User.Id);
+
+        var emailNotification = await database.Context.NotificationRecords.SingleAsync(n => n.StudentId == nextStudent.Id && n.Channel == "Email");
+        Assert.Equal(NotificationStatus.Failed, emailNotification.Status);
+        Assert.Equal("Recipient email is missing.", emailNotification.FailureReason);
+        Assert.Equal(0, services.Transport.SendCount);
+    }
+
+    [Fact]
+    public async Task BookReturned_WithActiveReservation_SmtpDisabled_Handled()
+    {
+        await using var database = await SqliteTestDatabase.CreateAsync();
+        var data = await database.AddCirculationDataAsync();
+        await database.ConfigureValidEmailSettingsAsync(enabled: false); // SMTP disabled
+
+        var nextStudent = await AddStudentAsync(database, "Next Queue Member");
+        var services = CreateServices(database, data.User);
+
+        await services.Reservation.CreateReservationAsync(data.Book.Id, nextStudent.Id, MemberType.Student);
+        await services.Circulation.IssueBookAsync(data.Copy.AccessionNumber, data.Student.Id, MemberType.Student, data.User.Id);
+        await services.Circulation.ReceiveBookAsync(data.Copy.AccessionNumber, "Normal", 0, null, null, data.User.Id);
+
+        var emailNotification = await database.Context.NotificationRecords.SingleAsync(n => n.StudentId == nextStudent.Id && n.Channel == "Email");
+        Assert.Equal(NotificationStatus.Pending, emailNotification.Status);
+        Assert.Contains("disabled", emailNotification.FailureReason, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(0, services.Transport.SendCount);
+    }
+
+    [Fact]
+    public async Task BookReturned_ReservationQueueSelectsCorrectNextPerson()
+    {
+        await using var database = await SqliteTestDatabase.CreateAsync();
+        var data = await database.AddCirculationDataAsync();
+
+        var studentA = await AddStudentAsync(database, "Student A");
+        var studentB = await AddStudentAsync(database, "Student B");
+
+        var services = CreateServices(database, data.User);
+
+        // First reserve: Student A, then Student B
+        await services.Reservation.CreateReservationAsync(data.Book.Id, studentA.Id, MemberType.Student);
+        await Task.Delay(10);
+        await services.Reservation.CreateReservationAsync(data.Book.Id, studentB.Id, MemberType.Student);
+
+        await services.Circulation.IssueBookAsync(data.Copy.AccessionNumber, data.Student.Id, MemberType.Student, data.User.Id);
+        await services.Circulation.ReceiveBookAsync(data.Copy.AccessionNumber, "Normal", 0, null, null, data.User.Id);
+
+        var resA = await database.Context.Reservations.SingleAsync(r => r.StudentId == studentA.Id);
+        var resB = await database.Context.Reservations.SingleAsync(r => r.StudentId == studentB.Id);
+
+        // Student A was first, so they should be Available. Student B should remain Pending.
+        Assert.Equal(ReservationStatus.Available, resA.Status);
+        Assert.Equal(ReservationStatus.Pending, resB.Status);
+    }
+
     private static ReservationTestServices CreateServices(
         SqliteTestDatabase database,
         User currentUser)
     {
         var log = new ActivityLogService(new Repository<ActivityLog>(database.Context));
-        var circulation = new CirculationService(database.Context, log);
         var transport = new FakeEmailTransport();
         var notification = new NotificationService(
             database.Context,
             log,
             transport,
             new EmailSettingsService(database.Context));
+        var circulation = new CirculationService(database.Context, log, notification);
         var reservation = new ReservationService(
             database.Context,
             new FakeAuthenticationService(currentUser),
@@ -390,7 +489,7 @@ public class ReservationWorkflowTests
     {
         var student = new Student
         {
-            RegistrationNumber = $"REG-{Guid.NewGuid():N}",
+            RegistrationNumber = new string(Guid.NewGuid().ToString("N").Where(char.IsDigit).Take(10).ToArray()),
             AdmissionNumber = $"ADM-{Guid.NewGuid():N}",
             RollNumber = $"ROLL-{Guid.NewGuid():N}",
             Name = name,

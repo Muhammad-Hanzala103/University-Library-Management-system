@@ -41,6 +41,10 @@ namespace KicsitLibrary.Services.Dashboard
                 stats.AvailableBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Available)?.Count ?? 0;
                 stats.IssuedBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Issued)?.Count ?? 0;
                 stats.ReservedBooks = copyGroups.FirstOrDefault(g => g.Status == BookStatus.Reserved)?.Count ?? 0;
+                stats.TotalReservations = await _context.Reservations.CountAsync(r => !r.IsDeleted);
+                stats.ActiveReservations = await _context.Reservations.CountAsync(r => !r.IsDeleted && (r.Status == ReservationStatus.Pending || r.Status == ReservationStatus.Available));
+                stats.ReadyForPickupReservations = await _context.Reservations.CountAsync(r => !r.IsDeleted && r.Status == ReservationStatus.Available);
+                stats.ExpiredReservations = await _context.Reservations.CountAsync(r => !r.IsDeleted && r.Status == ReservationStatus.Expired);
                 var localToday = DateTime.Now.Date;
                 var overdueCutoffUtc = TimeZoneInfo.ConvertTimeToUtc(
                     DateTime.SpecifyKind(localToday, DateTimeKind.Unspecified),

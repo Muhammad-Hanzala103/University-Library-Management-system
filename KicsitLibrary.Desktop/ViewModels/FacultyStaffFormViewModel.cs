@@ -21,7 +21,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         private string _windowTitle = "Register New Faculty/Staff";
 
         // Lists for combo boxes
-        public ObservableCollection<string> Departments { get; } = new() { "CS", "CE", "SE", "AI", "DS", "General" };
+        public ObservableCollection<string> Departments { get; } = new(KicsitLibrary.Core.Helpers.LibraryValidator.Departments);
         public ObservableCollection<FacultyType> FacultyTypes { get; } = new() 
         { 
             FacultyType.PermanentFaculty, 
@@ -41,7 +41,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         private FacultyType _selectedFacultyType = FacultyType.PermanentFaculty;
 
         [ObservableProperty]
-        private string _selectedDepartment = "CS";
+        private string _selectedDepartment = "Computer Science";
 
         [ObservableProperty]
         private string _designation = string.Empty;
@@ -79,10 +79,35 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private bool _isBusy;
 
+        private bool _isFormattingCnic;
+
+        partial void OnCnicChanged(string value)
+        {
+            if (_isFormattingCnic) return;
+            _isFormattingCnic = true;
+            try
+            {
+                var formatted = KicsitLibrary.Core.Helpers.LibraryValidator.FormatCnic(value);
+                if (Cnic != formatted)
+                {
+                    Cnic = formatted;
+                }
+            }
+            finally
+            {
+                _isFormattingCnic = false;
+            }
+        }
+
         public FacultyStaffFormViewModel(IConsumerService consumerService, FacultyStaff? editingMember)
         {
             _consumerService = consumerService ?? throw new ArgumentNullException(nameof(consumerService));
             _editingMember = editingMember;
+
+            if (Departments.Count > 0)
+            {
+                SelectedDepartment = Departments[0];
+            }
 
             if (_editingMember != null)
             {
@@ -94,7 +119,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                 Designation = _editingMember.Designation;
                 Email = _editingMember.Email;
                 Phone = _editingMember.Phone;
-                Cnic = _editingMember.CNIC ?? string.Empty;
+                Cnic = KicsitLibrary.Core.Helpers.LibraryValidator.FormatCnic(_editingMember.CNIC);
                 Address = _editingMember.Address;
                 ActiveStatus = _editingMember.ActiveStatus;
                 JoiningDate = _editingMember.JoiningDate;
@@ -139,6 +164,11 @@ namespace KicsitLibrary.Desktop.ViewModels
                 ErrorMessage = "Name is required.";
                 return;
             }
+            if (string.IsNullOrWhiteSpace(SelectedDepartment) || !KicsitLibrary.Core.Helpers.LibraryValidator.Departments.Contains(SelectedDepartment))
+            {
+                ErrorMessage = "Invalid Department selection.";
+                return;
+            }
             if (string.IsNullOrWhiteSpace(Designation))
             {
                 ErrorMessage = "Designation is required.";
@@ -163,6 +193,13 @@ namespace KicsitLibrary.Desktop.ViewModels
                 // Validate duplicate CNIC if filled
                 if (!string.IsNullOrWhiteSpace(Cnic))
                 {
+                    if (!KicsitLibrary.Core.Helpers.LibraryValidator.IsCnicValid(Cnic))
+                    {
+                        ErrorMessage = "CNIC format must be #####-#######-#.";
+                        IsBusy = false;
+                        return;
+                    }
+
                     var isCnicDuplicate = await _consumerService.IsFacultyCNICDuplicateAsync(
                         Cnic.Trim(), _editingMember?.Id);
                     if (isCnicDuplicate)

@@ -42,7 +42,10 @@
                     <Button Content="Open Book Details" Style="{StaticResource SecondaryButton}"
                             Command="{Binding OpenBookDetailsCommand}" Margin="0,0,8,8"/>
                     <Button Content="Clear Filters" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding ClearFiltersCommand}" Margin="0,0,0,8"/>
+                            Command="{Binding ClearFiltersCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Run Overdue Scheduler Now" Style="{StaticResource PrimaryButton}"
+                            ToolTip="Run the configured overdue scheduler once on demand."
+                            Command="{Binding RunSchedulerNowCommand}" Margin="0,0,0,8"/>
                 </WrapPanel>
             </StackPanel>
         </Border>
@@ -54,9 +57,6 @@
                                Foreground="{StaticResource PrimaryBrush}"
                                VerticalAlignment="Center"/>
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <Button Content="Run Scheduler Now" Style="{StaticResource PrimaryButton}"
-                                ToolTip="Run the configured overdue scheduler once on demand."
-                                Command="{Binding RunSchedulerNowCommand}" Margin="0,0,8,0"/>
                         <Button Content="Refresh Scheduler Status" Style="{StaticResource SecondaryButton}"
                                 ToolTip="Reload scheduler configuration and last-run status."
                                 Command="{Binding RefreshSchedulerStatusCommand}"/>

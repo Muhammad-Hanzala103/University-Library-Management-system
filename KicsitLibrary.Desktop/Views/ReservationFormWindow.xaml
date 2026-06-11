@@ -13,11 +13,57 @@
             <StackPanel>
                 <TextBlock Text="Member and Title Search" FontSize="18" FontWeight="Bold"
                            Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,10"/>
-                <WrapPanel>
-                    <ComboBox Width="140" ItemsSource="{Binding MemberTypes}" SelectedItem="{Binding SelectedMemberType}" Margin="0,0,8,8"/>
-                    <TextBox Width="220" Text="{Binding MemberSearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
-                    <TextBox Width="220" Text="{Binding BookSearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,8"/>
-                    <Button Content="Search" Command="{Binding SearchCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8"/>
+                <WrapPanel VerticalAlignment="Bottom">
+                    <StackPanel Width="140" Margin="0,0,8,8">
+                        <TextBlock Text="Member Type" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding MemberTypes}" SelectedItem="{Binding SelectedMemberType}"/>
+                    </StackPanel>
+                    
+                    <StackPanel Width="220" Margin="0,0,8,8">
+                        <TextBlock Text="Member Search" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                        <Grid>
+                            <TextBox x:Name="MemberSearchBox" Style="{StaticResource StyledTextBox}" 
+                                     Text="{Binding MemberSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Enter member registration/personnel number, name, email, or CNIC. Matches are shown on search."/>
+                            <TextBlock Text="Registration Number, Name..." Foreground="{StaticResource TextMutedBrush}" 
+                                       IsHitTestVisible="False" VerticalAlignment="Center" Margin="11,2,0,0" FontSize="12">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=MemberSearchBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
+                    
+                    <StackPanel Width="220" Margin="0,0,8,8">
+                        <TextBlock Text="Title Search" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                        <Grid>
+                            <TextBox x:Name="BookSearchBox" Style="{StaticResource StyledTextBox}" 
+                                     Text="{Binding BookSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Enter title, accession number, author, ISBN, journal, magazine, or newspaper."/>
+                            <TextBlock Text="Title, Accession, Author..." Foreground="{StaticResource TextMutedBrush}" 
+                                       IsHitTestVisible="False" VerticalAlignment="Center" Margin="11,2,0,0" FontSize="12">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=BookSearchBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
+                    
+                    <Button Content="Search" Command="{Binding SearchCommand}" Style="{StaticResource PrimaryButton}" Height="34" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
                 </WrapPanel>
             </StackPanel>
         </Border>

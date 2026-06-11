@@ -60,6 +60,13 @@ namespace KicsitLibrary.Core.Interfaces
         Task<string> GenerateUniqueVisitNumberAsync();
 
         // ==========================================
+        // VISITOR FEEDBACK MANAGEMENT
+        // ==========================================
+        Task<IEnumerable<VisitorFeedback>> GetAllVisitorFeedbacksAsync();
+        Task AddVisitorFeedbackAsync(VisitorFeedback feedback);
+        Task UpdateVisitorFeedbackAsync(VisitorFeedback feedback);
+
+        // ==========================================
         // HISTORY & PROFILE DETAILS
         // ==========================================
         Task<IEnumerable<IssueRecord>> GetBorrowingHistoryAsync(int memberId, MemberType type);

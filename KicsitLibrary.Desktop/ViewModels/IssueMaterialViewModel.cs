@@ -19,6 +19,10 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty] private string _memberIdentifier = string.Empty;
         [ObservableProperty] private MemberType _selectedMemberType = MemberType.Student;
 
+        [ObservableProperty] private bool _showSuggestions;
+        public System.Collections.ObjectModel.ObservableCollection<Student> StudentSuggestions { get; } = new();
+        [ObservableProperty] private Student? _selectedStudentSuggestion;
+
         // Found flags
         [ObservableProperty] private bool _isBookFound;
         [ObservableProperty] private bool _isMemberFound;
@@ -226,6 +230,60 @@ namespace KicsitLibrary.Desktop.ViewModels
 
             EligibilityMessage = string.Empty;
             StatusMessage = string.Empty;
+        }
+
+        partial void OnSelectedStudentSuggestionChanged(Student? value)
+        {
+            if (value != null)
+            {
+                MemberIdentifier = value.RegistrationNumber;
+                _foundMemberId = value.Id;
+                MemberName = value.Name;
+                MemberDetailDisplay = $"{value.Program} - Batch {value.Batch}";
+                MemberDepartment = value.Department;
+                MemberStatusDisplay = value.ActiveStatus ? "Active" : "Inactive";
+                MemberPhotoPath = value.PhotoPath ?? string.Empty;
+                IsMemberFound = true;
+                ShowSuggestions = false;
+            }
+        }
+
+        partial void OnMemberIdentifierChanged(string value)
+        {
+            if (SelectedStudentSuggestion != null && SelectedStudentSuggestion.RegistrationNumber == value)
+            {
+                return;
+            }
+            if (SelectedMemberType == MemberType.Student && !string.IsNullOrWhiteSpace(value))
+            {
+                var trimmed = value.Trim().ToLowerInvariant();
+                if (trimmed.Length >= 2)
+                {
+                    _ = LoadSuggestionsAsync(trimmed);
+                    return;
+                }
+            }
+            ShowSuggestions = false;
+        }
+
+        private async Task LoadSuggestionsAsync(string query)
+        {
+            try
+            {
+                var matches = await _consumerService.SearchStudentsAsync(query, null, null, null, null, null);
+                var list = matches.Take(10).ToList();
+                
+                StudentSuggestions.Clear();
+                foreach (var s in list)
+                {
+                    StudentSuggestions.Add(s);
+                }
+                ShowSuggestions = StudentSuggestions.Count > 0;
+            }
+            catch
+            {
+                ShowSuggestions = false;
+            }
         }
     }
 }

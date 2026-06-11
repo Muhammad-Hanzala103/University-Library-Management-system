@@ -117,6 +117,7 @@
             <DataGrid Grid.Row="0" ItemsSource="{Binding Books}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Catalog Code" Binding="{Binding UniqueTitleNumber}" Width="100"/>
+                    <DataGridTextColumn Header="Material Type" Binding="{Binding MaterialType}" Width="100"/>
                     <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="2*"/>
                     <DataGridTextColumn Header="Authors" Binding="{Binding BookAuthors, Converter={local:AuthorsDisplayConverter}}" Width="1.5*"/>
                     <DataGridTextColumn Header="Category" Binding="{Binding Category.Name}" Width="110"/>

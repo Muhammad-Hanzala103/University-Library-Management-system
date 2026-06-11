@@ -172,9 +172,14 @@ public class AuditComplianceWorkflowTests
         await using var database = await SqliteTestDatabase.CreateAsync();
         var data = await database.AddCirculationDataAsync();
         var service = CreateAuditService(database, Admin(data.User));
-        await service.CreateAuditRecordAsync(Request("AUD-DUP"));
+        
+        var res1 = await service.CreateAuditRecordAsync(Request(""));
+        var res2 = await service.CreateAuditRecordAsync(Request(""));
 
-        var duplicate = await service.CreateAuditRecordAsync(Request("AUD-DUP"));
+        var req2 = res2.AuditRecord!;
+        req2.AuditNumber = "1";
+
+        var duplicate = await service.UpdateAuditRecordAsync(req2.AuditRecordId, req2);
 
         Assert.False(duplicate.Succeeded);
         Assert.Contains("already exists", duplicate.ErrorMessage);
@@ -286,7 +291,7 @@ public class AuditComplianceWorkflowTests
         });
 
         var row = Assert.Single(results);
-        Assert.Equal("AUD-NEW", row.AuditNumber);
+        Assert.Equal("2", row.AuditNumber);
     }
 
     [Fact]
@@ -437,5 +442,69 @@ public class AuditComplianceWorkflowTests
                 ExportedAt = DateTime.UtcNow
             });
         }
+    }
+
+    [Fact]
+    public async Task AuditNumber_AutomaticGenerationStartsAt1AndIncrements()
+    {
+        await using var database = await SqliteTestDatabase.CreateAsync();
+        var data = await database.AddCirculationDataAsync();
+        var service = CreateAuditService(database, Admin(data.User));
+
+        // Create first audit (should get number 1)
+        var req1 = Request(""); // Empty audit number
+        var res1 = await service.CreateAuditRecordAsync(req1);
+        Assert.True(res1.Succeeded, res1.ErrorMessage);
+        Assert.Equal("1", res1.AuditRecord!.AuditNumber);
+
+        // Create second audit (should get number 2)
+        var req2 = Request("");
+        var res2 = await service.CreateAuditRecordAsync(req2);
+        Assert.True(res2.Succeeded, res2.ErrorMessage);
+        Assert.Equal("2", res2.AuditRecord!.AuditNumber);
+
+        // Soft delete first audit
+        await service.DeleteAuditRecordAsync(res1.AuditRecord.AuditRecordId, "soft delete test");
+
+        // Create third audit (should still increment to 3, even if 1 was deleted and max is 2)
+        var req3 = Request("");
+        var res3 = await service.CreateAuditRecordAsync(req3);
+        Assert.True(res3.Succeeded, res3.ErrorMessage);
+        Assert.Equal("3", res3.AuditRecord!.AuditNumber);
+    }
+
+    [Fact]
+    public async Task AuditNumber_MustAlwaysBeNumeric()
+    {
+        await using var database = await SqliteTestDatabase.CreateAsync();
+        var data = await database.AddCirculationDataAsync();
+        var service = CreateAuditService(database, Admin(data.User));
+
+        // Attempting to save with a non-numeric audit number (should fail validation)
+        var req = Request("ABC");
+        var res = await service.CreateAuditRecordAsync(req);
+
+        // Wait! CreateAuditRecordAsync auto-generates a numeric number by overriding whatever we pass!
+        // But let's check: if we pass a non-numeric audit number, it gets overwritten by the auto-generator!
+        // Let's verify that the generated audit number is numeric:
+        Assert.True(res.Succeeded);
+        Assert.True(int.TryParse(res.AuditRecord!.AuditNumber, out _));
+    }
+
+    [Fact]
+    public void FinancialYearState_DefaultsToCurrentCalculatedYearAndToggles()
+    {
+        // Default
+        Assert.True(KicsitLibrary.Core.Helpers.FinancialYearState.IsCurrentYear);
+        var calculated = KicsitLibrary.Core.Helpers.FinancialYearState.GetCurrentFinancialYear();
+        Assert.Equal(calculated, KicsitLibrary.Core.Helpers.FinancialYearState.SelectedYear);
+
+        // Toggle to custom
+        KicsitLibrary.Core.Helpers.FinancialYearState.IsCurrentYear = false;
+        KicsitLibrary.Core.Helpers.FinancialYearState.SelectedYear = "2024-2025";
+        Assert.Equal("2024-2025", KicsitLibrary.Core.Helpers.FinancialYearState.SelectedYear);
+
+        // Restore default for other tests
+        KicsitLibrary.Core.Helpers.FinancialYearState.IsCurrentYear = true;
     }
 }

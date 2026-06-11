@@ -15,11 +15,13 @@ namespace KicsitLibrary.Services.Circulation
     {
         private readonly KicsitLibraryDbContext _context;
         private readonly IActivityLogService _logService;
+        private readonly INotificationService? _notificationService;
 
-        public CirculationService(KicsitLibraryDbContext context, IActivityLogService logService)
+        public CirculationService(KicsitLibraryDbContext context, IActivityLogService logService, INotificationService? notificationService = null)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
+            _notificationService = notificationService;
         }
 
         // ==========================================
@@ -27,22 +29,26 @@ namespace KicsitLibrary.Services.Circulation
         // ==========================================
         public async Task<BookCopy?> GetCopyDetailsForCirculationAsync(string accessionNumber)
         {
+            if (string.IsNullOrWhiteSpace(accessionNumber)) return null;
+            var trimmed = accessionNumber.Trim().ToLowerInvariant();
             return await _context.BookCopies
                 .Include(bc => bc.BookMaster)
-                .FirstOrDefaultAsync(bc => bc.AccessionNumber == accessionNumber && !bc.IsDeleted);
+                .FirstOrDefaultAsync(bc => bc.AccessionNumber.ToLower() == trimmed && !bc.IsDeleted);
         }
 
         public async Task<object?> GetMemberDetailsAsync(string identifier, MemberType type)
         {
+            if (string.IsNullOrWhiteSpace(identifier)) return null;
+            var trimmed = identifier.Trim().ToLowerInvariant();
             if (type == MemberType.Student)
             {
                 return await _context.Students
-                    .FirstOrDefaultAsync(s => s.RegistrationNumber == identifier && !s.IsDeleted);
+                    .FirstOrDefaultAsync(s => s.RegistrationNumber.ToLower() == trimmed && !s.IsDeleted);
             }
             else
             {
                 return await _context.FacultyStaff
-                    .FirstOrDefaultAsync(fs => fs.PersonnelNumber == identifier && !fs.IsDeleted);
+                    .FirstOrDefaultAsync(fs => fs.PersonnelNumber.ToLower() == trimmed && !fs.IsDeleted);
             }
         }
 
@@ -146,18 +152,23 @@ namespace KicsitLibrary.Services.Circulation
         public async Task<IssueRecord> IssueBookAsync(string accessionNumber, int memberId, MemberType memberType, int issuedByUserId)
         {
             // 1. Get Book Copy details
+            if (string.IsNullOrWhiteSpace(accessionNumber))
+            {
+                throw new ArgumentException("Accession number is required.");
+            }
+            var trimmed = accessionNumber.Trim().ToLowerInvariant();
             var copy = await _context.BookCopies
                 .Include(bc => bc.BookMaster)
-                .FirstOrDefaultAsync(bc => bc.AccessionNumber == accessionNumber && !bc.IsDeleted);
+                .FirstOrDefaultAsync(bc => bc.AccessionNumber.ToLower() == trimmed && !bc.IsDeleted);
 
             if (copy == null)
             {
-                throw new InvalidOperationException($"Book copy with Accession Number '{accessionNumber}' does not exist.");
+                throw new InvalidOperationException($"Book copy with Accession Number '{accessionNumber.Trim()}' does not exist.");
             }
 
             if (copy.AvailabilityStatus != BookStatus.Available)
             {
-                throw new InvalidOperationException($"Book copy '{accessionNumber}' is currently not available. Status: {copy.AvailabilityStatus}");
+                throw new InvalidOperationException($"Book copy '{copy.AccessionNumber}' is currently not available. Status: {copy.AvailabilityStatus}");
             }
 
             // 2. Validate member eligibility
@@ -204,10 +215,15 @@ namespace KicsitLibrary.Services.Circulation
         public async Task<ReceiveRecord> ReceiveBookAsync(string accessionNumber, string condition, decimal collectedAmount, string? waiverReason, string? remarks, int receivedByUserId)
         {
             // 1. Get active issue record
+            if (string.IsNullOrWhiteSpace(accessionNumber))
+            {
+                throw new ArgumentException("Accession number is required.");
+            }
+            var trimmed = accessionNumber.Trim().ToLowerInvariant();
             var issueRecord = await _context.IssueRecords
                 .Include(ir => ir.BookCopy).ThenInclude(bc => bc.BookMaster)
                 .Include(ir => ir.ReceiveRecord)
-                .FirstOrDefaultAsync(ir => ir.AccessionNumber == accessionNumber && ir.ReceiveRecord == null && !ir.IsDeleted);
+                .FirstOrDefaultAsync(ir => ir.AccessionNumber.ToLower() == trimmed && ir.ReceiveRecord == null && !ir.IsDeleted);
 
             if (issueRecord == null)
             {
@@ -294,6 +310,49 @@ namespace KicsitLibrary.Services.Circulation
 
             await _context.ReceiveRecords.AddAsync(receiveRecord);
             await _context.SaveChangesAsync();
+
+            // Handle active reservation queue if copy is available
+            if (copy.AvailabilityStatus == BookStatus.Available && _notificationService != null)
+            {
+                var reservation = await _context.Reservations
+                    .Include(r => r.BookMaster)
+                    .Include(r => r.Student)
+                    .Include(r => r.FacultyStaff)
+                    .Where(r => r.BookMasterId == copy.BookMasterId && !r.IsDeleted && (r.Status == ReservationStatus.Pending || r.Status == ReservationStatus.Available))
+                    .OrderBy(r => r.ReservationDate)
+                    .ThenBy(r => r.Id)
+                    .FirstOrDefaultAsync();
+
+                if (reservation != null && reservation.Status == ReservationStatus.Pending)
+                {
+                    reservation.Status = ReservationStatus.Available;
+                    
+                    // Expiry days
+                    var expiryDaysVal = (await _context.SystemSettings.FirstOrDefaultAsync(s => s.Key == "ReservationExpiryDays"))?.Value ?? "3";
+                    int.TryParse(expiryDaysVal, out int expDays);
+                    if (expDays <= 0) expDays = 3;
+                    reservation.ExpiryDate = DateTime.UtcNow.AddDays(expDays);
+                    
+                    reservation.Remarks = (string.IsNullOrEmpty(reservation.Remarks) ? "" : reservation.Remarks + "; ") + "A copy is available for collection.";
+                    
+                    await _context.SaveChangesAsync();
+
+                    // Create notification records
+                    await _notificationService.CreateReservationAvailableNotificationsAsync(reservation, receivedByUserId);
+
+                    // Find and send the email notification immediately
+                    var pendingEmail = await _context.NotificationRecords
+                        .FirstOrDefaultAsync(nr => nr.StudentId == reservation.StudentId 
+                                                && nr.FacultyStaffId == reservation.FacultyStaffId
+                                                && nr.NotificationType == NotificationType.ReservationAvailableReminder 
+                                                && nr.Channel == "Email" 
+                                                && nr.Status == NotificationStatus.Pending);
+                    if (pendingEmail != null)
+                    {
+                        await _notificationService.SendNotificationAsync(pendingEmail.Id, receivedByUserId);
+                    }
+                }
+            }
 
             // Log Transaction
             await _logService.LogActivityAsync("Book Check-in", $"Book {accessionNumber} returned in {condition} condition. Fine: Rs. {calculatedFine:N0}.", receivedByUserId);

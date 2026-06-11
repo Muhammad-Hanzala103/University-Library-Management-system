@@ -1,6 +1,7 @@
 <UserControl x:Class="KicsitLibrary.Desktop.Views.AuditRecordsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:helpers="clr-namespace:KicsitLibrary.Desktop.Helpers"
              Background="Transparent">
     <Grid>
         <Grid.RowDefinitions>
@@ -36,7 +37,13 @@
             <DataGrid ItemsSource="{Binding AuditRecords}" SelectedItem="{Binding SelectedAuditRecord}"
                       AutoGenerateColumns="False" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Audit Number" Binding="{Binding AuditNumber}" Width="120"/>
+                    <DataGridTemplateColumn Header="Audit Number" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AuditNumber}" helpers:ClipboardHelper.ClickToCopy="True" Padding="5,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Type" Binding="{Binding AuditType}" Width="120"/>
                     <DataGridTextColumn Header="Date" Binding="{Binding AuditDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="100"/>
                     <DataGridTextColumn Header="Financial Year" Binding="{Binding FinancialYear}" Width="95"/>
