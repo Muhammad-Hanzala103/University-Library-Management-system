@@ -73,6 +73,9 @@ namespace KicsitLibrary.Services.Authentication
  
         public async Task<bool> ChangePasswordAsync(int userId, string oldPassword, string newPassword)
         {
+            if (string.IsNullOrWhiteSpace(oldPassword) || string.IsNullOrWhiteSpace(newPassword))
+                return false;
+
             using (var scope = _scopeFactory.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<KicsitLibraryDbContext>();

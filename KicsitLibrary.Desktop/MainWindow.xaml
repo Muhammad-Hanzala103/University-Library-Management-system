@@ -209,6 +209,7 @@
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
                     
                     <!-- Circle Avatar placeholder -->
@@ -221,8 +222,19 @@
                         <TextBlock Text="{Binding CurrentUserRole}" Foreground="{StaticResource TextMutedBrush}" FontSize="10" Margin="0,1,0,0"/>
                     </StackPanel>
                     
-                    <!-- Logout button placeholder -->
+                    <!-- Change Password button -->
                     <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center"
+                            Command="{Binding ChangePasswordCommand}"
+                            ToolTip="Change account password.">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <TextBlock Text="🔑" Foreground="{StaticResource TextMutedBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    
+                    <!-- Logout button placeholder -->
+                    <Button Grid.Column="3" Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center"
                             Command="{Binding LogoutCommand}"
                             ToolTip="Sign out and return to the login screen.">
                         <Button.Template>

@@ -104,5 +104,70 @@ namespace KicsitLibrary.Tests
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => authService.LoginAsync("nonexistent", "password"));
         }
+
+        [Fact]
+        public async Task ChangePasswordAsync_NullOrWhitespaceInputs_ReturnsFalseWithoutCrash()
+        {
+            // Arrange
+            var mockHasher = new Mock<IPasswordHasher>();
+            var authService = new AuthenticationService(CreateMockScopeFactory(), mockHasher.Object);
+
+            // Act & Assert
+            var result1 = await authService.ChangePasswordAsync(1, null!, "newPass");
+            var result2 = await authService.ChangePasswordAsync(1, "oldPass", "   ");
+            var result3 = await authService.ChangePasswordAsync(1, "", "");
+
+            Assert.False(result1);
+            Assert.False(result2);
+            Assert.False(result3);
+        }
+
+        [Fact]
+        public async Task ChangePasswordAsync_UserNotFound_ReturnsFalse()
+        {
+            // Arrange
+            var mockHasher = new Mock<IPasswordHasher>();
+            var authService = new AuthenticationService(CreateMockScopeFactory(), mockHasher.Object);
+
+            // Act
+            var result = await authService.ChangePasswordAsync(999, "oldPass", "newPass");
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task ChangePasswordAsync_SuccessfulChange_ReturnsTrue()
+        {
+            // Arrange
+            var mockHasher = new Mock<IPasswordHasher>();
+            mockHasher.Setup(h => h.VerifyPassword("oldPass", "hashed")).Returns(true);
+            mockHasher.Setup(h => h.HashPassword("newPass")).Returns("newHashed");
+
+            var user = new Core.Entities.User
+            {
+                Username = "pwduser",
+                PasswordHash = "hashed",
+                IsActive = true,
+                IsDeleted = false,
+                Email = "pwd@example.com",
+                FullName = "Pwd User",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                CreatedByUserId = 1
+            };
+            _testDb.Context.Users.Add(user);
+            await _testDb.Context.SaveChangesAsync();
+
+            var authService = new AuthenticationService(CreateMockScopeFactory(), mockHasher.Object);
+
+            // Act
+            var result = await authService.ChangePasswordAsync(user.Id, "oldPass", "newPass");
+
+            // Assert
+            Assert.True(result);
+            var updatedUser = await _testDb.Context.Users.FindAsync(user.Id);
+            Assert.Equal("newHashed", updatedUser?.PasswordHash);
+        }
     }
 }

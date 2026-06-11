@@ -126,24 +126,36 @@
 
                     <!-- Action Buttons -->
                     <StackPanel Orientation="Horizontal"
-                            Margin="0,0,0,10">
-                        <Button Content="Edit"
-                                Style="{StaticResource PrimaryButton}"
+                             Margin="0,0,0,12">
+                        <Button Style="{StaticResource PrimaryButton}"
                                 ToolTip="Edit selected setting"
                                 Command="{Binding EditSelectedCommand}"
                                 IsEnabled="{Binding CanEditSettings}"
-                                Margin="0,0,6,0"/>
-                        <Button Content="Reset to Default"
-                                Style="{StaticResource WarningButton}"
+                                Margin="0,0,8,0" Padding="12,8">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="✏️" Margin="0,0,6,0"/>
+                                <TextBlock Text="Edit" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource WarningButton}"
                                 ToolTip="Reset selected setting to default value"
                                 Command="{Binding ResetSelectedAsyncCommand}"
                                 IsEnabled="{Binding CanEditSettings}"
-                                Margin="0,0,6,0"/>
-                        <Button Content="Details"
-                                Style="{StaticResource SecondaryButton}"
+                                Margin="0,0,8,0" Padding="12,8">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚠️" Margin="0,0,6,0" Foreground="White"/>
+                                <TextBlock Text="Reset to Default" FontWeight="SemiBold" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource SecondaryButton}"
                                 ToolTip="View detailed information about selected setting"
                                 Command="{Binding ViewDetailsCommand}"
-                                Margin="0,0,6,0"/>
+                                Margin="0,0,6,0" Padding="12,8">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📋" Margin="0,0,6,0"/>
+                                <TextBlock Text="Details" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
 
                     <!-- Settings DataGrid -->

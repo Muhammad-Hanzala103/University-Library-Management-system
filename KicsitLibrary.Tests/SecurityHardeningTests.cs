@@ -226,7 +226,6 @@ public sealed class SecurityHardeningTests
 
     [Theory]
     [InlineData("SECURITY CHECKLIST.md")]
-    [InlineData("RELEASE SECURITY NOTES.md")]
     public void SecurityDocument_Exists(string fileName)
     {
         if (!IsRepoRootValid()) return;

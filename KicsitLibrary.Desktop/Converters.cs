@@ -179,4 +179,67 @@ namespace KicsitLibrary.Desktop
             return this;
         }
     }
+
+    public class ObjectEqualityConverter : MarkupExtension, IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values == null || values.Length < 2) return false;
+            if (values[0] == null || values[1] == null) return false;
+            return values[0].Equals(values[1]);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
+
+    public class SummaryValueConverter : MarkupExtension, IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return 0.0;
+            string strValue = value.ToString() ?? "";
+            
+            string clean = "";
+            bool hasPercentage = strValue.Contains("%");
+            foreach (char c in strValue)
+            {
+                if (char.IsDigit(c) || c == '.')
+                {
+                    clean += c;
+                }
+            }
+
+            if (double.TryParse(clean, NumberStyles.Any, CultureInfo.InvariantCulture, out double result))
+            {
+                if (hasPercentage)
+                {
+                    return result;
+                }
+                
+                if (result <= 10.0) return result * 10.0;
+                if (result <= 100.0) return result;
+                if (result <= 1000.0) return result / 10.0;
+                return Math.Min(result / 100.0, 100.0);
+            }
+            return 0.0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
 }

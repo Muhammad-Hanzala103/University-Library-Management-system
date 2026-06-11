@@ -1,11 +1,295 @@
-<UserControl x:Class="KicsitLibrary.Desktop.Views.InventoryManagementView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
- <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-  <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10"><StackPanel><TextBlock Text="Inventory" FontSize="22" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
-   <WrapPanel Margin="0,10,0,0"><TextBox Width="170" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,6,6"/><ComboBox Width="120" ItemsSource="{Binding ItemTypes}" SelectedItem="{Binding SelectedItemType}" Margin="0,0,6,6"/><TextBox Width="110" Text="{Binding Condition}" Margin="0,0,6,6"/><TextBox Width="110" Text="{Binding Location}" Margin="0,0,6,6"/><DatePicker SelectedDate="{Binding FromDate}" Width="120" Margin="0,0,6,6"/><DatePicker SelectedDate="{Binding ToDate}" Width="120" Margin="0,0,6,6"/><CheckBox Content="Damaged" IsChecked="{Binding DamagedOnly}" Margin="0,5,8,6"/><CheckBox Content="Low quantity" IsChecked="{Binding LowQuantityOnly}" Margin="0,5,8,6"/><CheckBox Content="Include deleted" IsChecked="{Binding IncludeDeleted}" Margin="0,5,8,6"/><Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/><Button Content="Clear" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/><Button Content="Add Item" Command="{Binding AddCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/></WrapPanel>
-   <TextBlock Text="{Binding Summary.TotalQuantity, StringFormat=Total quantity: {0}}" /></StackPanel></Border>
-  <Border Grid.Row="1" Style="{StaticResource CardStyle}"><DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False" IsReadOnly="True"><DataGrid.Columns>
-   <DataGridTextColumn Header="Item Name" Binding="{Binding ItemName}" Width="*"/><DataGridTextColumn Header="Type" Binding="{Binding ItemType}" Width="100"/><DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="55"/><DataGridTextColumn Header="Available" Binding="{Binding AvailableQuantity}" Width="70"/><DataGridTextColumn Header="Damaged" Binding="{Binding DamagedQuantity}" Width="70"/><DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="100"/><DataGridTextColumn Header="Condition" Binding="{Binding Condition}" Width="90"/><DataGridTextColumn Header="Purchase Date" Binding="{Binding PurchaseDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="105"/><DataGridTextColumn Header="Price" Binding="{Binding PurchasePrice, StringFormat={}{0:N2}}" Width="85"/><DataGridTextColumn Header="Supplier" Binding="{Binding Supplier}" Width="110"/><DataGridTextColumn Header="Updated" Binding="{Binding LastUpdatedDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="105"/><DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="70"/>
-  </DataGrid.Columns></DataGrid></Border>
-  <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,10,0,0"><StackPanel><WrapPanel><Button Content="Edit" Command="{Binding EditCommand}" ToolTip="Edit the selected inventory item's details." Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/><Button Content="Details" Command="{Binding ViewDetailsCommand}" ToolTip="View inventory history and current quantities." Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/><Button Content="Adjust" Command="{Binding AdjustCommand}" ToolTip="Adjust quantities with a required reason and activity log." Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/><TextBox Width="50" Text="{Binding ActionQuantity}" Margin="0,0,6,6"/><TextBox Width="240" Text="{Binding ActionReason}" Margin="0,0,6,6"/><Button Content="Mark Damaged" Command="{Binding MarkDamagedCommand}" ToolTip="Move the entered quantity to damaged stock and record the reason." Style="{StaticResource DangerButton}" Margin="0,0,6,6"/><Button Content="Mark Repaired" Command="{Binding MarkRepairedCommand}" ToolTip="Return repaired quantity to available stock." Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/><Button Content="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}" Margin="0,0,6,6"/><Button Content="Restore" Command="{Binding RestoreCommand}" ToolTip="Restore a previously archived inventory item." Style="{StaticResource SecondaryButton}" Margin="0,0,6,6"/><Button Content="Export Excel" Command="{Binding ExportCommand}" ToolTip="Export the filtered inventory list to Excel." Style="{StaticResource PrimaryButton}" Margin="0,0,6,6"/></WrapPanel><TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"/></StackPanel></Border>
- </Grid>
+<UserControl x:Class="KicsitLibrary.Desktop.Views.InventoryManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:KicsitLibrary.Desktop">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Filters Section -->
+        <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,12">
+            <StackPanel>
+                <DockPanel Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="INVENTORY MANAGEMENT" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                        <TextBlock Text="Track library assets, equipment, condition, and quantities" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding Summary.TotalQuantity, StringFormat='Total Quantity: {0}'}" 
+                               FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource PrimaryBrush}" FontSize="12"/>
+                </DockPanel>
+
+                <!-- Labeled Filters Grid -->
+                <WrapPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <StackPanel Width="150" Margin="0,0,8,8">
+                        <TextBlock Text="Search Name" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,4" Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="Search by item name"/>
+                    </StackPanel>
+
+                    <StackPanel Width="120" Margin="0,0,8,8">
+                        <TextBlock Text="Item Type" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,4" Foreground="{StaticResource TextMutedBrush}"/>
+                        <ComboBox ItemsSource="{Binding ItemTypes}" SelectedItem="{Binding SelectedItemType}" Padding="6"/>
+                    </StackPanel>
+
+                    <StackPanel Width="110" Margin="0,0,8,8">
+                        <TextBlock Text="Condition" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,4" Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Condition}" ToolTip="Filter by condition"/>
+                    </StackPanel>
+
+                    <StackPanel Width="110" Margin="0,0,8,8">
+                        <TextBlock Text="Location" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,4" Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Location}" ToolTip="Filter by location"/>
+                    </StackPanel>
+
+                    <StackPanel Width="120" Margin="0,0,8,8">
+                        <TextBlock Text="Purchase From" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,4" Foreground="{StaticResource TextMutedBrush}"/>
+                        <DatePicker SelectedDate="{Binding FromDate}"/>
+                    </StackPanel>
+
+                    <StackPanel Width="120" Margin="0,0,8,8">
+                        <TextBlock Text="Purchase To" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,4" Foreground="{StaticResource TextMutedBrush}"/>
+                        <DatePicker SelectedDate="{Binding ToDate}"/>
+                    </StackPanel>
+
+                    <!-- Checkboxes -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,12,0,0">
+                        <CheckBox Content="Damaged Only" IsChecked="{Binding DamagedOnly}" Margin="0,0,12,0" FontWeight="SemiBold" Foreground="{StaticResource TextDarkBrush}"/>
+                        <CheckBox Content="Low Qty Only" IsChecked="{Binding LowQuantityOnly}" Margin="0,0,12,0" FontWeight="SemiBold" Foreground="{StaticResource TextDarkBrush}"/>
+                        <CheckBox Content="Include Deleted" IsChecked="{Binding IncludeDeleted}" Margin="0,0,12,0" FontWeight="SemiBold" Foreground="{StaticResource TextDarkBrush}"/>
+                    </StackPanel>
+
+                    <!-- Filter Actions -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,12,0,0">
+                        <Button Style="{StaticResource PrimaryButton}" Command="{Binding RefreshCommand}" ToolTip="Apply current filters" Margin="0,0,6,0" Padding="12,6">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🔍" Margin="0,0,4,0"/>
+                                <TextBlock Text="Search"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding ClearFiltersCommand}" ToolTip="Clear search and filters" Margin="0,0,6,0" Padding="12,6">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🧹" Margin="0,0,4,0"/>
+                                <TextBlock Text="Clear"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource PrimaryButton}" Command="{Binding AddCommand}" ToolTip="Add a new inventory item" Padding="12,6">
+                            <Button.Background>
+                                <SolidColorBrush Color="{StaticResource SuccessColor}"/>
+                            </Button.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="➕" Margin="0,0,4,0"/>
+                                <TextBlock Text="Add Item" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Inventory Data Grid -->
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+            <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False" IsReadOnly="True" Style="{StaticResource StyledDataGrid}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Item Name" Binding="{Binding ItemName}" Width="*"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding ItemType}" Width="100"/>
+                    <DataGridTemplateColumn Header="Qty" Width="65">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="#F1F5F9" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Quantity}" FontSize="11" FontWeight="SemiBold" Foreground="#334155"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Available" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="#DCFCE7" CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse Width="6" Height="6" Fill="#15803D" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding AvailableQuantity}" FontSize="11" FontWeight="SemiBold" Foreground="#15803D"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Damaged" Width="85">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#FEE2E2"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding DamagedQuantity}" Value="0">
+                                                    <Setter Property="Background" Value="#F1F5F9"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse Width="6" Height="6" Margin="0,0,4,0" VerticalAlignment="Center">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="#B91C1C"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding DamagedQuantity}" Value="0">
+                                                            <Setter Property="Fill" Value="#64748B"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <TextBlock Text="{Binding DamagedQuantity}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#B91C1C"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding DamagedQuantity}" Value="0">
+                                                            <Setter Property="Foreground" Value="#64748B"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="100"/>
+                    <DataGridTextColumn Header="Condition" Binding="{Binding Condition}" Width="90"/>
+                    <DataGridTextColumn Header="Purchase Date" Binding="{Binding PurchaseDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="110"/>
+                    <DataGridTextColumn Header="Price" Binding="{Binding PurchasePrice, StringFormat={}{0:N2}}" Width="90"/>
+                    <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier}" Width="110"/>
+                    <DataGridTemplateColumn Header="Status" Width="95">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="10" Padding="8,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#DCFCE7"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="Low Stock">
+                                                    <Setter Property="Background" Value="#FEF3C7"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Out of Stock">
+                                                    <Setter Property="Background" Value="#FEE2E2"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Damaged">
+                                                    <Setter Property="Background" Value="#FEE2E2"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding Status}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#15803D"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Low Stock">
+                                                        <Setter Property="Foreground" Value="#D97706"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Out of Stock">
+                                                        <Setter Property="Foreground" Value="#B91C1C"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Damaged">
+                                                        <Setter Property="Foreground" Value="#B91C1C"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Selected Item Actions & Adjustments -->
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,12,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- General CRUD Actions -->
+                <WrapPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding EditCommand}" ToolTip="Edit selected inventory item" Margin="0,0,8,6" Padding="12,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✏️" Margin="0,0,4,0"/>
+                            <TextBlock Text="Edit Details"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding ViewDetailsCommand}" ToolTip="View history and item logs" Margin="0,0,8,6" Padding="12,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📋" Margin="0,0,4,0"/>
+                            <TextBlock Text="View History"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource DangerButton}" Command="{Binding DeleteCommand}" ToolTip="Delete selected item" Margin="0,0,8,6" Padding="12,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🗑️" Margin="0,0,4,0"/>
+                            <TextBlock Text="Delete"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding RestoreCommand}" ToolTip="Restore deleted item" Margin="0,0,8,6" Padding="12,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="♻️" Margin="0,0,4,0"/>
+                            <TextBlock Text="Restore"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource PrimaryButton}" Command="{Binding ExportCommand}" ToolTip="Export list to Excel" Margin="0,0,0,6" Padding="12,8">
+                        <Button.Background>
+                            <SolidColorBrush Color="{StaticResource OperationalAccentColor}"/>
+                        </Button.Background>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📈" Margin="0,0,4,0"/>
+                            <TextBlock Text="Export Excel" Foreground="White"/>
+                        </StackPanel>
+                    </Button>
+                </WrapPanel>
+
+                <!-- Stock Adjustments Panel -->
+                <Border Grid.Column="1" Background="#F8FAFC" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="12,0,0,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Width="70" Margin="0,0,8,0">
+                            <TextBlock Text="Qty to Adjust" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,4" Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding ActionQuantity}" ToolTip="Quantity to adjust, damage, or repair"/>
+                        </StackPanel>
+
+                        <StackPanel Width="180" Margin="0,0,8,0">
+                            <TextBlock Text="Reason for Adjustment" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,4" Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding ActionReason}" ToolTip="Reason for log registration"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                <Button Style="{StaticResource SecondaryButton}" Command="{Binding AdjustCommand}" ToolTip="Manually adjust available quantity" Margin="0,0,4,0" Padding="8,4">
+                                    <TextBlock Text="Adjust" FontSize="11" FontWeight="SemiBold"/>
+                                </Button>
+                                <Button Style="{StaticResource SecondaryButton}" Command="{Binding MarkRepairedCommand}" ToolTip="Mark damaged items as repaired" Padding="8,4">
+                                    <TextBlock Text="Mark Repaired" FontSize="11" FontWeight="SemiBold"/>
+                                </Button>
+                            </StackPanel>
+                            <Button Style="{StaticResource DangerButton}" Command="{Binding MarkDamagedCommand}" ToolTip="Mark available items as damaged" Padding="8,4">
+                                <TextBlock Text="Mark Damaged" FontSize="11" FontWeight="SemiBold"/>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3" Margin="0,8,0,0" Padding="4" Visibility="{Binding StatusMessage, Converter={local:StringVisibilityConverter}}">
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource SuccessBrush}" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+        </Border>
+    </Grid>
 </UserControl>

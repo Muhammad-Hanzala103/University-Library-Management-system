@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KicsitLibrary.Core.Interfaces;
+using KicsitLibrary.Desktop.Views;
 
 namespace KicsitLibrary.Desktop.ViewModels
 {
@@ -244,6 +245,18 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToSettings() => _navigationService.NavigateTo("Settings");
+
+        [RelayCommand]
+        private void ChangePassword()
+        {
+            var activeWindow = App.Current.MainWindow;
+            var changePasswordWindow = App.AppHost?.Services.GetRequiredService<ChangePasswordWindow>();
+            if (changePasswordWindow != null)
+            {
+                changePasswordWindow.Owner = activeWindow;
+                changePasswordWindow.ShowDialog();
+            }
+        }
 
         [RelayCommand]
         private async Task LogoutAsync()
