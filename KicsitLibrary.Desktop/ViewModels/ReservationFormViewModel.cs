@@ -53,21 +53,32 @@ public partial class ReservationFormViewModel : ObservableObject
             Students = new ObservableCollection<Student>(await _context.Students.AsNoTracking()
                 .Where(item => memberSearch == string.Empty ||
                     item.Name.Contains(memberSearch) ||
-                    item.RegistrationNumber.Contains(memberSearch))
+                    item.RegistrationNumber.Contains(memberSearch) ||
+                    (item.Email != null && item.Email.Contains(memberSearch)) ||
+                    (item.CNIC != null && item.CNIC.Contains(memberSearch)))
                 .OrderBy(item => item.Name)
                 .Take(50)
                 .ToListAsync());
             FacultyStaff = new ObservableCollection<FacultyStaff>(await _context.FacultyStaff.AsNoTracking()
                 .Where(item => memberSearch == string.Empty ||
                     item.Name.Contains(memberSearch) ||
-                    item.PersonnelNumber.Contains(memberSearch))
+                    item.PersonnelNumber.Contains(memberSearch) ||
+                    (item.Email != null && item.Email.Contains(memberSearch)) ||
+                    (item.CNIC != null && item.CNIC.Contains(memberSearch)))
                 .OrderBy(item => item.Name)
                 .Take(50)
                 .ToListAsync());
             Books = new ObservableCollection<BookMaster>(await _context.BookMasters.AsNoTracking()
+                .Include(bm => bm.BookAuthors).ThenInclude(ba => ba.Author)
+                .Include(bm => bm.BookCopies)
                 .Where(item => bookSearch == string.Empty ||
                     item.Title.Contains(bookSearch) ||
-                    item.UniqueTitleNumber.Contains(bookSearch))
+                    (item.SubTitle != null && item.SubTitle.Contains(bookSearch)) ||
+                    item.UniqueTitleNumber.Contains(bookSearch) ||
+                    (item.ISBN != null && item.ISBN.Contains(bookSearch)) ||
+                    (item.ISSN != null && item.ISSN.Contains(bookSearch)) ||
+                    item.BookCopies.Any(bc => !bc.IsDeleted && bc.AccessionNumber.Contains(bookSearch)) ||
+                    item.BookAuthors.Any(ba => ba.Author.Name.Contains(bookSearch)))
                 .OrderBy(item => item.Title)
                 .Take(50)
                 .ToListAsync());

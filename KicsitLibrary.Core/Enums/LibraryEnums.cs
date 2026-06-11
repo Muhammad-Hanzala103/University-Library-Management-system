@@ -14,6 +14,14 @@ namespace KicsitLibrary.Core.Enums
         Missing
     }
 
+    public enum MaterialType
+    {
+        Book,
+        Journal,
+        Magazine,
+        Newspaper
+    }
+
     public enum MemberType
     {
         Student,

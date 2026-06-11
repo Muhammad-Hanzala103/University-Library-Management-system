@@ -58,7 +58,7 @@ internal sealed class SqliteTestDatabase : IAsyncDisposable
         };
         var student = new Student
         {
-            RegistrationNumber = $"REG-{Guid.NewGuid():N}",
+            RegistrationNumber = new string(Guid.NewGuid().ToString("N").Where(char.IsDigit).Take(10).ToArray()),
             AdmissionNumber = "ADM-1",
             RollNumber = "ROLL-1",
             Name = "Test Student",

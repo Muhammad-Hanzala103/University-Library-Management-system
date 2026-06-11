@@ -145,7 +145,10 @@ namespace KicsitLibrary.Desktop.ViewModels
                     _currentScope = App.AppHost?.Services.CreateScope();
                     CurrentView = _currentScope?.ServiceProvider.GetService<AuditRecordsViewModel>();
                     if (CurrentView is AuditRecordsViewModel auditRecords)
+                    {
+                        auditRecords.FinancialYear = Helpers.FinancialYearState.SelectedYear;
                         _ = auditRecords.RefreshAsync();
+                    }
                     break;
                 case "Inventory":
                     _currentScope = App.AppHost?.Services.CreateScope();
@@ -279,6 +282,81 @@ namespace KicsitLibrary.Desktop.ViewModels
                 else
                 {
                     App.Current.Shutdown();
+                }
+            }
+        }
+
+        public bool IsCurrentFinancialYear
+        {
+            get => Helpers.FinancialYearState.IsCurrentYear;
+            set
+            {
+                if (Helpers.FinancialYearState.IsCurrentYear == value) return;
+                Helpers.FinancialYearState.IsCurrentYear = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsCustomFinancialYear));
+                OnPropertyChanged(nameof(ActiveFinancialYear));
+                TriggerCurrentViewRefresh();
+            }
+        }
+
+        public bool IsCustomFinancialYear
+        {
+            get => !Helpers.FinancialYearState.IsCurrentYear;
+            set
+            {
+                if (Helpers.FinancialYearState.IsCurrentYear == !value) return;
+                Helpers.FinancialYearState.IsCurrentYear = !value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsCurrentFinancialYear));
+                OnPropertyChanged(nameof(ActiveFinancialYear));
+                TriggerCurrentViewRefresh();
+            }
+        }
+
+        public string ActiveFinancialYear
+        {
+            get => Helpers.FinancialYearState.SelectedYear;
+            set
+            {
+                if (Helpers.FinancialYearState.SelectedYear == value) return;
+                Helpers.FinancialYearState.SelectedYear = value;
+                OnPropertyChanged();
+                TriggerCurrentViewRefresh();
+            }
+        }
+
+        public System.Collections.ObjectModel.ObservableCollection<string> AvailableFinancialYears { get; } = new()
+        {
+            "2023-2024",
+            "2024-2025",
+            "2025-2026",
+            "2026-2027",
+            "2027-2028"
+        };
+
+        private void TriggerCurrentViewRefresh()
+        {
+            if (CurrentView is AuditRecordsViewModel auditVM)
+            {
+                auditVM.FinancialYear = Helpers.FinancialYearState.SelectedYear;
+                if (auditVM.RefreshCommand.CanExecute(null))
+                {
+                    auditVM.RefreshCommand.Execute(null);
+                }
+            }
+            else if (CurrentView is ReportsDashboardViewModel reportsVM)
+            {
+                foreach (var input in reportsVM.FilterInputs)
+                {
+                    if (input.Definition.Key == "FinancialYear")
+                    {
+                        input.TextValue = Helpers.FinancialYearState.SelectedYear;
+                    }
+                }
+                if (reportsVM.RefreshPreviewCommand.CanExecute(null))
+                {
+                    reportsVM.RefreshPreviewCommand.Execute(null);
                 }
             }
         }

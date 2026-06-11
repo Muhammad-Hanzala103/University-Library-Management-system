@@ -214,19 +214,23 @@ namespace KicsitLibrary.Tests
 
             var s1 = new Student
             {
-                RegistrationNumber = "2026-CS-01",
+                RegistrationNumber = "202601",
                 Name = "First",
                 RollNumber = "01",
-                Email = "duplicate@test.com"
+                Email = "duplicate@test.com",
+                Program = "BSCS",
+                Department = "Computer Science"
             };
             await service.AddStudentAsync(s1);
 
             var s2 = new Student
             {
-                RegistrationNumber = "2026-CS-02",
+                RegistrationNumber = "202602",
                 Name = "Second",
                 RollNumber = "02",
-                Email = "duplicate@test.com"
+                Email = "duplicate@test.com",
+                Program = "BSCS",
+                Department = "Computer Science"
             };
 
             await Assert.ThrowsAsync<InvalidOperationException>(
@@ -256,13 +260,13 @@ namespace KicsitLibrary.Tests
             await using var database = await SqliteTestDatabase.CreateAsync();
             var service = new ConsumerService(database.Context);
 
-            await service.AddStudentAsync(new Student { RegistrationNumber = "2026-CS-99", Name = "Zac", RollNumber = "99" });
-            await service.AddStudentAsync(new Student { RegistrationNumber = "2026-CS-01", Name = "Abe", RollNumber = "01" });
+            await service.AddStudentAsync(new Student { RegistrationNumber = "202699", Name = "Zac", RollNumber = "99", Program = "BSCS", Department = "Computer Science" });
+            await service.AddStudentAsync(new Student { RegistrationNumber = "202601", Name = "Abe", RollNumber = "01", Program = "BSCS", Department = "Computer Science" });
 
             var students = await service.GetAllStudentsAsync();
             var list = students.ToList();
-            Assert.Equal("2026-CS-01", list[0].RegistrationNumber);
-            Assert.Equal("2026-CS-99", list[1].RegistrationNumber);
+            Assert.Equal("202601", list[0].RegistrationNumber);
+            Assert.Equal("202699", list[1].RegistrationNumber);
         }
 
         [Fact]

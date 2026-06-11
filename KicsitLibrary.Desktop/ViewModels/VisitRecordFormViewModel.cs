@@ -58,6 +58,12 @@ namespace KicsitLibrary.Desktop.ViewModels
         private DateTime? _nextFollowUpDate;
 
         [ObservableProperty]
+        private string _contact = string.Empty;
+
+        [ObservableProperty]
+        private string _remarks = string.Empty;
+
+        [ObservableProperty]
         private string _errorMessage = string.Empty;
 
         [ObservableProperty]
@@ -85,6 +91,8 @@ namespace KicsitLibrary.Desktop.ViewModels
                 Requirements = _editingRecord.Requirements;
                 ActionTaken = _editingRecord.ActionTaken;
                 NextFollowUpDate = _editingRecord.NextFollowUpDate;
+                Contact = _editingRecord.Contact ?? string.Empty;
+                Remarks = _editingRecord.Remarks ?? string.Empty;
             }
         }
 
@@ -120,6 +128,8 @@ namespace KicsitLibrary.Desktop.ViewModels
                 record.Requirements = Requirements.Trim();
                 record.ActionTaken = ActionTaken.Trim();
                 record.NextFollowUpDate = NextFollowUpDate;
+                record.Contact = string.IsNullOrWhiteSpace(Contact) ? null : Contact.Trim();
+                record.Remarks = string.IsNullOrWhiteSpace(Remarks) ? null : Remarks.Trim();
 
                 if (_editingRecord == null)
                 {

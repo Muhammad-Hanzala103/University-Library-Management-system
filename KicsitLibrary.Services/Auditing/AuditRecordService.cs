@@ -96,6 +96,22 @@ public sealed class AuditRecordService : IAuditRecordService
     {
         if (!await CanManageAsync())
             return Failure("The current user cannot create audit records.");
+
+        // Automatically generate sequential unique audit number
+        var maxAuditNum = 0;
+        var auditRecords = await _context.AuditRecords.IgnoreQueryFilters().AsNoTracking().Select(item => item.AuditNumber).ToListAsync(cancellationToken);
+        foreach (var numStr in auditRecords)
+        {
+            if (int.TryParse(numStr, out var val))
+            {
+                if (val > maxAuditNum)
+                {
+                    maxAuditNum = val;
+                }
+            }
+        }
+        request.AuditNumber = (maxAuditNum + 1).ToString();
+
         var validation = Validate(request);
         if (validation != null)
             return Failure(validation);
@@ -292,6 +308,8 @@ public sealed class AuditRecordService : IAuditRecordService
             return "Audit data is required.";
         if (string.IsNullOrWhiteSpace(request.AuditNumber))
             return "Audit number is required.";
+        if (!int.TryParse(request.AuditNumber.Trim(), out _))
+            return "Audit number must be numeric.";
         if (request.AuditDate == default)
             return "Audit date is required.";
         if (string.IsNullOrWhiteSpace(request.AuditType))

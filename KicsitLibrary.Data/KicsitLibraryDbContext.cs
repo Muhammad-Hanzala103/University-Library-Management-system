@@ -39,6 +39,7 @@ namespace KicsitLibrary.Data
         public DbSet<Fine> Fines => Set<Fine>();
         public DbSet<NotificationRecord> NotificationRecords => Set<NotificationRecord>();
         public DbSet<VisitRecord> VisitRecords => Set<VisitRecord>();
+        public DbSet<VisitorFeedback> VisitorFeedbacks => Set<VisitorFeedback>();
         public DbSet<VisitFile> VisitFiles => Set<VisitFile>();
         public DbSet<AuditRecord> AuditRecords => Set<AuditRecord>();
         public DbSet<AuditFile> AuditFiles => Set<AuditFile>();

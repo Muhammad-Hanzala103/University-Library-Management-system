@@ -200,7 +200,12 @@ public partial class ReportsDashboardViewModel : ObservableObject
 
         foreach (var filter in SelectedReport.Filters)
         {
-            FilterInputs.Add(new ReportFilterInputViewModel(filter));
+            var vm = new ReportFilterInputViewModel(filter);
+            if (filter.Key == "FinancialYear" && string.IsNullOrEmpty(vm.TextValue))
+            {
+                vm.TextValue = Helpers.FinancialYearState.SelectedYear;
+            }
+            FilterInputs.Add(vm);
         }
     }
 

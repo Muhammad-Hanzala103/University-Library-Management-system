@@ -1,6 +1,9 @@
 <UserControl x:Class="KicsitLibrary.Desktop.Views.VisitRecordsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl x:Class="KicsitLibrary.Desktop.Views.VisitRecordsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:KicsitLibrary.Desktop"
@@ -10,7 +13,6 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -19,92 +21,151 @@
                      Visibility="{Binding IsBusy, Converter={local:BooleanToVisibilityConverter}}" 
                      VerticalAlignment="Top" Margin="0,0,0,10"/>
 
-        <!-- Top Actions -->
-        <Grid Grid.Row="0" Margin="0,0,0,15">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <TextBlock Text="Visits" FontSize="18" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center"/>
-            </StackPanel>
-            
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Log Inspection Visit" Style="{StaticResource PrimaryButton}" Command="{Binding AddVisitCommand}" Padding="15,6"/>
-            </StackPanel>
-        </Grid>
+        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
+            <!-- Tab 1: Accreditation & Inspection -->
+            <TabItem Header="Accreditation &amp; Inspection">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <!-- Search Filters Panel -->
-        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,15" Padding="15">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="1.5*"/>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="1.5*"/>
-                </Grid.ColumnDefinitions>
+                    <!-- Top Actions -->
+                    <Grid Grid.Row="0" Margin="0,0,0,15">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <TextBlock Text="Accreditation &amp; Inspection Visits" FontSize="18" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Log Inspection Visit" Style="{StaticResource PrimaryButton}" Command="{Binding AddVisitCommand}" Padding="15,6"/>
+                        </StackPanel>
+                    </Grid>
 
-                <!-- Search Organization -->
-                <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                    <TextBlock Text="Accreditation Body / Organization Name" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SearchOrganization, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
+                    <!-- Search Filters Panel -->
+                    <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,15" Padding="15">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1.5*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1.5*"/>
+                            </Grid.ColumnDefinitions>
 
-                <!-- Date of Visit -->
-                <StackPanel Grid.Column="1" Margin="0,0,10,0">
-                    <TextBlock Text="Date of Visit" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                    <DatePicker Height="36" SelectedDate="{Binding SearchDate}"/>
-                </StackPanel>
+                            <!-- Search Organization -->
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Accreditation Body / Organization Name" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SearchOrganization, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
 
-                <!-- Search Purpose -->
-                <StackPanel Grid.Column="2" Margin="0,0,10,0">
-                    <TextBlock Text="Purpose of Visit" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SearchPurpose, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
+                            <!-- Date of Visit -->
+                            <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                <TextBlock Text="Date of Visit" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                                <DatePicker Height="36" SelectedDate="{Binding SearchDate}"/>
+                            </StackPanel>
 
-                <!-- Action Buttons -->
-                <Grid Grid.Column="3" VerticalAlignment="Bottom" Height="36">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Content="Reset" Style="{StaticResource SecondaryButton}" Command="{Binding ClearFiltersCommand}" Margin="0,0,5,0"/>
-                    <Button Grid.Column="1" Content="Search Logs" Style="{StaticResource PrimaryButton}" Command="{Binding SearchCommand}" Margin="5,0,0,0"/>
+                            <!-- Search Purpose -->
+                            <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                                <TextBlock Text="Purpose of Visit" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SearchPurpose, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <!-- Action Buttons -->
+                            <Grid Grid.Column="3" VerticalAlignment="Bottom" Height="36">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="Reset" Style="{StaticResource SecondaryButton}" Command="{Binding ClearFiltersCommand}" Margin="0,0,5,0"/>
+                                <Button Grid.Column="1" Content="Search Logs" Style="{StaticResource PrimaryButton}" Command="{Binding SearchCommand}" Margin="5,0,0,0"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Visit Records Data Grid -->
+                    <DataGrid Grid.Row="2" ItemsSource="{Binding VisitRecords}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Visit Number" Binding="{Binding VisitNumber}" Width="120"/>
+                            <DataGridTextColumn Header="Organization / Body" Binding="{Binding OrganizationName}" Width="1.5*"/>
+                            <DataGridTextColumn Header="Date of Visit" Binding="{Binding VisitDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="110"/>
+                            <DataGridTextColumn Header="Purpose" Binding="{Binding Purpose}" Width="2*"/>
+                            <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="100"/>
+                            <DataGridTextColumn Header="Logged By" Binding="{Binding CreatedByUser.FullName}" Width="110"/>
+                            <DataGridTemplateColumn Width="120" Header="Actions">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="✏️" ToolTip="Edit Visit Details" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                                    Command="{Binding DataContext.EditVisitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Content="🗑️" ToolTip="Delete Record" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="12,0,0,0"
+                                                    Command="{Binding DataContext.DeleteVisitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Bottom Status / Errors bar -->
+                    <TextBlock Grid.Row="3" Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" Margin="0,8,0,0"
+                               Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}"/>
                 </Grid>
-            </Grid>
-        </Border>
+            </TabItem>
 
-        <!-- Visit Records Data Grid -->
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+            <!-- Tab 2: Visitor Feedback & Suggestions -->
+            <TabItem Header="Visitor Feedback &amp; Suggestions">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-            <DataGrid Grid.Row="0" ItemsSource="{Binding VisitRecords}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Visit Number" Binding="{Binding VisitNumber}" Width="120"/>
-                    <DataGridTextColumn Header="Organization / Body" Binding="{Binding OrganizationName}" Width="1.5*"/>
-                    <DataGridTextColumn Header="Date of Visit" Binding="{Binding VisitDate, StringFormat={}{0:dd-MMM-yyyy}}" Width="110"/>
-                    <DataGridTextColumn Header="Purpose" Binding="{Binding Purpose}" Width="2*"/>
-                    <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="100"/>
-                    <DataGridTextColumn Header="Logged By" Binding="{Binding CreatedByUser.FullName}" Width="110"/>
-                    <DataGridTemplateColumn Width="120" Header="Actions">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Content="✏️" ToolTip="Edit Visit Details" Background="Transparent" BorderThickness="0" Cursor="Hand"
-                                            Command="{Binding DataContext.EditVisitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}"/>
-                                    <Button Content="🗑️" ToolTip="Delete Record" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="12,0,0,0"
-                                            Command="{Binding DataContext.DeleteVisitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                    <!-- Top Actions -->
+                    <Grid Grid.Row="0" Margin="0,0,0,15">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <TextBlock Text="Visitor Feedback &amp; Suggestions" FontSize="18" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Register Feedback" Style="{StaticResource PrimaryButton}" Command="{Binding AddFeedbackCommand}" Padding="15,6"/>
+                        </StackPanel>
+                    </Grid>
 
-            <!-- Bottom Status / Errors bar -->
-            <TextBlock Grid.Row="1" Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" Margin="0,8,0,0"
-                       Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}"/>
-        </Grid>
+                    <!-- Feedback Data Grid -->
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Feedbacks}" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Visitor Name" Binding="{Binding VisitorName}" Width="150"/>
+                            <DataGridTextColumn Header="CNIC" Binding="{Binding CNIC}" Width="120"/>
+                            <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="110"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="150"/>
+                            <DataGridTextColumn Header="Purpose of Visit" Binding="{Binding VisitPurpose}" Width="1.5*"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding FeedbackType}" Width="100"/>
+                            <DataGridTextColumn Header="Feedback Text" Binding="{Binding FeedbackText}" Width="2*"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding CreatedAt, StringFormat={}{0:dd-MMM-yyyy HH:mm}}" Width="130"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="90"/>
+                            <DataGridTemplateColumn Width="100" Header="Actions">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="✏️" ToolTip="Review/Edit Feedback" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                                    Command="{Binding DataContext.EditFeedbackCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Bottom Status / Errors bar -->
+                    <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" Margin="0,8,0,0"
+                               Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

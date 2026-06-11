@@ -20,8 +20,8 @@ namespace KicsitLibrary.Desktop.ViewModels
         private ObservableCollection<Student> _students = new();
 
         // Filters lists
-        public ObservableCollection<string> Programs { get; } = new() { "BSCS", "BSSE", "BSCE", "BSAI", "BSDS", "MCS", "BBA", "Other" };
-        public ObservableCollection<string> Departments { get; } = new() { "CS", "CE", "SE", "AI", "DS", "General" };
+        public ObservableCollection<string> Programs { get; } = new(KicsitLibrary.Core.Helpers.LibraryValidator.Programs);
+        public ObservableCollection<string> Departments { get; } = new(KicsitLibrary.Core.Helpers.LibraryValidator.Departments);
         public ObservableCollection<string> Batches { get; } = new() { "2022", "2023", "2024", "2025", "2026" };
         public ObservableCollection<ClearanceStatus> ClearanceStatuses { get; } = new() { ClearanceStatus.NotCleared, ClearanceStatus.Cleared };
 

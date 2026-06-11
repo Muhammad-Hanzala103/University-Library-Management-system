@@ -20,7 +20,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         private ObservableCollection<FacultyStaff> _facultyStaffMembers = new();
 
         // Filters lists
-        public ObservableCollection<string> Departments { get; } = new() { "CS", "CE", "SE", "AI", "DS", "General" };
+        public ObservableCollection<string> Departments { get; } = new(KicsitLibrary.Core.Helpers.LibraryValidator.Departments);
         public ObservableCollection<FacultyType> FacultyTypes { get; } = new() 
         { 
             FacultyType.PermanentFaculty, 

@@ -1,13 +1,15 @@
 <Window x:Class="KicsitLibrary.Desktop.Views.AuditRecordDetailsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:helpers="clr-namespace:KicsitLibrary.Desktop.Helpers"
         Title="Audit Record Details" Height="720" Width="820"
         WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Border Style="{StaticResource CardStyle}" Margin="16">
             <StackPanel>
                 <TextBlock Text="{Binding Details.AuditNumber}" FontSize="22" FontWeight="Bold"
-                           Foreground="{StaticResource PrimaryBrush}"/>
+                           Foreground="{StaticResource PrimaryBrush}"
+                           helpers:ClipboardHelper.ClickToCopy="True"/>
                 <TextBlock Text="{Binding Details.AuditType, StringFormat=Type: {0}}" Margin="0,8,0,0"/>
                 <TextBlock Text="{Binding Details.AuditDate, StringFormat=Date: {0:dd-MMM-yyyy}}"/>
                 <TextBlock Text="{Binding Details.FinancialYear, StringFormat=Financial Year: {0}}"/>

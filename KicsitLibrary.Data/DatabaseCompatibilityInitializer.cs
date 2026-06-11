@@ -65,6 +65,19 @@ namespace KicsitLibrary.Data
                 ["Remarks"] = "TEXT NULL"
             };
 
+        private static readonly IReadOnlyDictionary<string, string> BookMasterColumns =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["MaterialType"] = "TEXT NOT NULL DEFAULT 'Book'"
+            };
+
+        private static readonly IReadOnlyDictionary<string, string> VisitRecordColumns =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Contact"] = "TEXT NULL",
+                ["Remarks"] = "TEXT NULL"
+            };
+
         public static async Task ApplyAsync(KicsitLibraryDbContext context)
         {
             if (!string.Equals(
@@ -84,11 +97,13 @@ namespace KicsitLibrary.Data
 
             try
             {
+                await AddMissingColumnsAsync(connection, "BookMasters", BookMasterColumns);
                 await AddMissingColumnsAsync(connection, "Categories", CategoryColumns);
                 await AddMissingColumnsAsync(connection, "BookCopies", BookCopyColumns);
                 await AddMissingColumnsAsync(connection, "NotificationRecords", NotificationColumns);
                 await AddMissingColumnsAsync(connection, "Students", StudentClearanceColumns);
                 await AddMissingColumnsAsync(connection, "FacultyStaff", FacultyClearanceColumns);
+                await AddMissingColumnsAsync(connection, "VisitRecords", VisitRecordColumns);
                 await context.Database.ExecuteSqlRawAsync("""
                     CREATE TABLE IF NOT EXISTS "DocumentUploads" (
                         "Id" INTEGER NOT NULL CONSTRAINT "PK_DocumentUploads" PRIMARY KEY AUTOINCREMENT,
@@ -226,6 +241,28 @@ namespace KicsitLibrary.Data
                         "ErrorMessage" TEXT NULL,
                         "RollbackPerformed" INTEGER NOT NULL DEFAULT 0,
                         "MetadataJson" TEXT NULL,
+                        "CreatedAt" TEXT NOT NULL,
+                        "UpdatedAt" TEXT NULL,
+                        "IsDeleted" INTEGER NOT NULL DEFAULT 0,
+                        "DeletedAt" TEXT NULL,
+                        "DeletedReason" TEXT NULL,
+                        "DeletedByUserId" INTEGER NULL
+                    );
+                    """);
+
+                await context.Database.ExecuteSqlRawAsync("""
+                    CREATE TABLE IF NOT EXISTS "VisitorFeedbacks" (
+                        "Id" INTEGER NOT NULL CONSTRAINT "PK_VisitorFeedbacks" PRIMARY KEY AUTOINCREMENT,
+                        "VisitorName" TEXT NOT NULL,
+                        "CNIC" TEXT NULL,
+                        "Phone" TEXT NULL,
+                        "Email" TEXT NULL,
+                        "VisitPurpose" TEXT NOT NULL,
+                        "FeedbackType" TEXT NOT NULL,
+                        "FeedbackText" TEXT NOT NULL,
+                        "Status" TEXT NOT NULL,
+                        "ReviewedRemarks" TEXT NULL,
+                        "ReviewedByUserId" INTEGER NULL,
                         "CreatedAt" TEXT NOT NULL,
                         "UpdatedAt" TEXT NULL,
                         "IsDeleted" INTEGER NOT NULL DEFAULT 0,

@@ -60,6 +60,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         [RelayCommand]
         private void QuickFaculty() => _navigationService.NavigateTo("Faculty and Staff");
 
+
         [RelayCommand]
         private void QuickOverdue() => _navigationService.NavigateTo("Overdue Reminders");
 
@@ -68,5 +69,8 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void QuickSettings() => _navigationService.NavigateTo("Settings");
+
+        [RelayCommand]
+        private void NavigateToReservations() => _navigationService.NavigateTo("Reservations");
     }
 }

@@ -96,12 +96,22 @@
                     </Border>
 
                     <!-- Reserved Books -->
-                    <Border Style="{StaticResource CardStyle}" BorderThickness="4,1,1,1" BorderBrush="{StaticResource WarningBrush}" Margin="0,0,0,10">
+                    <Border Style="{StaticResource CardStyle}" BorderThickness="4,1,1,1" BorderBrush="{StaticResource WarningBrush}" Margin="0,0,0,10" Cursor="Hand">
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToReservationsCommand}"/>
+                        </Border.InputBindings>
                         <Grid>
                             <StackPanel>
                                 <TextBlock Text="Reserved Books" Style="{StaticResource SubtitleTextStyle}"/>
-                                <TextBlock Text="{Binding Stats.ReservedBooks}" Foreground="{StaticResource WarningBrush}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0"/>
-                                <TextBlock Text="Holds requested by members" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding Stats.ActiveReservations}" Foreground="{StaticResource WarningBrush}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0}"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                    <TextBlock Text="Total: " Foreground="{StaticResource TextMutedBrush}" FontSize="11"/>
+                                    <TextBlock Text="{Binding Stats.TotalReservations}" Foreground="{StaticResource TextDarkBrush}" FontSize="11" FontWeight="SemiBold"/>
+                                    <TextBlock Text=" | Ready: " Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="5,0,0,0"/>
+                                    <TextBlock Text="{Binding Stats.ReadyForPickupReservations}" Foreground="{StaticResource SuccessBrush}" FontSize="11" FontWeight="SemiBold"/>
+                                    <TextBlock Text=" | Expired: " Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="5,0,0,0"/>
+                                    <TextBlock Text="{Binding Stats.ExpiredReservations}" Foreground="{StaticResource DangerBrush}" FontSize="11" FontWeight="SemiBold"/>
+                                </StackPanel>
                             </StackPanel>
                             <TextBlock Text="📌" FontSize="28" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.25"/>
                         </Grid>

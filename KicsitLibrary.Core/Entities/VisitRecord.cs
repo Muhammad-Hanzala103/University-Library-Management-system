@@ -18,6 +18,8 @@ namespace KicsitLibrary.Core.Entities
         public string Requirements { get; set; } = string.Empty;
         public string ActionTaken { get; set; } = string.Empty;
         public DateTime? NextFollowUpDate { get; set; }
+        public string? Contact { get; set; }
+        public string? Remarks { get; set; }
         
         public int CreatedByUserId { get; set; }
         public virtual User CreatedByUser { get; set; } = null!;

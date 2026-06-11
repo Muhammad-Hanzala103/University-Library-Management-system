@@ -54,11 +54,11 @@
                         <StackPanel Grid.Column="0" Margin="0,0,6,0">
                             <TextBlock Text="Visit Type" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                             <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding VisitType}" SelectedValuePath="Content">
-                                <ComboBoxItem Content="HEC Accreditation"/>
-                                <ComboBoxItem Content="PEC Accreditation"/>
-                                <ComboBoxItem Content="NCEAC Accreditation"/>
-                                <ComboBoxItem Content="QEC Quality Audit"/>
-                                <ComboBoxItem Content="ExternalVisit"/>
+                                <ComboBoxItem Content="General Visitor"/>
+                                <ComboBoxItem Content="Auditor"/>
+                                <ComboBoxItem Content="Inspector"/>
+                                <ComboBoxItem Content="Guest"/>
+                                <ComboBoxItem Content="Vendor"/>
                                 <ComboBoxItem Content="Other"/>
                             </ComboBox>
                         </StackPanel>
@@ -96,6 +96,15 @@
                     <!-- Visit Team Members -->
                     <TextBlock Text="Delegation Team Members" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                     <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding VisitTeamMembers, UpdateSourceTrigger=PropertyChanged}" Height="60"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
+
+                    <!-- Contact -->
+                    <TextBlock Text="Contact Number / Email" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Contact, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+
+                    <!-- Remarks -->
+                    <TextBlock Text="Feedback or Remarks" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Remarks, UpdateSourceTrigger=PropertyChanged}" Height="60"
                              TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
                 </StackPanel>
             </ScrollViewer>

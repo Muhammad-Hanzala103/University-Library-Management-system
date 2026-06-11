@@ -1,6 +1,7 @@
 <Window x:Class="KicsitLibrary.Desktop.Views.AuditRecordFormWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:helpers="clr-namespace:KicsitLibrary.Desktop.Helpers"
         Title="{Binding WindowTitle}" Height="760" Width="820"
         WindowStartupLocation="CenterOwner" Background="{StaticResource BgBrush}">
     <Grid Margin="16">
@@ -18,7 +19,7 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="Audit Number *" FontWeight="Bold"/>
-                        <TextBox Text="{Binding Record.AuditNumber}" Margin="0,4,0,10"/>
+                        <TextBox Text="{Binding Record.AuditNumber}" IsReadOnly="True" helpers:ClipboardHelper.ClickToCopy="True" Margin="0,4,0,10"/>
                         <TextBlock Text="Audit Date *" FontWeight="Bold"/>
                         <DatePicker SelectedDate="{Binding Record.AuditDate}" Margin="0,4,0,10"/>
                         <TextBlock Text="Audit Type *" FontWeight="Bold"/>

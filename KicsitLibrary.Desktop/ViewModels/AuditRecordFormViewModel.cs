@@ -34,6 +34,20 @@ public partial class AuditRecordFormViewModel(
             Record = await service.GetAuditRecordDetailsAsync(auditRecordId.Value);
             WindowTitle = $"Edit Audit Record: {Record.AuditNumber}";
         }
+        else
+        {
+            var records = await service.GetAuditRecordsAsync(new AuditRecordFilter { Limit = 2000 });
+            var maxVal = 0;
+            foreach (var r in records)
+            {
+                if (int.TryParse(r.AuditNumber, out var val) && val > maxVal)
+                {
+                    maxVal = val;
+                }
+            }
+            Record.AuditNumber = (maxVal + 1).ToString();
+            WindowTitle = "Add Audit Record";
+        }
     }
 
     [RelayCommand]

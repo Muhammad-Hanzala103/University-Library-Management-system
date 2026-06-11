@@ -80,7 +80,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                         ClearanceDisplay = student.ClearanceStatus.ToString();
                         Email = student.Email;
                         Phone = student.Phone;
-                        Cnic = student.CNIC ?? "N/A";
+                        Cnic = string.IsNullOrWhiteSpace(student.CNIC) ? "N/A" : KicsitLibrary.Core.Helpers.LibraryValidator.FormatCnic(student.CNIC);
                         Address = student.Address;
                         PhotoPath = student.PhotoPath ?? string.Empty;
                         StatusDisplay = student.ActiveStatus ? "Active" : "Inactive";
@@ -102,7 +102,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                         ClearanceDisplay = fs.ActiveStatus ? "Cleared" : "Suspended";
                         Email = fs.Email;
                         Phone = fs.Phone;
-                        Cnic = fs.CNIC ?? "N/A";
+                        Cnic = string.IsNullOrWhiteSpace(fs.CNIC) ? "N/A" : KicsitLibrary.Core.Helpers.LibraryValidator.FormatCnic(fs.CNIC);
                         Address = fs.Address;
                         StatusDisplay = fs.ActiveStatus ? "Active" : "Inactive";
 

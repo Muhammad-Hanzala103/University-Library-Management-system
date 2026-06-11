@@ -17,6 +17,9 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private ObservableCollection<VisitRecord> _visitRecords = new();
 
+        [ObservableProperty]
+        private ObservableCollection<VisitorFeedback> _feedbacks = new();
+
         // Search Filter Properties
         [ObservableProperty]
         private string _searchOrganization = string.Empty;
@@ -59,10 +62,17 @@ namespace KicsitLibrary.Desktop.ViewModels
                 {
                     VisitRecords.Add(rec);
                 }
+
+                var feedbacksList = await _consumerService.GetAllVisitorFeedbacksAsync();
+                Feedbacks.Clear();
+                foreach (var fb in feedbacksList)
+                {
+                    Feedbacks.Add(fb);
+                }
             }
             catch (Exception ex)
             {
-                ErrorMessage = $"Failed to load visit records: {ex.Message}";
+                ErrorMessage = $"Failed to load visit/feedback records: {ex.Message}";
             }
             finally
             {
@@ -98,6 +108,30 @@ namespace KicsitLibrary.Desktop.ViewModels
 
             var vm = new VisitRecordFormViewModel(_consumerService, _authService, record);
             var window = new Views.VisitRecordWindow(vm);
+            if (window.ShowDialog() == true)
+            {
+                _ = SearchAsync();
+            }
+        }
+
+        [RelayCommand]
+        private void AddFeedback()
+        {
+            var vm = new VisitorFeedbackFormViewModel(_consumerService, _authService, null);
+            var window = new Views.VisitorFeedbackWindow(vm);
+            if (window.ShowDialog() == true)
+            {
+                _ = SearchAsync();
+            }
+        }
+
+        [RelayCommand]
+        private void EditFeedback(VisitorFeedback? record)
+        {
+            if (record == null) return;
+
+            var vm = new VisitorFeedbackFormViewModel(_consumerService, _authService, record);
+            var window = new Views.VisitorFeedbackWindow(vm);
             if (window.ShowDialog() == true)
             {
                 _ = SearchAsync();

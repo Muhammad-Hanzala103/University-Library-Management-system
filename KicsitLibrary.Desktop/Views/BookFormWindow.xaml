@@ -41,6 +41,10 @@
                     <TextBlock Text="Material Title *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                     <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
 
+                    <!-- Material Type -->
+                    <TextBlock Text="Material Type *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                    <ComboBox Height="36" Margin="0,0,0,12" ItemsSource="{Binding MaterialTypes}" SelectedItem="{Binding SelectedMaterialType}"/>
+
                     <!-- Subtitle -->
                     <TextBlock Text="Subtitle" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                     <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SubTitle, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>

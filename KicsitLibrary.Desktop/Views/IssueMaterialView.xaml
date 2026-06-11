@@ -41,7 +41,28 @@
 
                     <!-- Member Identifier -->
                     <TextBlock Text="Member Registration / Personnel ID *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding MemberIdentifier, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                    <Grid>
+                        <TextBox x:Name="MemberIdentifierTextBox" Style="{StaticResource StyledTextBox}" Text="{Binding MemberIdentifier, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                        <Popup IsOpen="{Binding ShowSuggestions}" PlacementTarget="{Binding ElementName=MemberIdentifierTextBox}" Placement="Bottom" StaysOpen="False" Width="{Binding ElementName=MemberIdentifierTextBox, Path=ActualWidth}">
+                            <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="{StaticResource CardBgBrush}" MaxHeight="200" CornerRadius="4">
+                                <ListBox ItemsSource="{Binding StudentSuggestions}" SelectedItem="{Binding SelectedStudentSuggestion}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="5">
+                                                <TextBlock Text="{Binding RegistrationNumber}" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Name}" FontSize="11"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Program}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                    <TextBlock Text=" - " FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                    <TextBlock Text="{Binding Department}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
+                        </Popup>
+                    </Grid>
 
                     <!-- Book Accession Number -->
                     <TextBlock Text="Book Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,4"/>
