@@ -279,13 +279,14 @@
     </Style>
 
     <!-- Styled DataGrid -->
-    <Style TargetType="DataGrid">
+    <Style x:Key="StyledDataGrid" TargetType="DataGrid">
         <Setter Property="Background" Value="{StaticResource CardBgBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="RowBackground" Value="#FFFFFF" />
-        <Setter Property="AlternatingRowBackground" Value="{StaticResource BgBrush}" />
-        <Setter Property="GridLinesVisibility" Value="None" />
+        <Setter Property="AlternatingRowBackground" Value="#F8FAFC" />
+        <Setter Property="GridLinesVisibility" Value="Horizontal" />
+        <Setter Property="HorizontalGridLinesBrush" Value="#E2E8F0" />
         <Setter Property="HeadersVisibility" Value="Column" />
         <Setter Property="AutoGenerateColumns" Value="False" />
         <Setter Property="CanUserAddRows" Value="False" />
@@ -296,16 +297,19 @@
         <Setter Property="SelectionUnit" Value="FullRow" />
     </Style>
 
+    <Style TargetType="DataGrid" BasedOn="{StaticResource StyledDataGrid}"/>
+
     <Style TargetType="DataGridColumnHeader">
-        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextLightBrush}" />
-        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="Background" Value="#E2E8F0" />
+        <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}" />
+        <Setter Property="Padding" Value="12,12" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="BorderBrush" Value="#CBD5E1" />
     </Style>
 
     <Style TargetType="DataGridCell">
-        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Padding" Value="12,10" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
@@ -318,19 +322,68 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="#E5E7EB" />
-                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}" />
+                <Setter Property="Background" Value="#EFF6FF" />
+                <Setter Property="Foreground" Value="#1E40AF" />
             </Trigger>
         </Style.Triggers>
     </Style>
 
     <Style TargetType="DataGridRow">
         <Setter Property="Background" Value="#FFFFFF" />
-        <Setter Property="Margin" Value="0,0,0,2" />
+        <Setter Property="Margin" Value="0,0,0,1" />
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="#E5E7EB" />
+                <Setter Property="Background" Value="#EFF6FF" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#F1F5F9" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- Category ListBox Style -->
+    <Style x:Key="CategoryListBox" TargetType="ListBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="10,8"/>
+                    <Setter Property="Margin" Value="0,2,0,2"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border x:Name="Border" 
+                                        Background="{TemplateBinding Background}" 
+                                        BorderThickness="3,0,0,0"
+                                        BorderBrush="Transparent"
+                                        Padding="{TemplateBinding Padding}"
+                                        CornerRadius="0,4,4,0">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="#E2E8F0" />
+                                        <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="#EFF6FF" />
+                                        <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                        <Setter Property="Foreground" Value="#1E40AF" />
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>

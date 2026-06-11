@@ -233,6 +233,8 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<SettingsManagementView>();
                     services.AddTransient<SettingsEditWindow>();
                     services.AddTransient<SettingsDetailsWindow>();
+                    services.AddTransient<ChangePasswordViewModel>();
+                    services.AddTransient<ChangePasswordWindow>();
                 })
                 .Build();
         }

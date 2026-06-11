@@ -5,45 +5,66 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KicsitLibrary.Desktop"
         mc:Ignorable="d"
-        Title="Login - Ilm-o-Kutub System" Height="500" Width="420"
+        Title="Login - Ilm-o-Kutub System" Height="530" Width="420"
         WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
     
-    <Border Background="{StaticResource BgBrush}" CornerRadius="12" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+    <Border Background="{StaticResource BgBrush}" CornerRadius="16" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
         <Border.Effect>
-            <DropShadowEffect Color="#000000" Opacity="0.15" BlurRadius="20" ShadowDepth="4" Direction="270" />
+            <DropShadowEffect Color="#000000" Opacity="0.2" BlurRadius="25" ShadowDepth="5" Direction="270" />
         </Border.Effect>
         
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="180"/> <!-- Dark Premium Header -->
+                <RowDefinition Height="*"/>    <!-- Light Form Panel -->
             </Grid.RowDefinitions>
 
-            <!-- Close Titlebar area -->
-            <Grid Grid.Row="0" Margin="15,15,15,0">
-                <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Center" 
-                        Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextMutedBrush}" 
-                        FontSize="16" Cursor="Hand" Click="CloseButton_Click">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}"/>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </Grid>
+            <!-- Header Panel with Gradient -->
+            <Border Grid.Row="0" CornerRadius="15,15,0,0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#2E3E56" Offset="0.0"/>
+                        <GradientStop Color="#141D2A" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                
+                <Grid>
+                    <!-- Close button in header -->
+                    <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16"
+                            Background="Transparent" BorderThickness="0" Foreground="#A0AEC0" 
+                            FontSize="18" FontWeight="Bold" Cursor="Hand" Click="CloseButton_Click" ToolTip="Close application">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}" Opacity="0.8"/>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
 
-            <!-- Header Branding -->
-            <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,15,0,10">
-                <Border Width="64" Height="64" CornerRadius="32" Background="{StaticResource PrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,12">
-                    <TextBlock Text="📚" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <TextBlock Text="Ilm-o-Kutub System" Foreground="{StaticResource PrimaryBrush}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
-                <TextBlock Text="Dr A Q Khan Institute of Computer Sciences &amp; IT" Foreground="{StaticResource TextMutedBrush}" FontSize="11" Margin="0,3,0,0" HorizontalAlignment="Center"/>
-            </StackPanel>
+                    <!-- Header Branding -->
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0">
+                        <Border Width="64" Height="64" CornerRadius="32" Background="White" HorizontalAlignment="Center" Margin="0,0,0,10">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" Opacity="0.25" BlurRadius="10" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <TextBlock Text="📚" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+                        </Border>
+                        <TextBlock Text="Ilm-o-Kutub System" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Dr A Q Khan Institute of Computer Sciences &amp; IT" Foreground="#93C5FD" FontSize="11" Margin="0,3,0,0" HorizontalAlignment="Center" Opacity="0.9"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
 
-            <!-- Form Area -->
-            <StackPanel Grid.Row="2" Margin="35,15,35,35" VerticalAlignment="Top">
+            <!-- Form Area (Light Context) -->
+            <StackPanel Grid.Row="1" Margin="35,25,35,25" VerticalAlignment="Top">
                 <!-- Username -->
                 <TextBlock Text="Username" Foreground="{StaticResource TextDarkBrush}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
                 <TextBox x:Name="UsernameInput" Style="{StaticResource StyledTextBox}" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,16"/>
@@ -56,13 +77,14 @@
                             <Border Name="Border" 
                                     Background="White" 
                                     BorderBrush="{StaticResource BorderBrush}" 
-                                    BorderThickness="1.5" 
-                                    CornerRadius="5">
+                                    BorderThickness="1" 
+                                    CornerRadius="4">
                                 <ScrollViewer x:Name="PART_ContentHost" />
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsFocused" Value="True">
                                     <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                    <Setter TargetName="Border" Property="BorderThickness" Value="1.5"/>
                                 </Trigger>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource AccentHoverBrush}" />
@@ -74,15 +96,22 @@
 
                 <!-- Error Message -->
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" FontWeight="SemiBold" 
-                           HorizontalAlignment="Center" Margin="0,0,0,16" TextWrapping="Wrap" Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}"/>
+                           HorizontalAlignment="Center" Margin="0,0,0,12" TextWrapping="Wrap" Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}"/>
 
                 <!-- Login Button -->
-                <Button Style="{StaticResource PrimaryButton}" Content="Sign In" Height="40" FontSize="14"
+                <Button Style="{StaticResource PrimaryButton}" Content="Sign In" Height="42" FontSize="14"
                         ToolTip="Sign in with an authorized library account."
-                        Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordInput}" Margin="0,0,0,15"/>
+                        Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordInput}" Margin="0,0,0,15">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="{StaticResource AccentColor}" Offset="0.0"/>
+                            <GradientStop Color="#1D4ED8" Offset="1.0"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
 
                 <!-- Loading State overlay -->
-                <ProgressBar Height="4" IsIndeterminate="True" 
+                <ProgressBar Height="4" IsIndeterminate="True" Background="Transparent" Foreground="{StaticResource AccentBrush}"
                              Visibility="{Binding IsBusy, Converter={local:BooleanToVisibilityConverter}}" Margin="0,5,0,0"/>
             </StackPanel>
         </Grid>

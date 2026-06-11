@@ -51,8 +51,25 @@
                                                 <Button Command="{Binding DataContext.SelectReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                         ToolTip="Select this report and load its available filters."
                                                         CommandParameter="{Binding}"
-                                                        Style="{StaticResource SecondaryButton}"
                                                         Width="175" Height="72" Margin="0,0,10,8" Padding="8">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Value="True">
+                                                                    <DataTrigger.Binding>
+                                                                        <MultiBinding Converter="{local:ObjectEqualityConverter}">
+                                                                            <Binding Path="." />
+                                                                            <Binding Path="DataContext.SelectedReport" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                                                        </MultiBinding>
+                                                                    </DataTrigger.Binding>
+                                                                    <Setter Property="Background" Value="#EFF6FF" />
+                                                                    <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                                    <Setter Property="BorderThickness" Value="1.5" />
+                                                                    <Setter Property="Foreground" Value="#1E40AF" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
                                                     <StackPanel>
                                                         <TextBlock Text="{Binding Title}" FontWeight="Bold"
                                                                    TextWrapping="Wrap" TextAlignment="Center"/>
@@ -135,23 +152,104 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <WrapPanel Margin="0,5,0,0">
-                    <Button Content="Export CSV" Style="{StaticResource SecondaryButton}"
+                <WrapPanel Margin="0,12,0,0">
+                    <Button Style="{StaticResource SecondaryButton}"
                             ToolTip="Export the current report rows as a CSV file."
-                            Command="{Binding ExportCsvCommand}" Margin="0,0,8,0"/>
-                    <Button Content="Export Excel" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ExportCsvCommand}" Margin="0,0,8,0" Padding="12,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📄" Margin="0,0,6,0"/>
+                            <TextBlock Text="Export CSV" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SecondaryButton}"
                             ToolTip="Generate a formatted Excel workbook for the current report."
-                            Command="{Binding ExportExcelCommand}" Margin="0,0,8,0"/>
-                    <Button Content="Export PDF" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ExportExcelCommand}" Margin="0,0,8,0" Padding="12,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📈" Margin="0,0,6,0"/>
+                            <TextBlock Text="Export Excel" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SecondaryButton}"
                             ToolTip="Generate a PDF file for the current report."
-                            Command="{Binding ExportPdfCommand}"/>
+                            Command="{Binding ExportPdfCommand}" Padding="12,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📕" Margin="0,0,6,0"/>
+                            <TextBlock Text="Export PDF" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
                 </WrapPanel>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="3" Style="{StaticResource CardStyle}" Padding="12">
-            <views:ReportPreviewView DataContext="{Binding Preview}"/>
-        </Border>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="12" Margin="0,0,12,0">
+                <views:ReportPreviewView DataContext="{Binding Preview}"/>
+            </Border>
+            
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                        <TextBlock Text="REPORT VISUALIZATION" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" FontSize="12"/>
+                        <TextBlock Text="Summary metrics visual distribution" FontSize="10" Foreground="{StaticResource TextMutedBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    
+                    <Grid Grid.Row="1">
+                        <!-- Placeholder when no report is loaded or empty -->
+                        <TextBlock Text="No preview data available to chart." 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextMutedBrush}" FontSize="11"
+                                   Visibility="{Binding Preview.IsEmpty, Converter={local:BooleanToVisibilityConverter}}"/>
+                                   
+                        <!-- Chart content when loaded -->
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                      Visibility="{Binding Preview.IsEmpty, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}">
+                            <ItemsControl ItemsSource="{Binding Preview.SummaryItems}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,14">
+                                            <DockPanel LastChildFill="False">
+                                                <TextBlock DockPanel.Dock="Left" Text="{Binding Key}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextDarkBrush}"/>
+                                                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentBrush}"/>
+                                            </DockPanel>
+                                            
+                                            <!-- Lightweight visual bar representing the metric -->
+                                            <Grid Margin="0,4,0,0" Height="8">
+                                                <Border Background="#F1F5F9" CornerRadius="4"/>
+                                                <ProgressBar Value="{Binding Value, Converter={local:SummaryValueConverter}}" 
+                                                             Maximum="100" 
+                                                             Height="8"
+                                                             BorderThickness="0"
+                                                             Background="Transparent"
+                                                             Foreground="{StaticResource AccentBrush}">
+                                                    <ProgressBar.Template>
+                                                        <ControlTemplate TargetType="ProgressBar">
+                                                            <Grid>
+                                                                <Border x:Name="PART_Track" Background="Transparent" CornerRadius="4"/>
+                                                                <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="4" HorizontalAlignment="Left"/>
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </ProgressBar.Template>
+                                                </ProgressBar>
+                                            </Grid>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
 
         <StackPanel Grid.Row="4" Margin="0,10,0,0">
             <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource SuccessBrush}"

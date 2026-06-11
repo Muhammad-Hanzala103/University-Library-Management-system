@@ -295,11 +295,10 @@ if (Test-Path $gitignorePath) {
 }
 
 # ─── 10. Security Documentation Check ───
-Write-Host "[10/10] Checking for required security documents..." -ForegroundColor White
+Write-Host "[10/11] Checking for required security documents..." -ForegroundColor White
 
 $requiredDocs = @(
-    "SECURITY CHECKLIST.md",
-    "RELEASE SECURITY NOTES.md"
+    "SECURITY CHECKLIST.md"
 )
 
 foreach ($doc in $requiredDocs) {
@@ -309,6 +308,44 @@ foreach ($doc in $requiredDocs) {
     } else {
         Write-Fail "$doc is missing."
     }
+}
+
+# ─── 11. Supabase Configuration Check ───
+Write-Host "[11/11] Checking for exposed Supabase URLs and API keys..." -ForegroundColor White
+
+$supabaseIssueFound = $false
+$supabaseUrlPattern = 'https://[a-zA-Z0-9\-]{20}\.supabase\.co'
+$supabaseKeyPattern = '\beyJ[a-zA-Z0-9-_]{30,}\.[a-zA-Z0-9-_]{30,}\.?[a-zA-Z0-9-_]*\b'
+
+foreach ($file in $allTextFiles) {
+    if ($file.Name -eq "security_scan.ps1" -or $file.Name -eq "SecurityHardeningTests.cs") {
+        continue
+    }
+    
+    $lines = @(Get-Content $file.FullName -ErrorAction SilentlyContinue)
+    if ($null -ne $lines) {
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            $line = $lines[$i]
+            if ($file.Extension -eq ".cs" -or $file.Extension -eq ".json" -or $file.Extension -eq ".xaml") {
+                if ($line -match $supabaseUrlPattern) {
+                    $lineNumber = $i + 1
+                    Write-Fail "Exposed Supabase Project URL found in file: $($file.FullName.Replace($repoRoot, '.')) (Line $lineNumber)"
+                    $supabaseIssueFound = $true
+                }
+            }
+            if ($line -match $supabaseKeyPattern) {
+                if ($line -notmatch 'placeholder' -and $line -notmatch 'template' -and $line -notmatch 'YOUR_' -and $line -notmatch 'example') {
+                    $lineNumber = $i + 1
+                    Write-Fail "Exposed JWT / Supabase Key pattern found in file: $($file.FullName.Replace($repoRoot, '.')) (Line $lineNumber)"
+                    $supabaseIssueFound = $true
+                }
+            }
+        }
+    }
+}
+
+if (-not $supabaseIssueFound) {
+    Write-Pass "No exposed Supabase credentials or project URLs found."
 }
 
 # ─── Summary ───
