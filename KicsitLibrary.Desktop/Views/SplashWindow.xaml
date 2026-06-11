@@ -8,13 +8,29 @@
         Background="Transparent"
         Title="Ilm o Kutub System"
         Height="420" Width="720">
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="MainContainer"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.8"
+                                     DecelerationRatio="0.8"/>
+                    <ThicknessAnimation Storyboard.TargetName="MainContainer"
+                                        Storyboard.TargetProperty="Margin"
+                                        From="0,20,0,0" To="0,0,0,0" Duration="0:0:0.8"
+                                        DecelerationRatio="0.8"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
     <Grid>
         <!-- Background Shadow and Main Border -->
         <Border CornerRadius="8" Background="#1F2937" BorderThickness="1.5" BorderBrush="#374151">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.55" ShadowDepth="3"/>
             </Border.Effect>
-            <Grid Margin="24">
+            <Grid x:Name="MainContainer" Margin="24">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -64,12 +80,7 @@
 
                 <!-- Footer Team info -->
                 <Grid Grid.Row="3" Margin="10,0,10,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Developed for Advanced Visual Programming Lab" Foreground="#6B7280" FontSize="11" FontFamily="Segoe UI" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                    <TextBlock Text="Muhammad Hanzala, Muhammad Umar, Muhammad Umair" Grid.Column="1" Foreground="#6B7280" FontSize="11" FontFamily="Segoe UI" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Text="Developed for Advanced Visual Programming Lab" Foreground="#6B7280" FontSize="11" FontFamily="Segoe UI" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
             </Grid>
         </Border>

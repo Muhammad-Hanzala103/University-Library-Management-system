@@ -22,6 +22,12 @@ namespace KicsitLibrary.Desktop.ViewModels
         private string _title = "Dashboard";
 
         [ObservableProperty]
+        private bool _isSidebarExpanded = true;
+
+        [RelayCommand]
+        private void ToggleSidebar() => IsSidebarExpanded = !IsSidebarExpanded;
+
+        [ObservableProperty]
         private string _currentUserName = "Administrator";
 
         [ObservableProperty]

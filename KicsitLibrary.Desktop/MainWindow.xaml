@@ -78,7 +78,18 @@
     
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="260"/>
+            <ColumnDefinition>
+                <ColumnDefinition.Style>
+                    <Style TargetType="ColumnDefinition">
+                        <Setter Property="Width" Value="260"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSidebarExpanded}" Value="False">
+                                <Setter Property="Width" Value="60"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ColumnDefinition.Style>
+            </ColumnDefinition>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -91,114 +102,179 @@
             </Grid.RowDefinitions>
 
             <!-- Product header -->
-            <StackPanel Grid.Row="0" VerticalAlignment="Center" Margin="20,0">
-                <TextBlock Text="Ilm-o-Kutub" Foreground="{StaticResource TextLightBrush}" FontSize="18" FontWeight="Bold" FontFamily="Segoe UI"/>
-                <TextBlock Text="System" Foreground="#D1D5DB" FontSize="11" Margin="0,2,0,0"/>
-            </StackPanel>
+            <DockPanel Grid.Row="0" Margin="10,0">
+                <Button DockPanel.Dock="Left" Command="{Binding ToggleSidebarCommand}" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextLightBrush}" FontSize="18" Padding="5" VerticalAlignment="Center">
+                    <TextBlock Text="☰" />
+                </Button>
+                <StackPanel VerticalAlignment="Center" Margin="10,0" Visibility="{Binding IsSidebarExpanded, Converter={local:BooleanToVisibilityConverter}}">
+                    <TextBlock Text="Ilm-o-Kutub" Foreground="{StaticResource TextLightBrush}" FontSize="18" FontWeight="Bold" FontFamily="Segoe UI"/>
+                    <TextBlock Text="System" Foreground="#D1D5DB" FontSize="11" Margin="0,2,0,0"/>
+                </StackPanel>
+            </DockPanel>
 
             <!-- Navigation Items -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10">
                 <StackPanel>
-                    <Button Style="{StaticResource SidebarButton}" Content="Dashboard" 
-                            Command="{Binding NavigateToDashboardCommand}" 
-                            ToolTip="Shows overall library statistics and quick actions."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Dashboard}"/>
+                    <StackPanel.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                        <Style TargetType="TextBlock" x:Key="IconStyle">
+                            <Setter Property="FontSize" Value="16" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="Width" Value="40" />
+                            <Setter Property="Height" Value="40" />
+                            <Setter Property="Padding" Value="0,10,0,0" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Command="{Binding NavigateToDashboardCommand}" ToolTip="Dashboard" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Dashboard}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📊" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Dashboard" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Book Catalog" 
-                            Command="{Binding NavigateToCatalogCommand}"
-                            ToolTip="Manage titles, authors, publishers, copies, and accession numbers."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Book Catalog}"/>
+                    <Button Command="{Binding NavigateToCatalogCommand}" ToolTip="Book Catalog" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Book Catalog}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📚" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Book Catalog" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Issue Material" 
-                            Command="{Binding NavigateToIssueCommand}"
-                            ToolTip="Issue available books to eligible students or faculty."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Issue Material}"/>
+                    <Button Command="{Binding NavigateToIssueCommand}" ToolTip="Issue Material" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Issue Material}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📤" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Issue Material" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Receive Material" 
-                            Command="{Binding NavigateToReceiveCommand}"
-                            ToolTip="Receive returned books and calculate overdue fines."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Receive Material}"/>
+                    <Button Command="{Binding NavigateToReceiveCommand}" ToolTip="Receive Material" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Receive Material}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📥" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Receive Material" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Fines" 
-                            Command="{Binding NavigateToFinesCommand}"
-                            ToolTip="Review, collect, waive, and track library fines."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Fines}"/>
+                    <Button Command="{Binding NavigateToFinesCommand}" ToolTip="Fines" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Fines}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="💰" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Fines" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
 
-                    <Button Style="{StaticResource SidebarButton}" Content="Reservations"
-                            Command="{Binding NavigateToReservationsCommand}"
-                            ToolTip="Manage reservation requests and title queues."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reservations}"/>
+                    <Button Command="{Binding NavigateToReservationsCommand}" ToolTip="Reservations" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reservations}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🕒" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Reservations" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Overdue Reminders" 
-                            Command="{Binding NavigateToOverdueCommand}"
-                            ToolTip="Review overdue loans and prepare reminder records."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Overdue Reminders}"/>
+                    <Button Command="{Binding NavigateToOverdueCommand}" ToolTip="Overdue Reminders" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Overdue Reminders}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⚠️" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Overdue Reminders" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
 
-                    <Button Style="{StaticResource SidebarButton}" Content="Notifications"
-                            Command="{Binding NavigateToNotificationsCommand}"
-                            ToolTip="Review notification history and manually deliver pending emails."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Notifications}"/>
+                    <Button Command="{Binding NavigateToNotificationsCommand}" ToolTip="Notifications" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Notifications}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🔔" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Notifications" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Students" 
-                            Command="{Binding NavigateToStudentsCommand}"
-                            ToolTip="Register students and maintain their library accounts."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Students}"/>
+                    <Button Command="{Binding NavigateToStudentsCommand}" ToolTip="Students" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Students}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🎓" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Students" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Faculty and Staff" 
-                            Command="{Binding NavigateToFacultyCommand}"
-                            ToolTip="Register faculty and staff and maintain borrowing profiles."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Faculty and Staff}"/>
+                    <Button Command="{Binding NavigateToFacultyCommand}" ToolTip="Faculty and Staff" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Faculty and Staff}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="👨‍🏫" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Faculty and Staff" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Visits" 
-                            Command="{Binding NavigateToVisitsCommand}"
-                            ToolTip="Record accreditation, inspection, and official library visits."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Visits}"/>
+                    <Button Command="{Binding NavigateToVisitsCommand}" ToolTip="Visits" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Visits}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🏢" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Visits" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Audit Records" 
-                            Command="{Binding NavigateToAuditCommand}"
-                            ToolTip="Manage formal audit records, findings, and follow-up status."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Audit Records}"/>
+                    <Button Command="{Binding NavigateToAuditCommand}" ToolTip="Audit Records" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Audit Records}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📝" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Audit Records" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
 
-                    <Button Style="{StaticResource SidebarButton}" Content="Activity Logs"
-                            Command="{Binding NavigateToActivityLogsCommand}"
-                            ToolTip="Review recorded user and system activity."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Activity Logs}"/>
+                    <Button Command="{Binding NavigateToActivityLogsCommand}" ToolTip="Activity Logs" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Activity Logs}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📋" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Activity Logs" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Inventory" 
-                            Command="{Binding NavigateToInventoryCommand}"
-                            ToolTip="Track library assets, quantities, condition, and location."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Inventory}"/>
-                    <Button Style="{StaticResource SidebarButton}" Content="Stock Verification"
-                            Command="{Binding NavigateToStockVerificationCommand}"
-                            ToolTip="Run and reconcile physical book stock verification sessions."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Stock Verification}"/>
-                    <Button Style="{StaticResource SidebarButton}" Content="Backup"
-                            Command="{Binding NavigateToBackupsCommand}"
-                            ToolTip="Create verified local database backups."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Backup}"/>
-                    <Button Style="{StaticResource SidebarButton}" Content="Restore"
-                            Command="{Binding NavigateToRestoresCommand}"
-                            ToolTip="Validate and stage a safe database restore."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Restore}"/>
-                    <Button Style="{StaticResource SidebarButton}" Content="Documents"
-                            Command="{Binding NavigateToDocumentsCommand}"
-                            ToolTip="Upload, verify, and manage administrative library documents."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Documents}"/>
-                    
-                    <Button Style="{StaticResource SidebarButton}" Content="Reports" 
-                            Command="{Binding NavigateToReportsCommand}"
-                            ToolTip="Preview and export operational library reports."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reports}"/>
+                    <Button Command="{Binding NavigateToInventoryCommand}" ToolTip="Inventory" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Inventory}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📦" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Inventory" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
 
-                    <Button Style="{StaticResource SidebarButton}" Content="Library Clearance"
-                            Command="{Binding NavigateToClearanceCommand}"
-                            ToolTip="Check dues and issue verified library clearance certificates."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Library Clearance}"/>
+                    <Button Command="{Binding NavigateToStockVerificationCommand}" ToolTip="Stock Verification" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Stock Verification}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✔️" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Stock Verification" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding NavigateToBackupsCommand}" ToolTip="Backup" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Backup}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="💾" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Backup" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding NavigateToRestoresCommand}" ToolTip="Restore" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Restore}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🔄" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Restore" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding NavigateToDocumentsCommand}" ToolTip="Documents" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Documents}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📄" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Documents" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Style="{StaticResource SidebarButton}" Content="Settings" 
-                            Command="{Binding NavigateToSettingsCommand}"
-                            ToolTip="Open available application configuration options."
-                            Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Settings}"/>
+                    <Button Command="{Binding NavigateToReportsCommand}" ToolTip="Reports" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reports}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📈" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Reports" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding NavigateToClearanceCommand}" ToolTip="Library Clearance" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Library Clearance}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✅" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Library Clearance" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button Command="{Binding NavigateToSettingsCommand}" ToolTip="Settings" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Settings}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⚙️" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Settings" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </ScrollViewer>
 
@@ -217,7 +293,7 @@
                         <TextBlock Text="A" Foreground="White" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="{Binding IsSidebarExpanded, Converter={local:BooleanToVisibilityConverter}}">
                         <TextBlock Text="{Binding CurrentUserName}" Foreground="{StaticResource TextLightBrush}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                         <TextBlock Text="{Binding CurrentUserRole}" Foreground="{StaticResource TextMutedBrush}" FontSize="10" Margin="0,1,0,0"/>
                     </StackPanel>

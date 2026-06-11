@@ -3,7 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:KicsitLibrary.Desktop"
              Background="Transparent">
-    <Grid>
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="UserControl.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="MainGrid"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.4"
+                                     DecelerationRatio="0.8"/>
+                    <ThicknessAnimation Storyboard.TargetName="MainGrid"
+                                        Storyboard.TargetProperty="Margin"
+                                        From="0,15,0,0" To="0,0,0,0" Duration="0:0:0.4"
+                                        DecelerationRatio="0.8"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
