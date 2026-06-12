@@ -43,12 +43,12 @@ namespace KicsitLibrary.Desktop.Helpers
             {
                 if ((bool)passwordBox.GetValue(BindPasswordProperty))
                 {
-                    passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
                     if (!(bool)passwordBox.GetValue(UpdatingPasswordProperty))
                     {
+                        passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
                         passwordBox.Password = (string)e.NewValue ?? string.Empty;
+                        passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
                     }
-                    passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
                 }
             }
         }

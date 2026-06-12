@@ -26,7 +26,12 @@
             </StackPanel>
             
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Register Personnel" Style="{StaticResource PrimaryButton}" Command="{Binding AddFacultyCommand}" Padding="15,6"/>
+                <Button Style="{StaticResource PrimaryButton}" Command="{Binding AddFacultyCommand}" Padding="15,6">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE109;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Register Personnel" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 

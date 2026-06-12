@@ -155,7 +155,7 @@
                         </Button>
                         <Button Style="{StaticResource WarningButton}"
                                 ToolTip="Reset selected setting to default value"
-                                Command="{Binding ResetSelectedAsyncCommand}"
+                                Command="{Binding ResetSelectedCommand}"
                                 IsEnabled="{Binding CanEditSettings}"
                                 Margin="0,0,8,0" Padding="12,8">
                             <StackPanel Orientation="Horizontal">

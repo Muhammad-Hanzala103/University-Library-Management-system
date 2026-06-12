@@ -29,7 +29,12 @@
                 <Button Content="Manage Authors" Style="{StaticResource SecondaryButton}" Click="ManageAuthors_Click" Margin="0,0,8,0" Padding="12,6"/>
                 <Button Content="Manage Publishers" Style="{StaticResource SecondaryButton}" Click="ManagePublishers_Click" Margin="0,0,8,0" Padding="12,6"/>
                 <Button Content="Manage Departments" Style="{StaticResource SecondaryButton}" Click="ManageDepartments_Click" Margin="0,0,8,0" Padding="12,6"/>
-                <Button Content="Add New Book" Style="{StaticResource PrimaryButton}" Command="{Binding AddBookCommand}" Padding="15,6"/>
+                <Button Style="{StaticResource PrimaryButton}" Command="{Binding AddBookCommand}" Padding="15,6">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE109;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Add New Book" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 

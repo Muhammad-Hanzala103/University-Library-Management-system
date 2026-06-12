@@ -121,6 +121,7 @@
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
                         <Style TargetType="TextBlock" x:Key="IconStyle">
+                            <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets" />
                             <Setter Property="FontSize" Value="16" />
                             <Setter Property="VerticalAlignment" Value="Center" />
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -128,150 +129,152 @@
                             <Setter Property="Height" Value="40" />
                             <Setter Property="Padding" Value="0,10,0,0" />
                         </Style>
+                        <Style TargetType="TextBlock" x:Key="MenuHeaderStyle">
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="FontSize" Value="10" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter Property="Margin" Value="15,15,0,5" />
+                            <Setter Property="Visibility" Value="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}" />
+                        </Style>
                     </StackPanel.Resources>
+
+                    <!-- Core -->
+                    <TextBlock Text="CORE" Style="{StaticResource MenuHeaderStyle}" />
                     <Button Command="{Binding NavigateToDashboardCommand}" ToolTip="Dashboard" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Dashboard}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📊" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE909;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Dashboard" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
                     <Button Command="{Binding NavigateToCatalogCommand}" ToolTip="Book Catalog" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Book Catalog}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📚" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE82D;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Book Catalog" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
+
+                    <!-- Circulation -->
+                    <TextBlock Text="CIRCULATION" Style="{StaticResource MenuHeaderStyle}" />
                     <Button Command="{Binding NavigateToIssueCommand}" ToolTip="Issue Material" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Issue Material}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📤" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE898;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Issue Material" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
                     <Button Command="{Binding NavigateToReceiveCommand}" ToolTip="Receive Material" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Receive Material}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📥" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE896;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Receive Material" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
-                    <Button Command="{Binding NavigateToFinesCommand}" ToolTip="Fines" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Fines}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="💰" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Fines" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-
                     <Button Command="{Binding NavigateToReservationsCommand}" ToolTip="Reservations" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reservations}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🕒" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE823;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Reservations" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
                     <Button Command="{Binding NavigateToOverdueCommand}" ToolTip="Overdue Reminders" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Overdue Reminders}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⚠️" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE814;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Overdue Reminders" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-
-                    <Button Command="{Binding NavigateToNotificationsCommand}" ToolTip="Notifications" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Notifications}">
+                    <Button Command="{Binding NavigateToFinesCommand}" ToolTip="Fines" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Fines}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🔔" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Notifications" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                            <TextBlock Text="&#xE8C7;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Fines" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
                     
+                    <!-- People -->
+                    <TextBlock Text="PEOPLE" Style="{StaticResource MenuHeaderStyle}" />
                     <Button Command="{Binding NavigateToStudentsCommand}" ToolTip="Students" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Students}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🎓" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE716;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Students" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
                     <Button Command="{Binding NavigateToFacultyCommand}" ToolTip="Faculty and Staff" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Faculty and Staff}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="👨‍🏫" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE77B;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Faculty and Staff" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
                     <Button Command="{Binding NavigateToVisitsCommand}" ToolTip="Visits" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Visits}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🏢" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE825;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Visits" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
-                    <Button Command="{Binding NavigateToAuditCommand}" ToolTip="Audit Records" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Audit Records}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📝" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Audit Records" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Command="{Binding NavigateToActivityLogsCommand}" ToolTip="Activity Logs" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Activity Logs}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📋" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Activity Logs" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-                    
-                    <Button Command="{Binding NavigateToInventoryCommand}" ToolTip="Inventory" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Inventory}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📦" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Inventory" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Command="{Binding NavigateToStockVerificationCommand}" ToolTip="Stock Verification" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Stock Verification}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="✔️" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Stock Verification" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Command="{Binding NavigateToBackupsCommand}" ToolTip="Backup" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Backup}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="💾" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Backup" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Command="{Binding NavigateToRestoresCommand}" ToolTip="Restore" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Restore}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🔄" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Restore" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Command="{Binding NavigateToDocumentsCommand}" ToolTip="Documents" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Documents}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📄" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Documents" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-                    
-                    <Button Command="{Binding NavigateToReportsCommand}" ToolTip="Reports" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reports}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📈" Style="{StaticResource IconStyle}" />
-                            <TextBlock Text="Reports" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </Button>
-
                     <Button Command="{Binding NavigateToClearanceCommand}" ToolTip="Library Clearance" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Library Clearance}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="✅" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE8FB;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Library Clearance" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
-                    
+
+                    <!-- Management -->
+                    <TextBlock Text="MANAGEMENT" Style="{StaticResource MenuHeaderStyle}" />
+                    <Button Command="{Binding NavigateToInventoryCommand}" ToolTip="Inventory" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Inventory}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE171;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Inventory" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToStockVerificationCommand}" ToolTip="Stock Verification" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Stock Verification}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE73E;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Stock Verification" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToReportsCommand}" ToolTip="Reports" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Reports}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE9D2;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Reports" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToNotificationsCommand}" ToolTip="Notifications" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Notifications}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xEA8F;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Notifications" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- System -->
+                    <TextBlock Text="SYSTEM" Style="{StaticResource MenuHeaderStyle}" />
+                    <Button Command="{Binding NavigateToActivityLogsCommand}" ToolTip="Activity Logs" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Activity Logs}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8FD;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Activity Logs" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToAuditCommand}" ToolTip="Audit Records" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Audit Records}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE9D9;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Audit Records" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToDocumentsCommand}" ToolTip="Documents" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Documents}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8A5;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Documents" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToBackupsCommand}" ToolTip="Backup" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Backup}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xEC3E;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Backup" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToRestoresCommand}" ToolTip="Restore" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Restore}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE777;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Restore" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
                     <Button Command="{Binding NavigateToSettingsCommand}" ToolTip="Settings" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter=Settings}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⚙️" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="&#xE713;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Settings" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
@@ -304,7 +307,7 @@
                             ToolTip="Change account password.">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <TextBlock Text="🔑" Foreground="{StaticResource TextMutedBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE8D7;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Foreground="{StaticResource TextMutedBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
@@ -315,7 +318,7 @@
                             ToolTip="Sign out and return to the login screen.">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <TextBlock Text="❌" Foreground="{StaticResource TextMutedBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE748;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Foreground="{StaticResource TextMutedBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
@@ -428,7 +431,7 @@
                         <Grid>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
                                 <Border Width="80" Height="80" CornerRadius="40" Background="{StaticResource BgBrush}" Margin="0,0,0,15">
-                                    <TextBlock Text="📚" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="&#xE82D;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
                                 </Border>
                                 <TextBlock Text="Ilm-o-Kutub System" Style="{StaticResource TitleTextStyle}" FontSize="22" HorizontalAlignment="Center"/>
                                 <TextBlock Text="Select a module from the sidebar to manage daily library operations." 

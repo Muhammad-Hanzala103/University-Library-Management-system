@@ -141,22 +141,22 @@
                                 <StackPanel Orientation="Horizontal"
                                             Visibility="{Binding IsDateRange, Converter={local:BooleanToVisibilityConverter}}">
                                     <StackPanel Width="145" Margin="0,0,6,0">
-                                        <TextBlock Text="{Binding Label, StringFormat={}{0} From}" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Label, StringFormat='{}{0} From'}" FontSize="11" FontWeight="SemiBold"/>
                                         <DatePicker SelectedDate="{Binding FromDate}"/>
                                     </StackPanel>
                                     <StackPanel Width="145">
-                                        <TextBlock Text="{Binding Label, StringFormat={}{0} To}" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Label, StringFormat='{}{0} To'}" FontSize="11" FontWeight="SemiBold"/>
                                         <DatePicker SelectedDate="{Binding ToDate}"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal"
                                             Visibility="{Binding IsNumberRange, Converter={local:BooleanToVisibilityConverter}}">
                                     <StackPanel Width="105" Margin="0,0,6,0">
-                                        <TextBlock Text="{Binding Label, StringFormat={}{0} Min}" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Label, StringFormat='{}{0} Min'}" FontSize="11" FontWeight="SemiBold"/>
                                         <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding TextValue}"/>
                                     </StackPanel>
                                     <StackPanel Width="105">
-                                        <TextBlock Text="{Binding Label, StringFormat={}{0} Max}" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Label, StringFormat='{}{0} Max'}" FontSize="11" FontWeight="SemiBold"/>
                                         <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding SecondaryTextValue}"/>
                                     </StackPanel>
                                 </StackPanel>

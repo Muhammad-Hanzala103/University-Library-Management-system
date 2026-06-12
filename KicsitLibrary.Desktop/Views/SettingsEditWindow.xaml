@@ -219,7 +219,7 @@
                 Margin="16,0">
             <Button Content="Validate"
                     Style="{StaticResource SecondaryButton}"
-                    Command="{Binding ValidateAsyncCommand}"
+                    Command="{Binding ValidateCommand}"
                     Margin="0,0,6,0"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBooleanConverter}}"/>
         </StackPanel>
@@ -239,7 +239,7 @@
             <Button DockPanel.Dock="Right"
                     Content="Save"
                     Style="{StaticResource PrimaryButton}"
-                    Command="{Binding SaveAsyncCommand}"
+                    Command="{Binding SaveCommand}"
                     Width="80"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBooleanConverter}}"/>
         </DockPanel>

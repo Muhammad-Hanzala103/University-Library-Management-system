@@ -36,7 +36,12 @@
                         </StackPanel>
                         
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="Log Inspection Visit" Style="{StaticResource PrimaryButton}" Command="{Binding AddVisitCommand}" Padding="15,6"/>
+                            <Button Style="{StaticResource PrimaryButton}" Command="{Binding AddVisitCommand}" Padding="15,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE109;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Log Inspection Visit" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </Grid>
 
@@ -128,7 +133,12 @@
                         </StackPanel>
                         
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="Register Feedback" Style="{StaticResource PrimaryButton}" Command="{Binding AddFeedbackCommand}" Padding="15,6"/>
+                            <Button Style="{StaticResource PrimaryButton}" Command="{Binding AddFeedbackCommand}" Padding="15,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE109;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Register Feedback" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </Grid>
 

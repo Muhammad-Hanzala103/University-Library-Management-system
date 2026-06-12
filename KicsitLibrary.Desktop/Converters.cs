@@ -221,7 +221,7 @@ namespace KicsitLibrary.Desktop
             {
                 if (hasPercentage)
                 {
-                    return result;
+                    return Math.Min(result, 100.0);
                 }
                 
                 if (result <= 10.0) return result * 10.0;
