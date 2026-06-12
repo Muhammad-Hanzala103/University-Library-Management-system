@@ -397,6 +397,7 @@ namespace KicsitLibrary.Desktop
             }
 
             splash.UpdateStatus("Opening secure login...");
+            await Task.Delay(1500);
             var loginWindow = AppHost.Services.GetRequiredService<LoginWindow>();
             splash.Close();
             var loginResult = loginWindow.ShowDialog();
