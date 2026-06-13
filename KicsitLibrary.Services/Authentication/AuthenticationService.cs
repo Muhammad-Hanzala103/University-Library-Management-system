@@ -37,19 +37,31 @@ namespace KicsitLibrary.Services.Authentication
                 var user = await context.Users
                     .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
-                    .FirstOrDefaultAsync(u => u.Username == username && !u.IsDeleted && u.IsActive);
- 
+                    .FirstOrDefaultAsync(u => u.Username == username && !u.IsDeleted);
+
                 if (user == null)
                 {
                     await logService.LogActivityAsync("Login Failed", $"Failed login attempt for username: {username}");
-                    return null;
+                    throw new UnauthorizedAccessException("Invalid username or password.");
                 }
- 
+
+                if (!user.IsActive)
+                {
+                    await logService.LogActivityAsync("Login Failed", $"Failed login attempt for inactive account: {username}", user.Id);
+                    throw new UnauthorizedAccessException("Your account is currently inactive. Please contact the administrator.");
+                }
+
+                if (user.AccountStatus == "PendingApproval")
+                {
+                    await logService.LogActivityAsync("Login Failed", $"Failed login attempt for pending account: {username}", user.Id);
+                    throw new UnauthorizedAccessException("Your account is pending administrator approval. You will be notified once approved.");
+                }
+
                 var isValid = _passwordHasher.VerifyPassword(password, user.PasswordHash);
                 if (!isValid)
                 {
                     await logService.LogActivityAsync("Login Failed", $"Failed login attempt for username: {username} (Invalid Password)", user.Id);
-                    return null;
+                    throw new UnauthorizedAccessException("Invalid username or password.");
                 }
  
                 CurrentUser = user;

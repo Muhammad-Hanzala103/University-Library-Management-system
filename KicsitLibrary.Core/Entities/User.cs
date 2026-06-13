@@ -24,6 +24,17 @@ namespace KicsitLibrary.Core.Entities
         public System.DateTime? PendingOtpExpiresAt { get; set; }
         public int PendingOtpAttempts { get; set; }
 
+        public string? TwoFactorEmail { get; set; }
+        public System.DateTime? PendingOtpCreatedAt { get; set; }
+        public bool PasswordResetTokenUsed { get; set; }
+        public System.DateTime? PasswordResetRequestedAt { get; set; }
+        public System.DateTime? LastLoginAt { get; set; }
+        public string? ExternalProvider { get; set; }
+        public string? ExternalProviderUserId { get; set; }
+        public bool IsPhoneVerified { get; set; }
+        public bool CreatedByAdmin { get; set; }
+        public bool RequiresPasswordChange { get; set; }
+        public int? LinkedStudentId { get; set; }
         public string? PhoneNumber { get; set; }
         public string? AccountStatus { get; set; }
         public string? Role { get; set; }

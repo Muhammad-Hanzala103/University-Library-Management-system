@@ -69,10 +69,7 @@ namespace KicsitLibrary.Tests
             var authService = new AuthenticationService(CreateMockScopeFactory(), mockHasher.Object);
 
             // Act & Assert
-            var result = await authService.LoginAsync("testuser", "wrongpassword");
-            
-            // Should not throw, should return null
-            Assert.Null(result);
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(() => authService.LoginAsync("testuser", "wrongpassword"));
         }
 
         [Fact]
@@ -83,10 +80,7 @@ namespace KicsitLibrary.Tests
             var authService = new AuthenticationService(CreateMockScopeFactory(), mockHasher.Object);
 
             // Act & Assert
-            var result = await authService.LoginAsync("nonexistent", "password");
-            
-            // Should not throw, should return null
-            Assert.Null(result);
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(() => authService.LoginAsync("nonexistent", "password"));
         }
 
         [Fact]

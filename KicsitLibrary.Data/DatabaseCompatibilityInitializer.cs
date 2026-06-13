@@ -83,11 +83,26 @@ namespace KicsitLibrary.Data
             {
                 ["IsTwoFactorEnabled"] = "INTEGER NOT NULL DEFAULT 0",
                 ["TwoFactorMethod"] = "TEXT NULL",
+                ["TwoFactorEmail"] = "TEXT NULL",
                 ["PendingOtpHash"] = "TEXT NULL",
                 ["PendingOtpExpiresAt"] = "TEXT NULL",
                 ["PendingOtpAttempts"] = "INTEGER NOT NULL DEFAULT 0",
+                ["PendingOtpCreatedAt"] = "TEXT NULL",
                 ["PasswordResetTokenHash"] = "TEXT NULL",
-                ["PasswordResetTokenExpiresAt"] = "TEXT NULL"
+                ["PasswordResetTokenExpiresAt"] = "TEXT NULL",
+                ["PasswordResetTokenUsed"] = "INTEGER NOT NULL DEFAULT 0",
+                ["PasswordResetRequestedAt"] = "TEXT NULL",
+                ["LastLoginAt"] = "TEXT NULL",
+                ["ExternalProvider"] = "TEXT NULL",
+                ["ExternalProviderUserId"] = "TEXT NULL",
+                ["PhoneNumber"] = "TEXT NULL",
+                ["IsPhoneVerified"] = "INTEGER NOT NULL DEFAULT 0",
+                ["AccountStatus"] = "TEXT NULL",
+                ["Role"] = "TEXT NULL",
+                ["CreatedByAdmin"] = "INTEGER NOT NULL DEFAULT 0",
+                ["RequiresPasswordChange"] = "INTEGER NOT NULL DEFAULT 0",
+                ["LinkedStudentId"] = "INTEGER NULL",
+                ["LinkedFacultyStaffId"] = "INTEGER NULL"
             };
 
         public static async Task ApplyAsync(KicsitLibraryDbContext context)

@@ -55,7 +55,7 @@
                     </StackPanel>
                     <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButton}" Margin="0,12,8,8" Height="28"/>
                     <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,12,8,8" Height="28"/>
-                    <Button Content="+ New Reservation" Command="{Binding CreateCommand}" ToolTip="Create a reservation after member and title eligibility checks." Style="{StaticResource OperationalButton}" Margin="0,12,8,8" Height="28"/>
+                    <Button Content="+ New Reservation" Command="{Binding CreateCommand}" ToolTip="Create a reservation after member and title eligibility checks." Style="{StaticResource PrimaryButton}" Margin="0,12,8,8" Height="28"/>
                 </WrapPanel>
             </StackPanel>
         </Border>

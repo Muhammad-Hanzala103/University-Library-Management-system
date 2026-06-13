@@ -55,10 +55,10 @@ namespace KicsitLibrary.Desktop.ViewModels
                 {
                     LoginSuccess?.Invoke();
                 }
-                else
-                {
-                    ErrorMessage = "Invalid username or password.";
-                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ErrorMessage = ex.Message;
             }
             catch (Exception ex)
             {

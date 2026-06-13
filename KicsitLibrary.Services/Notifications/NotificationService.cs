@@ -38,34 +38,41 @@ namespace KicsitLibrary.Services.Notifications
         {
             ArgumentNullException.ThrowIfNull(notification);
 
-            if (!notification.IssueRecordId.HasValue)
+            if (notification.NotificationType != NotificationType.SystemAlert && !notification.IssueRecordId.HasValue)
             {
-                throw new InvalidOperationException("An issue record is required for notification deduplication.");
-            }
-
-            var eligibility = await CanCreateNotificationAsync(
-                notification.IssueRecordId.Value,
-                notification.NotificationType,
-                notification.Channel,
-                cooldownHours);
-
-            if (!eligibility.CanCreate)
-            {
-                return new NotificationCreateResult
-                {
-                    Created = false,
-                    Message = eligibility.Reason,
-                    Notification = eligibility.LastNotification!
-                };
+                throw new InvalidOperationException("An issue record is required for notification deduplication for this notification type.");
             }
 
             var nowUtc = DateTime.UtcNow;
             notification.Channel = NormalizeChannel(notification.Channel);
-            notification.DeduplicationKey = BuildDeduplicationKey(
-                notification.IssueRecordId.Value,
-                notification.NotificationType,
-                notification.Channel,
-                nowUtc);
+
+            if (notification.IssueRecordId.HasValue)
+            {
+                var eligibility = await CanCreateNotificationAsync(
+                    notification.IssueRecordId.Value,
+                    notification.NotificationType,
+                    notification.Channel,
+                    cooldownHours);
+
+                if (!eligibility.CanCreate)
+                {
+                    return new NotificationCreateResult
+                    {
+                        Created = false,
+                        Message = eligibility.Reason,
+                        Notification = eligibility.LastNotification!
+                    };
+                }
+                notification.DeduplicationKey = BuildDeduplicationKey(
+                    notification.IssueRecordId.Value,
+                    notification.NotificationType,
+                    notification.Channel,
+                    nowUtc);
+            }
+            else
+            {
+                notification.DeduplicationKey = $"sysalert:{Guid.NewGuid():N}";
+            }
 
             try
             {
