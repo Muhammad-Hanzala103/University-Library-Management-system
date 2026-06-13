@@ -5,8 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KicsitLibrary.Desktop"
         mc:Ignorable="d"
-        Title="Login - Ilm-o-Kutub System" Height="530" Width="420"
-        WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
+        Title="Login - Ilm-o-Kutub System" Height="580" MinHeight="550" Width="420" MinWidth="400"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanResizeWithGrip" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
+    </WindowChrome.WindowChrome>
     
     <Border Background="{StaticResource BgBrush}" CornerRadius="16" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
         <Border.Effect>
@@ -20,7 +24,7 @@
             </Grid.RowDefinitions>
 
             <!-- Header Panel with Gradient -->
-            <Border Grid.Row="0" CornerRadius="15,15,0,0" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+            <Border Grid.Row="0" CornerRadius="15,15,0,0">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <GradientStop Color="#2E3E56" Offset="0.0"/>
@@ -29,10 +33,30 @@
                 </Border.Background>
                 
                 <Grid>
-                    <!-- Close button in header -->
-                    <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16"
-                            Background="Transparent" BorderThickness="0" Foreground="#A0AEC0" 
-                            FontSize="18" FontWeight="Bold" Cursor="Hand" Click="CloseButton_Click" ToolTip="Close application">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16" WindowChrome.IsHitTestVisibleInChrome="True">
+                        <!-- Minimize button -->
+                        <Button Content="—" Margin="0,0,10,0"
+                                Background="Transparent" BorderThickness="0" Foreground="#A0AEC0" 
+                                FontSize="14" FontWeight="Bold" Cursor="Hand" Click="MinimizeButton_Click" ToolTip="Minimize application">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}" Opacity="0.8" VerticalAlignment="Center"/>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Close button -->
+                        <Button Content="✕" 
+                                Background="Transparent" BorderThickness="0" Foreground="#A0AEC0" 
+                                FontSize="18" FontWeight="Bold" Cursor="Hand" Click="CloseButton_Click" ToolTip="Close application">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}" Opacity="0.8"/>
@@ -47,7 +71,8 @@
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
-                    </Button>
+                        </Button>
+                    </StackPanel>
 
                     <!-- Header Branding -->
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0">
@@ -101,6 +126,23 @@
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Foreground" Value="{StaticResource AccentHoverBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <!-- Create Account -->
+                <Button Content="Create Account" Background="Transparent" BorderThickness="0" 
+                        Foreground="{StaticResource TextMutedBrush}" FontWeight="SemiBold" FontSize="11" 
+                        HorizontalAlignment="Center" Margin="0,0,0,15"
+                        Click="CreateAccount_Click" ToolTip="Request a new library account.">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>

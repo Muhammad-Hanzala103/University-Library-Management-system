@@ -22,6 +22,7 @@ namespace KicsitLibrary.Core.Interfaces
         Task<(int CurrentIssuedCount, int MaxAllowedLimit, decimal PendingFinesTotal, bool HasActiveOverdue, string EligibilityMessage)> CheckMemberEligibilityAsync(int memberId, MemberType memberType);
         Task<BookCopy?> GetCopyDetailsForCirculationAsync(string accessionNumber);
         Task<object?> GetMemberDetailsAsync(string identifier, MemberType type);
+        Task<IEnumerable<IssueRecord>> GetActiveIssuesByMemberAsync(int memberId, MemberType memberType);
 
         // ==========================================
         // FINES BILLING MANAGEMENT

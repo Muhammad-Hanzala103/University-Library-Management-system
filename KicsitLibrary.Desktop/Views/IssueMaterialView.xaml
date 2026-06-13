@@ -281,11 +281,55 @@
                                     </Grid>
                                 </Border>
 
-                                <!-- Checkout Button -->
-                                <Button Content="📥 Confirm Book Issue" Style="{StaticResource PrimaryButton}"
-                                        ToolTip="Create the issue record after the displayed checks pass."
-                                        Command="{Binding ConfirmIssueCommand}" Height="45" FontSize="14" FontWeight="Bold"
-                                        IsEnabled="{Binding IsEligible}"/>
+                                <!-- Action Bar -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Button Grid.Column="0" Content="📥 Issue Material" Style="{StaticResource PrimaryButton}"
+                                            ToolTip="Create the issue record after the displayed checks pass."
+                                            Command="{Binding ConfirmIssueCommand}" Height="45" FontSize="14" FontWeight="Bold"
+                                            IsEnabled="{Binding IsEligible}" Margin="0,0,10,0"/>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <Button Content="⏳ Reserve Instead" Style="{StaticResource SecondaryButton}" Command="{Binding ReserveInsteadCommand}" ToolTip="Reserve this material if checkout is not possible." Height="45" Margin="0,0,10,0" Padding="15,0"/>
+                                        <Button Content="🖨 Print Slip" Style="{StaticResource SecondaryButton}" Command="{Binding PrintSlipCommand}" ToolTip="Print checkout slip." Height="45" Margin="0,0,0,0" Padding="15,0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Active Issues Table -->
+                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15" Visibility="{Binding IsMemberFound, Converter={local:BooleanToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="CURRENT ACTIVE ISSUES" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10"/>
+                                
+                                <DataGrid ItemsSource="{Binding ActiveIssues}" AutoGenerateColumns="False" IsReadOnly="True" 
+                                          HeadersVisibility="Column" SelectionMode="Single"
+                                          Background="Transparent" RowBackground="White" AlternatingRowBackground="#F8FAFC"
+                                          BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                          GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E5E7EB"
+                                          MinHeight="100" MaxHeight="200">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Accession No." Binding="{Binding CopyAccessionNumber}" Width="120" FontWeight="SemiBold"/>
+                                        <DataGridTextColumn Header="Issue Date" Binding="{Binding IssueDate, StringFormat='{}{0:dd-MMM-yyyy}'}" Width="110"/>
+                                        <DataGridTextColumn Header="Due Date" Binding="{Binding ExpectedReturnDate, StringFormat='{}{0:dd-MMM-yyyy}'}" Width="110">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Renewals" Binding="{Binding RenewalCount}" Width="80"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                
+                                <TextBlock Text="No active issues for this member." FontSize="12" FontStyle="Italic" Foreground="{StaticResource TextMutedBrush}"
+                                           Margin="0,15,0,10" HorizontalAlignment="Center"
+                                           Visibility="{Binding ActiveIssues.Count, Converter={local:CountToVisibilityConverter}, ConverterParameter=Inverse}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

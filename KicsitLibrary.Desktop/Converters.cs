@@ -269,4 +269,33 @@ namespace KicsitLibrary.Desktop
             return this;
         }
     }
+
+    public class CountToVisibilityConverter : System.Windows.Markup.MarkupExtension, IValueConverter
+    {
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isInverse = parameter as string == "Inverse";
+            int count = 0;
+            
+            if (value is int c)
+            {
+                count = c;
+            }
+            
+            bool isVisible = count > 0;
+            if (isInverse) isVisible = !isVisible;
+            
+            return isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

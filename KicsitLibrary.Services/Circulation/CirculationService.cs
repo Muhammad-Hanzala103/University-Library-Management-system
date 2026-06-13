@@ -52,6 +52,25 @@ namespace KicsitLibrary.Services.Circulation
             }
         }
 
+        public async Task<IEnumerable<IssueRecord>> GetActiveIssuesByMemberAsync(int memberId, MemberType memberType)
+        {
+            var query = _context.IssueRecords
+                .Include(i => i.BookCopy)
+                .ThenInclude(bc => bc.BookMaster)
+                .Where(i => i.MemberType == memberType && i.ReceiveRecord == null && !i.IsDeleted);
+
+            if (memberType == MemberType.Student)
+            {
+                query = query.Where(i => i.StudentId == memberId);
+            }
+            else
+            {
+                query = query.Where(i => i.FacultyStaffId == memberId);
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task<(int CurrentIssuedCount, int MaxAllowedLimit, decimal PendingFinesTotal, bool HasActiveOverdue, string EligibilityMessage)> CheckMemberEligibilityAsync(int memberId, MemberType memberType)
         {
             int currentIssued = 0;

@@ -255,6 +255,9 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<SettingsEditWindow>();
                     services.AddTransient<SettingsDetailsWindow>();
                     services.AddTransient<ChangePasswordViewModel>();
+                    services.AddTransient<LoginViewModel>();
+                    services.AddTransient<ForgotPasswordViewModel>();
+                    services.AddTransient<CreateAccountViewModel>();
                     services.AddTransient<ChangePasswordWindow>();
                     
                     // Hosted Services (Background Workers)

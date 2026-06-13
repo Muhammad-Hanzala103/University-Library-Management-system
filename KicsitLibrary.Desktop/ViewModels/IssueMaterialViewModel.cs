@@ -22,6 +22,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty] private bool _showSuggestions;
         public System.Collections.ObjectModel.ObservableCollection<Student> StudentSuggestions { get; } = new();
         [ObservableProperty] private Student? _selectedStudentSuggestion;
+        public System.Collections.ObjectModel.ObservableCollection<IssueRecord> ActiveIssues { get; } = new();
 
         // Found flags
         [ObservableProperty] private bool _isBookFound;
@@ -123,6 +124,17 @@ namespace KicsitLibrary.Desktop.ViewModels
                         MemberStatusDisplay = fs.ActiveStatus ? "Active" : "Inactive";
                         MemberPhotoPath = string.Empty; // Local fallback checked in UI
                     }
+
+                    // Load Active Issues for the member
+                    if (_foundMemberId.HasValue)
+                    {
+                        var issues = await _circulationService.GetActiveIssuesByMemberAsync(_foundMemberId.Value, SelectedMemberType);
+                        ActiveIssues.Clear();
+                        foreach (var issue in issues)
+                        {
+                            ActiveIssues.Add(issue);
+                        }
+                    }
                 }
                 else
                 {
@@ -194,6 +206,17 @@ namespace KicsitLibrary.Desktop.ViewModels
                 BookTitle = "No Book Loaded";
                 BookAuthorDisplay = string.Empty;
                 BookStatusDisplay = string.Empty;
+
+                // Refresh active issues
+                if (_foundMemberId.HasValue)
+                {
+                    var issues = await _circulationService.GetActiveIssuesByMemberAsync(_foundMemberId.Value, SelectedMemberType);
+                    ActiveIssues.Clear();
+                    foreach (var issue in issues)
+                    {
+                        ActiveIssues.Add(issue);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -203,6 +226,24 @@ namespace KicsitLibrary.Desktop.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        [RelayCommand]
+        private void ReserveInstead()
+        {
+            if (!IsBookFound || LoadedCopy == null)
+            {
+                StatusMessage = "No book loaded to reserve.";
+                return;
+            }
+            // Logic to navigate to Reservation view with this book.
+            StatusMessage = "Navigation to Reservation module with this book is triggered.";
+        }
+
+        [RelayCommand]
+        private void PrintSlip()
+        {
+            StatusMessage = "Print/Export slip requested.";
         }
 
         [RelayCommand]

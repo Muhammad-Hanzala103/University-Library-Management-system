@@ -27,8 +27,20 @@ namespace KicsitLibrary.Desktop
             Close();
         }
 
-        private void Header_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // Do not drag when clicking inside textboxes/passwordboxes
+            if (e.OriginalSource is System.Windows.FrameworkElement fe && 
+                (fe is System.Windows.Controls.TextBox || fe is System.Windows.Controls.PasswordBox || fe is System.Windows.Controls.Button || fe is System.Windows.Controls.ComboBox))
+            {
+                return;
+            }
+
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
                 DragMove();
@@ -45,6 +57,18 @@ namespace KicsitLibrary.Desktop
                     Owner = this
                 };
                 forgotPasswordWindow.ShowDialog();
+            }
+        }
+        private void CreateAccount_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = App.AppHost?.Services.GetRequiredService<ViewModels.CreateAccountViewModel>();
+            if (viewModel != null)
+            {
+                var createAccountWindow = new Views.CreateAccountWindow(viewModel)
+                {
+                    Owner = this
+                };
+                createAccountWindow.ShowDialog();
             }
         }
     }
