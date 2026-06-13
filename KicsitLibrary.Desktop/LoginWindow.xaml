@@ -153,10 +153,20 @@
 
                 <!-- OAuth Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
-                    <Button Content="Microsoft" Style="{StaticResource SecondaryButton}" Width="110" Margin="0,0,10,0"
-                            IsEnabled="False" ToolTip="Configure OAuth Client ID in Settings to enable."/>
-                    <Button Content="Google" Style="{StaticResource SecondaryButton}" Width="110"
-                            IsEnabled="False" ToolTip="Configure OAuth Client ID in Settings to enable."/>
+                    <Button Style="{StaticResource SecondaryButton}" Width="110" Margin="0,0,10,0"
+                            Command="{Binding MicrosoftLoginCommand}" ToolTip="Sign in with Microsoft">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="M 0,0 L 10,0 L 10,10 L 0,10 Z M 12,0 L 22,0 L 22,10 L 12,10 Z M 0,12 L 10,12 L 10,22 L 0,22 Z M 12,12 L 22,12 L 22,22 L 12,22 Z" Fill="#00A4EF" Margin="0,0,8,0" Stretch="Uniform" Width="14" Height="14" VerticalAlignment="Center"/>
+                            <TextBlock Text="Microsoft" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SecondaryButton}" Width="110"
+                            Command="{Binding GoogleLoginCommand}" ToolTip="Sign in with Google">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="M 11.2,4.8 C 10.6,4.2 9.8,3.9 8.9,3.9 C 7.2,3.9 5.8,5.1 5.3,6.6 C 5.2,7.1 5.1,7.5 5.1,8 C 5.1,8.5 5.2,8.9 5.3,9.4 C 5.8,10.9 7.2,12.1 8.9,12.1 C 10.4,12.1 11.6,11.3 12.2,10 L 8.9,10 L 8.9,6.9 L 15.6,6.9 C 15.7,7.4 15.7,8 15.7,8.5 C 15.7,12.8 12.8,15.8 8.9,15.8 C 4.5,15.8 0.9,12.2 0.9,7.9 C 0.9,3.6 4.5,0 8.9,0 C 11.4,0 13.5,0.9 15.2,2.5 L 12.8,4.9 C 12.4,4.5 11.9,4.2 11.2,4.8 Z" Fill="#EA4335" Margin="0,0,8,0" Stretch="Uniform" Width="14" Height="14" VerticalAlignment="Center"/>
+                            <TextBlock Text="Google" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
                 <!-- Loading State overlay -->

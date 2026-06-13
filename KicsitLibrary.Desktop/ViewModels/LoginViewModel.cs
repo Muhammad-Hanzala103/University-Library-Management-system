@@ -69,5 +69,25 @@ namespace KicsitLibrary.Desktop.ViewModels
                 IsBusy = false;
             }
         }
+
+        [RelayCommand]
+        private async Task MicrosoftLoginAsync()
+        {
+            ErrorMessage = string.Empty;
+            IsBusy = true;
+            await Task.Delay(1000);
+            ErrorMessage = "Microsoft OAuth provider is not configured for this environment. Please sign in with your local account or contact the IT administrator.";
+            IsBusy = false;
+        }
+
+        [RelayCommand]
+        private async Task GoogleLoginAsync()
+        {
+            ErrorMessage = string.Empty;
+            IsBusy = true;
+            await Task.Delay(1000);
+            ErrorMessage = "Google OAuth provider is not configured for this environment. Please sign in with your local account or contact the IT administrator.";
+            IsBusy = false;
+        }
     }
 }
