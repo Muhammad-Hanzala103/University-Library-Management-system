@@ -205,13 +205,38 @@ namespace KicsitLibrary.Desktop
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return 0.0;
+
+            if (value is double dVal)
+            {
+                if (double.IsNaN(dVal) || double.IsInfinity(dVal) || dVal < 0) return 0.0;
+                return Math.Min(dVal, 100.0);
+            }
+            if (value is float fVal)
+            {
+                if (float.IsNaN(fVal) || float.IsInfinity(fVal) || fVal < 0) return 0.0;
+                return Math.Min(fVal, 100.0);
+            }
+            if (value is decimal mVal)
+            {
+                if (mVal < 0) return 0.0;
+                return Math.Min((double)mVal, 100.0);
+            }
+            if (value is int iVal)
+            {
+                if (iVal < 0) return 0.0;
+                if (iVal <= 10) return iVal * 10.0;
+                if (iVal <= 100) return iVal;
+                if (iVal <= 1000) return iVal / 10.0;
+                return Math.Min(iVal / 100.0, 100.0);
+            }
+
             string strValue = value.ToString() ?? "";
             
             string clean = "";
             bool hasPercentage = strValue.Contains("%");
             foreach (char c in strValue)
             {
-                if (char.IsDigit(c) || c == '.')
+                if (char.IsDigit(c) || c == '.' || (c == '-' && clean.Length == 0))
                 {
                     clean += c;
                 }
@@ -219,6 +244,8 @@ namespace KicsitLibrary.Desktop
 
             if (double.TryParse(clean, NumberStyles.Any, CultureInfo.InvariantCulture, out double result))
             {
+                if (double.IsNaN(result) || double.IsInfinity(result) || result < 0) return 0.0;
+
                 if (hasPercentage)
                 {
                     return Math.Min(result, 100.0);

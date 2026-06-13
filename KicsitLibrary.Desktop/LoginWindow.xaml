@@ -20,7 +20,7 @@
             </Grid.RowDefinitions>
 
             <!-- Header Panel with Gradient -->
-            <Border Grid.Row="0" CornerRadius="15,15,0,0">
+            <Border Grid.Row="0" CornerRadius="15,15,0,0" MouseLeftButtonDown="Header_MouseLeftButtonDown">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                         <GradientStop Color="#2E3E56" Offset="0.0"/>
@@ -71,28 +71,7 @@
                 
                 <!-- Password -->
                 <TextBlock Text="Password" Foreground="{StaticResource TextDarkBrush}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                <PasswordBox x:Name="PasswordInput" Padding="10,8" VerticalContentAlignment="Center" FontSize="13" Height="38" Margin="0,0,0,12">
-                    <PasswordBox.Template>
-                        <ControlTemplate TargetType="PasswordBox">
-                            <Border Name="Border" 
-                                    Background="White" 
-                                    BorderBrush="{StaticResource BorderBrush}" 
-                                    BorderThickness="1" 
-                                    CornerRadius="4">
-                                <ScrollViewer x:Name="PART_ContentHost" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsFocused" Value="True">
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-                                    <Setter TargetName="Border" Property="BorderThickness" Value="1.5"/>
-                                </Trigger>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource AccentHoverBrush}" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </PasswordBox.Template>
-                </PasswordBox>
+                <PasswordBox x:Name="PasswordInput" Margin="0,0,0,12" />
 
                 <!-- Error Message -->
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" FontWeight="SemiBold" 
@@ -104,8 +83,8 @@
                         Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordInput}" Margin="0,0,0,15">
                     <Button.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                            <GradientStop Color="{StaticResource AccentColor}" Offset="0.0"/>
-                            <GradientStop Color="#1D4ED8" Offset="1.0"/>
+                            <GradientStop Color="#0F766E" Offset="0.0"/>
+                            <GradientStop Color="#115E59" Offset="1.0"/>
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>

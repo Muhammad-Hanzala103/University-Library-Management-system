@@ -45,9 +45,13 @@ namespace KicsitLibrary.Desktop.Helpers
                 {
                     if (!(bool)passwordBox.GetValue(UpdatingPasswordProperty))
                     {
-                        passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
-                        passwordBox.Password = (string)e.NewValue ?? string.Empty;
-                        passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
+                        var newPassword = (string)e.NewValue ?? string.Empty;
+                        if (passwordBox.Password != newPassword)
+                        {
+                            passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
+                            passwordBox.Password = newPassword;
+                            passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
+                        }
                     }
                 }
             }
@@ -57,13 +61,9 @@ namespace KicsitLibrary.Desktop.Helpers
         {
             if (d is PasswordBox passwordBox)
             {
-                bool wasBound = (bool)e.OldValue;
                 bool needToBind = (bool)e.NewValue;
 
-                if (wasBound)
-                {
-                    passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
-                }
+                passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
 
                 if (needToBind)
                 {
