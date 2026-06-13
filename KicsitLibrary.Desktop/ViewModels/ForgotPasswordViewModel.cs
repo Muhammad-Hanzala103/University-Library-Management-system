@@ -52,11 +52,10 @@ namespace KicsitLibrary.Desktop.ViewModels
 
             try
             {
-                // This will safely return true even if the user doesn't exist to prevent enumeration.
-                await _authService.RequestPasswordResetAsync(UsernameOrEmail);
+                var result = await _authService.RequestPasswordResetAsync(UsernameOrEmail);
                 
                 IsCodeSent = true;
-                Message = "If an account with that email exists, reset instructions have been sent. If you entered a phone, please note SMS is not currently configured.";
+                Message = result.Message;
             }
             catch (Exception ex)
             {

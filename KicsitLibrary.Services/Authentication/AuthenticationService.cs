@@ -148,20 +148,44 @@ namespace KicsitLibrary.Services.Authentication
             }
         }
 
-        public async Task<bool> RequestPasswordResetAsync(string usernameOrEmail)
+        public async Task<(bool Success, string Message)> RequestPasswordResetAsync(string usernameOrEmail)
         {
-            if (string.IsNullOrWhiteSpace(usernameOrEmail)) return false;
+            if (string.IsNullOrWhiteSpace(usernameOrEmail)) return (false, "Please enter your username, email, or phone.");
 
             using (var scope = _scopeFactory.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<KicsitLibraryDbContext>();
+                var notificationService = scope.ServiceProvider.GetService<INotificationService>();
+                
+                var isPhone = usernameOrEmail.All(char.IsDigit) && usernameOrEmail.Length >= 10;
                 
                 var user = await context.Users.FirstOrDefaultAsync(u => 
-                    (u.Username == usernameOrEmail || u.Email == usernameOrEmail) && 
+                    (u.Username == usernameOrEmail || u.Email == usernameOrEmail || (isPhone && u.PhoneNumber == usernameOrEmail)) && 
                     !u.IsDeleted && u.IsActive);
 
-                if (user == null || string.IsNullOrWhiteSpace(user.Email))
-                    return true; // Return true safely to not expose if user exists
+                if (user == null)
+                    return (true, "If an account with that information exists, reset instructions have been sent.");
+
+                if (isPhone)
+                {
+                    if (notificationService != null)
+                    {
+                        var notif = new NotificationRecord
+                        {
+                            UserId = user.Id,
+                            NotificationType = KicsitLibrary.Core.Enums.NotificationType.SystemAlert,
+                            Channel = "System",
+                            Subject = "Manual Password Reset Request (Phone)",
+                            Message = $"User {user.Username} requested a password reset via phone ({usernameOrEmail}). SMS is not configured.",
+                            CreatedAtUtc = DateTime.UtcNow
+                        };
+                        await notificationService.CreateNotificationAsync(notif, 0, user.Id);
+                    }
+                    return (true, "SMS provider not configured. Administrator has been notified.");
+                }
+
+                if (string.IsNullOrWhiteSpace(user.Email))
+                    return (true, "If an account with that information exists, reset instructions have been sent.");
 
                 var rawToken = Guid.NewGuid().ToString("N");
                 user.PasswordResetTokenHash = _passwordHasher.HashPassword(rawToken);
@@ -169,9 +193,35 @@ namespace KicsitLibrary.Services.Authentication
                 
                 await context.SaveChangesAsync();
 
-                // TODO: Queue or send email with rawToken to user.Email
+                if (notificationService != null)
+                {
+                    var emailStatus = await notificationService.ValidateEmailSettingsAsync();
+                    var notif = new NotificationRecord
+                    {
+                        UserId = user.Id,
+                        NotificationType = KicsitLibrary.Core.Enums.NotificationType.SystemAlert,
+                        Channel = "Email",
+                        RecipientEmail = user.Email,
+                        RecipientName = user.FullName,
+                        Subject = "Password Reset Request",
+                        Message = $"Your password reset code is: {rawToken}. It will expire in 15 minutes.",
+                        CreatedAtUtc = DateTime.UtcNow,
+                        Status = KicsitLibrary.Core.Enums.NotificationStatus.Pending
+                    };
+                    
+                    await notificationService.CreateNotificationAsync(notif, 0, user.Id);
+                    
+                    if (emailStatus.IsValid)
+                    {
+                        return (true, "Reset email sent.");
+                    }
+                    else
+                    {
+                        return (true, "Reset email queued / SMTP not configured.");
+                    }
+                }
                 
-                return true;
+                return (true, "Reset request processed.");
             }
         }
 

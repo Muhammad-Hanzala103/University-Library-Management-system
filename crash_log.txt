@@ -1,5 +1,5 @@
-System.Windows.Markup.XamlParseException: 'Provide value on 'System.Windows.StaticResourceExtension' threw an exception.' Line number '156' and line position '26'.
- ---> System.Exception: Cannot find resource named 'WarningButton'. Resource names are case sensitive.
+System.Windows.Markup.XamlParseException: 'Provide value on 'System.Windows.StaticResourceExtension' threw an exception.' Line number '58' and line position '91'.
+ ---> System.Exception: Cannot find resource named 'OperationalButton'. Resource names are case sensitive.
    at System.Windows.StaticResourceExtension.ProvideValue(IServiceProvider serviceProvider)
    at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
    --- End of inner exception stack trace ---

@@ -9,7 +9,7 @@ namespace KicsitLibrary.Core.Interfaces
         Task<bool> ChangePasswordAsync(int userId, string oldPassword, string newPassword);
         
         // Forgot Password and 2FA
-        Task<bool> RequestPasswordResetAsync(string usernameOrEmail);
+        Task<(bool Success, string Message)> RequestPasswordResetAsync(string usernameOrEmail);
         Task<bool> ResetPasswordAsync(string usernameOrEmail, string token, string newPassword);
         
         Task<bool> GenerateAndSendOtpAsync(int userId);
