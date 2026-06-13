@@ -78,6 +78,18 @@ namespace KicsitLibrary.Data
                 ["Remarks"] = "TEXT NULL"
             };
 
+        private static readonly IReadOnlyDictionary<string, string> UserColumns =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["IsTwoFactorEnabled"] = "INTEGER NOT NULL DEFAULT 0",
+                ["TwoFactorMethod"] = "TEXT NULL",
+                ["PendingOtpHash"] = "TEXT NULL",
+                ["PendingOtpExpiresAt"] = "TEXT NULL",
+                ["PendingOtpAttempts"] = "INTEGER NOT NULL DEFAULT 0",
+                ["PasswordResetTokenHash"] = "TEXT NULL",
+                ["PasswordResetTokenExpiresAt"] = "TEXT NULL"
+            };
+
         public static async Task ApplyAsync(KicsitLibraryDbContext context)
         {
             if (!string.Equals(
@@ -104,6 +116,7 @@ namespace KicsitLibrary.Data
                 await AddMissingColumnsAsync(connection, "Students", StudentClearanceColumns);
                 await AddMissingColumnsAsync(connection, "FacultyStaff", FacultyClearanceColumns);
                 await AddMissingColumnsAsync(connection, "VisitRecords", VisitRecordColumns);
+                await AddMissingColumnsAsync(connection, "Users", UserColumns);
                 await context.Database.ExecuteSqlRawAsync("""
                     CREATE TABLE IF NOT EXISTS "DocumentUploads" (
                         "Id" INTEGER NOT NULL CONSTRAINT "PK_DocumentUploads" PRIMARY KEY AUTOINCREMENT,

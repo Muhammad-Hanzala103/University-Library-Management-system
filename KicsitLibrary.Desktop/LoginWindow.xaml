@@ -112,9 +112,9 @@
                 <!-- OAuth Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
                     <Button Content="Microsoft" Style="{StaticResource SecondaryButton}" Width="110" Margin="0,0,10,0"
-                            IsEnabled="False" ToolTip="Microsoft login requires MSAL Client ID configuration (Pending)."/>
+                            IsEnabled="False" ToolTip="Configure OAuth Client ID in Settings to enable."/>
                     <Button Content="Google" Style="{StaticResource SecondaryButton}" Width="110"
-                            IsEnabled="False" ToolTip="Google login requires OAuth Client ID configuration (Pending)."/>
+                            IsEnabled="False" ToolTip="Configure OAuth Client ID in Settings to enable."/>
                 </StackPanel>
 
                 <!-- Loading State overlay -->

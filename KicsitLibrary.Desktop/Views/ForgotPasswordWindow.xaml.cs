@@ -16,5 +16,21 @@ namespace KicsitLibrary.Desktop.Views
         {
             Close();
         }
+
+        private void NewPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ForgotPasswordViewModel vm)
+            {
+                vm.NewPassword = NewPasswordBox.Password;
+            }
+        }
+
+        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ForgotPasswordViewModel vm)
+            {
+                vm.ConfirmPassword = ConfirmPasswordBox.Password;
+            }
+        }
     }
 }
