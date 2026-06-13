@@ -217,7 +217,7 @@
         <Border Grid.Row="3"
                 Background="{StaticResource BgBrush}"
                 Margin="0,10,0,0"
-                Visibility="{Binding StatusMessage, Converter={local:NullToVisibilityConverter}}">
+                Visibility="{Binding StatusMessage, Converter={local:StringVisibilityConverter}}">
             <TextBlock Text="{Binding StatusMessage}"
                     Margin="12"
                     Foreground="{StaticResource TextMutedBrush}"

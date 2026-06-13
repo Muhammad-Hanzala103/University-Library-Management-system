@@ -1,4 +1,6 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -20,9 +22,13 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty] private MemberType _selectedMemberType = MemberType.Student;
 
         [ObservableProperty] private bool _showSuggestions;
-        public System.Collections.ObjectModel.ObservableCollection<Student> StudentSuggestions { get; } = new();
+        public ObservableCollection<Student> StudentSuggestions { get; } = new();
         [ObservableProperty] private Student? _selectedStudentSuggestion;
-        public System.Collections.ObjectModel.ObservableCollection<IssueRecord> ActiveIssues { get; } = new();
+        public ObservableCollection<IssueRecord> ActiveIssues { get; } = new();
+
+        // Advanced checkout cart
+        public ObservableCollection<BookCopy> Cart { get; } = new();
+        [ObservableProperty] private bool _autoAddOnScan = true;
 
         // Found flags
         [ObservableProperty] private bool _isBookFound;
@@ -65,106 +71,115 @@ namespace KicsitLibrary.Desktop.ViewModels
         {
             StatusMessage = string.Empty;
             IsBookFound = false;
-            IsMemberFound = false;
             IsEligible = false;
-            _foundMemberId = null;
 
-            if (string.IsNullOrWhiteSpace(AccessionNumber))
+            if (string.IsNullOrWhiteSpace(AccessionNumber) && string.IsNullOrWhiteSpace(MemberIdentifier))
             {
-                StatusMessage = "Please enter or scan a book Accession Number.";
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(MemberIdentifier))
-            {
-                StatusMessage = "Please enter or scan a Member Registration / Personnel Number.";
+                StatusMessage = "Please scan or enter details first.";
                 return;
             }
 
             IsBusy = true;
             try
             {
-                // 1. Search Book Copy
-                var copy = await _circulationService.GetCopyDetailsForCirculationAsync(AccessionNumber.Trim());
-                if (copy != null)
+                // 1. Search Member (if specified and not loaded or changing)
+                if (!string.IsNullOrWhiteSpace(MemberIdentifier))
                 {
-                    LoadedCopy = copy;
-                    BookTitle = copy.BookMaster.Title;
-                    BookAuthorDisplay = copy.BookMaster.Subject ?? "General Subject";
-                    BookStatusDisplay = copy.AvailabilityStatus.ToString();
-                    IsBookFound = true;
-                }
-                else
-                {
-                    BookTitle = "Material not found in catalog.";
-                    BookAuthorDisplay = string.Empty;
-                    BookStatusDisplay = "Unavailable";
-                }
-
-                // 2. Search Member
-                var memberObj = await _circulationService.GetMemberDetailsAsync(MemberIdentifier.Trim(), SelectedMemberType);
-                if (memberObj != null)
-                {
-                    IsMemberFound = true;
-                    if (SelectedMemberType == MemberType.Student && memberObj is Student student)
+                    var memberObj = await _circulationService.GetMemberDetailsAsync(MemberIdentifier.Trim(), SelectedMemberType);
+                    if (memberObj != null)
                     {
-                        _foundMemberId = student.Id;
-                        MemberName = student.Name;
-                        MemberDetailDisplay = $"{student.Program} - Batch {student.Batch}";
-                        MemberDepartment = student.Department;
-                        MemberStatusDisplay = student.ActiveStatus ? "Active" : "Inactive";
-                        MemberPhotoPath = student.PhotoPath ?? string.Empty;
-                    }
-                    else if (SelectedMemberType == MemberType.FacultyStaff && memberObj is FacultyStaff fs)
-                    {
-                        _foundMemberId = fs.Id;
-                        MemberName = fs.Name;
-                        MemberDetailDisplay = $"{fs.Designation} ({fs.FacultyType})";
-                        MemberDepartment = fs.Department;
-                        MemberStatusDisplay = fs.ActiveStatus ? "Active" : "Inactive";
-                        MemberPhotoPath = string.Empty; // Local fallback checked in UI
-                    }
-
-                    // Load Active Issues for the member
-                    if (_foundMemberId.HasValue)
-                    {
-                        var issues = await _circulationService.GetActiveIssuesByMemberAsync(_foundMemberId.Value, SelectedMemberType);
-                        ActiveIssues.Clear();
-                        foreach (var issue in issues)
+                        IsMemberFound = true;
+                        if (SelectedMemberType == MemberType.Student && memberObj is Student student)
                         {
-                            ActiveIssues.Add(issue);
+                            _foundMemberId = student.Id;
+                            MemberName = student.Name;
+                            MemberDetailDisplay = $"{student.Program} - Batch {student.Batch}";
+                            MemberDepartment = student.Department;
+                            MemberStatusDisplay = student.ActiveStatus ? "Active" : "Inactive";
+                            MemberPhotoPath = student.PhotoPath ?? string.Empty;
                         }
-                    }
-                }
-                else
-                {
-                    MemberName = "Member record not found.";
-                    MemberDetailDisplay = string.Empty;
-                    MemberDepartment = string.Empty;
-                    MemberStatusDisplay = "Inactive";
-                    MemberPhotoPath = string.Empty;
-                }
+                        else if (SelectedMemberType == MemberType.FacultyStaff && memberObj is FacultyStaff fs)
+                        {
+                            _foundMemberId = fs.Id;
+                            MemberName = fs.Name;
+                            MemberDetailDisplay = $"{fs.Designation} ({fs.FacultyType})";
+                            MemberDepartment = fs.Department;
+                            MemberStatusDisplay = fs.ActiveStatus ? "Active" : "Inactive";
+                            MemberPhotoPath = string.Empty;
+                        }
 
-                // 3. Check Eligibility if both found
-                if (IsBookFound && IsMemberFound && _foundMemberId.HasValue)
-                {
-                    var result = await _circulationService.CheckMemberEligibilityAsync(_foundMemberId.Value, SelectedMemberType);
-                    CurrentIssuedCount = result.CurrentIssuedCount;
-                    MaxAllowedLimit = result.MaxAllowedLimit;
-                    PendingFinesTotal = result.PendingFinesTotal;
-                    HasActiveOverdue = result.HasActiveOverdue;
-                    EligibilityMessage = result.EligibilityMessage;
+                        // Load Active Issues & Core Eligibility for the member
+                        if (_foundMemberId.HasValue)
+                        {
+                            var issues = await _circulationService.GetActiveIssuesByMemberAsync(_foundMemberId.Value, SelectedMemberType);
+                            ActiveIssues.Clear();
+                            foreach (var issue in issues)
+                            {
+                                ActiveIssues.Add(issue);
+                            }
 
-                    if (LoadedCopy?.AvailabilityStatus != BookStatus.Available)
-                    {
-                        EligibilityMessage = $"Material copy is not available (Status: {LoadedCopy?.AvailabilityStatus})";
-                        IsEligible = false;
+                            var eligibilityResult = await _circulationService.CheckMemberEligibilityAsync(_foundMemberId.Value, SelectedMemberType);
+                            CurrentIssuedCount = eligibilityResult.CurrentIssuedCount;
+                            MaxAllowedLimit = eligibilityResult.MaxAllowedLimit;
+                            PendingFinesTotal = eligibilityResult.PendingFinesTotal;
+                            HasActiveOverdue = eligibilityResult.HasActiveOverdue;
+                        }
                     }
                     else
                     {
-                        IsEligible = result.EligibilityMessage == "Eligible";
+                        MemberName = "Member record not found.";
+                        MemberDetailDisplay = string.Empty;
+                        MemberDepartment = string.Empty;
+                        MemberStatusDisplay = "Inactive";
+                        MemberPhotoPath = string.Empty;
+                        IsMemberFound = false;
+                        _foundMemberId = null;
+                        ActiveIssues.Clear();
                     }
                 }
+
+                // 2. Search Book Copy (if specified)
+                if (!string.IsNullOrWhiteSpace(AccessionNumber))
+                {
+                    var copy = await _circulationService.GetCopyDetailsForCirculationAsync(AccessionNumber.Trim());
+                    if (copy != null)
+                    {
+                        LoadedCopy = copy;
+                        BookTitle = copy.BookMaster.Title;
+                        BookAuthorDisplay = copy.BookMaster.Subject ?? "General Subject";
+                        BookStatusDisplay = copy.AvailabilityStatus.ToString();
+                        IsBookFound = true;
+
+                        if (AutoAddOnScan)
+                        {
+                            if (Cart.Any(c => c.AccessionNumber == copy.AccessionNumber))
+                            {
+                                StatusMessage = $"Book copy '{copy.AccessionNumber}' is already in the cart.";
+                            }
+                            else if (copy.AvailabilityStatus != BookStatus.Available)
+                            {
+                                StatusMessage = $"Book copy '{copy.AccessionNumber}' is not available (Status: {copy.AvailabilityStatus}).";
+                            }
+                            else
+                            {
+                                Cart.Add(copy);
+                                StatusMessage = $"Added '{copy.BookMaster.Title}' to checkout cart.";
+                                AccessionNumber = string.Empty;
+                                LoadedCopy = null;
+                                IsBookFound = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        BookTitle = "Material not found in catalog.";
+                        BookAuthorDisplay = string.Empty;
+                        BookStatusDisplay = "Unavailable";
+                        LoadedCopy = null;
+                    }
+                }
+
+                RecalculateEligibility();
             }
             catch (Exception ex)
             {
@@ -177,9 +192,99 @@ namespace KicsitLibrary.Desktop.ViewModels
         }
 
         [RelayCommand]
+        private void AddToCart()
+        {
+            if (LoadedCopy == null)
+            {
+                StatusMessage = "No book copy loaded to add to cart.";
+                return;
+            }
+
+            if (Cart.Any(c => c.AccessionNumber == LoadedCopy.AccessionNumber))
+            {
+                StatusMessage = $"Book copy '{LoadedCopy.AccessionNumber}' is already in the cart.";
+                return;
+            }
+
+            if (LoadedCopy.AvailabilityStatus != BookStatus.Available)
+            {
+                StatusMessage = $"Book copy '{LoadedCopy.AccessionNumber}' is not available.";
+                return;
+            }
+
+            Cart.Add(LoadedCopy);
+            StatusMessage = $"Added '{LoadedCopy.BookMaster.Title}' to cart.";
+            
+            AccessionNumber = string.Empty;
+            LoadedCopy = null;
+            IsBookFound = false;
+
+            RecalculateEligibility();
+        }
+
+        [RelayCommand]
+        private void RemoveFromCart(BookCopy copy)
+        {
+            if (copy == null) return;
+            Cart.Remove(copy);
+            StatusMessage = $"Removed '{copy.BookMaster.Title}' from cart.";
+            RecalculateEligibility();
+        }
+
+        [RelayCommand]
+        private void ClearCart()
+        {
+            Cart.Clear();
+            StatusMessage = "Cart cleared.";
+            RecalculateEligibility();
+        }
+
+        private void RecalculateEligibility()
+        {
+            if (!IsMemberFound || !_foundMemberId.HasValue)
+            {
+                IsEligible = false;
+                EligibilityMessage = "Validate member registration first.";
+                return;
+            }
+
+            var remainingLimit = MaxAllowedLimit - CurrentIssuedCount;
+            if (Cart.Count == 0)
+            {
+                IsEligible = false;
+                EligibilityMessage = "Add books to the cart to checkout.";
+                return;
+            }
+
+            if (Cart.Count > remainingLimit)
+            {
+                IsEligible = false;
+                EligibilityMessage = $"Limit exceeded: Member can borrow {remainingLimit} more books, but cart has {Cart.Count} items.";
+                return;
+            }
+
+            if (HasActiveOverdue)
+            {
+                IsEligible = false;
+                EligibilityMessage = "Blocked: Member has active overdue books.";
+                return;
+            }
+
+            if (PendingFinesTotal > 0)
+            {
+                IsEligible = false;
+                EligibilityMessage = $"Blocked: Member has Rs. {PendingFinesTotal:N0} outstanding fines.";
+                return;
+            }
+
+            IsEligible = true;
+            EligibilityMessage = $"Eligible. Ready to checkout {Cart.Count} item(s).";
+        }
+
+        [RelayCommand]
         private async Task ConfirmIssueAsync()
         {
-            if (!IsEligible || !_foundMemberId.HasValue || LoadedCopy == null)
+            if (!IsEligible || !_foundMemberId.HasValue || Cart.Count == 0)
             {
                 StatusMessage = "Cannot issue material. Validation checks failed.";
                 return;
@@ -189,16 +294,66 @@ namespace KicsitLibrary.Desktop.ViewModels
             try
             {
                 var userId = _authService.CurrentUser?.Id ?? 1;
-                var record = await _circulationService.IssueBookAsync(
-                    LoadedCopy.AccessionNumber,
-                    _foundMemberId.Value,
-                    SelectedMemberType,
-                    userId
-                );
+                var succeededCount = 0;
+                var failedCount = 0;
+                var errorMessages = new System.Collections.Generic.List<string>();
+                var receiptBuilder = new System.Text.StringBuilder();
 
-                StatusMessage = $"Material checkout successful! Due date: {record.ExpectedReturnDate:dd-MMM-yyyy}.";
-                
-                // Clear fields for next checkout
+                receiptBuilder.AppendLine("========================================");
+                receiptBuilder.AppendLine("       ILM-O-KUTUB LIBRARY SYSTEM       ");
+                receiptBuilder.AppendLine("             CHECKOUT SLIP              ");
+                receiptBuilder.AppendLine("========================================");
+                receiptBuilder.AppendLine($"Date: {DateTime.Now:dd-MMM-yyyy HH:mm:ss}");
+                receiptBuilder.AppendLine($"Member: {MemberName}");
+                receiptBuilder.AppendLine($"ID: {MemberIdentifier}");
+                receiptBuilder.AppendLine($"Category: {SelectedMemberType}");
+                receiptBuilder.AppendLine("----------------------------------------");
+                receiptBuilder.AppendLine("Issued Materials:");
+
+                var copiesToIssue = Cart.ToList();
+
+                foreach (var copy in copiesToIssue)
+                {
+                    try
+                    {
+                        var record = await _circulationService.IssueBookAsync(
+                            copy.AccessionNumber,
+                            _foundMemberId.Value,
+                            SelectedMemberType,
+                            userId
+                        );
+                        succeededCount++;
+                        receiptBuilder.AppendLine($"- {copy.BookMaster.Title}");
+                        receiptBuilder.AppendLine($"  Acc No: {copy.AccessionNumber}  Due: {record.ExpectedReturnDate:dd-MMM-yyyy}");
+                    }
+                    catch (Exception ex)
+                    {
+                        failedCount++;
+                        errorMessages.Add($"{copy.AccessionNumber}: {ex.Message}");
+                    }
+                }
+
+                receiptBuilder.AppendLine("----------------------------------------");
+                receiptBuilder.AppendLine($"Total Issued: {succeededCount}");
+                if (failedCount > 0)
+                {
+                    receiptBuilder.AppendLine($"Failed: {failedCount}");
+                }
+                receiptBuilder.AppendLine("========================================");
+                receiptBuilder.AppendLine("Please return books on or before due date.");
+                receiptBuilder.AppendLine("     Thank you for using our library!   ");
+                receiptBuilder.AppendLine("========================================");
+
+                if (failedCount == 0)
+                {
+                    StatusMessage = $"Successfully checked out {succeededCount} book(s)!\n\nReceipt:\n{receiptBuilder}";
+                }
+                else
+                {
+                    StatusMessage = $"Checkout completed with errors. Succeeded: {succeededCount}, Failed: {failedCount}.\nErrors:\n{string.Join("\n", errorMessages)}\n\nReceipt:\n{receiptBuilder}";
+                }
+
+                Cart.Clear();
                 AccessionNumber = string.Empty;
                 IsEligible = false;
                 IsBookFound = false;
@@ -207,7 +362,6 @@ namespace KicsitLibrary.Desktop.ViewModels
                 BookAuthorDisplay = string.Empty;
                 BookStatusDisplay = string.Empty;
 
-                // Refresh active issues
                 if (_foundMemberId.HasValue)
                 {
                     var issues = await _circulationService.GetActiveIssuesByMemberAsync(_foundMemberId.Value, SelectedMemberType);
@@ -220,7 +374,7 @@ namespace KicsitLibrary.Desktop.ViewModels
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Failed to issue material: {ex.Message}";
+                StatusMessage = $"Failed to issue materials: {ex.Message}";
             }
             finally
             {
@@ -236,19 +390,42 @@ namespace KicsitLibrary.Desktop.ViewModels
                 StatusMessage = "No book loaded to reserve.";
                 return;
             }
-            // Logic to navigate to Reservation view with this book.
-            StatusMessage = "Navigation to Reservation module with this book is triggered.";
+            StatusMessage = $"Navigation to Reservation module with book '{LoadedCopy.BookMaster.Title}' is triggered.";
         }
 
         [RelayCommand]
         private void PrintSlip()
         {
-            StatusMessage = "Print/Export slip requested.";
+            if (ActiveIssues.Count == 0)
+            {
+                StatusMessage = "No active checkout records to print.";
+                return;
+            }
+
+            var receiptBuilder = new System.Text.StringBuilder();
+            receiptBuilder.AppendLine("========================================");
+            receiptBuilder.AppendLine("       ILM-O-KUTUB LIBRARY SYSTEM       ");
+            receiptBuilder.AppendLine("          ACTIVE ISSUES RECEIPT         ");
+            receiptBuilder.AppendLine("========================================");
+            receiptBuilder.AppendLine($"Date: {DateTime.Now:dd-MMM-yyyy HH:mm:ss}");
+            receiptBuilder.AppendLine($"Member: {MemberName}");
+            receiptBuilder.AppendLine($"ID: {MemberIdentifier}");
+            receiptBuilder.AppendLine("----------------------------------------");
+            receiptBuilder.AppendLine("Current Active Issues:");
+            foreach (var issue in ActiveIssues)
+            {
+                receiptBuilder.AppendLine($"- Acc No: {issue.AccessionNumber}");
+                receiptBuilder.AppendLine($"  Issued: {issue.IssueDate:dd-MMM-yyyy}  Due: {issue.ExpectedReturnDate:dd-MMM-yyyy}");
+            }
+            receiptBuilder.AppendLine("========================================");
+
+            StatusMessage = receiptBuilder.ToString();
         }
 
         [RelayCommand]
         private void ClearAll()
         {
+            Cart.Clear();
             AccessionNumber = string.Empty;
             MemberIdentifier = string.Empty;
             SelectedMemberType = MemberType.Student;
@@ -271,6 +448,7 @@ namespace KicsitLibrary.Desktop.ViewModels
 
             EligibilityMessage = string.Empty;
             StatusMessage = string.Empty;
+            ActiveIssues.Clear();
         }
 
         partial void OnSelectedStudentSuggestionChanged(Student? value)
@@ -286,6 +464,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                 MemberPhotoPath = value.PhotoPath ?? string.Empty;
                 IsMemberFound = true;
                 ShowSuggestions = false;
+                _ = ValidateDetailsAsync();
             }
         }
 

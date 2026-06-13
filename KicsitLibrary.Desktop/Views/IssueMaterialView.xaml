@@ -6,13 +6,12 @@
              xmlns:local="clr-namespace:KicsitLibrary.Desktop"
              xmlns:coreEnums="clr-namespace:KicsitLibrary.Core.Enums;assembly=KicsitLibrary.Core"
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="1000" Background="Transparent">
+             d:DesignHeight="750" d:DesignWidth="1100" Background="Transparent">
     
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Loader Progress Bar -->
@@ -28,243 +27,206 @@
             </Grid.ColumnDefinitions>
 
             <!-- LEFT PANEL: Search / Scan Input Form -->
-            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,15,0" VerticalAlignment="Top">
-                <StackPanel>
-                    <TextBlock Text="CHECKOUT TRANSACTION" FontSize="14" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,15"/>
+            <StackPanel Grid.Column="0" Margin="0,0,15,0">
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" VerticalAlignment="Top">
+                    <StackPanel>
+                        <TextBlock Text="CHECKOUT TRANSACTION" FontSize="14" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,15"/>
 
-                    <!-- Member Type Selection -->
-                    <TextBlock Text="Member Category *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                    <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding SelectedMemberType}" SelectedValuePath="Tag">
-                        <ComboBoxItem Content="Student" Tag="{x:Static coreEnums:MemberType.Student}"/>
-                        <ComboBoxItem Content="Faculty / Staff" Tag="{x:Static coreEnums:MemberType.FacultyStaff}"/>
-                    </ComboBox>
+                        <!-- Member Type Selection -->
+                        <TextBlock Text="Member Category *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                        <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding SelectedMemberType}" SelectedValuePath="Tag">
+                            <ComboBoxItem Content="Student" Tag="{x:Static coreEnums:MemberType.Student}"/>
+                            <ComboBoxItem Content="Faculty / Staff" Tag="{x:Static coreEnums:MemberType.FacultyStaff}"/>
+                        </ComboBox>
 
-                    <!-- Member Identifier -->
-                    <TextBlock Text="Member Registration / Personnel ID *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                    <Grid>
-                        <TextBox x:Name="MemberIdentifierTextBox" Style="{StaticResource StyledTextBox}" Text="{Binding MemberIdentifier, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
-                        <Popup IsOpen="{Binding ShowSuggestions}" PlacementTarget="{Binding ElementName=MemberIdentifierTextBox}" Placement="Bottom" StaysOpen="False" Width="{Binding ElementName=MemberIdentifierTextBox, Path=ActualWidth}">
-                            <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="{StaticResource CardBgBrush}" MaxHeight="200" CornerRadius="4">
-                                <ListBox ItemsSource="{Binding StudentSuggestions}" SelectedItem="{Binding SelectedStudentSuggestion}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Margin="5">
-                                                <TextBlock Text="{Binding RegistrationNumber}" FontWeight="Bold"/>
-                                                <TextBlock Text="{Binding Name}" FontSize="11"/>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Program}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
-                                                    <TextBlock Text=" - " FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
-                                                    <TextBlock Text="{Binding Department}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                        <!-- Member Identifier -->
+                        <TextBlock Text="Member Registration / Personnel ID *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                        <Grid>
+                            <TextBox x:Name="MemberIdentifierTextBox" Style="{StaticResource StyledTextBox}" Text="{Binding MemberIdentifier, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                            <Popup IsOpen="{Binding ShowSuggestions}" PlacementTarget="{Binding ElementName=MemberIdentifierTextBox}" Placement="Bottom" StaysOpen="False" Width="{Binding ElementName=MemberIdentifierTextBox, Path=ActualWidth}">
+                                <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="{StaticResource CardBgBrush}" MaxHeight="200" CornerRadius="4">
+                                    <ListBox ItemsSource="{Binding StudentSuggestions}" SelectedItem="{Binding SelectedStudentSuggestion}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="5">
+                                                    <TextBlock Text="{Binding RegistrationNumber}" FontWeight="Bold"/>
+                                                    <TextBlock Text="{Binding Name}" FontSize="11"/>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Program}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                        <TextBlock Text=" - " FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                        <TextBlock Text="{Binding Department}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                    </StackPanel>
                                                 </StackPanel>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Border>
-                        </Popup>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Border>
+                            </Popup>
+                        </Grid>
+
+                        <!-- Book Accession Number -->
+                        <TextBlock Text="Book Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" FontSize="16" Padding="10" Background="#F0F9FF" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.5"/>
+
+                        <!-- Auto-Add Checkbox -->
+                        <CheckBox Content="Auto-Add copy to checkout cart on scan" 
+                                  IsChecked="{Binding AutoAddOnScan, Mode=TwoWay}"
+                                  Foreground="{StaticResource TextMutedBrush}" 
+                                  FontSize="11" Margin="0,0,0,15"/>
+
+                        <!-- Action Buttons -->
+                        <Button Content="🔍 Validate / Add to Cart" Style="{StaticResource PrimaryButton}" Command="{Binding ValidateDetailsCommand}" ToolTip="Lookup member privileges and add copy barcode to checkout queue." Margin="0,0,0,8" Height="38"/>
+                        <Button Content="➕ Add Current Copy Manually" Style="{StaticResource SecondaryButton}" Command="{Binding AddToCartCommand}" ToolTip="Add currently searched book copy to checkout cart." Margin="0,0,0,8" Height="38"/>
+                        <Button Content="🧹 Clear Form Fields" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" ToolTip="Clear member search and barcodes form." Height="38"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Scanned Book metadata preview card -->
+                <Border Style="{StaticResource CardStyle}" Visibility="{Binding IsBookFound, Converter={local:BooleanToVisibilityConverter}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="36" Height="36" CornerRadius="18" Background="#EFF6FF" VerticalAlignment="Top" Margin="0,0,12,0">
+                            <TextBlock Text="📖" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="SCANNED BOOK COPY PREVIEW" FontSize="9" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,3"/>
+                            <TextBlock Text="{Binding BookTitle}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{Binding BookAuthorDisplay, StringFormat='Subject: {0}'}" FontSize="11" Margin="0,2,0,0"/>
+                            <TextBlock Text="{Binding LoadedCopy.Location, StringFormat='Location: {0}'}" FontSize="11" Margin="0,2,0,0"/>
+                            <TextBlock Text="{Binding BookStatusDisplay, StringFormat='Status: {0}'}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" Margin="0,2,0,0"/>
+                        </StackPanel>
                     </Grid>
+                </Border>
+            </StackPanel>
 
-                    <!-- Book Accession Number -->
-                    <TextBlock Text="Book Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,4"/>
-                    <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,20" FontSize="18" Padding="12" Background="#F0F9FF" BorderBrush="{StaticResource AccentBrush}" BorderThickness="2"/>
-
-                    <!-- Action Buttons -->
-                    <Button Content="🔍 Validate Eligibility" Style="{StaticResource PrimaryButton}" Command="{Binding ValidateDetailsCommand}" ToolTip="Check member eligibility, limits, and copy availability before issuing." Margin="0,0,0,10" Height="40"/>
-                    <Button Content="🧹 Clear All Fields" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" ToolTip="Clear the current issue form without saving." Height="40"/>
-                </StackPanel>
-            </Border>
-
-            <!-- RIGHT PANEL: Details & Verification -->
+            <!-- RIGHT PANEL: Checkout Cart & Verification Details -->
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <Grid>
-                    <!-- Display fallback message when neither book nor member is found -->
-                    <Border Style="{StaticResource CardStyle}" VerticalAlignment="Stretch" Margin="5,0,0,0"
-                            Visibility="{Binding IsBookFound, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}">
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30">
-                            <TextBlock Text="📝" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                            <TextBlock Text="Scan &amp; Verify" Style="{StaticResource TitleTextStyle}" FontSize="18" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                            <TextBlock Text="Enter the member identifier and book accession number on the left, then click Validate to verify borrowing privileges." 
-                                       Style="{StaticResource SubtitleTextStyle}" HorizontalAlignment="Center" TextAlignment="Center" FontSize="12"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- CART AND SYSTEM STATUS CARDS -->
+                    <!-- Cart Card -->
+                    <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="5,0,0,12" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1.5,1,1,1">
+                        <StackPanel>
+                            <DockPanel Margin="0,0,0,10">
+                                <TextBlock Text="🛒 CHECKOUT CART" FontSize="14" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding Cart.Count, StringFormat='{}{0} item(s) scanned'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center"/>
+                            </DockPanel>
+
+                            <DataGrid ItemsSource="{Binding Cart}" AutoGenerateColumns="False" IsReadOnly="True"
+                                      HeadersVisibility="Column" SelectionMode="Single"
+                                      Background="Transparent" RowBackground="White" AlternatingRowBackground="#F8FAFC"
+                                      BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E5E7EB"
+                                      MinHeight="150" MaxHeight="250">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Accession No." Binding="{Binding AccessionNumber}" Width="110" FontWeight="SemiBold"/>
+                                    <DataGridTextColumn Header="Book Title" Binding="{Binding BookMaster.Title}" Width="*"/>
+                                    <DataGridTextColumn Header="Rack / Shelf" Binding="{Binding Location}" Width="120"/>
+                                    <DataGridTemplateColumn Width="60" Header="Action">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="❌" 
+                                                        Command="{Binding DataContext.RemoveFromCartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" BorderThickness="0" Cursor="Hand" Foreground="Red" FontSize="11" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <TextBlock Text="Checkout Cart is empty. Scan accession numbers on the left to add items." 
+                                       FontSize="12" FontStyle="Italic" Foreground="{StaticResource TextMutedBrush}"
+                                       Margin="0,25,0,20" HorizontalAlignment="Center"
+                                       Visibility="{Binding Cart.Count, Converter={local:CountToVisibilityConverter}, ConverterParameter=Inverse}"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Main details grid, shown when book or member is found -->
-                    <StackPanel Margin="5,0,0,0" Visibility="{Binding IsBookFound, Converter={local:BooleanToVisibilityConverter}}">
-                        
-                        <!-- Book Details Card -->
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.5,1,1,1">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <Border Width="40" Height="40" CornerRadius="20" Background="#E1EFFE" VerticalAlignment="Top" Margin="0,0,15,0">
-                                    <TextBlock Text="📖" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="BOOK METADATA" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,5"/>
-                                    <TextBlock Text="{Binding BookTitle}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
-                                    
-                                    <Grid Margin="0,8,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <StackPanel Grid.Column="0">
-                                            <TextBlock Text="Subject / Category" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                            <TextBlock Text="{Binding BookAuthorDisplay}" FontSize="13" FontWeight="SemiBold"/>
-                                        </StackPanel>
-                                        
-                                        <StackPanel Grid.Column="1">
-                                            <TextBlock Text="Book Location" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                            <TextBlock Text="{Binding LoadedCopy.Location}" FontSize="13" FontWeight="SemiBold"/>
-                                        </StackPanel>
+                    <!-- Borrower Card (Visible when member found) -->
+                    <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="5,0,0,12" Visibility="{Binding IsMemberFound, Converter={local:BooleanToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
 
-                                        <StackPanel Grid.Column="2">
-                                            <TextBlock Text="Availability Status" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                            <TextBlock Text="{Binding BookStatusDisplay}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource AccentBrush}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <!-- Borrower Details Card -->
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15" Visibility="{Binding IsMemberFound, Converter={local:BooleanToVisibilityConverter}}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <!-- Profile Photo with fallback -->
-                                <Border Grid.Column="0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="4" Height="90" Width="70" Background="#F8F9FA" VerticalAlignment="Top" HorizontalAlignment="Left">
-                                    <Grid>
-                                        <Image Source="{Binding MemberPhotoPath}" Stretch="UniformToFill" Margin="2"
-                                               Visibility="{Binding MemberPhotoPath, Converter={local:StringVisibilityConverter}}"/>
-                                        
-                                        <TextBlock Text="👤" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                   Visibility="{Binding MemberPhotoPath, Converter={local:StringVisibilityConverter}, ConverterParameter=Inverse}"/>
-                                    </Grid>
-                                </Border>
-                                
-                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                    <TextBlock Text="MEMBER PROFILE" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,5"/>
-                                    <TextBlock Text="{Binding MemberName}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
-                                    <TextBlock Text="{Binding MemberDetailDisplay}" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
-                                    
-                                    <Grid Margin="0,10,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <StackPanel Grid.Column="0">
-                                            <TextBlock Text="Department" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                            <TextBlock Text="{Binding MemberDepartment}" FontSize="13" FontWeight="SemiBold"/>
-                                        </StackPanel>
-                                        
-                                        <StackPanel Grid.Column="1">
-                                            <TextBlock Text="Account Status" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                            <TextBlock Text="{Binding MemberStatusDisplay}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <!-- Borrowing Privileges & Eligibility Verification Card -->
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,10" Visibility="{Binding IsMemberFound, Converter={local:BooleanToVisibilityConverter}}">
-                            <StackPanel>
-                                <TextBlock Text="CIRCULATION PRIVILEGES &amp; RULE VERIFICATION" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10"/>
-                                
-                                <Grid Margin="0,0,0,15">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Books Issued Limit -->
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Currently Issued" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                            <TextBlock Text="{Binding CurrentIssuedCount}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
-                                            <TextBlock Text=" / " FontSize="18" Foreground="{StaticResource TextMutedBrush}"/>
-                                            <TextBlock Text="{Binding MaxAllowedLimit}" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}"/>
-                                        </StackPanel>
-                                    </StackPanel>
-
-                                    <!-- Unpaid Fines -->
-                                    <StackPanel Grid.Column="1">
-                                        <TextBlock Text="Outstanding Fines" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                        <TextBlock Text="{Binding PendingFinesTotal, StringFormat='Rs. {0:N0}'}" FontSize="18" FontWeight="Bold" Margin="0,2,0,0">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding PendingFinesTotal, Converter={local:MenuSelectionConverter}}" Value="">
-                                                            <!-- fallback or trigger color when fine > 0 -->
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </StackPanel>
-
-                                    <!-- Overdue items -->
-                                    <StackPanel Grid.Column="2">
-                                        <TextBlock Text="Has Overdue Books?" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                        <TextBlock Text="{Binding HasActiveOverdue, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}" FontSize="14" FontWeight="Bold" Margin="0,5,0,0">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding HasActiveOverdue}" Value="True">
-                                                            <Setter Property="Text" Value="⚠️ YES (Overdue)"/>
-                                                            <Setter Property="Foreground" Value="{StaticResource DangerBrush}"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding HasActiveOverdue}" Value="False">
-                                                            <Setter Property="Text" Value="✅ NO"/>
-                                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </StackPanel>
+                            <!-- Member photo -->
+                            <Border Grid.Column="0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="4" Height="90" Width="70" Background="#F8F9FA" VerticalAlignment="Top" HorizontalAlignment="Left">
+                                <Grid>
+                                    <Image Source="{Binding MemberPhotoPath}" Stretch="UniformToFill" Margin="2"
+                                           Visibility="{Binding MemberPhotoPath, Converter={local:StringVisibilityConverter}}"/>
+                                    <TextBlock Text="👤" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Visibility="{Binding MemberPhotoPath, Converter={local:StringVisibilityConverter}, ConverterParameter=Inverse}"/>
                                 </Grid>
+                            </Border>
 
-                                <!-- Eligibility Message banner -->
-                                <Border CornerRadius="6" Padding="12" Margin="0,0,0,15">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsEligible}" Value="True">
-                                                    <Setter Property="Background" Value="#DEF7EC"/>
-                                                    <Setter Property="BorderBrush" Value="#31C48D"/>
-                                                    <Setter Property="BorderThickness" Value="1"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsEligible}" Value="False">
-                                                    <Setter Property="Background" Value="#FDE8E8"/>
-                                                    <Setter Property="BorderBrush" Value="#F8B4B4"/>
-                                                    <Setter Property="BorderThickness" Value="1"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
+                            <!-- Member Details -->
+                            <StackPanel Grid.Column="1" Margin="10,0,10,0">
+                                <TextBlock Text="MEMBER PROFILE" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding MemberName}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                                <TextBlock Text="{Binding MemberDetailDisplay}" FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,1,0,0"/>
+                                <TextBlock Text="{Binding MemberDepartment}" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                                <TextBlock Text="{Binding MemberStatusDisplay}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <!-- Limits and Overdues -->
+                            <Border Grid.Column="2" BorderThickness="1,0,0,0" BorderBrush="{StaticResource BorderBrush}" Padding="15,0,0,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
                                     
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <TextBlock Text="ℹ️" FontSize="18" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding EligibilityMessage}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center">
+                                    <UniformGrid Columns="3" Grid.Row="0">
+                                        <StackPanel>
+                                            <TextBlock Text="Currently Issued" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                <TextBlock Text="{Binding CurrentIssuedCount}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                                                <TextBlock Text=" / " FontSize="16" Foreground="{StaticResource TextMutedBrush}"/>
+                                                <TextBlock Text="{Binding MaxAllowedLimit}" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Outstanding Fines" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                            <TextBlock Text="{Binding PendingFinesTotal, StringFormat='Rs. {0:N0}'}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Overdue Books" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                            <TextBlock Text="❌ YES (Blocked)" FontSize="12" FontWeight="Bold" Foreground="{StaticResource DangerBrush}" Margin="0,4,0,0" Visibility="{Binding HasActiveOverdue, Converter={local:BooleanToVisibilityConverter}}"/>
+                                            <TextBlock Text="✅ None" FontSize="12" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" Margin="0,4,0,0" Visibility="{Binding HasActiveOverdue, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
+                                        </StackPanel>
+                                    </UniformGrid>
+
+                                    <!-- Eligibility Banner -->
+                                    <Border Grid.Row="1" CornerRadius="4" Padding="8" Margin="0,8,0,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEligible}" Value="True">
+                                                        <Setter Property="Background" Value="#DEF7EC"/>
+                                                        <Setter Property="BorderBrush" Value="#31C48D"/>
+                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsEligible}" Value="False">
+                                                        <Setter Property="Background" Value="#FDE8E8"/>
+                                                        <Setter Property="BorderBrush" Value="#F8B4B4"/>
+                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding EligibilityMessage}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
@@ -278,80 +240,47 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
-                                    </Grid>
-                                </Border>
-
-                                <!-- Action Bar -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <Button Grid.Column="0" Content="📥 Issue Material" Style="{StaticResource PrimaryButton}"
-                                            ToolTip="Create the issue record after the displayed checks pass."
-                                            Command="{Binding ConfirmIssueCommand}" Height="45" FontSize="14" FontWeight="Bold"
-                                            IsEnabled="{Binding IsEligible}" Margin="0,0,10,0"/>
-
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Button Content="⏳ Reserve Instead" Style="{StaticResource SecondaryButton}" Command="{Binding ReserveInsteadCommand}" ToolTip="Reserve this material if checkout is not possible." Height="45" Margin="0,0,10,0" Padding="15,0"/>
-                                        <Button Content="🖨 Print Slip" Style="{StaticResource SecondaryButton}" Command="{Binding PrintSlipCommand}" ToolTip="Print checkout slip." Height="45" Margin="0,0,0,0" Padding="15,0"/>
-                                    </StackPanel>
+                                    </Border>
                                 </Grid>
-                            </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Action panel & Print slips -->
+                    <StackPanel Grid.Row="2" Margin="5,0,0,0">
+                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" Visibility="{Binding IsMemberFound, Converter={local:BooleanToVisibilityConverter}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Button Grid.Column="0" Content="📥 Confirm Bulk Checkout" Style="{StaticResource PrimaryButton}" Height="45" FontSize="14" FontWeight="Bold"
+                                        Command="{Binding ConfirmIssueCommand}" IsEnabled="{Binding IsEligible}" Margin="0,0,10,0" ToolTip="Finalize checkout for all items in the cart."/>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="⏳ Reserve Title" Style="{StaticResource SecondaryButton}" Command="{Binding ReserveInsteadCommand}" ToolTip="Reserve a hold request for the book master instead." Height="45" Margin="0,0,8,0" Padding="15,0"/>
+                                    <Button Content="🖨 Print Receipt Slip" Style="{StaticResource SecondaryButton}" Command="{Binding PrintSlipCommand}" ToolTip="Generate checkout transaction slip." Height="45" Margin="0,0,8,0" Padding="15,0"/>
+                                    <Button Content="🧹 Clear Cart" Style="{StaticResource DangerButton}" Command="{Binding ClearCartCommand}" ToolTip="Empty all scanned items." Height="45" Padding="15,0"/>
+                                </StackPanel>
+                            </Grid>
                         </Border>
 
-                        <!-- Active Issues Table -->
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15" Visibility="{Binding IsMemberFound, Converter={local:BooleanToVisibilityConverter}}">
+                        <!-- Monospace Slip Output -->
+                        <Border Style="{StaticResource CardStyle}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="#F1F5F9"
+                                Visibility="{Binding StatusMessage, Converter={local:StringVisibilityConverter}}">
                             <StackPanel>
-                                <TextBlock Text="CURRENT ACTIVE ISSUES" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10"/>
-                                
-                                <DataGrid ItemsSource="{Binding ActiveIssues}" AutoGenerateColumns="False" IsReadOnly="True" 
-                                          HeadersVisibility="Column" SelectionMode="Single"
-                                          Background="Transparent" RowBackground="White" AlternatingRowBackground="#F8FAFC"
-                                          BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
-                                          GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E5E7EB"
-                                          MinHeight="100" MaxHeight="200">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Accession No." Binding="{Binding CopyAccessionNumber}" Width="120" FontWeight="SemiBold"/>
-                                        <DataGridTextColumn Header="Issue Date" Binding="{Binding IssueDate, StringFormat='{}{0:dd-MMM-yyyy}'}" Width="110"/>
-                                        <DataGridTextColumn Header="Due Date" Binding="{Binding ExpectedReturnDate, StringFormat='{}{0:dd-MMM-yyyy}'}" Width="110">
-                                            <DataGridTextColumn.ElementStyle>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="FontWeight" Value="Bold"/>
-                                                    <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                                                </Style>
-                                            </DataGridTextColumn.ElementStyle>
-                                        </DataGridTextColumn>
-                                        <DataGridTextColumn Header="Renewals" Binding="{Binding RenewalCount}" Width="80"/>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                                
-                                <TextBlock Text="No active issues for this member." FontSize="12" FontStyle="Italic" Foreground="{StaticResource TextMutedBrush}"
-                                           Margin="0,15,0,10" HorizontalAlignment="Center"
-                                           Visibility="{Binding ActiveIssues.Count, Converter={local:CountToVisibilityConverter}, ConverterParameter=Inverse}"/>
+                                <TextBlock Text="TRANSACTION STATUS &amp; RECEIPT PRINTER SLIP" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                                    <TextBox Text="{Binding StatusMessage, Mode=OneWay}" 
+                                             FontFamily="Consolas" FontSize="12" Background="Transparent" 
+                                             BorderThickness="0" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"/>
+                                </ScrollViewer>
                             </StackPanel>
                         </Border>
                     </StackPanel>
                 </Grid>
             </ScrollViewer>
         </Grid>
-
-        <!-- Status / Success Message Bar -->
-        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" FontSize="13" FontWeight="Bold" Margin="0,15,0,0" Padding="12" TextWrapping="Wrap"
-                   Visibility="{Binding StatusMessage, Converter={local:StringVisibilityConverter}}">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Background" Value="#EBF5FF"/>
-                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-                    <Style.Triggers>
-                        <!-- Detect if it has 'succeeded' or 'successful' or 'checkout successful' in message -->
-                        <DataTrigger Binding="{Binding StatusMessage, Converter={local:MenuSelectionConverter}}" Value="">
-                            <!-- optional fallback -->
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
     </Grid>
 </UserControl>

@@ -241,7 +241,7 @@
                                             <!-- Lightweight visual bar representing the metric -->
                                             <Grid Margin="0,4,0,0" Height="8">
                                                 <Border Background="#F1F5F9" CornerRadius="4"/>
-                                                <ProgressBar Value="{Binding Value, Converter={local:SummaryValueConverter}}" 
+                                                <ProgressBar Value="{Binding Value, Mode=OneWay, Converter={local:SummaryValueConverter}}" 
                                                              Maximum="100" 
                                                              Height="8"
                                                              BorderThickness="0"

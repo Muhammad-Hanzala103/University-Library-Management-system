@@ -242,16 +242,16 @@ public sealed class StockVerificationReportDataProvider(KicsitLibraryDbContext c
         })
         .Where(item =>
             TextMatches(search, item.Copy.AccessionNumber, item.Copy.BookMaster.Title) &&
-            ExactMatches(category, item.Copy.BookMaster.Category.Name) &&
-            ExactMatches(department, item.Copy.BookMaster.DepartmentCategory.Name) &&
+            ExactMatches(category, item.Copy.BookMaster.Category?.Name) &&
+            ExactMatches(department, item.Copy.BookMaster.DepartmentCategory?.Name) &&
             ExactMatches(status, item.Status.ToString()) &&
             TextMatches(rack, item.Copy.RackNumber) &&
             TextMatches(shelf, item.Copy.ShelfNumber))
         .Select(item => Row(
             ("AccessionNumber", item.Copy.AccessionNumber),
             ("BookTitle", item.Copy.BookMaster.Title),
-            ("Category", item.Copy.BookMaster.Category.Name),
-            ("Department", item.Copy.BookMaster.DepartmentCategory.Name),
+            ("Category", item.Copy.BookMaster.Category?.Name ?? string.Empty),
+            ("Department", item.Copy.BookMaster.DepartmentCategory?.Name ?? string.Empty),
             ("Rack", item.Copy.RackNumber),
             ("Shelf", item.Copy.ShelfNumber),
             ("ExpectedStatus", item.Status.ToString()),

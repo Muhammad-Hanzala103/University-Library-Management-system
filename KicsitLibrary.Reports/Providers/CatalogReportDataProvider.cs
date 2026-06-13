@@ -79,23 +79,24 @@ namespace KicsitLibrary.Reports.Providers
 
             var filtered = copies.Where(copy =>
                 Matches(search, copy.AccessionNumber, copy.BookMaster.Title, copy.BookMaster.ISBN, copy.BookMaster.ISSN) &&
-                MatchesExact(category, copy.BookMaster.Category.Name) &&
-                MatchesExact(department, copy.BookMaster.DepartmentCategory.Name) &&
-                MatchesExact(literature, copy.BookMaster.LiteratureCategory.Name) &&
+                MatchesExact(category, copy.BookMaster.Category?.Name) &&
+                MatchesExact(department, copy.BookMaster.DepartmentCategory?.Name) &&
+                MatchesExact(literature, copy.BookMaster.LiteratureCategory?.Name) &&
                 MatchesExact(status, copy.AvailabilityStatus.ToString()) &&
-                Matches(author, copy.BookMaster.BookAuthors.Select(item => item.Author.Name).ToArray()) &&
-                Matches(publisher, copy.BookMaster.Publisher.Name));
+                Matches(author, copy.BookMaster.BookAuthors.Select(item => item.Author?.Name).Where(n => n != null).ToArray()) &&
+                Matches(publisher, copy.BookMaster.Publisher?.Name));
 
             var rows = filtered.Select(copy => Row(
                 ("AccessionNumber", copy.AccessionNumber),
                 ("Title", copy.BookMaster.Title),
                 ("Author", string.Join(", ", copy.BookMaster.BookAuthors
-                    .Select(item => item.Author.Name)
+                    .Select(item => item.Author?.Name)
+                    .Where(name => !string.IsNullOrEmpty(name))
                     .OrderBy(name => name))),
-                ("Publisher", copy.BookMaster.Publisher.Name),
-                ("Category", copy.BookMaster.Category.Name),
-                ("Department", copy.BookMaster.DepartmentCategory.Name),
-                ("LiteratureCategory", copy.BookMaster.LiteratureCategory.Name),
+                ("Publisher", copy.BookMaster.Publisher?.Name ?? string.Empty),
+                ("Category", copy.BookMaster.Category?.Name ?? string.Empty),
+                ("Department", copy.BookMaster.DepartmentCategory?.Name ?? string.Empty),
+                ("LiteratureCategory", copy.BookMaster.LiteratureCategory?.Name ?? string.Empty),
                 ("ISBN", copy.BookMaster.ISBN),
                 ("ISSN", copy.BookMaster.ISSN),
                 ("Status", copy.AvailabilityStatus.ToString()),

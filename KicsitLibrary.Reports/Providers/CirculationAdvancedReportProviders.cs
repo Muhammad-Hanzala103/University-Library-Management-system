@@ -177,16 +177,16 @@ public sealed class LostDamagedBooksReportDataProvider(KicsitLibraryDbContext co
         .Where(item =>
             TextMatches(search, item.Copy.AccessionNumber, item.Copy.BookMaster.Title, item.LastMember) &&
             ExactMatches(status, item.Copy.AvailabilityStatus.ToString()) &&
-            ExactMatches(category, item.Copy.BookMaster.Category.Name) &&
-            ExactMatches(department, item.Copy.BookMaster.DepartmentCategory.Name) &&
+            ExactMatches(category, item.Copy.BookMaster.Category?.Name) &&
+            ExactMatches(department, item.Copy.BookMaster.DepartmentCategory?.Name) &&
             (!fromDate.HasValue || item.Copy.LastIssuedDate?.ToLocalTime().Date >= fromDate.Value.Date) &&
             (!toDate.HasValue || item.Copy.LastIssuedDate?.ToLocalTime().Date <= toDate.Value.Date))
         .Select(item => Row(
             ("AccessionNumber", item.Copy.AccessionNumber),
             ("BookTitle", item.Copy.BookMaster.Title),
-            ("Author", string.Join(", ", item.Copy.BookMaster.BookAuthors.Select(bookAuthor => bookAuthor.Author.Name))),
-            ("Category", item.Copy.BookMaster.Category.Name),
-            ("Department", item.Copy.BookMaster.DepartmentCategory.Name),
+            ("Author", string.Join(", ", item.Copy.BookMaster.BookAuthors.Select(bookAuthor => bookAuthor.Author?.Name).Where(n => n != null))),
+            ("Category", item.Copy.BookMaster.Category?.Name ?? string.Empty),
+            ("Department", item.Copy.BookMaster.DepartmentCategory?.Name ?? string.Empty),
             ("Status", item.Copy.AvailabilityStatus.ToString()),
             ("LastIssuedTo", item.LastMember),
             ("LastIssueDate", item.Copy.LastIssuedDate?.ToLocalTime()),
