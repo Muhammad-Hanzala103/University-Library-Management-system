@@ -1,0 +1,55 @@
+<UserControl x:Class="KicsitLibrary.Desktop.Views.UserManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:KicsitLibrary.Desktop"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000" Background="Transparent">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Loader Progress Bar -->
+        <ProgressBar Grid.Row="0" Height="4" IsIndeterminate="True" 
+                     Visibility="{Binding IsBusy, Converter={local:BooleanToVisibilityConverter}}" 
+                     VerticalAlignment="Top" Margin="0,0,0,10"/>
+
+        <!-- Top Actions Bar -->
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,15" Padding="15">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Pending Account Requests" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                <Button Content="Refresh" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshCommand}" Margin="0,0,8,0"/>
+                <Button Content="Approve Selected" Style="{StaticResource PrimaryButton}" Background="{StaticResource SuccessBrush}" Command="{Binding ApproveCommand}" Margin="0,0,8,0"/>
+                <Button Content="Reject Selected" Style="{StaticResource PrimaryButton}" Background="{StaticResource DangerBrush}" Command="{Binding RejectCommand}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- DataGrid -->
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}">
+            <DataGrid ItemsSource="{Binding PendingRequests}" SelectedItem="{Binding SelectedRequest}" AutoGenerateColumns="False" IsReadOnly="True" BorderThickness="0" Background="Transparent">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Date" Binding="{Binding CreatedAt, StringFormat='dd-MMM-yyyy'}" Width="100"/>
+                    <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}" Width="150"/>
+                    <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="120"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
+                    <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="150"/>
+                    <DataGridTextColumn Header="Phone" Binding="{Binding PhoneNumber}" Width="120"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Status / Error Bar -->
+        <StackPanel Grid.Row="3" Margin="0,15,0,0">
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource SuccessBrush}" FontSize="12" Padding="8" FontWeight="SemiBold" TextWrapping="Wrap"
+                       Visibility="{Binding StatusMessage, Converter={local:StringVisibilityConverter}}"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" Padding="8" FontWeight="SemiBold" TextWrapping="Wrap"
+                       Visibility="{Binding ErrorMessage, Converter={local:StringVisibilityConverter}}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

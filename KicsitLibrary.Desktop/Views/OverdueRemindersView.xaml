@@ -26,26 +26,15 @@
                 <TextBlock Text="OVERDUE PROCESSING" FontWeight="Bold"
                            Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,10"/>
                 <WrapPanel>
-                    <Button Content="Refresh" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding RefreshCommand}" Margin="0,0,8,8"/>
-                    <Button Content="Run Overdue Check" Style="{StaticResource PrimaryButton}"
-                            ToolTip="Recalculate overdue status and create eligible reminder records."
-                            Command="{Binding RunOverdueCheckCommand}" Margin="0,0,8,8"/>
-                    <Button Content="Send Reminder For Selected" Style="{StaticResource PrimaryButton}"
-                            ToolTip="Create reminder notifications for the selected overdue issue."
-                            Command="{Binding SendReminderForSelectedCommand}" Margin="0,0,8,8"/>
-                    <Button Content="Send Reminders For All Eligible" Style="{StaticResource PrimaryButton}"
-                            ToolTip="Create reminders for every eligible overdue issue without duplicates."
-                            Command="{Binding SendRemindersForAllEligibleCommand}" Margin="0,0,8,8"/>
-                    <Button Content="Open Member Profile" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding OpenMemberProfileCommand}" Margin="0,0,8,8"/>
-                    <Button Content="Open Book Details" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding OpenBookDetailsCommand}" Margin="0,0,8,8"/>
-                    <Button Content="Clear Filters" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding ClearFiltersCommand}" Margin="0,0,8,8"/>
                     <Button Content="Run Overdue Scheduler Now" Style="{StaticResource PrimaryButton}"
                             ToolTip="Run the configured overdue scheduler once on demand."
-                            Command="{Binding RunSchedulerNowCommand}" Margin="0,0,0,8"/>
+                            Command="{Binding RunSchedulerNowCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Refresh Scheduler Status" Style="{StaticResource SecondaryButton}"
+                            ToolTip="Reload scheduler configuration and last-run status."
+                            Command="{Binding RefreshSchedulerStatusCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Open Notification Center" Style="{StaticResource SecondaryButton}"
+                            ToolTip="View all notifications including overdue emails."
+                            Command="{Binding OpenNotificationCenterCommand}" Margin="0,0,8,8"/>
                 </WrapPanel>
             </StackPanel>
         </Border>
@@ -56,11 +45,6 @@
                     <TextBlock Text="SCHEDULER STATUS" FontWeight="Bold"
                                Foreground="{StaticResource PrimaryBrush}"
                                VerticalAlignment="Center"/>
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <Button Content="Refresh Scheduler Status" Style="{StaticResource SecondaryButton}"
-                                ToolTip="Reload scheduler configuration and last-run status."
-                                Command="{Binding RefreshSchedulerStatusCommand}"/>
-                    </StackPanel>
                 </DockPanel>
                 <WrapPanel>
                     <StackPanel Width="135" Margin="0,0,10,8">
@@ -102,10 +86,27 @@
         </Border>
 
         <Border Grid.Row="3" Style="{StaticResource CardStyle}" Margin="0,0,0,12" Padding="12">
-            <WrapPanel>
-                <StackPanel Width="210" Margin="0,0,10,8">
-                    <TextBlock Text="Search" FontSize="11" FontWeight="SemiBold"/>
-                    <TextBox Style="{StaticResource StyledTextBox}"
+            <StackPanel>
+                <WrapPanel Margin="0,0,0,12">
+                    <Button Content="Send Selected" Style="{StaticResource PrimaryButton}"
+                            ToolTip="Send reminder for the selected overdue issue."
+                            Command="{Binding SendReminderForSelectedCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Send All Pending" Style="{StaticResource PrimaryButton}"
+                            ToolTip="Create reminders for every eligible overdue issue without duplicates."
+                            Command="{Binding SendRemindersForAllEligibleCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Retry Failed" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding RetryFailedCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Validate Email Settings" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ValidateEmailSettingsCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Refresh" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding RefreshCommand}" Margin="0,0,8,8"/>
+                    <Button Content="Clear Filters" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ClearFiltersCommand}" Margin="0,0,8,8"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <StackPanel Width="210" Margin="0,0,10,8">
+                        <TextBlock Text="Search" FontSize="11" FontWeight="SemiBold"/>
+                        <TextBox Style="{StaticResource StyledTextBox}"
                              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
                 <StackPanel Width="130" Margin="0,0,10,8">
@@ -156,6 +157,7 @@
                     <CheckBox Content="Exclude Resolved" IsChecked="{Binding ExcludeResolved}" Margin="0,0,10,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
                 </StackPanel>
             </WrapPanel>
+            </StackPanel>
         </Border>
 
         <Border Grid.Row="4" Style="{StaticResource CardStyle}" Padding="0">

@@ -19,6 +19,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         private readonly IAuthenticationService _authenticationService;
         private readonly IActivityLogService _logService;
         private readonly IRecordDetailsService _recordDetailsService;
+        private readonly INavigationService _navigationService;
         private List<OverdueItem> _allItems = [];
 
         public IReadOnlyList<string> MemberTypeOptions { get; } = ["All", "Student", "FacultyStaff"];
@@ -60,7 +61,8 @@ namespace KicsitLibrary.Desktop.ViewModels
             INotificationService notificationService,
             IAuthenticationService authenticationService,
             IActivityLogService logService,
-            IRecordDetailsService recordDetailsService)
+            IRecordDetailsService recordDetailsService,
+            INavigationService navigationService)
         {
             _overdueService = overdueService ?? throw new ArgumentNullException(nameof(overdueService));
             _schedulerService = schedulerService ?? throw new ArgumentNullException(nameof(schedulerService));
@@ -68,6 +70,7 @@ namespace KicsitLibrary.Desktop.ViewModels
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
             _recordDetailsService = recordDetailsService ?? throw new ArgumentNullException(nameof(recordDetailsService));
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             _ = RefreshAsync();
         }
 
@@ -220,6 +223,53 @@ namespace KicsitLibrary.Desktop.ViewModels
                 "Overdue Filters Cleared",
                 "Overdue reminder filters were reset.",
                 CurrentUserId);
+        }
+
+        [RelayCommand]
+        private async Task RetryFailedCommandAsync()
+        {
+            IsBusy = true;
+            ErrorMessage = string.Empty;
+            try
+            {
+                var result = await _notificationService.SendPendingEmailNotificationsAsync(CurrentUserId);
+                StatusMessage = $"Retry finished: {result.ProcessedCount} attempted, {result.SentCount} successful, {result.FailedCount} failed.";
+                await RefreshAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Retry failed: {ex.Message}";
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task ValidateEmailSettingsAsync()
+        {
+            IsBusy = true;
+            ErrorMessage = string.Empty;
+            try
+            {
+                var result = await _notificationService.ValidateEmailSettingsAsync();
+                StatusMessage = result.IsValid ? "Email settings are valid." : $"Email settings invalid: {result.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Validation failed: {ex.Message}";
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenNotificationCenter()
+        {
+            _navigationService.NavigateTo("Notifications");
         }
 
         [RelayCommand]

@@ -219,6 +219,7 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<DocumentUploadViewModel>();
                     services.AddTransient<DocumentDetailsViewModel>();
                     services.AddTransient<SettingsManagementViewModel>();
+                    services.AddTransient<UserManagementViewModel>();
                     services.AddTransient<SettingsEditViewModel>();
                     services.AddTransient<ForgotPasswordViewModel>();
                     services.AddTransient<SettingsDetailsViewModel>();

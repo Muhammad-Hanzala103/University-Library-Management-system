@@ -313,7 +313,7 @@ public class DatabaseRelocationWorkflowTests
         public Task<bool> ChangePasswordAsync(int userId, string oldPassword, string newPassword) => Task.FromResult(false);
         public Task<bool> VerifyUserPermissionAsync(int userId, string permissionCode) =>
             Task.FromResult(isAdmin && permissionCode is "VIEW_BACKUPS" or "MANAGE_BACKUPS");
-        public Task<bool> RequestPasswordResetAsync(string usernameOrEmail) => Task.FromResult(true);
+        public Task<(bool Success, string Message)> RequestPasswordResetAsync(string usernameOrEmail) => Task.FromResult((true, ""));
             public Task<bool> ResetPasswordAsync(string usernameOrEmail, string token, string newPassword) => Task.FromResult(true);
             public Task<bool> GenerateAndSendOtpAsync(int userId) => Task.FromResult(true);
             public Task<bool> VerifyOtpAsync(int userId, string otp) => Task.FromResult(true);

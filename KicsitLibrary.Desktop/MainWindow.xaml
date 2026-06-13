@@ -74,6 +74,9 @@
         <DataTemplate DataType="{x:Type vm:SettingsManagementViewModel}">
             <views:SettingsManagementView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:UserManagementViewModel}">
+            <views:UserManagementView/>
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -276,6 +279,12 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE713;" Style="{StaticResource IconStyle}" />
                             <TextBlock Text="Settings" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding NavigateToAccountRequestsCommand}" ToolTip="Account Requests" Tag="{Binding Title, Converter={local:MenuSelectionConverter}, ConverterParameter='Account Requests'}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE716;" Style="{StaticResource IconStyle}" />
+                            <TextBlock Text="Account Requests" VerticalAlignment="Center" Visibility="{Binding DataContext.IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={local:BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

@@ -24,6 +24,11 @@ namespace KicsitLibrary.Core.Entities
         public System.DateTime? PendingOtpExpiresAt { get; set; }
         public int PendingOtpAttempts { get; set; }
 
+        public string? PhoneNumber { get; set; }
+        public string? AccountStatus { get; set; }
+        public string? Role { get; set; }
+        public string? LinkedFacultyStaffId { get; set; }
+
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<ActivityLog> ActivityLogs { get; set; } = new List<ActivityLog>();
     }

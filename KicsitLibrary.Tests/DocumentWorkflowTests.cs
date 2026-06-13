@@ -428,7 +428,7 @@ public class DocumentWorkflowTests
             Task.FromResult(CurrentUser?.UserRoles.Any(userRole =>
                 userRole.Role.RolePermissions.Any(rolePermission =>
                     rolePermission.Permission.Code == permissionCode)) == true);
-        public Task<bool> RequestPasswordResetAsync(string usernameOrEmail) => Task.FromResult(true);
+        public Task<(bool Success, string Message)> RequestPasswordResetAsync(string usernameOrEmail) => Task.FromResult((true, ""));
             public Task<bool> ResetPasswordAsync(string usernameOrEmail, string token, string newPassword) => Task.FromResult(true);
             public Task<bool> GenerateAndSendOtpAsync(int userId) => Task.FromResult(true);
             public Task<bool> VerifyOtpAsync(int userId, string otp) => Task.FromResult(true);

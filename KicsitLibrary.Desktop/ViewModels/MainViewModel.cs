@@ -186,6 +186,10 @@ namespace KicsitLibrary.Desktop.ViewModels
                     CurrentView = _currentScope?.ServiceProvider.GetService<SettingsManagementViewModel>();
                     if (CurrentView is SettingsManagementViewModel settings) _ = settings.InitializeAsync();
                     break;
+                case "Account Requests":
+                    _currentScope = App.AppHost?.Services.CreateScope();
+                    CurrentView = _currentScope?.ServiceProvider.GetService<UserManagementViewModel>();
+                    break;
                 default:
                     CurrentView = null;
                     break;
@@ -254,6 +258,9 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         [RelayCommand]
         private void NavigateToSettings() => _navigationService.NavigateTo("Settings");
+
+        [RelayCommand]
+        private void NavigateToAccountRequests() => _navigationService.NavigateTo("Account Requests");
 
         [RelayCommand]
         private void ChangePassword()

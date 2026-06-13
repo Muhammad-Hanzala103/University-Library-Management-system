@@ -172,12 +172,11 @@ namespace KicsitLibrary.Services.Authentication
                     {
                         var notif = new NotificationRecord
                         {
-                            UserId = user.Id,
                             NotificationType = KicsitLibrary.Core.Enums.NotificationType.SystemAlert,
                             Channel = "System",
                             Subject = "Manual Password Reset Request (Phone)",
                             Message = $"User {user.Username} requested a password reset via phone ({usernameOrEmail}). SMS is not configured.",
-                            CreatedAtUtc = DateTime.UtcNow
+                            Status = KicsitLibrary.Core.Enums.NotificationStatus.Pending
                         };
                         await notificationService.CreateNotificationAsync(notif, 0, user.Id);
                     }
@@ -198,14 +197,12 @@ namespace KicsitLibrary.Services.Authentication
                     var emailStatus = await notificationService.ValidateEmailSettingsAsync();
                     var notif = new NotificationRecord
                     {
-                        UserId = user.Id,
                         NotificationType = KicsitLibrary.Core.Enums.NotificationType.SystemAlert,
                         Channel = "Email",
                         RecipientEmail = user.Email,
                         RecipientName = user.FullName,
                         Subject = "Password Reset Request",
                         Message = $"Your password reset code is: {rawToken}. It will expire in 15 minutes.",
-                        CreatedAtUtc = DateTime.UtcNow,
                         Status = KicsitLibrary.Core.Enums.NotificationStatus.Pending
                     };
                     
