@@ -270,6 +270,12 @@ public sealed class SecurityHardeningTests
         public Task<User?> LoginAsync(string username, string password) => Task.FromResult(CurrentUser);
         public Task<bool> ChangePasswordAsync(int userId, string oldPassword, string newPassword) => Task.FromResult(false);
         public Task<bool> VerifyUserPermissionAsync(int userId, string permissionCode) => Task.FromResult(_isAdmin);
-        public Task LogoutAsync() => Task.CompletedTask;
+        public Task<bool> RequestPasswordResetAsync(string usernameOrEmail) => Task.FromResult(true);
+            public Task<bool> ResetPasswordAsync(string usernameOrEmail, string token, string newPassword) => Task.FromResult(true);
+            public Task<bool> GenerateAndSendOtpAsync(int userId) => Task.FromResult(true);
+            public Task<bool> VerifyOtpAsync(int userId, string otp) => Task.FromResult(true);
+            public Task LogoutAsync() => Task.CompletedTask;
     }
 }
+
+

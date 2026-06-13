@@ -187,7 +187,11 @@ public class RuntimePathServiceTests
             string permissionCode) =>
             Task.FromResult(permissionCode is "VIEW_BACKUPS" or "MANAGE_BACKUPS");
 
-        public Task LogoutAsync() => Task.CompletedTask;
+        public Task<bool> RequestPasswordResetAsync(string usernameOrEmail) => Task.FromResult(true);
+            public Task<bool> ResetPasswordAsync(string usernameOrEmail, string token, string newPassword) => Task.FromResult(true);
+            public Task<bool> GenerateAndSendOtpAsync(int userId) => Task.FromResult(true);
+            public Task<bool> VerifyOtpAsync(int userId, string otp) => Task.FromResult(true);
+            public Task LogoutAsync() => Task.CompletedTask;
     }
 
     private sealed class FakeDatabaseOwnershipService : IDatabaseOwnershipService
@@ -238,3 +242,5 @@ public class RuntimePathServiceTests
             Task.FromResult(0);
     }
 }
+
+

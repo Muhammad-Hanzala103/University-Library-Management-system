@@ -48,7 +48,8 @@ namespace KicsitLibrary.Desktop
         {
             DispatcherUnhandledException += (s, e) =>
             {
-                MessageBox.Show($"An unexpected UI error occurred: {e.Exception.Message}", "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                File.WriteAllText("crash_log.txt", e.Exception.ToString());
+                MessageBox.Show($"An unexpected UI error occurred: {e.Exception.Message}\nSee crash_log.txt for details.", "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 e.Handled = true;
             };
 
@@ -219,6 +220,7 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<DocumentDetailsViewModel>();
                     services.AddTransient<SettingsManagementViewModel>();
                     services.AddTransient<SettingsEditViewModel>();
+                    services.AddTransient<ForgotPasswordViewModel>();
                     services.AddTransient<SettingsDetailsViewModel>();
                     services.AddTransient<OverdueRemindersView>();
                     services.AddTransient<NotificationCenterView>();
@@ -254,6 +256,10 @@ namespace KicsitLibrary.Desktop
                     services.AddTransient<SettingsDetailsWindow>();
                     services.AddTransient<ChangePasswordViewModel>();
                     services.AddTransient<ChangePasswordWindow>();
+                    
+                    // Hosted Services (Background Workers)
+                    services.AddHostedService<KicsitLibrary.Desktop.Workers.FineCalculatorWorker>();
+                    services.AddHostedService<KicsitLibrary.Desktop.Workers.ReservationQueueWorker>();
                 })
                 .Build();
         }

@@ -67,11 +67,12 @@
             <StackPanel Grid.Row="1" Margin="35,25,35,25" VerticalAlignment="Top">
                 <!-- Username -->
                 <TextBlock Text="Username" Foreground="{StaticResource TextDarkBrush}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                <TextBox x:Name="UsernameInput" Style="{StaticResource StyledTextBox}" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,16"/>
+                <TextBox x:Name="UsernameInput" Style="{StaticResource StyledTextBox}" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,16"
+                         ToolTip="Enter your unique library username."/>
                 
                 <!-- Password -->
                 <TextBlock Text="Password" Foreground="{StaticResource TextDarkBrush}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                <PasswordBox x:Name="PasswordInput" Margin="0,0,0,12" />
+                <PasswordBox x:Name="PasswordInput" Margin="0,0,0,12" ToolTip="Enter your account password."/>
 
                 <!-- Error Message -->
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerBrush}" FontSize="12" FontWeight="SemiBold" 
@@ -80,7 +81,7 @@
                 <!-- Login Button -->
                 <Button Style="{StaticResource PrimaryButton}" Content="Sign In" Height="42" FontSize="14"
                         ToolTip="Sign in with an authorized library account."
-                        Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordInput}" Margin="0,0,0,15">
+                        Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordInput}" Margin="0,0,0,10">
                     <Button.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                             <GradientStop Color="#0F766E" Offset="0.0"/>
@@ -88,6 +89,33 @@
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
+
+                <!-- Forgot Password -->
+                <Button Content="Forgot Password?" Background="Transparent" BorderThickness="0" 
+                        Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" FontSize="11" 
+                        HorizontalAlignment="Center" Margin="0,0,0,15"
+                        Click="ForgotPassword_Click" ToolTip="Reset your forgotten password.">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{StaticResource AccentHoverBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <TextBlock Text="OR CONTINUE WITH" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                <!-- OAuth Buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
+                    <Button Content="Microsoft" Style="{StaticResource SecondaryButton}" Width="110" Margin="0,0,10,0"
+                            IsEnabled="False" ToolTip="Microsoft login requires MSAL Client ID configuration (Pending)."/>
+                    <Button Content="Google" Style="{StaticResource SecondaryButton}" Width="110"
+                            IsEnabled="False" ToolTip="Google login requires OAuth Client ID configuration (Pending)."/>
+                </StackPanel>
 
                 <!-- Loading State overlay -->
                 <ProgressBar Height="4" IsIndeterminate="True" Background="Transparent" Foreground="{StaticResource AccentBrush}"

@@ -13,6 +13,17 @@ namespace KicsitLibrary.Core.Entities
         public int? CreatedByUserId { get; set; }
         public int? UpdatedByUserId { get; set; }
 
+        // Forgot Password
+        public string? PasswordResetTokenHash { get; set; }
+        public System.DateTime? PasswordResetTokenExpiresAt { get; set; }
+        
+        // 2FA
+        public bool IsTwoFactorEnabled { get; set; }
+        public string? TwoFactorMethod { get; set; }
+        public string? PendingOtpHash { get; set; }
+        public System.DateTime? PendingOtpExpiresAt { get; set; }
+        public int PendingOtpAttempts { get; set; }
+
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<ActivityLog> ActivityLogs { get; set; } = new List<ActivityLog>();
     }

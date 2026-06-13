@@ -47,7 +47,7 @@
                         </Grid.ColumnDefinitions>
                         <!-- Top Accent Line -->
                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Rectangle Width="60" Height="4" Fill="#2563EB" Margin="0,0,8,0" RadiusX="2" RadiusY="2"/>
+                            <Rectangle Width="60" Height="4" Fill="#0F766E" Margin="0,0,8,0" RadiusX="2" RadiusY="2"/>
                             <Rectangle Width="30" Height="4" Fill="#0F766E" RadiusX="2" RadiusY="2"/>
                         </StackPanel>
                         <!-- Version -->
@@ -71,7 +71,7 @@
                     <ProgressBar x:Name="ProgressIndicator" Height="6" IsIndeterminate="True" Background="#374151" BorderThickness="0">
                         <ProgressBar.Foreground>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                <GradientStop Color="#2563EB" Offset="0.0"/>
+                                <GradientStop Color="#0F766E" Offset="0.0"/>
                                 <GradientStop Color="#0F766E" Offset="1.0"/>
                             </LinearGradientBrush>
                         </ProgressBar.Foreground>

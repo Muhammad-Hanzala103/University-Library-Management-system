@@ -119,7 +119,7 @@
                         <Grid>
                             <StackPanel>
                                 <TextBlock Text="Reserved Books" Style="{StaticResource SubtitleTextStyle}"/>
-                                <TextBlock Text="{Binding Stats.ActiveReservations}" Foreground="{StaticResource WarningBrush}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0}"/>
+                                <TextBlock Text="{Binding Stats.ActiveReservations}" Foreground="{StaticResource WarningBrush}" FontSize="28" FontWeight="Bold" Margin="0,5,0,0"/>
                                 <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                     <TextBlock Text="Total: " Foreground="{StaticResource TextMutedBrush}" FontSize="11"/>
                                     <TextBlock Text="{Binding Stats.TotalReservations}" Foreground="{StaticResource TextDarkBrush}" FontSize="11" FontWeight="SemiBold"/>

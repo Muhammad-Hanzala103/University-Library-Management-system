@@ -81,6 +81,12 @@ namespace KicsitLibrary.Core.Enums
         Other
     }
 
+    public enum ClearanceStatus
+    {
+        NotCleared,
+        Cleared
+    }
+
     public enum NotificationType
     {
         BeforeDueDateReminder,
@@ -88,7 +94,9 @@ namespace KicsitLibrary.Core.Enums
         OverdueReminder,
         FinePendingReminder,
         ReservationAvailableReminder,
-        ClearancePendingReminder
+        ClearancePendingReminder,
+        SystemAlert,
+        TwoFactorOtp
     }
 
     public enum ReservationStatus
@@ -98,12 +106,6 @@ namespace KicsitLibrary.Core.Enums
         Issued,
         Cancelled,
         Expired
-    }
-
-    public enum ClearanceStatus
-    {
-        NotCleared,
-        Cleared
     }
 
     public enum NotificationStatus

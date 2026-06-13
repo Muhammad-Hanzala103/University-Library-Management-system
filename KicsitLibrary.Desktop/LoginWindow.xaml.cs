@@ -1,5 +1,6 @@
 using System.Windows;
 using KicsitLibrary.Desktop.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace KicsitLibrary.Desktop
 {
@@ -31,6 +32,19 @@ namespace KicsitLibrary.Desktop
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
                 DragMove();
+            }
+        }
+
+        private void ForgotPassword_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = App.AppHost?.Services.GetRequiredService<ViewModels.ForgotPasswordViewModel>();
+            if (viewModel != null)
+            {
+                var forgotPasswordWindow = new Views.ForgotPasswordWindow(viewModel)
+                {
+                    Owner = this
+                };
+                forgotPasswordWindow.ShowDialog();
             }
         }
     }
