@@ -59,6 +59,16 @@ namespace KicsitLibrary.Desktop.ViewModels
             CheckAuthorization();
         }
 
+        partial void OnSelectedCategoryChanged(string value)
+        {
+            _ = FilterSettingsAsync();
+        }
+
+        partial void OnSearchTextChanged(string value)
+        {
+            _ = FilterSettingsAsync();
+        }
+
         public async Task InitializeAsync()
         {
             await LoadCategoriesAsync();

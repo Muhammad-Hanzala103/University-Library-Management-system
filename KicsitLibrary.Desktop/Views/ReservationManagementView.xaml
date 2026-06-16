@@ -53,9 +53,11 @@
                         <TextBlock Text="To:" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}"/>
                         <DatePicker Width="120" SelectedDate="{Binding ToDate}"/>
                     </StackPanel>
-                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" Height="36" VerticalAlignment="Bottom"/>
-                    <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" Height="36" VerticalAlignment="Bottom"/>
-                    <Button Content="+ New Reservation" Command="{Binding CreateCommand}" ToolTip="Create a reservation after member and title eligibility checks." Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" Height="36" VerticalAlignment="Bottom"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,8,8">
+                        <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" Height="36"/>
+                        <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" Height="36"/>
+                        <Button Content="+ New Reservation" Command="{Binding CreateCommand}" ToolTip="Create a reservation after member and title eligibility checks." Style="{StaticResource PrimaryButton}" Height="36"/>
+                    </StackPanel>
                 </WrapPanel>
             </StackPanel>
         </Border>

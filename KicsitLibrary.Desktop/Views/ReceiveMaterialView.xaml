@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:KicsitLibrary.Desktop"
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="1000" Background="Transparent">
+             d:DesignHeight="700" d:DesignWidth="1100" Background="Transparent">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -39,30 +39,16 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0" Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Padding="12" Background="#F0F9FF" BorderBrush="{StaticResource AccentBrush}" BorderThickness="2" />
-                        <Button Grid.Column="1" Content="🔍 Load" Style="{StaticResource PrimaryButton}" Command="{Binding LoadDetailsCommand}" ToolTip="Load the active issue and calculate the return details." Width="80" Margin="8,0,0,0" FontSize="14"/>
+                        <Button Grid.Column="1" Content="🔍 Add" Style="{StaticResource PrimaryButton}" Command="{Binding LoadDetailsCommand}" ToolTip="Scan and add book to return list." Width="80" Margin="8,0,0,0" FontSize="14"/>
                     </Grid>
 
-                    <!-- Fields shown only when issue details are loaded -->
+                    <!-- Fields shown only when items are added to list -->
                     <StackPanel Visibility="{Binding IsIssueFound, Converter={local:BooleanToVisibilityConverter}}">
                         <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Margin="0,5,0,15" Padding="0,10,0,0"/>
-
-                        <!-- Book Condition -->
-                        <TextBlock Text="Return Physical Condition *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                        <ComboBox Height="36" SelectedValue="{Binding SelectedCondition}" SelectedValuePath="Content" Margin="0,0,0,12">
-                            <ComboBoxItem Content="Normal"/>
-                            <ComboBoxItem Content="Damaged"/>
-                            <ComboBoxItem Content="Lost"/>
-                        </ComboBox>
 
                         <!-- Payment Mode Selection -->
                         <TextBlock Text="Payment Mode *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
                         <ComboBox Height="36" ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding PaymentMode}" Margin="0,0,0,12"/>
-
-                        <!-- Collected fine amount -->
-                        <StackPanel Visibility="{Binding IsPayNowVisible, Converter={local:BooleanToVisibilityConverter}}">
-                            <TextBlock Text="Fine Collected Amount (Rs.)" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding PaidAmount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
-                        </StackPanel>
 
                         <!-- Waiver Reason -->
                         <StackPanel Visibility="{Binding IsWaiverVisible, Converter={local:BooleanToVisibilityConverter}}">
@@ -71,201 +57,111 @@
                         </StackPanel>
 
                         <!-- Remarks -->
-                        <TextBlock Text="Staff Remarks" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,20"/>
-                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Remarks, UpdateSourceTrigger=PropertyChanged}" Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,15"/>
+                        <TextBlock Text="Staff Remarks" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding Remarks, UpdateSourceTrigger=PropertyChanged}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,15"/>
+
+                        <!-- Summary Cards -->
+                        <Border Style="{StaticResource CardStyle}" BorderBrush="{StaticResource BorderBrush}" Background="#F8FAFC" Padding="12" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Text="RETURN SUMMARY" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                <DockPanel Margin="0,0,0,4">
+                                    <TextBlock Text="Total Books:" FontSize="12" Foreground="{StaticResource TextDarkBrush}"/>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding PendingReturns.Count}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                                <DockPanel Margin="0,0,0,4">
+                                    <TextBlock Text="Total Fine Amount:" FontSize="12" Foreground="{StaticResource TextDarkBrush}"/>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding TotalFine, StringFormat='Rs. {0:N0}'}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource DangerBrush}" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                                <DockPanel Visibility="{Binding IsPayNowVisible, Converter={local:BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="Amount to Pay:" FontSize="12" Foreground="{StaticResource TextDarkBrush}"/>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding TotalPaidAmount, StringFormat='Rs. {0:N0}'}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </Border>
 
                         <!-- Actions -->
-                        <Button Content="📥 Confirm Return &amp; Save" Style="{StaticResource PrimaryButton}" Command="{Binding ConfirmReturnCommand}" ToolTip="Complete the return, update copy availability, and save any fine." Height="40" Margin="0,0,0,8"/>
-                        <Button Content="🧹 Cancel / Clear" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" ToolTip="Clear the loaded return without saving changes." Height="40"/>
+                        <Button Content="📥 Confirm Return &amp; Save All" Style="{StaticResource PrimaryButton}" Command="{Binding ConfirmReturnCommand}" ToolTip="Process check-in for all items in the list." Height="40" Margin="0,0,0,8"/>
+                        <Button Content="📄 Print Return Slip" Style="{StaticResource SecondaryButton}" Command="{Binding PrintReturnSlipCommand}" ToolTip="Print check-in transaction slip." Height="40" Margin="0,0,0,8"/>
+                        <Button Content="🧹 Cancel / Clear List" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" ToolTip="Clear all scanned items." Height="40"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- RIGHT PANEL: Borrower & Loan Details -->
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                <Grid>
-                    <!-- Fallback panel when no active borrowing record loaded -->
-                    <Border Style="{StaticResource CardStyle}" VerticalAlignment="Stretch" Margin="5,0,0,0"
-                            Visibility="{Binding IsIssueFound, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}">
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30">
-                            <TextBlock Text="🔄" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                            <TextBlock Text="Receive Book Copy" Style="{StaticResource TitleTextStyle}" FontSize="18" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                            <TextBlock Text="Scan the book copy's accession number on the left to verify active loan records, member information, and late return fines." 
-                                       Style="{StaticResource SubtitleTextStyle}" HorizontalAlignment="Center" TextAlignment="Center" FontSize="12"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Details layout, visible when record loaded -->
-                    <StackPanel Margin="5,0,0,0" Visibility="{Binding IsIssueFound, Converter={local:BooleanToVisibilityConverter}}">
-                        
-                        <!-- Book Details Card -->
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.5,1,1,1">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <Border Width="40" Height="40" CornerRadius="20" Background="#E1EFFE" VerticalAlignment="Top" Margin="0,0,15,0">
-                                    <TextBlock Text="📖" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="MATERIAL INFO" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,5"/>
-                                    <TextBlock Text="{Binding BookTitle}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
-                                    <TextBlock Text="{Binding AccessionNumber, StringFormat='Accession: {0}'}" FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <!-- Borrower Card -->
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Border Width="40" Height="40" CornerRadius="20" Background="#F3F4F6" VerticalAlignment="Top" Margin="0,0,15,0">
-                                    <TextBlock Text="👤" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="ISSUED TO" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,5"/>
-                                    <TextBlock Text="{Binding BorrowerName}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
-                                    
-                                    <Grid Margin="0,8,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <StackPanel Grid.Column="0">
-                                            <TextBlock Text="Borrower Category" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                            <TextBlock Text="{Binding BorrowerTypeDisplay}" FontSize="13" FontWeight="SemiBold"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <!-- Borrow Period Details -->
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,15">
-                            <StackPanel>
-                                <TextBlock Text="LOAN DATES &amp; SCHEDULE" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10"/>
-                                
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Issue Date -->
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Check-out Date" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                        <TextBlock Text="{Binding IssueDateDisplay}" FontSize="14" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,2,0,0"/>
-                                    </StackPanel>
-
-                                    <!-- Expected Return Date -->
-                                    <StackPanel Grid.Column="1">
-                                        <TextBlock Text="Expected Return Date" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                        <TextBlock Text="{Binding DueDateDisplay}" FontSize="14" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Fine Calculation Card -->
-                        <Border Style="{StaticResource CardStyle}" BorderBrush="{StaticResource DangerBrush}" BorderThickness="1.5,1,1,1">
-                            <StackPanel>
-                                <TextBlock Text="FINE &amp; CHARGES CALCULATION" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10"/>
-
-                                <Grid Margin="0,0,0,15">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Overdue Days -->
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Overdue Days" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                            <TextBlock Text="{Binding OverdueDays}" FontSize="20" FontWeight="Bold">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding OverdueDays, Converter={local:MenuSelectionConverter}}" Value="">
-                                                                <!-- placeholder trigger -->
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                            <TextBlock Text=" Days Late" FontSize="12" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Bottom" Margin="4,0,0,2"/>
-                                        </StackPanel>
-                                    </StackPanel>
-
-                                    <!-- Selected Condition -->
-                                    <StackPanel Grid.Column="1">
-                                        <TextBlock Text="Return Condition status" FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
-                                        <TextBlock Text="{Binding SelectedCondition}" FontSize="16" FontWeight="Bold" Margin="0,2,0,0">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding SelectedCondition}" Value="Normal">
-                                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding SelectedCondition}" Value="Damaged">
-                                                            <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
-                                                            <Setter Property="Text" Value="⚠️ Damaged"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding SelectedCondition}" Value="Lost">
-                                                            <Setter Property="Foreground" Value="{StaticResource DangerBrush}"/>
-                                                            <Setter Property="Text" Value="🚨 Lost"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </Grid>
-
-                                <!-- Total Fine Banner -->
-                                <Border CornerRadius="6" Background="#FEF2F2" BorderBrush="#FCA5A5" BorderThickness="1" Padding="15">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="Total Outstanding Fine" FontSize="11" Foreground="#9B1C1C" FontWeight="SemiBold"/>
-                                            <TextBlock Text="Includes any damaged/lost copy charges + late returns" FontSize="10" Foreground="#C81E1E"/>
-                                        </StackPanel>
-
-                                        <TextBlock Grid.Column="1" Text="{Binding CalculatedFine, StringFormat='Rs. {0:N0}'}" FontSize="24" FontWeight="ExtraBold" Foreground="{StaticResource DangerBrush}" VerticalAlignment="Center"/>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-                        </Border>
+            <!-- RIGHT PANEL: Return Cart Grid & Fallback welcome -->
+            <Grid Grid.Column="1">
+                <!-- Fallback welcome panel -->
+                <Border Style="{StaticResource CardStyle}" VerticalAlignment="Stretch" Margin="5,0,0,0"
+                        Visibility="{Binding IsIssueFound, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=Inverse}">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30">
+                        <TextBlock Text="🔄" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock Text="Receive Book Copies" Style="{StaticResource TitleTextStyle}" FontSize="18" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="Scan book copy accession numbers on the left to add them to the return list, select physical condition, and process bulk returns." 
+                                   Style="{StaticResource SubtitleTextStyle}" HorizontalAlignment="Center" TextAlignment="Center" FontSize="12"/>
                     </StackPanel>
-                </Grid>
-            </ScrollViewer>
+                </Border>
+
+                <!-- Scanned return list DataGrid -->
+                <Border Style="{StaticResource CardStyle}" Margin="5,0,0,0"
+                        Visibility="{Binding IsIssueFound, Converter={local:BooleanToVisibilityConverter}}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="PENDING RETURNS LIST" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" FontSize="12" Margin="0,0,0,10"/>
+                        
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding PendingReturns}"
+                                  AutoGenerateColumns="False" IsReadOnly="False" RowHeight="38" HeadersVisibility="Column"
+                                  Style="{StaticResource StyledDataGrid}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Accession" Binding="{Binding AccessionNumber}" Width="100" IsReadOnly="True" FontWeight="SemiBold"/>
+                                <DataGridTextColumn Header="Book Title" Binding="{Binding BookTitle}" Width="*" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Borrower" Binding="{Binding BorrowerName}" Width="130" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding BorrowerTypeDisplay}" Width="80" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Due Date" Binding="{Binding DueDateDisplay}" Width="95" IsReadOnly="True" Foreground="{StaticResource TextMutedBrush}"/>
+                                <DataGridTextColumn Header="Days Late" Binding="{Binding OverdueDays}" Width="80" IsReadOnly="True" FontWeight="Bold" Foreground="{StaticResource DangerBrush}"/>
+                                
+                                <!-- Editable Return Condition ComboBox -->
+                                <DataGridTemplateColumn Header="Condition" Width="105">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ComboBox SelectedValue="{Binding SelectedCondition, UpdateSourceTrigger=PropertyChanged}" 
+                                                      SelectedValuePath="Content" Height="26" VerticalAlignment="Center">
+                                                <ComboBoxItem Content="Normal"/>
+                                                <ComboBoxItem Content="Damaged"/>
+                                                <ComboBoxItem Content="Lost"/>
+                                            </ComboBox>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTextColumn Header="Fine (Rs.)" Binding="{Binding CalculatedFine, StringFormat='{}{0:N0}'}" Width="85" IsReadOnly="True" FontWeight="Bold" Foreground="{StaticResource DangerBrush}"/>
+
+                                <!-- Actions Column -->
+                                <DataGridTemplateColumn Width="50">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="❌" Style="{StaticResource IconButton}" 
+                                                    Command="{Binding DataContext.RemoveItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip="Remove this item from the list"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
         </Grid>
 
         <!-- Status / Message Display Bar -->
-        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" FontSize="13" FontWeight="Bold" Margin="0,15,0,0" Padding="12" TextWrapping="Wrap"
-                   Visibility="{Binding StatusMessage, Converter={local:StringVisibilityConverter}}">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Background" Value="#EBF5FF"/>
-                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
-                    <Style.Triggers>
-                        <!-- Detection trigger -->
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
+        <Border Grid.Row="2" Margin="0,15,0,0"
+                Visibility="{Binding StatusMessage, Converter={local:StringVisibilityConverter}}">
+            <TextBox Text="{Binding StatusMessage}" Style="{StaticResource StyledTextBox}" 
+                     FontFamily="Consolas, Courier New" FontSize="12" IsReadOnly="True" 
+                     Height="120" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+        </Border>
     </Grid>
 </UserControl>

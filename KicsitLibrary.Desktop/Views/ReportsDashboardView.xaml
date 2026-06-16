@@ -108,8 +108,6 @@
         <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,0,0,12" Padding="12">
             <StackPanel>
                 <DockPanel Margin="0,0,0,10">
-                    <TextBlock Text="{Binding SelectedReport.Title}" FontWeight="Bold"
-                               Foreground="{StaticResource PrimaryBrush}"/>
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                         <Button Content="Refresh Preview" Style="{StaticResource PrimaryButton}"
                                 ToolTip="Run the selected report with the current filters."
@@ -118,6 +116,8 @@
                                 ToolTip="Reset all filters for the selected report."
                                 Command="{Binding ClearFiltersCommand}"/>
                     </StackPanel>
+                    <TextBlock Text="{Binding SelectedReport.Title}" FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center"/>
                 </DockPanel>
 
                 <ItemsControl ItemsSource="{Binding FilterInputs}">

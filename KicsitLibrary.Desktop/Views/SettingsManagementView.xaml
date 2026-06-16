@@ -40,15 +40,6 @@
                 Margin="0,0,0,12">
             <StackPanel>
                 <DockPanel Margin="0,0,0,10">
-                    <StackPanel>
-                        <TextBlock Text="SYSTEM SETTINGS"
-                                FontWeight="Bold"
-                                   Foreground="{StaticResource PrimaryBrush}"/>
-                        <TextBlock FontSize="11"
-                                Foreground="{StaticResource TextMutedBrush}">
-                            <Run Text="Manage application settings and configuration"/>
-                        </TextBlock>
-                    </StackPanel>
                     <StackPanel DockPanel.Dock="Right"
                             Orientation="Horizontal"
                             VerticalAlignment="Center">
@@ -63,6 +54,15 @@
                                 ToolTip="Reload settings from database"
                                 Command="{Binding RefreshCommand}"/>
                     </StackPanel>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="SYSTEM SETTINGS"
+                                FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryBrush}"/>
+                        <TextBlock FontSize="11"
+                                Foreground="{StaticResource TextMutedBrush}">
+                            <Run Text="Manage application settings and configuration"/>
+                        </TextBlock>
+                    </StackPanel>
                 </DockPanel>
 
                 <DockPanel Margin="0,0,0,10">
@@ -71,16 +71,15 @@
                             VerticalAlignment="Center"
                             FontSize="11"
                             FontWeight="SemiBold"/>
-                    <TextBox DockPanel.Dock="Left"
-                            Style="{StaticResource StyledTextBox}"
-                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                             ToolTip="Search by key, name, or description"/>
                     <Button DockPanel.Dock="Right"
                             Content="Clear"
                             Style="{StaticResource SecondaryButton}"
                             ToolTip="Clear search and filters"
                             Command="{Binding ClearFiltersCommand}"
                             Margin="10,0,0,0"/>
+                    <TextBox Style="{StaticResource StyledTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Search by key, name, or description"/>
                 </DockPanel>
             </StackPanel>
         </Border>
@@ -135,7 +134,7 @@
                         <TextBlock DockPanel.Dock="Right"
                                 FontSize="10"
                                 Foreground="{StaticResource TextMutedBrush}">
-                            <Run Text="{Binding VisibleSettings.Count}"/>
+                            <Run Text="{Binding VisibleSettings.Count, Mode=OneWay}"/>
                             <Run Text=" setting(s)"/>
                         </TextBlock>
                     </DockPanel>
