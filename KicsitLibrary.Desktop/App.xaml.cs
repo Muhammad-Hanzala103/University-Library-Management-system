@@ -103,12 +103,15 @@ namespace KicsitLibrary.Desktop
                     services.AddSingleton<IHintService>(_ => HintService.Current);
                     services.AddScoped<IActivityLogService, ActivityLogService>();
                     services.AddSingleton<IAuthenticationService, AuthenticationService>();
+                    services.AddSingleton<System.Net.Http.HttpClient>();
+                    services.AddScoped<IBookMetadataService, BookMetadataService>();
                     services.AddScoped<IDashboardService, DashboardService>();
                     services.AddScoped<ICatalogService, CatalogService>();
                     services.AddScoped<IConsumerService, ConsumerService>();
                     services.AddScoped<ICirculationService, CirculationService>();
                     services.AddScoped<IEmailSettingsService, EmailSettingsService>();
                     services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
+                    services.AddScoped<ISmsTransport, TwilioSmsTransport>();
                     services.AddScoped<INotificationService, NotificationService>();
                     services.AddScoped<IOverdueService, OverdueService>();
                     services.AddSingleton<IOverdueSchedulerService, OverdueSchedulerService>();

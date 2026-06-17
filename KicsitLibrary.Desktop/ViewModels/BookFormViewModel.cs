@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Http;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Win32;
@@ -33,6 +34,7 @@ namespace KicsitLibrary.Desktop.ViewModels
     {
         private readonly ICatalogService _catalogService;
         private readonly IAuthenticationService _authService;
+        private readonly IBookMetadataService _metadataService;
         private readonly BookMaster? _editingBook;
 
         [ObservableProperty]
@@ -167,10 +169,15 @@ namespace KicsitLibrary.Desktop.ViewModels
 
         public event Action<bool>? CloseRequest;
 
-        public BookFormViewModel(ICatalogService catalogService, IAuthenticationService authService, BookMaster? editingBook)
+        public BookFormViewModel(
+            ICatalogService catalogService, 
+            IAuthenticationService authService, 
+            IBookMetadataService metadataService, 
+            BookMaster? editingBook)
         {
             _catalogService = catalogService ?? throw new ArgumentNullException(nameof(catalogService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
             _editingBook = editingBook;
 
             if (_editingBook != null)
@@ -439,6 +446,126 @@ namespace KicsitLibrary.Desktop.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = $"Failed to save book catalog record: {ex.Message}";
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task FetchMetadataAsync()
+        {
+            ErrorMessage = string.Empty;
+            if (string.IsNullOrWhiteSpace(Isbn))
+            {
+                ErrorMessage = "Please enter an ISBN to fetch metadata.";
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var result = await _metadataService.FetchByIsbnAsync(Isbn);
+                if (result == null)
+                {
+                    ErrorMessage = "No book details found for the entered ISBN.";
+                    return;
+                }
+
+                if (!string.IsNullOrWhiteSpace(result.Title))
+                {
+                    Title = result.Title;
+                }
+                if (!string.IsNullOrWhiteSpace(result.SubTitle))
+                {
+                    SubTitle = result.SubTitle;
+                }
+                if (!string.IsNullOrWhiteSpace(result.Description))
+                {
+                    Notes = result.Description;
+                }
+                if (result.PublicationYear.HasValue)
+                {
+                    PublicationYear = result.PublicationYear.Value;
+                }
+                if (!string.IsNullOrWhiteSpace(result.Edition))
+                {
+                    Edition = result.Edition;
+                }
+                if (!string.IsNullOrWhiteSpace(result.Language))
+                {
+                    Language = result.Language;
+                }
+
+                // Match or create Publisher
+                if (!string.IsNullOrWhiteSpace(result.Publisher))
+                {
+                    var matchedPub = Publishers.FirstOrDefault(p => p.Name.Equals(result.Publisher, StringComparison.OrdinalIgnoreCase));
+                    if (matchedPub != null)
+                    {
+                        SelectedPublisherId = matchedPub.Id;
+                    }
+                    else
+                    {
+                        var newPub = new Publisher { Name = result.Publisher.Trim(), Description = "Auto-created via ISBN metadata fetch" };
+                        await _catalogService.AddPublisherAsync(newPub);
+                        Publishers.Add(newPub);
+                        SelectedPublisherId = newPub.Id;
+                    }
+                }
+
+                // Match or create Authors
+                if (result.Authors.Any())
+                {
+                    foreach (var authorName in result.Authors)
+                    {
+                        var matchedAuthorSel = Authors.FirstOrDefault(a => a.Author.Name.Equals(authorName, StringComparison.OrdinalIgnoreCase));
+                        if (matchedAuthorSel != null)
+                        {
+                            matchedAuthorSel.IsSelected = true;
+                        }
+                        else
+                        {
+                            var newAuthor = new Author { Name = authorName.Trim(), Biography = "Auto-created via ISBN metadata fetch" };
+                            await _catalogService.AddAuthorAsync(newAuthor);
+                            var selection = new AuthorSelection(newAuthor, true);
+                            Authors.Add(selection);
+                        }
+                    }
+                }
+
+                // Download cover image if exists
+                if (!string.IsNullOrWhiteSpace(result.CoverImageUrl))
+                {
+                    try
+                    {
+                        using var client = new HttpClient();
+                        var imageBytes = await client.GetByteArrayAsync(result.CoverImageUrl);
+                        var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.jpg");
+                        await File.WriteAllBytesAsync(tempFile, imageBytes);
+                        
+                        var securePath = SecureUploadFile(tempFile, "Covers");
+                        BookCoverPath = securePath;
+                        
+                        try
+                        {
+                            File.Delete(tempFile);
+                        }
+                        catch
+                        {
+                            // Ignore temp file deletion failure
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorMessage = $"Failed to download cover image: {ex.Message}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Failed to fetch book metadata: {ex.Message}";
             }
             finally
             {

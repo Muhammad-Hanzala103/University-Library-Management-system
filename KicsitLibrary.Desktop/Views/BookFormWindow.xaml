@@ -144,7 +144,14 @@
                         <!-- ISBN -->
                         <StackPanel Grid.Column="0" Margin="0,0,6,0">
                             <TextBlock Text="ISBN" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding ISBN, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding ISBN, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,6,0"/>
+                                <Button Grid.Column="1" Content="Fetch" Style="{StaticResource SecondaryButton}" Command="{Binding FetchMetadataCommand}" Padding="10,6" ToolTip="Fetch details by ISBN from online libraries"/>
+                            </Grid>
                         </StackPanel>
                         <!-- ISSN -->
                         <StackPanel Grid.Column="1" Margin="6,0,0,0">

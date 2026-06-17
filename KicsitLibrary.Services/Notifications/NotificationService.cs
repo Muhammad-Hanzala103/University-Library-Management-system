@@ -18,17 +18,20 @@ namespace KicsitLibrary.Services.Notifications
         private readonly IActivityLogService _logService;
         private readonly IEmailTransport _emailTransport;
         private readonly IEmailSettingsService _emailSettingsService;
+        private readonly ISmsTransport _smsTransport;
 
         public NotificationService(
             KicsitLibraryDbContext context,
             IActivityLogService logService,
             IEmailTransport emailTransport,
-            IEmailSettingsService emailSettingsService)
+            IEmailSettingsService emailSettingsService,
+            ISmsTransport smsTransport)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
             _emailTransport = emailTransport ?? throw new ArgumentNullException(nameof(emailTransport));
             _emailSettingsService = emailSettingsService ?? throw new ArgumentNullException(nameof(emailSettingsService));
+            _smsTransport = smsTransport ?? throw new ArgumentNullException(nameof(smsTransport));
         }
 
         public async Task<NotificationCreateResult> CreateNotificationAsync(
@@ -146,10 +149,27 @@ namespace KicsitLibrary.Services.Notifications
                 };
             }
 
-            return await DeliverEmailAsync(
+            if (notification.Channel.Equals("Email", StringComparison.OrdinalIgnoreCase))
+            {
+                return await DeliverEmailAsync(
+                    notification,
+                    userId,
+                    cancellationToken);
+            }
+            else if (notification.Channel.Equals("WhatsApp", StringComparison.OrdinalIgnoreCase) ||
+                     notification.Channel.Equals("SMS", StringComparison.OrdinalIgnoreCase))
+            {
+                return await DeliverSmsOrWhatsAppAsync(
+                    notification,
+                    userId,
+                    cancellationToken);
+            }
+
+            return await RecordBlockedDeliveryAsync(
                 notification,
+                $"Channel '{notification.Channel}' is not supported.",
                 userId,
-                cancellationToken);
+                keepPending: false);
         }
 
         public async Task<NotificationBatchDeliveryResult> SendPendingEmailNotificationsAsync(
@@ -213,19 +233,27 @@ namespace KicsitLibrary.Services.Notifications
                 };
             }
 
-            if (!notification.Channel.Equals("Email", StringComparison.OrdinalIgnoreCase))
+            if (notification.Channel.Equals("Email", StringComparison.OrdinalIgnoreCase))
             {
-                return await RecordBlockedDeliveryAsync(
+                return await DeliverEmailAsync(
                     notification,
-                    "Only email notification records can be retried through SMTP.",
                     userId,
-                    keepPending: notification.Status == NotificationStatus.Pending);
+                    CancellationToken.None);
+            }
+            else if (notification.Channel.Equals("WhatsApp", StringComparison.OrdinalIgnoreCase) ||
+                     notification.Channel.Equals("SMS", StringComparison.OrdinalIgnoreCase))
+            {
+                return await DeliverSmsOrWhatsAppAsync(
+                    notification,
+                    userId,
+                    CancellationToken.None);
             }
 
-            return await DeliverEmailAsync(
+            return await RecordBlockedDeliveryAsync(
                 notification,
+                $"Channel '{notification.Channel}' is not supported for retry.",
                 userId,
-                CancellationToken.None);
+                keepPending: notification.Status == NotificationStatus.Pending);
         }
 
         public Task<EmailSettingsValidationResult> ValidateEmailSettingsAsync()
@@ -377,7 +405,7 @@ namespace KicsitLibrary.Services.Notifications
             notification.FailureReason = reason;
             await _context.SaveChangesAsync();
             await _logService.LogActivityAsync(
-                "Email Delivery Blocked",
+                $"{notification.Channel} Delivery Blocked",
                 $"Notification {notification.Id} was not sent: {reason}",
                 userId);
 
@@ -387,6 +415,107 @@ namespace KicsitLibrary.Services.Notifications
                 Succeeded = false,
                 Attempted = false,
                 Message = reason,
+                Notification = notification
+            };
+        }
+
+        private async Task<NotificationDeliveryResult> DeliverSmsOrWhatsAppAsync(
+            NotificationRecord notification,
+            int? userId,
+            CancellationToken cancellationToken)
+        {
+            bool isWhatsApp = notification.Channel.Equals("WhatsApp", StringComparison.OrdinalIgnoreCase);
+
+            var settings = await _context.SystemSettings
+                .Where(s => s.Group == "Notifications")
+                .ToDictionaryAsync(s => s.Key, s => s.Value, cancellationToken);
+
+            var enabledKey = isWhatsApp ? "WhatsAppNotificationEnabled" : "SmsNotificationEnabled";
+            var isEnabled = settings.TryGetValue(enabledKey, out var enabledVal) && bool.TryParse(enabledVal, out var parsedEnabled) && parsedEnabled;
+
+            if (!isEnabled)
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    $"{notification.Channel} notifications are disabled.",
+                    userId,
+                    keepPending: true);
+            }
+
+            string recipientPhone = string.Empty;
+            if (notification.StudentId.HasValue)
+            {
+                var student = await _context.Students.FindAsync(new object[] { notification.StudentId.Value }, cancellationToken);
+                recipientPhone = student?.Phone ?? string.Empty;
+            }
+            else if (notification.FacultyStaffId.HasValue)
+            {
+                var faculty = await _context.FacultyStaff.FindAsync(new object[] { notification.FacultyStaffId.Value }, cancellationToken);
+                recipientPhone = faculty?.Phone ?? string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(recipientPhone))
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    "Recipient phone number is missing.",
+                    userId,
+                    keepPending: false);
+            }
+
+            var maxRetryStr = settings.TryGetValue("MaxNotificationRetryCount", out var maxVal) ? maxVal : "3";
+            var maxRetry = int.TryParse(maxRetryStr, out var rVal) ? rVal : 3;
+            if (notification.RetryCount >= maxRetry)
+            {
+                return await RecordBlockedDeliveryAsync(
+                    notification,
+                    $"Maximum retry count of {maxRetry} reached.",
+                    userId,
+                    keepPending: false);
+            }
+
+            notification.RetryCount++;
+            notification.LastAttemptAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var sendResult = await _smsTransport.SendSmsAsync(recipientPhone, notification.Message, isWhatsApp, cancellationToken);
+
+            if (sendResult.Succeeded)
+            {
+                notification.Status = NotificationStatus.Sent;
+                notification.SentAt = DateTime.UtcNow;
+                notification.FailureReason = null;
+            }
+            else
+            {
+                notification.Status = NotificationStatus.Failed;
+                notification.SentAt = null;
+                var authToken = settings.TryGetValue("SmsTwilioAuthToken", out var tokenVal) ? tokenVal : string.Empty;
+                notification.FailureReason = string.IsNullOrEmpty(authToken)
+                    ? sendResult.FailureReason
+                    : sendResult.FailureReason?.Replace(authToken, "[REDACTED]", StringComparison.Ordinal);
+            }
+
+            await _context.SaveChangesAsync(CancellationToken.None);
+
+            var channelLabel = isWhatsApp ? "WhatsApp" : "SMS";
+            var activityDetail = sendResult.Succeeded
+                ? $"{channelLabel} notification {notification.Id} sent to {notification.RecipientCode}."
+                : $"{channelLabel} notification {notification.Id} failed for {notification.RecipientCode}: {notification.FailureReason}";
+
+            await _logService.LogActivityAsync(
+                sendResult.Succeeded ? $"{channelLabel} Delivery Succeeded" : $"{channelLabel} Delivery Failed",
+                activityDetail,
+                userId);
+
+            return new NotificationDeliveryResult
+            {
+                NotificationId = notification.Id,
+                Succeeded = sendResult.Succeeded,
+                Attempted = true,
+                Message = sendResult.Succeeded
+                    ? $"{channelLabel} sent successfully."
+                    : notification.FailureReason ?? $"{channelLabel} delivery failed.",
                 Notification = notification
             };
         }
@@ -590,6 +719,11 @@ namespace KicsitLibrary.Services.Notifications
             if (channel.Equals("WhatsApp", StringComparison.OrdinalIgnoreCase))
             {
                 return "WhatsApp";
+            }
+
+            if (channel.Equals("SMS", StringComparison.OrdinalIgnoreCase))
+            {
+                return "SMS";
             }
 
             return "Email";

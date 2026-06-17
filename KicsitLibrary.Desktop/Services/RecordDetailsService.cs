@@ -12,15 +12,18 @@ namespace KicsitLibrary.Desktop.Services
         private readonly IConsumerService _consumerService;
         private readonly ICatalogService _catalogService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IBookMetadataService _metadataService;
 
         public RecordDetailsService(
             IConsumerService consumerService,
             ICatalogService catalogService,
-            IAuthenticationService authenticationService)
+            IAuthenticationService authenticationService,
+            IBookMetadataService metadataService)
         {
             _consumerService = consumerService ?? throw new ArgumentNullException(nameof(consumerService));
             _catalogService = catalogService ?? throw new ArgumentNullException(nameof(catalogService));
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
         }
 
         public void OpenMemberProfile(int memberId, MemberType memberType)
@@ -38,7 +41,7 @@ namespace KicsitLibrary.Desktop.Services
                 throw new InvalidOperationException("Book details could not be found.");
             }
 
-            var viewModel = new BookFormViewModel(_catalogService, _authenticationService, book);
+            var viewModel = new BookFormViewModel(_catalogService, _authenticationService, _metadataService, book);
             var window = new BookFormWindow(viewModel);
             window.ShowDialog();
         }

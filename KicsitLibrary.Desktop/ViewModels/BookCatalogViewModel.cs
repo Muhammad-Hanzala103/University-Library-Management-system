@@ -14,6 +14,7 @@ namespace KicsitLibrary.Desktop.ViewModels
     {
         private readonly ICatalogService _catalogService;
         private readonly IAuthenticationService _authService;
+        private readonly IBookMetadataService _metadataService;
 
         [ObservableProperty]
         private ObservableCollection<BookMaster> _books = new();
@@ -59,10 +60,14 @@ namespace KicsitLibrary.Desktop.ViewModels
         [ObservableProperty]
         private bool _isBusy;
 
-        public BookCatalogViewModel(ICatalogService catalogService, IAuthenticationService authService)
+        public BookCatalogViewModel(
+            ICatalogService catalogService, 
+            IAuthenticationService authService, 
+            IBookMetadataService metadataService)
         {
             _catalogService = catalogService ?? throw new ArgumentNullException(nameof(catalogService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
             
             _ = InitializeFiltersAndSearchAsync();
         }
@@ -169,7 +174,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         [RelayCommand]
         private void AddBook()
         {
-            var vm = new BookFormViewModel(_catalogService, _authService, null);
+            var vm = new BookFormViewModel(_catalogService, _authService, _metadataService, null);
             var window = new Views.BookFormWindow(vm);
             
             if (window.ShowDialog() == true)
@@ -183,7 +188,7 @@ namespace KicsitLibrary.Desktop.ViewModels
         {
             if (book == null) return;
 
-            var vm = new BookFormViewModel(_catalogService, _authService, book);
+            var vm = new BookFormViewModel(_catalogService, _authService, _metadataService, book);
             var window = new Views.BookFormWindow(vm);
 
             if (window.ShowDialog() == true)
