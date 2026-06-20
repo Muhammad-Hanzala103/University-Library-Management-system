@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace KicsitLibrary.Core.Entities
 {

@@ -508,7 +508,7 @@ namespace KicsitLibrary.Desktop.ViewModels
                     }
                     else
                     {
-                        var newPub = new Publisher { Name = result.Publisher.Trim(), Description = "Auto-created via ISBN metadata fetch" };
+                        var newPub = new Publisher { Name = result.Publisher.Trim() };
                         await _catalogService.AddPublisherAsync(newPub);
                         Publishers.Add(newPub);
                         SelectedPublisherId = newPub.Id;

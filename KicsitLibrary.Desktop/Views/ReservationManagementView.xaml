@@ -119,8 +119,8 @@
                             
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <GridColumnDefinition Width="*"/>
-                                    <GridColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -181,8 +181,8 @@
                                     
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <GridColumnDefinition Width="Auto"/>
-                                            <GridColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Interfaces;
+using KicsitLibrary.Core.Models;
 using KicsitLibrary.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
