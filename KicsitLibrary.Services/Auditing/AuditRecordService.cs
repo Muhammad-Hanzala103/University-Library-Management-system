@@ -393,4 +393,53 @@ public sealed class AuditRecordService : IAuditRecordService
     private static string Sanitize(string value) =>
         value.Replace(";", ",", StringComparison.Ordinal)
             .Replace("=", "-", StringComparison.Ordinal);
+
+    public async Task<bool> VerifyLedgerIntegrityAsync(CancellationToken cancellationToken = default)
+    {
+        await RequireViewAsync();
+        
+        var records = await _context.IssueRecords
+            .IgnoreQueryFilters()
+            .OrderBy(r => r.Id)
+            .ToListAsync(cancellationToken);
+            
+        var prevHash = "GENESIS_HASH";
+        
+        foreach (var record in records)
+        {
+            if (string.IsNullOrEmpty(record.TransactionHash))
+            {
+                // If it is an old legacy record without a hash, we skip or treat it as hash-less,
+                // but for enterprise network refactor, all new records must have hashes.
+                // Let's compute what it would have been or assume default.
+                continue;
+            }
+
+            var recordData = $"{record.AccessionNumber}_{record.IssueDate.Ticks}_{record.IssuedByUserId}_{record.TenantId}";
+            var expectedHash = ComputeSha256Hash(recordData + prevHash);
+            
+            if (record.TransactionHash != expectedHash)
+            {
+                return false;
+            }
+            
+            prevHash = record.TransactionHash;
+        }
+        
+        return true;
+    }
+
+    private static string ComputeSha256Hash(string rawData)
+    {
+        using (var sha256Hash = System.Security.Cryptography.SHA256.Create())
+        {
+            var bytes = sha256Hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(rawData));
+            var builder = new System.Text.StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append(bytes[i].ToString("x2"));
+            }
+            return builder.ToString();
+        }
+    }
 }

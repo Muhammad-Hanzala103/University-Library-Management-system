@@ -78,12 +78,17 @@ namespace KicsitLibrary.Desktop
                     var connectionString = configuration.GetConnectionString("DefaultConnection");
                     var dbProvider = configuration.GetValue<string>("SystemSettings:DatabaseProvider") ?? "SqlServer";
 
-                    // Register DB Context Factory dynamically (SQL Server or SQLite)
+                    // Register DB Context Factory dynamically (SQL Server, PostgreSQL, or SQLite)
                     if (dbProvider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
                     {
                         connectionString = ResolveSqliteConnectionString(connectionString);
                         services.AddDbContextFactory<KicsitLibraryDbContext>(options =>
                             options.UseSqlite(connectionString, b => b.MigrationsAssembly("KicsitLibrary.Data")));
+                    }
+                    else if (dbProvider.Equals("Postgres", StringComparison.OrdinalIgnoreCase) || dbProvider.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase))
+                    {
+                        services.AddDbContextFactory<KicsitLibraryDbContext>(options =>
+                            options.UseNpgsql(connectionString, b => b.MigrationsAssembly("KicsitLibrary.Data")));
                     }
                     else
                     {
@@ -112,6 +117,9 @@ namespace KicsitLibrary.Desktop
                     services.AddScoped<IEmailSettingsService, EmailSettingsService>();
                     services.AddSingleton<IEmailTransport, MailKitEmailTransport>();
                     services.AddScoped<ISmsTransport, TwilioSmsTransport>();
+                    services.AddScoped<ISmsTransport, InfobipSmsTransport>();
+                    services.AddScoped<IAutomaticNotificationQueueService, AutomaticNotificationQueueService>();
+                    services.AddHostedService<AutomaticNotificationQueueWorker>();
                     services.AddScoped<INotificationService, NotificationService>();
                     services.AddScoped<IOverdueService, OverdueService>();
                     services.AddSingleton<IOverdueSchedulerService, OverdueSchedulerService>();
@@ -378,11 +386,16 @@ namespace KicsitLibrary.Desktop
                     await ownershipService.RunWithCriticalOperationLockAsync(
                         "Database Compatibility Initialization",
                         sqliteDatabasePath,
-                        _ => DatabaseCompatibilityInitializer.ApplyAsync(dbContext));
+                        async _ => 
+                        {
+                            await DatabaseCompatibilityInitializer.ApplyAsync(dbContext);
+                            await dbContext.EnsureDatabaseSchemaAsync();
+                        });
                 }
                 else
                 {
                     await DatabaseCompatibilityInitializer.ApplyAsync(dbContext);
+                    await dbContext.EnsureDatabaseSchemaAsync();
                 }
                 
                 splash.UpdateStatus("Loading configuration...");

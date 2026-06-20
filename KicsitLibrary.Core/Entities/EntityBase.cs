@@ -6,6 +6,8 @@ namespace KicsitLibrary.Core.Entities
     {
         public int Id { get; set; }
         
+        public string TenantId { get; set; } = "default";
+        
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         

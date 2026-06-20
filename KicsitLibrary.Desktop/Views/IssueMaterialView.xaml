@@ -8,6 +8,69 @@
              mc:Ignorable="d" 
              d:DesignHeight="750" d:DesignWidth="1100" Background="Transparent">
     
+    <UserControl.Resources>
+        <!-- Golden focus bounding rings and hover states for Form Elements -->
+        <Style TargetType="TextBox" BasedOn="{StaticResource StyledTextBox}">
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#D97706" BlurRadius="8" ShadowDepth="0" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource CardBgBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#D97706" BlurRadius="8" ShadowDepth="0" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource AccentHoverBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="UserControl.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="MainWorkspaceGrid"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <ThicknessAnimation Storyboard.TargetName="MainWorkspaceGrid"
+                                        Storyboard.TargetProperty="Margin"
+                                        From="0,15,0,0" To="0,0,0,0" Duration="0:0:0.3">
+                        <ThicknessAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,90 +82,120 @@
                      Visibility="{Binding IsBusy, Converter={local:BooleanToVisibilityConverter}}" 
                      VerticalAlignment="Top" Margin="0,0,0,10"/>
 
-        <!-- Main Workspace split -->
-        <Grid Grid.Row="1">
+        <!-- Main Workspace split (Wide interactive Form on Left, Tracking Analytics on Right) -->
+        <Grid x:Name="MainWorkspaceGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="380"/>
+                <ColumnDefinition Width="1.2*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- LEFT PANEL: Search / Scan Input Form -->
-            <StackPanel Grid.Column="0" Margin="0,0,15,0">
-                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" VerticalAlignment="Top">
-                    <StackPanel>
-                        <TextBlock Text="CHECKOUT TRANSACTION" FontSize="14" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,15"/>
-
-                        <!-- Member Type Selection -->
-                        <TextBlock Text="Member Category *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                        <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding SelectedMemberType}" SelectedValuePath="Tag">
-                            <ComboBoxItem Content="Student" Tag="{x:Static coreEnums:MemberType.Student}"/>
-                            <ComboBoxItem Content="Faculty / Staff" Tag="{x:Static coreEnums:MemberType.FacultyStaff}"/>
-                        </ComboBox>
-
-                        <!-- Member Identifier -->
-                        <TextBlock Text="Member Registration / Personnel ID *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                        <Grid>
-                            <TextBox x:Name="MemberIdentifierTextBox" Style="{StaticResource StyledTextBox}" Text="{Binding MemberIdentifier, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
-                            <Popup IsOpen="{Binding ShowSuggestions}" PlacementTarget="{Binding ElementName=MemberIdentifierTextBox}" Placement="Bottom" StaysOpen="False" Width="{Binding ElementName=MemberIdentifierTextBox, Path=ActualWidth}">
-                                <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="{StaticResource CardBgBrush}" MaxHeight="200" CornerRadius="4">
-                                    <ListBox ItemsSource="{Binding StudentSuggestions}" SelectedItem="{Binding SelectedStudentSuggestion}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Margin="5">
-                                                    <TextBlock Text="{Binding RegistrationNumber}" FontWeight="Bold"/>
-                                                    <TextBlock Text="{Binding Name}" FontSize="11"/>
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding Program}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
-                                                        <TextBlock Text=" - " FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
-                                                        <TextBlock Text="{Binding Department}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
+            <!-- LEFT PANEL: Search / Scan Input Form (Wide Column) -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,15,0">
+                <StackPanel>
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" VerticalAlignment="Top">
+                        <StackPanel>
+                            <!-- Enterprise Header Status -->
+                            <DockPanel Margin="0,0,0,15">
+                                <StackPanel>
+                                    <TextBlock Text="ILM-O-KUTUB ENTERPRISE NETWORK" FontSize="9" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}"/>
+                                    <TextBlock Text="CHECKOUT TRANSACTION" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                                </StackPanel>
+                                <Border Background="#D1FAE5" BorderBrush="#10B981" BorderThickness="1" CornerRadius="4" Padding="6,3" VerticalAlignment="Center" HorizontalAlignment="Right" DockPanel.Dock="Right">
+                                    <TextBlock Text="Counter-01 ACTIVE" FontSize="9" FontWeight="Bold" Foreground="#065F46"/>
                                 </Border>
-                            </Popup>
-                        </Grid>
+                            </DockPanel>
 
-                        <!-- Book Accession Number -->
-                        <TextBlock Text="Book Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
-                        <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" FontSize="16" Padding="10" Background="#F0F9FF" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.5"/>
+                            <!-- Member Type Selection -->
+                            <TextBlock Text="Member Category *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <ComboBox Height="36" Margin="0,0,0,12" SelectedValue="{Binding SelectedMemberType}" SelectedValuePath="Tag">
+                                <ComboBoxItem Content="Student" Tag="{x:Static coreEnums:MemberType.Student}"/>
+                                <ComboBoxItem Content="Faculty / Staff" Tag="{x:Static coreEnums:MemberType.FacultyStaff}"/>
+                            </ComboBox>
 
-                        <!-- Auto-Add Checkbox -->
-                        <CheckBox Content="Auto-Add copy to checkout cart on scan" 
-                                  IsChecked="{Binding AutoAddOnScan, Mode=TwoWay}"
-                                  Foreground="{StaticResource TextMutedBrush}" 
-                                  FontSize="11" Margin="0,0,0,15"/>
+                            <!-- Member Identifier -->
+                            <TextBlock Text="Member Registration / Personnel ID *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <Grid>
+                                <TextBox x:Name="MemberIdentifierTextBox" Style="{StaticResource StyledTextBox}" Text="{Binding MemberIdentifier, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12"/>
+                                <Popup IsOpen="{Binding ShowSuggestions}" PlacementTarget="{Binding ElementName=MemberIdentifierTextBox}" Placement="Bottom" StaysOpen="False" Width="{Binding ElementName=MemberIdentifierTextBox, Path=ActualWidth}">
+                                    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="{StaticResource CardBgBrush}" MaxHeight="200" CornerRadius="4">
+                                        <ListBox ItemsSource="{Binding StudentSuggestions}" SelectedItem="{Binding SelectedStudentSuggestion}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Margin="5">
+                                                        <TextBlock Text="{Binding RegistrationNumber}" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Name}" FontSize="11"/>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Program}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                            <TextBlock Text=" - " FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                            <TextBlock Text="{Binding Department}" FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Border>
+                                </Popup>
+                            </Grid>
 
-                        <!-- Action Buttons -->
-                        <Button Content="🔍 Validate / Add to Cart" Style="{StaticResource PrimaryButton}" Command="{Binding ValidateDetailsCommand}" ToolTip="Lookup member privileges and add copy barcode to checkout queue." Margin="0,0,0,8" Height="38"/>
-                        <Button Content="➕ Add Current Copy Manually" Style="{StaticResource SecondaryButton}" Command="{Binding AddToCartCommand}" ToolTip="Add currently searched book copy to checkout cart." Margin="0,0,0,8" Height="38"/>
-                        <Button Content="🧹 Clear Form Fields" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" ToolTip="Clear member search and barcodes form." Height="38"/>
-                    </StackPanel>
-                </Border>
+                            <!-- Book Accession Number -->
+                            <TextBlock Text="Book Accession Number *" Style="{StaticResource BaseTextBlockStyle}" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource StyledTextBox}" Text="{Binding AccessionNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" FontSize="16" Padding="10" Background="#F0F9FF" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.5"/>
 
-                <!-- Scanned Book metadata preview card -->
-                <Border Style="{StaticResource CardStyle}" Visibility="{Binding IsBookFound, Converter={local:BooleanToVisibilityConverter}}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Width="36" Height="36" CornerRadius="18" Background="#EFF6FF" VerticalAlignment="Top" Margin="0,0,12,0">
-                            <TextBlock Text="📖" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="SCANNED BOOK COPY PREVIEW" FontSize="9" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,3"/>
-                            <TextBlock Text="{Binding BookTitle}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" TextTrimming="CharacterEllipsis"/>
-                            <TextBlock Text="{Binding BookAuthorDisplay, StringFormat='Subject: {0}'}" FontSize="11" Margin="0,2,0,0"/>
-                            <TextBlock Text="{Binding LoadedCopy.Location, StringFormat='Location: {0}'}" FontSize="11" Margin="0,2,0,0"/>
-                            <TextBlock Text="{Binding BookStatusDisplay, StringFormat='Status: {0}'}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" Margin="0,2,0,0"/>
+                            <!-- Auto-Add Checkbox -->
+                            <CheckBox Content="Auto-Add copy to checkout cart on scan" 
+                                      IsChecked="{Binding AutoAddOnScan, Mode=TwoWay}"
+                                      Foreground="{StaticResource TextMutedBrush}" 
+                                      FontSize="11" Margin="0,0,0,15"/>
+
+                            <!-- Operational Bounds Info (Responsive micro-notes) -->
+                            <Border BorderThickness="1" BorderBrush="{StaticResource BorderBrush}" Background="{StaticResource BgBrush}" CornerRadius="4" Padding="10" Margin="0,0,0,15">
+                                <StackPanel>
+                                    <TextBlock Text="ABSOLUTE PERSISTENCE LIMITS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource SecondaryBrush}" Margin="0,0,0,4"/>
+                                    <BulletDecorator Margin="0,2,0,0">
+                                        <BulletDecorator.Bullet>
+                                            <Ellipse Width="4" Height="4" Fill="{StaticResource AccentBrush}"/>
+                                        </BulletDecorator.Bullet>
+                                        <TextBlock Text=" Student limit: Max 5 books. Regular checkout duration is 14 days." FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                    </BulletDecorator>
+                                    <BulletDecorator Margin="0,2,0,0">
+                                        <BulletDecorator.Bullet>
+                                            <Ellipse Width="4" Height="4" Fill="{StaticResource AccentBrush}"/>
+                                        </BulletDecorator.Bullet>
+                                        <TextBlock Text=" Faculty / Staff limit: Max 10 books. Checkout duration is 30 days." FontSize="10" Foreground="{StaticResource TextMutedBrush}"/>
+                                    </BulletDecorator>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Action Buttons -->
+                            <Button Content="🔍 Validate / Add to Cart" Style="{StaticResource PrimaryButton}" Command="{Binding ValidateDetailsCommand}" ToolTip="Lookup member privileges and add copy barcode to checkout queue." Margin="0,0,0,8" Height="38"/>
+                            <Button Content="➕ Add Current Copy Manually" Style="{StaticResource SecondaryButton}" Command="{Binding AddToCartCommand}" ToolTip="Add currently searched book copy to checkout cart." Margin="0,0,0,8" Height="38"/>
+                            <Button Content="🧹 Clear Form Fields" Style="{StaticResource SecondaryButton}" Command="{Binding ClearAllCommand}" ToolTip="Clear member search and barcodes form." Height="38"/>
                         </StackPanel>
-                    </Grid>
-                </Border>
-            </StackPanel>
+                    </Border>
 
-            <!-- RIGHT PANEL: Checkout Cart & Verification Details -->
+                    <!-- Scanned Book metadata preview card -->
+                    <Border Style="{StaticResource CardStyle}" Visibility="{Binding IsBookFound, Converter={local:BooleanToVisibilityConverter}}" Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="36" Height="36" CornerRadius="18" Background="#EFF6FF" VerticalAlignment="Top" Margin="0,0,12,0">
+                                <TextBlock Text="📖" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="SCANNED BOOK COPY PREVIEW" FontSize="9" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,3"/>
+                                <TextBlock Text="{Binding BookTitle}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding BookAuthorDisplay, StringFormat='Subject: {0}'}" FontSize="11" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding LoadedCopy.Location, StringFormat='Location: {0}'}" FontSize="11" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding BookStatusDisplay, StringFormat='Status: {0}'}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- RIGHT PANEL: Checkout Cart & Verification Details (Operational Analytics) -->
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -128,6 +221,13 @@
                                       MinHeight="150" MaxHeight="250">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Accession No." Binding="{Binding AccessionNumber}" Width="110" FontWeight="SemiBold"/>
+                                    <DataGridTemplateColumn Header="Vector Barcode" Width="140">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Image Source="{Binding AccessionNumber, Converter={local:BarcodeConverter}}" Height="26" Stretch="Uniform" Margin="4,2"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                     <DataGridTextColumn Header="Book Title" Binding="{Binding BookMaster.Title}" Width="*"/>
                                     <DataGridTextColumn Header="Rack / Shelf" Binding="{Binding Location}" Width="120"/>
                                     <DataGridTemplateColumn Width="60" Header="Action">

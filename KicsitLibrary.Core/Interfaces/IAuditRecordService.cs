@@ -29,4 +29,6 @@ public interface IAuditRecordService
         CancellationToken cancellationToken = default);
     Task<AuditStatusSummary> GetAuditStatusSummaryAsync(
         CancellationToken cancellationToken = default);
+    Task<bool> VerifyLedgerIntegrityAsync(
+        CancellationToken cancellationToken = default);
 }

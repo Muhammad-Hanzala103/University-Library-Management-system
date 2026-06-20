@@ -28,6 +28,8 @@ namespace KicsitLibrary.Core.Entities
         public int IssuedByUserId { get; set; }
         public virtual User IssuedByUser { get; set; } = null!;
 
+        public string? TransactionHash { get; set; }
+
         public virtual ReceiveRecord? ReceiveRecord { get; set; }
         public virtual Fine? Fine { get; set; }
         public virtual ICollection<NotificationRecord> NotificationRecords { get; set; } = new List<NotificationRecord>();

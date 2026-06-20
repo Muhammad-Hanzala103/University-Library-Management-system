@@ -298,4 +298,32 @@ namespace KicsitLibrary.Desktop
             throw new NotImplementedException();
         }
     }
+
+    public class BarcodeConverter : MarkupExtension, IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return null;
+            string text = value.ToString() ?? "";
+            if (string.IsNullOrWhiteSpace(text)) return null;
+            try
+            {
+                return KicsitLibrary.Desktop.Helpers.BarcodeGenerator.GenerateCode39(text);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
 }
