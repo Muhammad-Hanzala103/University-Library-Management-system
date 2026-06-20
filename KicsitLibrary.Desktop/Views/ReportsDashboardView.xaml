@@ -39,10 +39,8 @@
                     <StackPanel>
                         <TextBlock Text="REPORTS" FontWeight="Bold"
                                    Foreground="{StaticResource PrimaryBrush}"/>
-                        <TextBlock FontSize="11" Foreground="{StaticResource TextMutedBrush}">
-                            <Run Text="{Binding VisibleReportCount}"/>
-                            <Run Text=" report(s)"/>
-                        </TextBlock>
+                        <TextBlock FontSize="11" Foreground="{StaticResource TextMutedBrush}"
+                                   Text="{Binding VisibleReportCount, Mode=OneWay, StringFormat='{}{0} report(s)'}"/>
                     </StackPanel>
                     <TextBox DockPanel.Dock="Right" Width="250"
                              Style="{StaticResource StyledTextBox}"

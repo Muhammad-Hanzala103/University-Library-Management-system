@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using KicsitLibrary.Core.Entities;
 using KicsitLibrary.Core.Enums;
+using KicsitLibrary.Core.Interfaces;
 using KicsitLibrary.Core.Models;
 using KicsitLibrary.Data.Repositories;
 using KicsitLibrary.Services.Catalog;

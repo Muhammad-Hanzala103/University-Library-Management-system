@@ -544,8 +544,8 @@ public sealed class DatabaseRelocationService(
         {
             await using var command = connection.CreateCommand();
             command.CommandText =
-                "INSERT INTO SystemSettings (Key, Value, Description, \"Group\", CreatedAt, IsDeleted) " +
-                "VALUES ($key, $value, '', 'Runtime', $createdAt, 0) " +
+                "INSERT INTO SystemSettings (Key, Value, Description, \"Group\", TenantId, CreatedAt, IsDeleted) " +
+                "VALUES ($key, $value, '', 'Runtime', 'default', $createdAt, 0) " +
                 "ON CONFLICT(Key) DO UPDATE SET Value = excluded.Value, \"Group\" = 'Runtime';";
             command.Parameters.AddWithValue("$key", setting.Key);
             command.Parameters.AddWithValue("$value", setting.Value);

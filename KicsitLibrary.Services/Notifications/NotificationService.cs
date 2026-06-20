@@ -18,20 +18,20 @@ namespace KicsitLibrary.Services.Notifications
         private readonly IActivityLogService _logService;
         private readonly IEmailTransport _emailTransport;
         private readonly IEmailSettingsService _emailSettingsService;
-        private readonly ISmsTransport _smsTransport;
+        private readonly ISmsTransport? _smsTransport;
 
         public NotificationService(
             KicsitLibraryDbContext context,
             IActivityLogService logService,
             IEmailTransport emailTransport,
             IEmailSettingsService emailSettingsService,
-            ISmsTransport smsTransport)
+            ISmsTransport? smsTransport = null)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logService = logService ?? throw new ArgumentNullException(nameof(logService));
             _emailTransport = emailTransport ?? throw new ArgumentNullException(nameof(emailTransport));
             _emailSettingsService = emailSettingsService ?? throw new ArgumentNullException(nameof(emailSettingsService));
-            _smsTransport = smsTransport ?? throw new ArgumentNullException(nameof(smsTransport));
+            _smsTransport = smsTransport;
         }
 
         public async Task<NotificationCreateResult> CreateNotificationAsync(
@@ -167,7 +167,7 @@ namespace KicsitLibrary.Services.Notifications
 
             return await RecordBlockedDeliveryAsync(
                 notification,
-                $"Channel '{notification.Channel}' is not supported.",
+                $"Channel '{notification.Channel}' is not supported. Only email notification records can be sent through SMTP.",
                 userId,
                 keepPending: false);
         }

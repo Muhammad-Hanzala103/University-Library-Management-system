@@ -133,10 +133,8 @@
                                    Foreground="{StaticResource PrimaryBrush}"/>
                         <TextBlock DockPanel.Dock="Right"
                                 FontSize="10"
-                                Foreground="{StaticResource TextMutedBrush}">
-                            <Run Text="{Binding VisibleSettings.Count, Mode=OneWay}"/>
-                            <Run Text=" setting(s)"/>
-                        </TextBlock>
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Text="{Binding VisibleSettings.Count, Mode=OneWay, StringFormat='{}{0} setting(s)'}"/>
                     </DockPanel>
 
                     <!-- Action Buttons -->
